@@ -1,4 +1,4 @@
-$Id: THANKS,v 1.8 2002/06/17 22:26:03 adrian Exp $
+$Id: THANKS,v 1.9 2003/03/11 22:52:38 adrian Exp $
 
 kover THANKS:
 
@@ -8,6 +8,7 @@ Using code and ideas from:
 - grip http://www.nostatic.org/grip/
 - kmail and kedit (see www.kde.org)
 - base64 encoding by unknown
+- k3b/kostore
 
 Alexander Koenig <alex@lisas.de>
 - gcc 3 patches
@@ -50,3 +51,6 @@ Rene Engelhard <mail@rene-engelhard.de>
 Nils Philippsen <nils@fht-esslingen.de>
 - php code for the wepages taken from
   RACE: http://lisas.de/race/
+
+Quique <quique@sindominio.net>
+- spanish translation
