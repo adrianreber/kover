@@ -1,4 +1,11 @@
-$Id: ChangeLog,v 1.36 2003/03/14 22:14:27 adrian Exp $
+$Id: ChangeLog,v 1.37 2004/04/20 21:05:42 adrian Exp $
+
+2004-04-20 Markus Brueffer <brueffer@phoenix-systems.de>
+        * kover FreeBSD patches
+
+2004-04-20 Laurent Montel <lmontel@mandrakesoft.com>
+        * First patch to add config shortcut.
+        * Fixe a mem leak.
 
 2003-03-14 Adrian <adrian@lisas.de>
         * *.png: somehow all the images were corrupted and are
