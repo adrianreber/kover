@@ -58,8 +58,7 @@ CD_Info::CD_Info() {
 	 trk.setAutoDelete(true);
 }
 
-CDDB_Fill::CDDB_Fill( KoverFile* _kover_file ) : QObject() 
-{
+CDDB_Fill::CDDB_Fill( KoverFile* _kover_file ) : QObject() {
 	 kover_file = _kover_file;
 	 cd_fd = -1;
 	 code = 0;
@@ -435,7 +434,7 @@ bool CDDB_Fill::cddb_query()
 	 char *query_buffer = NULL;
 	 char *http_buffer = NULL;
 	 char *offset_buffer = NULL;
-	 char *ss;
+	 char *ss,*sss,*ssss;
 	 int i;
 	 int tot_len,len;
 	 
@@ -502,7 +501,7 @@ bool CDDB_Fill::cddb_query()
 	 
 	 list <cddb_211_item *> inexact_list;
 	 inexact_dialog * inexact;
-	 int aber;
+	 int aber=0;
 	 
 	 //what category
 	 switch(code) {
@@ -520,20 +519,58 @@ bool CDDB_Fill::cddb_query()
 		  s[0] = 0;
 		  
 		  cddb_211_item *ref_211;
-
+		  
+		  //reading all possible matches into ref_211
 		  while (strncmp(s,".", 1)!=0) {
 				if (!fgets(s, 255, sk_1))
 					 break;
+				//not the first element
+				if (!aber++)
+					 continue;
 				if (s[0]!=48) {
 					 ref_211 = new cddb_211_item(s);
-					 _DEBUG_ fprintf(stderr,"%s:%s",PACKAGE,s);
+					 _DEBUG_ fprintf(stderr,"%s:read:%s",PACKAGE,s);
+					 //pushing everything in a list
 					 inexact_list.push_back(ref_211);
 				}
 		  }
+		  //removing the last element. it is just a "."
+		  inexact_list.remove(ref_211);
 		  inexact = new inexact_dialog(inexact_list);
+		  //dialog to choose one of the matches
 		  aber = inexact->exec();
 		  _DEBUG_ fprintf(stderr,"kover:inexact_dialog returns: %d\n",aber);
-		  return false;
+		  if (aber==-1) {
+				emit statusText("Our duty to your honour.");
+				return false;
+		  }
+		  //getting the string
+		  ssss = inexact->get(aber);
+		  _DEBUG_ fprintf(stderr,"kover:inexact->get(%d) returns:%s\n",aber,s);
+		  //string looks like : rock bd09280d Pink Floyd / The Wall (CD1)
+		  //searching first space
+		  ss = strchr(ssss, 32);
+		  *ss = 0; // terminating the string after the first " "
+		  //cdinfo.category is now "rock"
+		  cdinfo.category = ssss;
+		  free(ssss);
+		  ssss = inexact->get(aber);
+		  ss = strchr(ssss, 32); //searching for " "
+		  //ss is now " bd09280d Pink Floyd / The Wall (CD1)"
+		  //watch out a leading space (32)
+		  sss = strchr(ss+1, 32);
+		  *sss = 0;
+		  //strtoul - convert a string to an unsigned long integer
+		  cdinfo.cddb_id = strtoul(ss+1,NULL,16);
+		  free(ssss);
+		  if (cdinfo.cddb_id==ULONG_MAX) {
+				fprintf(stderr,"kover:%s:%d: this should not happen\n",__FILE__,__LINE__);
+				emit statusText("Why does the drum come hither?");
+				return false;
+		  }
+		  _DEBUG_ fprintf(stderr,"kover:new id:0x%lx:category:%s\n",cdinfo.cddb_id,cdinfo.category.latin1());
+		  break;
+		  //return false;
 	 case 202:
 		  emit statusText("No match found.");
 		  return false;
@@ -556,8 +593,7 @@ bool CDDB_Fill::cddb_query()
 }
  
 
-void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file)
-{
+void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file) {
 	 char *cddb_file = NULL;
 	 FILE *cddb_file_descriptor = NULL;
 	 char *query_buffer = NULL;
@@ -568,10 +604,9 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file)
 	 int t;
 	 char code_string[4];
 
-	 if (!local)
-	 {
-		  if (code == 200)  // cddb_query was a success, request info
-		  {
+	 if (!local) {
+		  if (code == 200 || code == 211)  { 
+				// cddb_query was a success, request info
 				emit statusText( "Downloading CD info..." );
        
 				t = strlen("cddb+read+%s+%08x")+strlen(cdinfo.category)+sizeof(cdinfo.cddb_id)+10;
@@ -599,8 +634,7 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file)
 
 				_DEBUG_ fprintf(stderr,"Code: %d\n", code);
 
-				switch(code)
-				{
+				switch(code) {
 				case 210:
 					 emit statusText("OK, CDDB database entry follows.");
 					 break;
@@ -620,64 +654,58 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file)
 					 emit statusText("ERROR: This should not happen.");
 					 fprintf(stderr,"kover:__FILE__:__LINE__: this should not happen");
 					 return;
-
 				}
+		  } else {
+				fprintf(stderr,"kover:__FILE__:__LINE__: this should not happen");
+				return;
 		  }
 	 }
   
 	 s[0] = 0;
 	
-	 while (strncmp(s,".", 1)!=0)
-	 {
+	 while (strncmp(s,".", 1)!=0) {
 		  if (!fgets(s, 255, desc))
 				break;
-
+		  
 		  _DEBUG_ fprintf(stderr,"answer: %s",s);
 
-		  if (!local && save_as_file && globals.write_local_cddb)
-		  {
-				if (!file_opened)
-				{
-					 if (globals.cddb_path)
-					 {
+		  if (!local && save_as_file && globals.write_local_cddb) {
+				if (!file_opened) {
+					 if (globals.cddb_path) {
 						  cddb_file = (char *) malloc(strlen(globals.cddb_path)+9);
 						  strcpy(cddb_file,globals.cddb_path);
-													 
-						  snprintf(help_string,9,"%08x",(unsigned int)cdinfo.cddb_id);
+						  
+						  snprintf(help_string,9,"%08lx", calcID());
 						  strncat(cddb_file,help_string,8);
-
+						  
 						  _DEBUG_ fprintf(stderr,"using file: %s\n",cddb_file);
-
+						  
 						  cddb_file_descriptor = fopen(cddb_file, "w");
-		
+						  
 						  free (cddb_file);
-
-						  if (cddb_file_descriptor)
-						  {
+						  
+						  if (cddb_file_descriptor) {
 								file_opened = true;
 						  }
-
 					 }
-				  
 				}
-				if (cddb_file_descriptor)
-				{
-					 if (strstr(s,"#") || strstr(s,"="))
-					 {
+				if (cddb_file_descriptor) {
+					 if (strstr(s,"#") || strstr(s,"=")) {
 						  if (strstr(s,"# Submitted via:"))
 								fprintf(cddb_file_descriptor,"# Submitted via: %s %s\n",PACKAGE,VERSION);
 						  else if (strstr(s,"# xmcd CD database file"))
 								fprintf(cddb_file_descriptor,"# xmcd CD database file generated by %s %s\n",PACKAGE,VERSION);
 						  else if (strstr(s,"# Processed by") || strstr(s,"# Generated: ") || strstr(s,"Copyright (C)"))
-								fprintf(cddb_file_descriptor,"#\n");
+								fprintf(cddb_file_descriptor,"#\n# Revenge his foul and most unnatural murder. (Hamlet I.5.25)\n#\n");
+						  else if (strstr(s,"DISCID"))
+								fprintf(cddb_file_descriptor,"DISCID=%08lx\n",calcID());
 						  else
 								fprintf(cddb_file_descriptor,"%s",s);
 					 }
 				}
 		  }
 
-		  if ((ss=strstr(s, "DTITLE")) != NULL)
-		  { 
+		  if ((ss=strstr(s, "DTITLE")) != NULL) { 
 				ss += 7;
 				ss[strlen(ss)-1] = 0;
 				cdinfo.cdnames = ss;
@@ -705,16 +733,13 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file)
 		  parse_trails(ss);
      
 		  if (cdinfo.trk.at(t)->songname.length())
-		  {       
 				cdinfo.trk.at(t)->songname += ss;
-		  } else {
+		  else
 				cdinfo.trk.at(t)->songname = ss;
-		  }
 	 }
   
 	 if (file_opened && cddb_file_descriptor)
 		  fclose(cddb_file_descriptor);
-   
 }
 
 void CDDB_Fill::CDDBSkipHTTP(int socket)

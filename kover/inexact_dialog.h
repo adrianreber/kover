@@ -26,7 +26,7 @@
 	 
 */
 
-/* $Id: inexact_dialog.h,v 1.1 2001/07/15 22:21:53 adrian Exp $ */
+/* $Id: inexact_dialog.h,v 1.2 2001/07/18 23:26:58 adrian Exp $ */
 
 #ifndef INEXACT_DIALOG_H
 #define INEXACT_DIALOG_H
@@ -42,8 +42,11 @@ class inexact_dialog : public QDialog {
 public:
 	 inexact_dialog(list <cddb_211_item *> inexact_list);
 	 ~inexact_dialog();
+	 int exec();
+	 char* get(int index);
 private:
 	 QListBox *box;
+	 list <cddb_211_item *> local_list;
 private slots:
 void accept();
 public slots:

@@ -30,7 +30,7 @@
 	 12 Jun 2001: Added slim case thingy
 */
 
-/* $Id: PreferencesDialog.cpp,v 1.12 2001/07/15 22:37:08 adrian Exp $ */
+/* $Id: PreferencesDialog.cpp,v 1.13 2001/07/20 17:26:56 adrian Exp $ */
 
 #include "PreferencesDialog.h"
 #include "KoverTop.h"
@@ -152,15 +152,15 @@ void PreferencesDialog::slotOk() {
 	 if ((((cddb_widgets.proxy_server)->text()).isEmpty() || ((cddb_widgets.proxy_port)->text()).isEmpty()) && (cddb_widgets.use_proxy)->isChecked()) {
 		  switch (i) {
 		  case 0:
-				KMessageBox::information(this,"<NELSON>HAHA</NELSON>");
+				KMessageBox::information(this,"Come for the third, Laertes. You do but dally.");
 				i++;
 				return;
 		  case 1:
-				KMessageBox::sorry(this,"Please reboot now.");
+				KMessageBox::sorry(this,"I pray you, pass with your best violence.");
 				i++;
 				return;
 		  case 2:
-				KMessageBox::error(this,"Disable use of a proxy server or enter something!");
+				KMessageBox::error(this,"I am afeard you make a wanton of me.");
 		  default:
 				i=0;
 				return;

@@ -26,7 +26,7 @@
 
 */
 
-/* $Id: inexact_dialog.cc,v 1.1 2001/07/15 22:21:53 adrian Exp $ */
+/* $Id: inexact_dialog.cc,v 1.3 2001/07/20 17:26:56 adrian Exp $ */
 
 #include "inexact_dialog.h"
 #include <qpushbutton.h>
@@ -34,14 +34,21 @@
 #include <qstring.h>
 #include <qlayout.h>
 #include <qgroupbox.h>
+#include <qlabel.h>
+
 
 inexact_dialog::inexact_dialog(list <cddb_211_item *> inexact_list) : QDialog(0,0,TRUE,0) {
+	 local_list = inexact_list;
 	 QVBoxLayout *top_layout = new QVBoxLayout(this);
+	 top_layout->addSpacing(10);
+	 QLabel *label = new QLabel("    Choose wisely!",this);
+	 top_layout->addWidget(label);
+	 top_layout->addSpacing(10);
 	 box = new QListBox(this);
 	 list <cddb_211_item *> :: iterator item;
+	 
 	 for (item = inexact_list.begin(); item != inexact_list.end(); item++) {
 		  box->insertItem(((*item)->get()));
-		  box->insertItem("haha");
 	 }
 	 box->setMinimumWidth(box->maxItemWidth()+30);
 	 
@@ -55,7 +62,8 @@ inexact_dialog::inexact_dialog(list <cddb_211_item *> inexact_list) : QDialog(0,
 
 	 //top_layout->addLayout(button_layout);
 	 
-	 QPushButton *ok = new QPushButton( "ok",this , "quitok" );
+	 QPushButton *ok = new QPushButton("Ok",this ,"ok");
+	 ok->setDefault(TRUE);
 	 
 	 ok->setMaximumWidth(70);
 
@@ -84,3 +92,22 @@ void inexact_dialog::double_clicked(QListBoxItem *item) {
 	 QDialog::done(item->listBox()->currentItem());
 }
 
+int inexact_dialog::exec() {
+	 if (local_list.size()==1) {
+		  return 0;
+		  //return QDialog::exec();
+	 }
+	 else {
+		  return QDialog::exec();
+	 }	  
+}
+
+char* inexact_dialog::get(int index) {
+	 int i=0;
+	 list <cddb_211_item *> :: iterator item;
+	 
+	 for (item = local_list.begin(); item != local_list.end(); item++) {
+		  if (i++==index)
+				return strdup((*item)->get());
+	 } 
+}
