@@ -28,7 +28,7 @@
 	 20 Jun 2001: Lot of undocumented changes
 */
 
-/* $Id: main.cc,v 1.4 2002/04/21 22:47:21 adrian Exp $ */
+/* $Id: main.cc,v 1.5 2002/05/21 22:39:54 adrian Exp $ */
 
 #include "kover.h"
 #include "kovertop.h"
@@ -37,6 +37,7 @@
 #include <klocale.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
+#include <dcopclient.h>
 #include <signal.h>
 
 kover_global globals;
@@ -101,6 +102,9 @@ int main(int argc, char* argv[]) {
 
 	 KApplication kover;  
 
+	 DCOPClient *client = kover.dcopClient();                                      
+	 client->attach();                     
+	 
 	 config = new config_class(&kover); 
   
 	 KCmdLineArgs *args = KCmdLineArgs::parsedArgs();

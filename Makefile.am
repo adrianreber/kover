@@ -15,3 +15,5 @@ $(top_srcdir)/acinclude.m4: $(top_srcdir)/admin/acinclude.m4.in $(top_srcdir)/ad
 MAINTAINERCLEANFILES = subdirs configure.in acinclude.m4 SUBDIRS kover.spec.in
 
 EXTRA_DIST = admin ABOUT-NLS kover.spec
+
+man_MANS = kover.1 cddb-id.1

@@ -1,4 +1,14 @@
-$Id: ChangeLog,v 1.18 2002/04/28 22:08:49 adrian Exp $
+$Id: ChangeLog,v 1.19 2002/05/21 22:39:54 adrian Exp $
+
+2002-05-21 Adrian <adrian@lisas.>
+   * pl.po: polish translation updated by:
+     Micha Rudolf <mrudolf@mercury.ci.uw.edu.pl>
+	* admin: new kde3 admin directory
+	  this should fix the issue with having only the libqt-mt
+	  libs.
+	* kover.1 cddb-id.1: finally manpages. thanks to:
+	  Rene Engelhard <mail@rene-engelhard.de>
+	* kover.spec.in: updated to include the manpages
 
 2002-04-29 Adrian <adrian@lisas.de>
 	* PreferencesDialog.cc: added small preview pictures

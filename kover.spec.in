@@ -32,6 +32,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/icons/*/*/*/*
 %{_datadir}/locale/*/*/*
 %{_datadir}/mimelnk/application/x-kover.desktop
+%{_mandir}/man1/*
 %attr(755,root,root)%{_bindir}/kover 
 
 %changelog
