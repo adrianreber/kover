@@ -31,7 +31,7 @@ KDE_PROG_LIBTOOL
 dnl for NLS support. Call them in this order!
 dnl WITH_NLS is for the po files
 
-ALL_LINGUAS="de fr nb pl it" 
+ALL_LINGUAS="de fr nb pl it es" 
 
 AM_KDE_WITH_NLS
 
@@ -92,4 +92,5 @@ po/Makefile \
 kover.spec \
 kover.1 \
 cddb-id.1 \
+kover/kostore/Makefile \
 )

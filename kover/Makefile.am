@@ -11,14 +11,14 @@ kover_SOURCES = imagedlg.cc cddb_fill.cc koverfile.cc \
 		net.cc cddb.cc server.cc server_dialog.cc
 
 #kover_LDADD   = $(LIB_KSYCOCA) $(LIB_KFILE) $(LIBSOCKET) -lkdeprint
-kover_LDADD   = $(LIBSOCKET) -lkdeprint
+kover_LDADD   = $(LIBSOCKET) -lkdeprint ./kostore/libkostore.la
 
 # the library search path. 
 kover_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 cddb_id_SOURCES = cdrom.cc cddb-id.cc cdrom_cddb.cc
 
-SUBDIRS = . pics
+SUBDIRS = kostore pics .
 
 rcdir = $(kde_datadir)/kover
 rc_DATA = koverui.rc

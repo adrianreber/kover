@@ -2,7 +2,7 @@ Name: kover
 Summary: WYSIWYG CD cover printer with CDDB support
 Version: @VERSION@
 Release: 1
-Copyright: GPL2
+License: GPL2
 Group: Applications/Publishing
 Source: http://lisas.de/kover/kover-%{version}.tar.gz
 URL: http://lisas.de/kover/
@@ -38,6 +38,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root)%{_bindir}/cddb-id
 
 %changelog
+* Mon Mar 10 2003 Adrian Reber <adrian@lisas.de>
+ - Changed Copyright: to License:
+
 * Sun Nov 18 2001 Adrian Reber <adrian@lisas.de>
  - Included mime type
 

@@ -31,7 +31,7 @@
 	 
 */
 
-/* $Id: koverfile.cc,v 1.18 2003/02/07 16:44:40 adrian Exp $ */
+/* $Id: koverfile.cc,v 1.19 2003/03/10 22:44:06 adrian Exp $ */
 
 using namespace std;
 
@@ -46,6 +46,7 @@ using namespace std;
 #include <kurl.h>
 #include <ktempfile.h>
 #include <kio/netaccess.h>
+#include <kostore/koStore.h>
 
 KoverFile::KoverFile()
 {
@@ -434,6 +435,36 @@ bool KoverFile::openFile(const KURL & url)
             KIO::NetAccess::removeTempFile(tempFile);
         return false;
     }
+    //this is for the k3b files
+    //unfortunately they changed to zipped format
+    //that's why i had to include this code and
+    //the kostore classes from koffice
+    KoStore *store = KoStore::createStore(filename, KoStore::Read);
+
+    if (store) {
+        if (!store->bad()) {
+            if (store->open("maindata.xml")) {
+                _DEBUG_ fprintf(stderr, "%s:this should be a kostore file\n",
+                    PACKAGE);
+                bool answer = false;
+                QIODevice *dev = store->device();
+
+                dev->open(IO_ReadOnly);
+                if (doc.setContent(dev))
+                    answer = true;
+                dev->close();
+                if (answer)
+                    answer = open_XML(doc);
+                else
+                    answer = false;
+                store->close();
+                delete store;
+                emit dataChanged(true);
+                return answer;
+            }
+        }
+    }
+    delete store;
 
     if (doc.setContent(&f)) {
         f.close();
@@ -646,6 +677,12 @@ bool KoverFile::open_XML(const QString & filename)
         return false;
     }
     f.close();
+
+    return open_XML(doc);
+}
+
+bool KoverFile::open_XML(QDomDocument doc)
+{
 
     QDomElement docElem = doc.documentElement();
     _DEBUG_ cerr << docElem.tagName() << endl;
