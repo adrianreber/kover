@@ -1,4 +1,4 @@
-$Id: THANKS,v 1.6 2002/04/21 22:47:21 adrian Exp $
+$Id: THANKS,v 1.7 2002/05/12 16:32:29 adrian Exp $
 
 kover THANKS:
 
@@ -42,3 +42,7 @@ Marco Ciampa <ciampix@libero.it>
 
 Micha Rudolf <mrudolf@mercury.ci.uw.edu.pl>
 - polish translation
+
+Rene Engelhard <mail@rene-engelhard.de>
+- debian package
+- man pages

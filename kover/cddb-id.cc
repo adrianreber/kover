@@ -1,4 +1,4 @@
-/* $Id: cddb-id.cc,v 1.3 2001/12/13 23:29:19 adrian Exp $ */
+/* $Id: cddb-id.cc,v 1.4 2002/05/12 17:02:00 adrian Exp $ */
 
 #include "cdrom_cddb.h"
 #include <stdio.h>
@@ -9,13 +9,13 @@ int main(int argc, char* argv[]) {
   
   char *device=NULL;
 
-  strncpy(argv[0],name,250);  
+  strncpy(name,argv[0],250);  
   
   if (argc!=2)
 		device = strdup("/dev/cdrom");
   else
 			 device = argv[1];
-  
+ 
   if (!strcmp(device,"-h")) {
 			 fprintf(stderr,"Usage: %s [device]\n",argv[0]);
 			 fprintf(stderr,"Use it to display the CDDB id of CD in [device]\n");
