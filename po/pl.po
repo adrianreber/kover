@@ -570,3 +570,6 @@ msgstr "Szukaj"
 #~ msgid "More >>"
 #~ msgstr "Więcej >>"
 
+msgid "&Kover"
+msgstr ""
+

@@ -518,3 +518,7 @@ msgstr ""
 #: without_cd.cc:79
 msgid "Search"
 msgstr ""
+
+msgid "&Kover"
+msgstr ""
+

@@ -505,7 +505,7 @@ msgstr ""
 
 #: inexact_dialog.cc:80 proxy_auth.cc:76
 msgid "Ok"
-msgstr "In Ordnung."
+msgstr ""
 
 #: proxy_auth.cc:69
 msgid "Password:"
@@ -525,4 +525,7 @@ msgstr "Suchen"
 
 msgid "Choose wisely!"
 msgstr "Wähle weise!"
+
+msgid "&Kover"
+msgstr ""
 

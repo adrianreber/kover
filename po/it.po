@@ -1,22 +1,23 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# kover it.po
+# Italian translation for Kover
+# Copyright (C) 2002 Free Software Foundation, Inc.
+# Marco Ciampa <ciampix@libero.it>, 2001,2002,2003.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2001-10-09 00:41+0200\n"
-"PO-Revision-Date: 2001-12-23 22:26GMT\n"
+"PO-Revision-Date: 2003-02-08 15:28GMT\n"
 "Last-Translator: Marco Ciampa <ciampix@libero.it>\n"
 "Language-Team: italiano <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 0.9.5\n"
+"X-Generator: KBabel 0.9.6\n"
 
 #: imagedlgdata.cpp:16
 msgid "First Image"
-msgstr "Prima Immagine"
+msgstr "Prima immagine"
 
 #: imagedlgdata.cpp:31 imagedlgdata.cpp:72 imagedlgdata.cpp:109
 msgid "Front, left side"
@@ -56,33 +57,31 @@ msgstr "Obiettivo"
 
 #: imagedlgdata.cpp:53
 msgid "Second Image"
-msgstr "Seconda Immagine"
+msgstr "Seconda immagine"
 
 #: imagedlgdata.cpp:90
 msgid "Third Image"
-msgstr "Terza Immagine"
+msgstr "Terza immagine"
 
 #: imagedlg.cpp:29
 msgid "Image Embedding"
-msgstr "Incorporamento Immagini"
+msgstr "Incorporamento immagini"
 
 #: cddb_fill.cpp:150
 msgid "Internal error: Filedescriptor is not -1, already opened?"
-msgstr "Errore interno: il descrittore file non Ë -1; gia aperto?"
+msgstr "Errore interno: il descrittore file non √®-1; gi√† aperto?"
 
 #: cddb_fill.cpp:160
-#, fuzzy
-msgid "You don¥t have permission to read from "
+msgid "You dont have permission to read from "
 msgstr "Non hai il permesso di leggere da "
 
 #: cddb_fill.cpp:164
-#, fuzzy
-msgid "There¥s no medium in "
-msgstr "Non c'Ë media in "
+msgid "Theres no medium in "
+msgstr "Non c'√® media in "
 
 #: cddb_fill.cpp:169
 msgid " is busy!"
-msgstr " Ë occupato!"
+msgstr " √® occupato!"
 
 #: cddb_fill.cpp:172
 msgid "Unknown error while opening "
@@ -90,12 +89,11 @@ msgstr "Errore sconosciuto aprendo "
 
 #: cddb_fill.cpp:185
 msgid "Oops. No information about disc. Will keep trying..."
-msgstr "Oops. Informazioni sul disco non presenti. ProverÚ ancora..."
+msgstr "Oops. Informazioni sul disco non presenti. Prover√≤ ancora..."
 
 #: cddb_fill.cpp:188
-#, fuzzy
-msgid "There¥s no audio cd in "
-msgstr "Non c'Ë cd audio in "
+msgid "Theres no audio cd in "
+msgstr "Non c'√® un cd audio in "
 
 #: cddb_fill.cpp:189
 msgid "! (ignoring)"
@@ -103,7 +101,7 @@ msgstr "! (ignorato)"
 
 #: cddb_fill.cpp:209
 msgid "Internal error: Filedescriptor is -1, not opened?"
-msgstr "Errore interno: il descrittore file Ë -1, forse non Ë aperto?"
+msgstr "Errore interno: il descrittore file √®-1, forse non √® aperto?"
 
 #: cddb_fill.cpp:213
 msgid "Reading table of contents..."
@@ -139,7 +137,7 @@ msgstr "Interrogazione database..."
 
 #: cddb_fill.cpp:494
 msgid "Initializing authorization"
-msgstr "Inizializzazione autorizzazione."
+msgstr "Inizializzazione autorizzazione"
 
 #: cddb_fill.cpp:500
 msgid "Operation aborted."
@@ -147,8 +145,7 @@ msgstr "Operazione abortita."
 
 #: cddb_fill.cpp:581
 msgid "Found inexact matches, list follows (until terminating marker)"
-msgstr ""
-"Trovate corrispondenze inseatte, segue elenco (fino al segno di termine)"
+msgstr "Trovate corrispondenze inseatte, segue elenco (fino al segno di termine)"
 
 #: cddb_fill.cpp:640
 msgid "No match found."
@@ -184,7 +181,7 @@ msgstr "ERRORE: questo non dovrebbe succedere."
 
 #: cddb_fill.cpp:911
 msgid "Trouble creating cddb greeting... Giving up..."
-msgstr "Problema nel creare saluto cddb."
+msgstr "Problema nel creare saluto cddb...abbandono..."
 
 #: KoverTop.cpp:52 KoverTop.cpp:144 KoverTop.cpp:221
 msgid "[New Document]"
@@ -200,27 +197,27 @@ msgstr "Interrogazione &CDDB "
 
 #: KoverTop.cpp:71
 msgid "&Image Embedding..."
-msgstr "&Impostazione Immagini..."
+msgstr "&Impostazione immagini..."
 
 #: KoverTop.cpp:72
 msgid "Title Font..."
-msgstr "Font Titolo..."
+msgstr "Carattere titolo..."
 
 #: KoverTop.cpp:73
 msgid "Title Fontcolor..."
-msgstr "Colore Testo Titolo..."
+msgstr "Colore del titolo..."
 
 #: KoverTop.cpp:74
 msgid "Contents Font..."
-msgstr "Font Contenuti..."
+msgstr "Carattere contenuti..."
 
 #: KoverTop.cpp:75
 msgid "Contents Fontcolor..."
-msgstr "Colore Testo Contenuti..."
+msgstr "Colore dei contenuti..."
 
 #: KoverTop.cpp:76
 msgid "Background Color..."
-msgstr "Colore Sfondo..."
+msgstr "Colore sfondo..."
 
 #: KoverTop.cpp:77
 msgid "Eject CD"
@@ -256,7 +253,7 @@ msgstr "File salvato"
 
 #: KoverTop.cpp:347
 msgid "Initiating CDDB lookup!"
-msgstr "Inizio interrogazione CDDB"
+msgstr "Inizio interrogazione CDDB!"
 
 #: KoverTop.cpp:365
 msgid "config me"
@@ -284,7 +281,7 @@ msgstr "server CDDB:"
 
 #: PreferencesDialog.cpp:69
 msgid "CGI path:"
-msgstr "path CGI:"
+msgstr "Percorso CGI:"
 
 #: PreferencesDialog.cpp:76
 msgid "&Proxy configuration"
@@ -300,11 +297,11 @@ msgstr "Usa la variabile di ambiente 'http_proxy'"
 
 #: PreferencesDialog.cpp:90
 msgid "Proxy server:"
-msgstr "server Proxy:"
+msgstr "Server proxy:"
 
 #: PreferencesDialog.cpp:96
 msgid "Proxy server port:"
-msgstr "porta server Proxy:"
+msgstr "Porta server proxy:"
 
 #: PreferencesDialog.cpp:109
 msgid "CDROM"
@@ -348,7 +345,7 @@ msgstr "Scrivi dati CDDB su file"
 
 #: PreferencesDialog.cpp:334
 msgid "CDDB path:"
-msgstr "Path CDDB:"
+msgstr "Percorso CDDB:"
 
 #: PreferencesDialog.cpp:390
 msgid "Various properties"
@@ -376,7 +373,7 @@ msgstr ""
 
 #: inexact_dialog.cc:52
 msgid "Choose wisely!"
-msgstr ""
+msgstr "Scegli con cura!"
 
 #: proxy_auth.cc:49
 msgid "Enter username and password for proxy at "
@@ -387,36 +384,32 @@ msgid "User Name:"
 msgstr "Nome utente:"
 
 #: cddb_fill.cc:139 cddb_fill.cc:187
-#, fuzzy
 msgid "No http_proxy environment variable found... Giving up..."
-msgstr "Usa la variabile di ambiente 'http_proxy'"
+msgstr "Non √® stata trovata la variabile ambiente http_proxy...abbandono..."
 
 #: cddb_fill.cc:142 cddb_fill.cc:190
-#, fuzzy
 msgid "Don't understand http_proxy environment variable... Giving up..."
-msgstr "Usa la variabile di ambiente 'http_proxy'"
+msgstr "La variabile di ambiente 'http_proxy' non √® comprensibile...abbandono..."
 
 #: kovertop.cc:159
-#, fuzzy
 msgid "Spine Text Font..."
-msgstr "Font titolo profilo"
+msgstr "Carattere profilo..."
 
 #: kovertop.cc:163
 msgid "CDDB without CD"
-msgstr ""
+msgstr "CDDB senza CD"
 
 #: kovertop.cc:204
 msgid "All this options are not global"
-msgstr ""
+msgstr "Tutte queste opzioni non sono globali"
 
 #: kovertop.cc:215
-#, fuzzy
 msgid "No title on booklet"
-msgstr "Stampa copertina e retro."
+msgstr "Senza titolo sul libretto"
 
 #: kovertop.cc:221
 msgid "Separate Spine Text"
-msgstr ""
+msgstr "Testo separato sul profilo"
 
 #: kovertop.cc:404
 msgid ""
@@ -424,116 +417,122 @@ msgid ""
 "*|All files\n"
 "*.k3b|k3b files"
 msgstr ""
+"*.kover|File Kover\n"
+"*|Tutti i file\n"
+"*.k3b|File k3b"
 
 #: kovertop.cc:500
 msgid ""
 "*.kover|Kover files\n"
 "*|All files"
 msgstr ""
+"*.kover|File Kover\n"
+"*|Tutti i file"
 
 #: PreferencesDialog.cc:499 PreferencesDialog.cc:503
 msgid "Cover"
-msgstr ""
+msgstr "Copertina"
 
 #: PreferencesDialog.cc:516
-#, fuzzy
 msgid "Display track duration after a CDDB request"
-msgstr "Mostra la durata della traccia dopo una richiesta CDDB."
+msgstr "Mostra la durata della traccia dopo una richiesta CDDB"
 
 #: PreferencesDialog.cc:522
-#, fuzzy
 msgid "Print inlet and booklet"
-msgstr "Stampa copertina e retro."
+msgstr "Stampa copertina e libretto"
 
 #: PreferencesDialog.cc:531
 msgid ""
 "Don't print booklet.\n"
 "(inlet only option)"
 msgstr ""
-"Non stampare la copertina.\n"
+"Non stampare il libretto.\n"
 "(opzione solo retro)"
 
 #: PreferencesDialog.cc:535
 msgid "Print all on one page"
-msgstr ""
+msgstr "Stampa tutto su una pagina"
 
 #: PreferencesDialog.cc:613
 msgid "Standard Fonts"
-msgstr ""
+msgstr "Caratteri standard"
 
 #: PreferencesDialog.cc:617
 msgid "&Standard Fonts"
-msgstr ""
+msgstr "Caratteri &standard"
 
 #: PreferencesDialog.cc:627
 msgid "Changes to any of these fonts are global.\n"
-msgstr ""
+msgstr "I cambiamenti su uno qualsiasi di questi caratteri sono globali.\n"
 
 #: PreferencesDialog.cc:628
 msgid "This means, that changes will only be available\n"
-msgstr ""
+msgstr "Ci√≤ significa che questi cambiamenti saranno disponibili solo\n"
 
 #: PreferencesDialog.cc:629
 msgid "for the next new cover.\n"
-msgstr ""
+msgstr "sulla prossima copertina.\n"
 
 #: PreferencesDialog.cc:630
 msgid "Except that the current cover is empty.\n"
-msgstr ""
+msgstr "Solo se la copertina corrente √® vuota.\n"
 
 #: PreferencesDialog.cc:631
 msgid "Then changes are applied to the current cover."
-msgstr ""
+msgstr "Allora i cambiamenti saranno applicati alla copertina corrente."
 
 #: PreferencesDialog.cc:635
-#, fuzzy
 msgid "Content Font: "
-msgstr "Font Contenuti..."
+msgstr "Carattere contenuti:"
 
 #: PreferencesDialog.cc:645
-#, fuzzy
 msgid "Title Font: "
-msgstr "Font Titolo..."
+msgstr "Carattere titolo:"
 
 #: PreferencesDialog.cc:654
 msgid "Spine Text Font: "
-msgstr ""
+msgstr "Carattere profilo:"
 
 #: PreferencesDialog.cc:756
 msgid "Save window position"
-msgstr ""
+msgstr "Salva la posizione della finestra"
 
 #: PreferencesDialog.cc:760
 msgid "Disable unnecessary animation"
-msgstr ""
+msgstr "Disabilita le inutili animazioni"
 
 #: PreferencesDialog.cc:765
-#, fuzzy
 msgid "Mouse click on kover preview triggers actual size"
-msgstr "Cliccando col mouse sull'anteprima mostra l'ampiezza reale."
+msgstr "Cliccando col mouse sull'anteprima mostra l'ampiezza reale"
 
 #: PreferencesDialog.cc:815
 msgid ""
 "Changes to the fonts will not be applied to the current cover, but for the "
 "next new cover."
 msgstr ""
+"I cambiamenti sui caratteri non verranno applicati alla copertina corrente "
+"ma alla prossima nuova copertina."
 
 #: inexact_dialog.cc:80 proxy_auth.cc:76
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: proxy_auth.cc:69
 msgid "Password:"
-msgstr ""
+msgstr "Password:"
 
 #: without_cd.cc:54
 msgid "Select a category:"
-msgstr ""
+msgstr "Seleziona una categoria:"
 
 #: without_cd.cc:72
 msgid "Enter CDDB Id:"
-msgstr ""
+msgstr "Inserire id CDDB:"
 
 #: without_cd.cc:79
 msgid "Search"
+msgstr "Cerca"
+
+msgid "&Kover"
 msgstr ""
+

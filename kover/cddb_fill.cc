@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.20 2003/02/07 22:33:13 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.21 2003/03/10 21:28:34 adrian Exp $ */
 
 #include "cddb_fill.moc"
 
@@ -450,6 +450,8 @@ bool CDDB_Fill::getCDDBFromLocalFile(bool without)
     if (globals.cddb_path) {
         _DEBUG_ fprintf(stderr, "CDDBDIR=%s\n", globals.cddb_path);
 
+	//if not locally, then category is = NULL 
+	//FIXME
         cddb_file =
             (char *) malloc(strlen(globals.cddb_path) + 10 +
             strlen(cdinfo.category));

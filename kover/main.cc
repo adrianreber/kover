@@ -30,7 +30,7 @@
 	 21 May 2002: Manual Connection to DCOP server
 */
 
-/* $Id: main.cc,v 1.8 2003/02/07 16:44:40 adrian Exp $ */
+/* $Id: main.cc,v 1.9 2003/03/10 21:28:34 adrian Exp $ */
 
 #include "kover.h"
 #include "kovertop.h"
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
         "%s Release %s - Copyright (C) 1998-2000 by Denis Oliver Kropp\n",
         PACKAGE, VERSION);
     fprintf(stderr,
-        "                      Copyright (C) 2000-2002 by Adrian Reber\n");
+        "                      Copyright (C) 2000-2003 by Adrian Reber\n");
     fprintf(stderr,
         "%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n",
         PACKAGE);
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
     KAboutData aboutData(PACKAGE, I18N_NOOP(PACKAGE), VERSION,
         "Kover is an easy to use WYSIWYG CD cover printer with CDDB support.",
         KAboutData::License_GPL_V2,
-        "(C) 1998-2000 Denis Oliver Kropp\n(C) 2000-2002 Adrian Reber");
+        "(C) 1998-2000 Denis Oliver Kropp\n(C) 2000-2003 Adrian Reber");
     aboutData.addAuthor("Denis Oliver Kropp", 0, "dok@fischlustig.de");
     aboutData.addAuthor("Adrian Reber", 0, "adrian@lisas.de");
 
