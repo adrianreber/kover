@@ -29,7 +29,7 @@
 	 
 */
 
-/* $Id: koverfile.cc,v 1.9 2002/08/14 14:22:22 adrian Exp $ */
+/* $Id: koverfile.cc,v 1.10 2002/08/15 14:12:57 adrian Exp $ */
 
 using namespace std;
 
@@ -540,6 +540,9 @@ bool KoverFile::save_as_XML(const QString &filename) {
 	 inlet.setAttribute("size",cd_inlet_title_font.pointSize());
 	 inlet.setAttribute("weight",cd_inlet_title_font.weight());
 	 inlet.setAttribute("italic",cd_inlet_title_font.italic());
+     inlet.setAttribute("spine_text",cd_spine_text);
+     the_text = doc.createCDATASection(cd_the_spine_text.utf8());
+     inlet.appendChild(the_text);
 	 kover.appendChild(inlet);
 
 	 //content
@@ -631,6 +634,8 @@ bool KoverFile::open_XML(const QString& filename) {
 													  (nm.namedItem("size")).nodeValue().toInt(),
 													  (nm.namedItem("weight")).nodeValue().toInt(),
 													  (nm.namedItem("italic")).nodeValue().toInt());
+                     cd_spine_text = nm.namedItem("spine_text").nodeValue().toInt();
+                     cd_the_spine_text = e.text();
 					 _DEBUG_ fprintf(stderr,"%s:font:%s\n",PACKAGE,cd_inlet_title_font.rawName().latin1());
 				}
 				

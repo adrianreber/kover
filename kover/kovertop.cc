@@ -34,7 +34,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.cc,v 1.10 2002/08/14 14:22:22 adrian Exp $ */
+/* $Id: kovertop.cc,v 1.11 2002/08/15 14:12:57 adrian Exp $ */
 
 #include "kovertop.moc"
 
@@ -364,6 +364,8 @@ void KoverTop::fileNew()
     title_edit->setFocus();
     kover_file.reset();
     display_title->setChecked(kover_file.display_title());
+    the_spine_text->setEnabled(kover_file.spine_text());
+    spine_text->setChecked(kover_file.spine_text());
     setStatusText("Chop!");
     altered_data = false;
     m_url = KURL();
@@ -403,6 +405,16 @@ void KoverTop::fileOpen(const KURL & url)
 
             display_title->setChecked(kover_file.display_title());
 
+            if (!kover_file.spine_text()) {
+                the_spine_text->setText(title_edit->text());
+                the_spine_text->setEnabled(kover_file.spine_text());
+                spine_text->setChecked(kover_file.spine_text());
+            } else {
+                the_spine_text->setText(kover_file.the_spine_text());
+                the_spine_text->setEnabled(kover_file.spine_text());
+                spine_text->setChecked(kover_file.spine_text());
+            }
+            
             if (kover_file.number()) {
                 number_spin->setValue(kover_file.number());
                 number_spin->setEnabled(true);
