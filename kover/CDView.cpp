@@ -59,7 +59,6 @@ CDView::CDView( KoverFile* _kover_file, QWidget* parent = NULL, const char* name
   printer->setOrientation( QPrinter::Landscape );
   printer->setMinMax( 1, 2 );
   printer->setFromTo( 1, 2 );
-  print_thread = 0;
 }
 
 void CDView::paintEvent( QPaintEvent * )
