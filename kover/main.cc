@@ -28,7 +28,7 @@
 	 20 Jun 2001: Lot of undocumented changes
 */
 
-/* $Id: main.cpp,v 1.25 2001/11/18 23:59:33 adrian Exp $ */
+/* $Id: main.cc,v 1.1 2001/12/13 23:29:19 adrian Exp $ */
 
 #include "kover.h"
 #include "KoverTop.h"

@@ -51,9 +51,10 @@
 #include <kfontdialog.h>
 #include <kcolordialog.h>
 #include <krecentdocument.h>
+#include <qlayout.h>
 
-#define NORM_WIDTH 720
-#define NORM_HEIGHT 440
+#define NORM_WIDTH 520
+#define NORM_HEIGHT 480
 #define PREV_WIDTH 695
 #define PREV_HEIGHT 684
 
@@ -64,13 +65,45 @@
 
 KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 	 main_frame = new QFrame(this);
+	 more_frame = new QFrame(this);
 	 
+	 button_layout = new QBoxLayout(more_frame, QBoxLayout::RightToLeft, -10);
+	 button_layout->setAlignment(Qt::AlignTop);
+	 button_layout->setMargin(7);
+
 	 setCaption(i18n("[New Document]"), false);
 	 setFixedSize( NORM_WIDTH, NORM_HEIGHT );
 
 	 status_bar = statusBar();
 	 status_bar->insertItem( "Kover "VERSION" - http://lisas.de/kover/", 1 );
 
+	 make_menu();
+
+	 make_main_frame();
+
+	 make_more_frame();
+
+	 connect(&kover_file, SIGNAL(dataChanged(bool)), SLOT(dataChanged(bool)));
+
+	 cddb_fill = new CDDB_Fill(&kover_file);
+	 connect(cddb_fill, SIGNAL(statusText(const char*)), SLOT(setStatusText(const char*)));
+	 connect(cddb_fill, SIGNAL(update_id(unsigned long)), SLOT(update_id(unsigned long)));
+
+	 altered_data = false;
+
+	 main_frame->adjustSize();
+	 recent->loadEntries((KApplication::kApplication())->config());
+}
+
+KoverTop::~KoverTop() {
+	 recent->saveEntries((KApplication::kApplication())->config());
+	 delete status_bar;
+	 delete cddb_fill;
+	 delete cdview;
+	 _DEBUG_ fprintf(stderr,"~KoverTop()\n");
+}
+
+void KoverTop::make_menu() {
 	 KStdAction::openNew(this, SLOT(fileNew()), actionCollection());
 	 KStdAction::open(this, SLOT(fileOpen()), actionCollection());
 	 KStdAction::save(this, SLOT(fileSave()), actionCollection());
@@ -93,10 +126,11 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 	 (void)new KAction(i18n("Inlet Title Font..."),"fonts",0,this,SLOT(inlet_title_font()),actionCollection(),"inlet_title_font");
 	 (void)new KAction(i18n("Eject CD"),"player_eject",0,this,SLOT(cdrom_eject()),actionCollection(),"eject_cdrom");
  	 (void)new KAction(i18n("CDDB without CD"),"network",0,this, SLOT(cddb_without_cd()),actionCollection(), "cddb_without_cd");
-	 
-	 
-	 createGUI();
 
+	 createGUI();
+}
+
+void KoverTop::make_main_frame() {
 	 number_spin = new QSpinBox( 1, 999, 1, main_frame, "numberspin" );
 	 number_spin->setEnabled(false);
 	 number_spin->resize( 50, 25 ); 
@@ -126,36 +160,24 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 
 	 cddb_id = new QLabel("CDDB id:", main_frame, "cddb_id");
 	 cddb_id->move( CDVIEW_X, CDVIEW_Y - 40 );
-
-	 QLabel *haha = new QLabel("Display Title", main_frame, "haha");
-	 haha->move(CDVIEW_X + CDVIEW_WIDTH, CDVIEW_Y - 40);
 	 
-	 cdview = new CDView( &kover_file, main_frame );
-	 cdview->resize( CDVIEW_WIDTH, CDVIEW_HEIGHT );
-	 cdview->move( CDVIEW_X, CDVIEW_Y );
-	 connect( cdview, SIGNAL(stopPreview()), SLOT(stopPreview()) );
-	 connect( cdview, SIGNAL(actualSize()), SLOT(actualSize()) );
-  
-	 connect( &kover_file, SIGNAL(dataChanged(bool)), SLOT(dataChanged(bool)) );
-
-	 cddb_fill = new CDDB_Fill( &kover_file );
-
-	 connect(cddb_fill, SIGNAL(statusText(const char*)), SLOT(setStatusText(const char*)));
-
-	 connect(cddb_fill, SIGNAL(update_id(unsigned long)), SLOT(update_id(unsigned long)));
-
-	 altered_data = false;
+	 cdview = new CDView(&kover_file, main_frame);
+	 cdview->resize(CDVIEW_WIDTH, CDVIEW_HEIGHT);
+	 cdview->move(CDVIEW_X, CDVIEW_Y);
+	 connect(cdview, SIGNAL(stopPreview()), SLOT(stopPreview()));
+	 connect(cdview, SIGNAL(actualSize()), SLOT(actualSize()));
+	 
 	 main_frame->move(0,70);
-	 main_frame->adjustSize();
-	 recent->loadEntries((KApplication::kApplication())->config());
 }
 
-KoverTop::~KoverTop() {
-	 recent->saveEntries((KApplication::kApplication())->config());
-	 delete status_bar;
-	 delete cddb_fill;
-	 delete cdview;
-	 _DEBUG_ fprintf(stderr,"~KoverTop()\n");
+void KoverTop::make_more_frame() {
+	 more_button = new QPushButton(i18n("More >>"),more_frame, "more");
+	 button_layout->addWidget(more_button,0,AlignRight);
+	 connect(more_button,SIGNAL(clicked()), SLOT(more_or_less()));
+// 	  QLabel *haha = new QLabel("Display Title", more_frame, "haha");
+// 	  button_layout->addWidget(haha,0,AlignRight);
+	 more_frame->move(0,70+310+40);
+	 more_frame->resize(520,150);
 }
 
 void KoverTop::dataChanged(bool image) {
@@ -215,6 +237,7 @@ void KoverTop::stopPreview() {
 	 statusBar()->show(); 
 	 toolBar("koverToolBar")->show();
 	 toolBar("mainToolBar")->show();
+	 more_frame->show();
 } 
 
 bool KoverTop::queryClose() {
@@ -325,8 +348,8 @@ void KoverTop::fileSaveAs()
     KURL url = KFileDialog::getSaveURL( ":koverfile", i18n( "*.kover|Kover files\n*|All files" ) );
 
 	 if (!url.isEmpty()) {
-				if( url.fileName().find( '.' ) == -1 )
-						  url.setFileName( url.fileName() + ".kover" );
+		  if( url.fileName().find( '.' ) == -1 )
+				url.setFileName( url.fileName() + ".kover" );
 		  saveFile( url );
 	 }
 }
@@ -364,6 +387,7 @@ void KoverTop::actualSize() {
 	 setFixedSize( PREV_WIDTH, PREV_HEIGHT );
 	 cdview->showPreview();
 	 cdview->setFocus();
+	 more_frame->hide();
 	 menuBar()->hide();
 	 statusBar()->hide();
 	 toolBar("mainToolBar")->hide();
@@ -480,6 +504,11 @@ void KoverTop::cddb_without_cd() {
 	 delete(without);
 	 free(id);
 	 globals.display_track_duration = display_track_duration;
+}
+
+void KoverTop::more_or_less() {
+	 more_button->setText("<< Less");
+	 _DEBUG_ fprintf(stderr,"<< Less\n");
 }
 
 

@@ -28,7 +28,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: KoverTop.h,v 1.22 2001/12/04 16:23:50 adrian Exp $ */
+/* $Id: KoverTop.h,v 1.23 2001/12/13 23:29:19 adrian Exp $ */
 
 #ifndef KOVER_TOP_H
 #define KOVER_TOP_H
@@ -98,12 +98,16 @@ void fileNew();
 	 void cdrom_eject();
 	 void inlet_title_font();
 	 void cddb_without_cd();
+	 void more_or_less();
 	 
 private:
 	 QCheckBox *slim_case;
 	 bool queryClose();
 	 int how_about_saving();
 
+	 void make_menu();
+	 void make_main_frame();
+	 void make_more_frame();
 	
 	 KRecentFilesAction * recent;
 	 
@@ -130,6 +134,10 @@ private:
 
 	 QLabel *cddb_id;
 	 CDView*	cdview;
+
+	 QBoxLayout *button_layout;
+	 QFrame *more_frame;
+	 QPushButton *more_button;
 };
 
 #endif /* KOVER_TOP_H */
