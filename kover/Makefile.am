@@ -3,7 +3,7 @@
 
 bin_PROGRAMS = kover cddb-id 
 
-kover_SOURCES = imagedlgdata.cpp imagedlg.cpp cddb_fill.cc koverfile.cpp \
+kover_SOURCES = imagedlgdata.cpp imagedlg.cpp cddb_fill.cc koverfile.cc \
 		kovertop.cc cdview.cc main.cc \
 		PreferencesDialog.cc cdrom.cc config.cc \
 		cddb_211_item.cc inexact_dialog.cc proxy_auth.cc \
@@ -31,7 +31,7 @@ KDE_ICON = AUTO
 
 EXTRA_DIST = kover.desktop koverui.rc lo16-app-kover.png lo32-app-kover.png hi32-app-kover.png hi48-app-kover.png x-kover.desktop
 
-noinst_HEADERS = KoverTop.h cddb_fill.h kover.h \
+noinst_HEADERS = kovertop.h cddb_fill.h kover.h \
 		 cdview.h PreferencesDialog.h imagedlg.h koverfile.h \
 		 kover_global.h cdrom.h config.h cdrom_cddb.h \
 		 cddb_211_item.h inexact_dialog.h proxy_auth.h \

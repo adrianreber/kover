@@ -17,7 +17,7 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: koverfile.cpp
+	 File: koverfile.cc
 	 
 	 Description: storage of cover data
 	 
@@ -27,7 +27,7 @@
 	 
 */
 
-/* $Id: koverfile.cpp,v 1.7 2001/11/19 23:57:04 adrian Exp $ */
+/* $Id: koverfile.cc,v 1.1 2002/01/15 19:47:38 adrian Exp $ */
 
 #include "koverfile.moc"
 
@@ -174,6 +174,7 @@ void KoverFile::setImageTarget( const int _nr, const int _image_target )
 		  emit dataChanged(true);
 	 }
 }
+
 
 QString KoverFile::title() const
 {

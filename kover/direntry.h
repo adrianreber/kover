@@ -18,19 +18,21 @@
 	
 	 File: direntry.h
 	
-	 Description: header for the config class
+	 Description: header for the direntry class
 	
 	 Changes:
 	
 	 01 Dec 2001: Initial creation
 */
 
-/* $Id: direntry.h,v 1.1 2001/12/01 23:17:42 adrian Exp $ */
+/* $Id: direntry.h,v 1.2 2002/01/13 00:33:21 adrian Exp $ */
 
 #ifndef DIRENTRY_H
 #define DIRENTRY_H
 
 #include <string>
+
+using namespace std;
 
 class direntry {
 public: 

@@ -26,7 +26,7 @@
 	 
 */
 
-/* $Id: categories.h,v 1.2 2001/11/11 01:02:41 adrian Exp $ */
+/* $Id: categories.h,v 1.3 2002/01/13 00:33:21 adrian Exp $ */
 
 #ifndef CATEGORIES_H
 #define CATEGORIES_H
@@ -34,6 +34,8 @@
 #include "../config.h"
 #include <list>
 #include <string>
+
+using namespace std;
 
 class categories {
 

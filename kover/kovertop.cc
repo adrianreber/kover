@@ -34,12 +34,12 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-#include "KoverTop.moc"
+#include "kovertop.moc"
 
-#include "KoverTop.h"
+#include "kovertop.h"
 #include "imagedlg.h"
 #include "without_cd.h"
-
+#include <math.h>
 #include <klocale.h>
 #include <kmainwindow.h>
 #include <kapp.h>
@@ -52,9 +52,17 @@
 #include <kcolordialog.h>
 #include <krecentdocument.h>
 #include <qlayout.h>
+#include <kurl.h>
+#include <qdom.h>
+
 
 #define NORM_WIDTH 520
-#define NORM_HEIGHT 480
+#define NORM_HEIGHT 490
+#define MORE_HEIGHT 550
+
+#define MORE_FRAME_HEIGHT 40
+#define MORE_FRAME_WIDTH 510
+
 #define PREV_WIDTH 695
 #define PREV_HEIGHT 684
 
@@ -63,19 +71,15 @@
 #define CDVIEW_WIDTH	291
 #define CDVIEW_HEIGHT 310
 
-KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
+KoverTop::KoverTop(const char* name) : KMainWindow(0, name) {
 	 main_frame = new QFrame(this);
 	 more_frame = new QFrame(this);
 	 
-	 button_layout = new QBoxLayout(more_frame, QBoxLayout::RightToLeft, -10);
-	 button_layout->setAlignment(Qt::AlignTop);
-	 button_layout->setMargin(7);
-
 	 setCaption(i18n("[New Document]"), false);
-	 setFixedSize( NORM_WIDTH, NORM_HEIGHT );
+	 setFixedSize(NORM_WIDTH, NORM_HEIGHT);
 
 	 status_bar = statusBar();
-	 status_bar->insertItem( "Kover "VERSION" - http://lisas.de/kover/", 1 );
+	 status_bar->insertItem("Kover "VERSION" - http://lisas.de/kover/", 1);
 
 	 make_menu();
 
@@ -90,6 +94,7 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 	 connect(cddb_fill, SIGNAL(update_id(unsigned long)), SLOT(update_id(unsigned long)));
 
 	 altered_data = false;
+	 more = false;
 
 	 main_frame->adjustSize();
 	 recent->loadEntries((KApplication::kApplication())->config());
@@ -171,13 +176,27 @@ void KoverTop::make_main_frame() {
 }
 
 void KoverTop::make_more_frame() {
+	 QVBoxLayout *top_layout = new QVBoxLayout(more_frame);
+	 button_layout = new QBoxLayout(top_layout, QBoxLayout::RightToLeft, -10);
+	 button_layout->setAlignment(Qt::AlignTop);
+	 button_layout->setMargin(7);
+	 more_frame->setMargin(0);
+//	 more_frame->setFrameStyle( QFrame::Panel | QFrame::Plain );
 	 more_button = new QPushButton(i18n("More >>"),more_frame, "more");
 	 button_layout->addWidget(more_button,0,AlignRight);
 	 connect(more_button,SIGNAL(clicked()), SLOT(more_or_less()));
 // 	  QLabel *haha = new QLabel("Display Title", more_frame, "haha");
 // 	  button_layout->addWidget(haha,0,AlignRight);
-	 more_frame->move(0,70+310+40);
-	 more_frame->resize(520,150);
+//	 more_frame_2 = new QFrame(more_frame);
+//	 more_frame_2->setFrameStyle( QFrame::Panel | QFrame::Raised );
+//	 more_frame_2->setLineWidth( 7 );
+//	 more_frame_2->resize(30,30);
+	 top_layout->addSpacing(5);
+//	 top_layout->addWidget(more_frame_2);
+
+	 more_frame->move(5,70+310+50);
+
+	 more_frame->resize(MORE_FRAME_WIDTH,MORE_FRAME_HEIGHT);
 }
 
 void KoverTop::dataChanged(bool image) {
@@ -229,7 +248,10 @@ void KoverTop::numberChecked(bool checked) {
 
 void KoverTop::stopPreview() {
 	 main_frame->move(0,70);
-	 setFixedSize(NORM_WIDTH, NORM_HEIGHT);
+	 if (more)
+		  setFixedSize(NORM_WIDTH, MORE_HEIGHT);
+	 else
+		  setFixedSize(NORM_WIDTH, NORM_HEIGHT);
 	 cdview->resize( CDVIEW_WIDTH, CDVIEW_HEIGHT );
 	 cdview->move( CDVIEW_X, CDVIEW_Y );
 	 cdview->showPreview( false );
@@ -309,7 +331,7 @@ void KoverTop::fileOpen( const KURL& url ) {
 }
 
 int KoverTop::how_about_saving() {
-	 switch (KMessageBox::warningYesNoCancel( this, i18n("Data changed since last saving!\nDo you want to save the changes?"))) {
+	 switch (KMessageBox::warningYesNoCancel(this, i18n("Data changed since last saving!\nDo you want to save the changes?"))) {
 	 case 3: //YES
 		  fileSave();
 		  if (altered_data)
@@ -323,8 +345,7 @@ int KoverTop::how_about_saving() {
 	 return -1;
 }
 
-void KoverTop::saveFile( const KURL& url )
-{
+void KoverTop::saveFile(const KURL& url) {
 	 if (kover_file.saveFile( url )) {
 		  setCaption(i18n(url.url()), false);
 		  setStatusText(i18n("File saved"));
@@ -332,19 +353,17 @@ void KoverTop::saveFile( const KURL& url )
 		  recent->addURL(url);
 		  m_url = url;
 	 } else
-		  KMessageBox::error( this, i18n("Error while opening/reading file!"));
+		  KMessageBox::error(this, i18n("Error while opening/reading file!"));
 }
 
-void KoverTop::fileSave()
-{
+void KoverTop::fileSave() {
 	 if( m_url.isEmpty() )
 		  fileSaveAs();
 	 else
 		  saveFile( m_url );
 }
 
-void KoverTop::fileSaveAs()
-{
+void KoverTop::fileSaveAs() {
     KURL url = KFileDialog::getSaveURL( ":koverfile", i18n( "*.kover|Kover files\n*|All files" ) );
 
 	 if (!url.isEmpty()) {
@@ -507,8 +526,83 @@ void KoverTop::cddb_without_cd() {
 }
 
 void KoverTop::more_or_less() {
-	 more_button->setText("<< Less");
-	 _DEBUG_ fprintf(stderr,"<< Less\n");
+	 if (more) {
+		  more = false;
+		  more_button->setText("More >>");
+		  _DEBUG_ fprintf(stderr,"More >>\n");
+		  for (int i = NORM_WIDTH; i > 0; i--) {
+				main_frame->move(i,70);
+				if (i%20==0) kapp->processEvents();
+		  }
+	 } else {
+		  more = true;
+		  more_button->setText("<< Less");
+		  _DEBUG_ fprintf(stderr,"<< Less\n");
+		  for (double i = 0; i < M_PI/2; i += (M_PI/25000)) {
+				main_frame->move((int)(sin(i)*NORM_WIDTH),70);
+				if ((int)(sin(i)*NORM_WIDTH)%40==0) kapp->processEvents();
+		  }
+	 }
+
+	 QDomDocument doc( "mydocument" );
+	 QFile f( "kover.xml" );
+	 if ( !f.open( IO_ReadOnly ) )
+		  return;
+	 if ( !doc.setContent( &f ) ) {
+		  f.close();
+		  return;
+	 }
+	 f.close();
+	 
+	 // print out the element names of all elements that are a direct child
+	 // of the outermost element.
+	 QDomElement docElem = doc.documentElement();
+	 cout << docElem.tagName() << endl;
+	 QDomNamedNodeMap nmm = docElem.attributes();
+	 for (uint length = 0; length < nmm.length(); length++) {
+		  cout << (nmm.item(length)).nodeName() << "..." << (nmm.item(length)).nodeValue() <<endl;
+	 }
+	 
+
+	 QDomNode n = docElem.firstChild();
+	 while( !n.isNull() ) {
+		  QDomElement e = n.toElement(); // try to convert the node to an element.
+		  if( !e.isNull() ) { // the node was really an element.
+				cout << e.tagName() << endl;
+				QDomNamedNodeMap nm = e.attributes();
+					 for (uint length = 0; length < nm.length(); length++) {
+						  cout << (nm.item(length)).nodeName() << "..." << (nm.item(length)).nodeValue() <<endl;
+					 }
+		  }
+		  QDomNode m = n.firstChild();
+		  while( !m.isNull() ) {
+				QDomElement ee = m.toElement();
+				if( !ee.isNull() ) { // the node was really an element.
+					 cout << ee.tagName() << "..." << ee.text() <<endl;
+					 
+					 
+				}
+				m = m.nextSibling();
+		  }
+		  
+		  n = n.nextSibling();
+	 }
+
+	 QDomElement elem = doc.createElement( "img" );
+	 elem.setAttribute( "src", "myimage.png" );
+	 docElem.appendChild(elem);
+
+	 QFile ff( "kover1.xml" );
+	 
+	 if ( !ff.open( IO_WriteOnly ) )
+		  return;
+	 
+	 ff.writeBlock((doc.toString()).latin1(),strlen((doc.toString()).latin1()));
+
+	 ff.close();
+  
+
+ 
 }
 
 

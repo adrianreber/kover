@@ -26,7 +26,7 @@
 	 
 */
 
-/* $Id: inexact_dialog.h,v 1.3 2001/10/08 22:36:55 adrian Exp $ */
+/* $Id: inexact_dialog.h,v 1.4 2002/01/13 00:33:21 adrian Exp $ */
 
 #ifndef INEXACT_DIALOG_H
 #define INEXACT_DIALOG_H
@@ -36,6 +36,8 @@
 #include "cddb_211_item.h"
 #include <list>
 #include <qlistbox.h>
+
+using namespace std;
 
 /**
  * The inexact_dialog class

@@ -26,7 +26,7 @@
 
 */
 
-/* $Id: without_cd.cc,v 1.3 2001/11/11 22:58:38 adrian Exp $ */
+/* $Id: without_cd.cc,v 1.4 2002/01/13 00:33:21 adrian Exp $ */
 
 #include "without_cd.moc"
 
@@ -43,6 +43,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+
+using namespace std;
 
 without_cd::without_cd() : QDialog(0,0,TRUE,0) {
 	 QString greeting;

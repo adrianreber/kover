@@ -17,7 +17,7 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	
-	 File: main.cpp
+	 File: main.cc
 	
 	 Description: File containing the main().
 
@@ -28,10 +28,10 @@
 	 20 Jun 2001: Lot of undocumented changes
 */
 
-/* $Id: main.cc,v 1.1 2001/12/13 23:29:19 adrian Exp $ */
+/* $Id: main.cc,v 1.3 2002/01/13 00:33:21 adrian Exp $ */
 
 #include "kover.h"
-#include "KoverTop.h"
+#include "kovertop.h"
 #include "config.h"
 
 #include <klocale.h>
