@@ -1,20 +1,12 @@
 
-dist-hook:
-	perl admin/am_edit
+include admin/deps.am
 
-AUTOMAKE_OPTIONS = foreign 1.4
+MAINTAINERCLEANFILES = configure.in kover.spec.in
 
-SUBDIRS = $(TOPSUBDIRS)
-
-$(top_srcdir)/subdirs:
-	cd $(top_srcdir) && $(MAKE) -f admin/Makefile.common subdirs
- 
-$(top_srcdir)/acinclude.m4: $(top_srcdir)/admin/acinclude.m4.in $(top_srcdir)/admin/libtool.m4.in
-	@cd $(top_srcdir) && cat admin/acinclude.m4.in admin/libtool.m4.in > acinclude.m4
- 
-MAINTAINERCLEANFILES = subdirs configure.in acinclude.m4 SUBDIRS kover.spec.in
-
-EXTRA_DIST = admin ABOUT-NLS kover.spec
+EXTRA_DIST = admin ABOUT-NLS kover.spec AUTHORS COPYING ChangeLog INSTALL README TODO
 
 man_MANS = kover.1 cddb-id.1
 
+AUTOMAKE_OPTIONS = foreign
+
+SUBDIRS=$(TOPSUBDIRS)
