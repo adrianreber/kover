@@ -28,7 +28,7 @@
 	 29 Oct 2001: Change size of the inlet title font
 */
 
-/* $Id: cdview.cc,v 1.11 2004/04/22 16:03:25 adrian Exp $ */
+/* $Id: cdview.cc,v 1.12 2004/09/17 19:03:52 adrian Exp $ */
 
 #include "cdview.moc"
 #include "koverfile.h"
@@ -93,16 +93,35 @@ void CDView::showPreview(bool preview)
     update();
 }
 
+void CDView::print_information(QPainter * p) 
+{
+	if(!previewMode)
+		return;
+	if (globals.one_page) {
+		p->restore();
+		p->rotate(-90);
+        	p->drawLine(10 + FRONT_H, 500, 10, 500);
+		p->drawText( -130, 140 , tr("Click to close"));
+	}
+}
+
 void CDView::printKover()
 {
     if (globals.one_page) {
         printer->setOrientation(KPrinter::Portrait);
         printer->setMinMax(1, 1);
         printer->setFromTo(1, 1);
-    }
+    } else {    
+    	printer->setOrientation(KPrinter::Landscape);
+    	printer->setMinMax(1, 2);
+    	printer->setFromTo(1, 2);
+    }    
+   
     if (printer->setup(this)) {
         QPainter *paint = new QPainter(printer);
 
+	paint->save();
+	
         previewMode = true;     // hack
 
         //this is getting ugly
@@ -118,15 +137,12 @@ void CDView::printKover()
                     drawInlet(paint, 20, 20);
             }
         } else {
-            printer->setOrientation(KPrinter::Portrait);
-            printer->setMinMax(1, 1);
-            printer->setFromTo(1, 1);
             drawBooklet(paint, 20, 15);
             drawInlet(paint, 20, 370);
-            printer->setOrientation(KPrinter::Landscape);
-            printer->setMinMax(1, 2);
-            printer->setFromTo(1, 2);
         }
+
+
+    	//print_information(paint);
 
         previewMode = false;
         paint->end();
@@ -139,7 +155,7 @@ void CDView::drawBooklet(QPainter * p, int X, int Y)
 {
     if (globals.inlet_only)
         return;
-    const float scale = 0.4;
+    const float scale = 0.4; // Abhängig von Bildschirmbreite!!
 
     if (globals.one_page)
         p->fillRect(X, Y, FRONT_H, FRONT_V, kover_file->backColor());

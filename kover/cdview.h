@@ -24,7 +24,7 @@
 	 Changes:
 */
 
-/* $Id: cdview.h,v 1.1 2001/12/04 16:23:50 adrian Exp $ */
+/* $Id: cdview.h,v 1.2 2004/09/17 19:03:52 adrian Exp $ */
 
 #ifndef _CDVIEW_H
 #define _CDVIEW_H
@@ -88,6 +88,7 @@ private:
 	 bool			previewMode;
 	 KPrinter*		printer;
 	 QPainter *paint1;
+	 void print_information(QPainter *);
 };
 
 #endif /* _CDVIEW_H */
