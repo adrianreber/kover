@@ -15,7 +15,7 @@ AC_ARG_PROGRAM
 AC_ISC_POSIX
 
 dnl Automake doc recommends to do this only here. (Janos)
-AM_INIT_AUTOMAKE(kover, 0.8.3) dnl searches for some needed programs
+AM_INIT_AUTOMAKE(kover, 2.8.3) dnl searches for some needed programs
 
 KDE_SET_PREFIX
 
@@ -31,7 +31,7 @@ KDE_PROG_LIBTOOL
 dnl for NLS support. Call them in this order!
 dnl WITH_NLS is for the po files
 
-ALL_LINGUAS="de fr"
+ALL_LINGUAS="de fr no pl"
 
 AM_KDE_WITH_NLS
 

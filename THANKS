@@ -1,4 +1,4 @@
-$Id: THANKS,v 1.5 2002/04/20 22:29:13 adrian Exp $
+$Id: THANKS,v 1.6 2002/04/21 22:47:21 adrian Exp $
 
 kover THANKS:
 
@@ -34,5 +34,11 @@ of compilation speed.
 - now using the KURL object to open and save files.
   it is now possible to save and open files via ftp...
 
-Denis Oliver Kropp
+Denis Oliver Kropp <dok@fischlustig.de>
 - for the original version of kover
+
+Marco Ciampa <ciampix@libero.it>
+- italian translation
+
+Micha Rudolf <mrudolf@mercury.ci.uw.edu.pl>
+- polish translation

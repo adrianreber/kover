@@ -28,7 +28,7 @@
 	 20 Jun 2001: Lot of undocumented changes
 */
 
-/* $Id: main.cc,v 1.3 2002/01/13 00:33:21 adrian Exp $ */
+/* $Id: main.cc,v 1.4 2002/04/21 22:47:21 adrian Exp $ */
 
 #include "kover.h"
 #include "kovertop.h"
@@ -88,11 +88,11 @@ int main(int argc, char* argv[]) {
 	 signal(SIGTERM,sighandler);
 	 signal(SIGINT,sighandler);
  
-	 fprintf(stderr, "%s Release %s - Copyright (C) 1999, 2000 by Denis Oliver Kropp\n",PACKAGE,VERSION);
-	 fprintf(stderr, "                      Copyright (C) 2000, 2001 by Adrian Reber\n");
+	 fprintf(stderr, "%s Release %s - Copyright (C) 1998-2000 by Denis Oliver Kropp\n",PACKAGE,VERSION);
+	 fprintf(stderr, "                      Copyright (C) 2000-2002 by Adrian Reber\n");
 	 fprintf(stderr, "%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n",PACKAGE);
 
-	 KAboutData aboutData(PACKAGE, I18N_NOOP(PACKAGE),VERSION, "Kover is an easy to use WYSIWYG CD cover printer with CDDB support.", KAboutData::License_GPL_V2,"(C) 1999, 2000 Denis Oliver Kropp\n(C) 2000, 2001 Adrian Reber");
+	 KAboutData aboutData(PACKAGE, I18N_NOOP(PACKAGE),VERSION, "Kover is an easy to use WYSIWYG CD cover printer with CDDB support.", KAboutData::License_GPL_V2,"(C) 1998-2000 Denis Oliver Kropp\n(C) 2000-2002 Adrian Reber");
 	 aboutData.addAuthor("Denis Oliver Kropp",0, "dok@fischlustig.de");
 	 aboutData.addAuthor("Adrian Reber",0,"adrian@lisas.de");
  

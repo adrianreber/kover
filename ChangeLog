@@ -1,10 +1,23 @@
-$Id: ChangeLog,v 1.14 2002/04/20 22:29:13 adrian Exp $
+$Id: ChangeLog,v 1.15 2002/04/21 22:47:21 adrian Exp $
+
+2002-04-22 Adrian <adrian@lisas.de>
+	* released as 2.8.3
+	  the big jump in the version number is a hint
+	  that this version is to be used with kde3
+	* this is just a development version
+	  lots of things are started but not finished
+	  don't expect everything to work yet
+	  this is for the people waiting to use kover with kde3
 
 2002-04-07 Adrian <adrian@lisas.de>
 	* kover_file.cc: changed .kover file format to use XML.
    * renamed some files from .cpp to .cc, so --enable-final
      can optimize better. More renaming will follow
 	* created the qt3_version branch in the cvs
+	* it.po: italian translation by
+	  Marco Ciampa <ciampix@libero.it>
+	* pl.po: polish translation by:
+	  Micha Rudolf <mrudolf@mercury.ci.uw.edu.pl>
 
 2002-03-07 Alexander <alex@lisas.de>
 	* gcc3 and kde3 fixes
