@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.3 2002/04/20 22:29:13 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.5 2002/04/23 14:15:04 adrian Exp $ */
 
 #include "cddb_fill.moc"
 
@@ -98,8 +98,10 @@ CDDB_Fill::CDDB_Fill(KoverFile* _kover_file) : QObject() {
 	 cd_fd = -1;
 	 code = 0;
 	 socket_1 = 0;
+	 socket_2 = 0;
 	 sock_mode = 0;
 	 sk_1 = NULL;
+	 sk_2 = NULL;
 }
 
 CDDB_Fill::~CDDB_Fill() {
@@ -942,7 +944,7 @@ int CDDB_Fill::CDDBSkipHTTP(int socket) {
 		  } while(inchar!='\n');
 	 } while(len>2);
  
-	 if (!globals.use_proxy) {	
+	 if (!globals.use_proxy || globals.proxy_port==80) {	
 		  do {
 				read(socket,&inchar,1);
 		  } while(inchar!='\n');

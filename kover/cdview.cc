@@ -28,7 +28,7 @@
 	 29 Oct 2001: Change size of the inlet title font
 */
   
-/* $Id: cdview.cc,v 1.4 2002/04/20 22:29:13 adrian Exp $ */
+/* $Id: cdview.cc,v 1.5 2002/04/23 14:15:04 adrian Exp $ */
 
 #include "cdview.moc"
 
@@ -69,7 +69,7 @@ CDView::CDView(KoverFile* _kover_file, QWidget* parent, const char* name)
 	 setFrameRect( QRect(0,0,0,0) );
 	 setFrameStyle( WinPanel | Sunken );
 	 
-	 printer = new KPrinter( QPrinter::Compatible );
+	 printer = new KPrinter(true, QPrinter::Compatible );
 	 printer->setOrientation( KPrinter::Landscape );
 	 printer->setMinMax( 1, 2 );
 	 printer->setFromTo( 1, 2 );

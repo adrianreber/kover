@@ -26,7 +26,9 @@
 
 */
 
-/* $Id: proxy_auth.cc,v 1.4 2001/11/11 00:34:48 adrian Exp $ */
+/* $Id: proxy_auth.cc,v 1.5 2002/04/23 14:15:04 adrian Exp $ */
+
+#include "proxy_auth.moc"
 
 #include "proxy_auth.h"
 
@@ -127,7 +129,7 @@ void proxy_auth::handle_input() {
 	 tmp = user->text();
 	 tmp += ":";
 	 tmp += pw->text();
-	 tmp += "\n";
+	 //tmp += "\n";
 	 
 	 pwd = strdup(tmp.latin1());
 
@@ -220,4 +222,3 @@ char *proxy_auth::get_authentification() {
 		  return strdup(base64encoded);
 	 return NULL;
 }
-#include "proxy_auth.moc"
