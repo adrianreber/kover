@@ -26,9 +26,11 @@
 	 22 Jan 2001: Great new commandline options
 
 	 20 Jun 2001: Lot of undocumented changes
+
+	 21 May 2002: Manual Connection to DCOP server
 */
 
-/* $Id: main.cc,v 1.5 2002/05/21 22:39:54 adrian Exp $ */
+/* $Id: main.cc,v 1.6 2002/05/21 22:41:55 adrian Exp $ */
 
 #include "kover.h"
 #include "kovertop.h"
