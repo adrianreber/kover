@@ -1,4 +1,9 @@
-$Id: ChangeLog,v 1.35 2003/03/10 22:44:06 adrian Exp $
+$Id: ChangeLog,v 1.36 2003/03/14 22:14:27 adrian Exp $
+
+2003-03-14 Adrian <adrian@lisas.de>
+        * *.png: somehow all the images were corrupted and are
+          now replaced with non-corrupted versions
+        * version updated to 2.9.3
 
 2003-03-10 Adrian <adrian@lisas.de>
         * es.po: spanish translation added from

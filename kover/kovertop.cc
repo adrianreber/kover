@@ -34,14 +34,19 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.cc,v 1.20 2003/02/07 16:44:40 adrian Exp $ */
+/* $Id: kovertop.cc,v 1.23 2003/03/23 22:24:38 adrian Exp $ */
 
+//moc file
 #include "kovertop.moc"
 
+//local includes
 #include "kovertop.h"
 #include "imagedlg.h"
 #include "without_cd.h"
+#include "filemode.h"
+#include <directory.h>
 
+//kde includes
 #include <klocale.h>
 #include <kmainwindow.h>
 #include <kapp.h>
@@ -54,8 +59,10 @@
 #include <kcolordialog.h>
 #include <krecentdocument.h>
 #include <kstdaccel.h>
-#include <qlayout.h>
 #include <kurl.h>
+
+//qt includes
+#include <qlayout.h>
 #include <qpoint.h>
 #include <qgroupbox.h>
 
@@ -139,6 +146,8 @@ void KoverTop::make_menu()
     (void) new KAction(i18n("&Actual size"), "viewmag",
         KStdAccel::shortcut(KStdAccel::ZoomOut), this, SLOT(stopPreview()),
         actionCollection(), "stop_preview");
+    (void) new KAction(i18n("&File mode"), "view_tree",
+        0, this, SLOT(file_mode()), actionCollection(), "file_mode");
     (void) new KAction(i18n("&CDDB lookup"), "network", 0, this,
         SLOT(cddbFill()), actionCollection(), "cddb");
     KStdAction::preferences(this, SLOT(preferences()), actionCollection());
@@ -748,4 +757,33 @@ void KoverTop::spine_text_changed_method(const QString & s)
     bla = "kk";
     if (kover_file.spine_text())
         kover_file.set_the_spine_text(the_spine_text->text());
+}
+
+void KoverTop::file_mode()
+{
+    filemode *file_mode = new filemode();
+
+    file_mode->exec();
+    fprintf(stderr, "%s:%s\n", PACKAGE, file_mode->get(0));
+    directory *tmp = new directory("/tmp");
+
+    tmp->make_childs();
+    delete file_mode;
+
+    string add = "";
+
+    for (int i = 0; i <= tmp->how_many_files(); i++) {
+        //directory *child = tmp->get_childs(i);
+
+        //if (child == NULL)
+        //    continue;
+
+        if (!tmp->get_file(i).empty()) {
+            add +=
+                tmp->get_file(i) + "\n";
+        }
+    }
+    delete tmp;
+    contents_edit->setText(add.c_str());
+
 }

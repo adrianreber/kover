@@ -28,7 +28,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.h,v 1.6 2002/09/16 22:45:53 adrian Exp $ */
+/* $Id: kovertop.h,v 1.9 2003/03/23 22:24:38 adrian Exp $ */
 
 #ifndef KOVER_TOP_H
 #define KOVER_TOP_H
@@ -57,102 +57,98 @@
 
 /** KoverTop is the TopLevelWidget. */
 
-class KoverTop : public KMainWindow {
-	 Q_OBJECT
-public:
-	 KoverTop(const char* name=NULL);
-	 ~KoverTop();
-	 
-public slots:
-void contentsBoxChanged();
-	 void titleBoxChanged();
-	 void stopPreview();
-	 void numberChecked(bool checked);
-	 void numberChanged(int number);
-	 void dataChanged(bool image);
-	 void setStatusText( const char* _status_text );
-	 void actualSize();
-	 void update_id(unsigned long=0);
-	 void fileOpen( const KURL& );
+class KoverTop:public KMainWindow {
+  Q_OBJECT public:
+      KoverTop(const char *name = NULL);
+     ~KoverTop();
 
-private:
-	 void saveFile( const KURL& );
-	 
-private slots:
+    public slots:void contentsBoxChanged();
+    void titleBoxChanged();
+    void stopPreview();
+    void numberChecked(bool checked);
+    void numberChanged(int number);
+    void dataChanged(bool image);
+    void setStatusText(const char *_status_text);
+    void actualSize();
+    void update_id(unsigned long = 0);
+    void fileOpen(const KURL &);
 
-void fileNew();
-	 void fileOpen();
-	 void fileSave();
-	 void fileSaveAs();
-	 void filePrint();
-	 void cut();
- 
-	 void copy();
-	 void paste();
-	 void cddbFill();
-	 void preferences();
-	 void imageEmbedding();
-	 void titleFont();
-	 void titleFontColor();
-	 void contentsFont();
-	 void contentsFontColor();
-	 void backgroundColor();
-	 void cdrom_eject();
-	 void inlet_title_font();
-	 void cddb_without_cd();
-	 void more_or_less();
-	 void display_title_signal();
-     void spine_text_method();
-	 void spine_text_changed_method(const QString& s);
-     
-private:
-	 
-	 bool queryClose();
-	 int how_about_saving();
+  private:
+    void saveFile(const KURL &);
 
-	 void make_menu();
-	 void make_main_frame();
-	 void make_more_frame();
-	 void make_option_frame();
-     void update_id(QString id);
-	 
-	 QFrame *option_frame;
-	 QCheckBox *display_title; 
-     QLineEdit *the_spine_text;
-     QCheckBox *spine_text;
-	
-	 KRecentFilesAction * recent;
-	 QCheckBox *slim_case;
+    private slots:void fileNew();
+    void fileOpen();
+    void fileSave();
+    void fileSaveAs();
+    void filePrint();
+    void cut();
 
-	 QFrame *main_frame;
- 
-	 KoverFile kover_file;
-	 CDDB_Fill*	cddb_fill;
+    void copy();
+    void paste();
+    void cddbFill();
+    void preferences();
+    void imageEmbedding();
+    void titleFont();
+    void titleFontColor();
+    void contentsFont();
+    void contentsFontColor();
+    void backgroundColor();
+    void cdrom_eject();
+    void inlet_title_font();
+    void cddb_without_cd();
+    void more_or_less();
+    void display_title_signal();
+    void spine_text_method();
+    void spine_text_changed_method(const QString & s);
+    void file_mode();
 
-	 KURL m_url;
-	 bool	altered_data;
+  private:
 
-	 QLabel*	title_label;
-	 QMultiLineEdit* title_edit;
+      bool queryClose();
+    int how_about_saving();
 
-	 QLabel*	contents_label;
-	 QMultiLineEdit* contents_edit;
-  
-	 QCheckBox*	number_check;
-	 QSpinBox* number_spin;
+    void make_menu();
+    void make_main_frame();
+    void make_more_frame();
+    void make_option_frame();
+    void update_id(QString id);
 
-	 KToolBar* main_toolbar;
-	 KToolBar* cd_toolbar;
-	 KStatusBar* status_bar;
+    QFrame *option_frame;
+    QCheckBox *display_title;
+    QLineEdit *the_spine_text;
+    QCheckBox *spine_text;
 
-	 QLabel *cddb_id;
-	 CDView* cdview;
+    KRecentFilesAction *recent;
+    QCheckBox *slim_case;
 
-	 QBoxLayout *button_layout;
-	 QFrame *more_frame;
-	 QPushButton *more_button;
-	 bool more;
-	 QFrame *more_frame_2;
+    QFrame *main_frame;
+
+    KoverFile kover_file;
+    CDDB_Fill *cddb_fill;
+
+    KURL m_url;
+    bool altered_data;
+
+    QLabel *title_label;
+    QMultiLineEdit *title_edit;
+
+    QLabel *contents_label;
+    QMultiLineEdit *contents_edit;
+
+    QCheckBox *number_check;
+    QSpinBox *number_spin;
+
+    KToolBar *main_toolbar;
+    KToolBar *cd_toolbar;
+    KStatusBar *status_bar;
+
+    QLabel *cddb_id;
+    CDView *cdview;
+
+    QBoxLayout *button_layout;
+    QFrame *more_frame;
+    QPushButton *more_button;
+    bool more;
 };
 
 #endif /* KOVER_TOP_H */

@@ -1,0 +1,375 @@
+# Anjuta Version 1.0.1 
+Compatibility Level: 1 
+
+<PROJECT_DESCRIPTION_START>
+Some description<PROJECT_DESCRIPTION_END>
+<CONFIG_PROGS_START>
+<CONFIG_PROGS_END>
+<CONFIG_LIBS_START>
+<CONFIG_LIBS_END>
+<CONFIG_HEADERS_START>
+<CONFIG_HEADERS_END>
+<CONFIG_CHARACTERISTICS_START>
+<CONFIG_CHARACTERISTICS_END>
+<CONFIG_LIB_FUNCS_START>
+<CONFIG_LIB_FUNCS_END>
+<CONFIG_ADDITIONAL_START>
+<CONFIG_ADDITIONAL_END>
+<CONFIG_FILES_START>
+<CONFIG_FILES_END>
+<MAKEFILE_AM_START>
+<MAKEFILE_AM_END>
+
+props.file.type=project
+
+anjuta.version=1.0.1
+anjuta.compatibility.level=1
+
+project.name=kover
+project.type=GENERIC
+project.target.type=EXECUTABLE
+project.version=2.8.5
+project.author=adrian
+project.source.target=unknown
+project.has.gettext=0
+project.programming.language=C
+project.excluded.modules=	intl
+
+project.config.extra.modules.before=
+project.config.extra.modules.after=
+project.config.blocked=1
+project.config.disable.overwriting=1 1 1 1 1 1 1 1 1 
+
+project.menu.entry=Unknown
+project.menu.group=Application
+project.menu.comment=No comment
+project.menu.icon=unknown_icon.xpm
+project.menu.need.terminal=0
+
+project.configure.options=
+anjuta.program.arguments=
+preferences.indent.automatic=1
+preferences.use.tabs=0
+preferences.indent.opening=0
+preferences.indent.closing=0
+preferences.tabsize=4
+preferences.indent.size=4
+preferences.autoformat.style=Custom style
+preferences.autoformat.custom.style= -i4 -br -bad -cdw -ce -nut -nbap -brs -nbfda -npsl -sob -nlp -npcs
+preferences.autoformat.disable=0
+
+module.include.name=.
+module.include.type=
+module.include.expanded=1
+module.include.files=\
+	acconfig.h\
+	kover/PreferencesDialog.h\
+	kover/cddb_211_item.h\
+	kover/cddb_fill.h\
+	kover/cdrom.h\
+	kover/cdrom_cddb.h\
+	kover/config.h\
+	kover/imagedlg.h\
+	kover/inexact_dialog.h\
+	kover/kover.h\
+	kover/kover_global.h\
+	kover/koverfile.h\
+	kover/without_cd.h\
+	kover/categories.h\
+	kover/test/digcalc.h\
+	kover/proxy_auth.h\
+	kover/direntry.h\
+	kover/attic/CDDB.h\
+	kover/cdview.h\
+	kover/kovertop.h\
+	kover/net.h\
+	kover/sites.h\
+	kover/cddb.h\
+	kover/server.h\
+	kover/server_dialog.h\
+	config.h
+
+module.source.name=.
+module.source.type=
+module.source.expanded=1
+module.source.files=\
+	kover/cdview.cc\
+	kover/kovertop.cc\
+	kover/cddb-id.cc\
+	kover/cddb_211_item.cc\
+	kover/cdrom.cc\
+	kover/cdrom_cddb.cc\
+	kover/config.cc\
+	kover/inexact_dialog.cc\
+	kover/kover_meta_unload.cc\
+	kover/koverfile.cc\
+	kover/without_cd.cc\
+	kover/cddb_fill.cc\
+	kover/test/digcalc.c\
+	kover/test/digest.c\
+	kover/test/base64decode.c\
+	kover/test/base64encode.c\
+	kover/test/dir.c\
+	kover/proxy_auth.cc\
+	kover/categories.cc\
+	kover/direntry.cc\
+	kover/main.cc\
+	kover/sites.cc\
+	kover/attic/CDDB.cpp\
+	kover/PreferencesDialog.cc\
+	kover/net.cc\
+	kover/cddb.cc\
+	kover/server.cc\
+	kover/server_dialog.cc\
+	kover/imagedlg.cc
+
+module.pixmap.name=.
+module.pixmap.type=
+module.pixmap.expanded=0
+module.pixmap.files=\
+	kover/hi32-app-kover.png\
+	kover/hi48-app-kover.png\
+	kover/lo16-app-kover.png\
+	kover/lo32-app-kover.png\
+	kover/diagrams/html/doxygen.gif\
+	kover/diagrams/html/_c_d_d_b_8h__incl.gif\
+	kover/diagrams/html/_c_d_d_b_8h__dep__incl.gif\
+	kover/diagrams/html/cddb__211__item_8h__incl.gif\
+	kover/diagrams/html/cddb__211__item_8h__dep__incl.gif\
+	kover/diagrams/html/cddb__fill_8h__incl.gif\
+	kover/diagrams/html/cddb__fill_8h__dep__incl.gif\
+	kover/diagrams/html/cdrom_8h__incl.gif\
+	kover/diagrams/html/cdrom_8h__dep__incl.gif\
+	kover/diagrams/html/cdrom__cddb_8h__incl.gif\
+	kover/diagrams/html/_c_d_view_8h__incl.gif\
+	kover/diagrams/html/_c_d_view_8h__dep__incl.gif\
+	kover/diagrams/html/config_8h__incl.gif\
+	kover/diagrams/html/config_8h__dep__incl.gif\
+	kover/diagrams/html/imagedlg_8h__incl.gif\
+	kover/diagrams/html/inexact__dialog_8h__incl.gif\
+	kover/diagrams/html/kover_8h__incl.gif\
+	kover/diagrams/html/kover_8h__dep__incl.gif\
+	kover/diagrams/html/kover__global_8h__dep__incl.gif\
+	kover/diagrams/html/koverfile_8h__incl.gif\
+	kover/diagrams/html/koverfile_8h__dep__incl.gif\
+	kover/diagrams/html/_kover_top_8h__incl.gif\
+	kover/diagrams/html/_preferences_dialog_8h__incl.gif\
+	kover/diagrams/html/_preferences_dialog_8h__dep__incl.gif\
+	kover/diagrams/html/class_c_d___info__coll__graph.gif\
+	kover/diagrams/html/class_c_d_d_b___fill__inherit__graph.gif\
+	kover/diagrams/html/class_c_d_d_b___fill__coll__graph.gif\
+	kover/diagrams/html/classcdrom__inherit__graph.gif\
+	kover/diagrams/html/classcdrom__cddb__inherit__graph.gif\
+	kover/diagrams/html/classcdrom__cddb__coll__graph.gif\
+	kover/diagrams/html/class_c_d_view__inherit__graph.gif\
+	kover/diagrams/html/class_c_d_view__coll__graph.gif\
+	kover/diagrams/html/class_image_dlg__inherit__graph.gif\
+	kover/diagrams/html/class_image_dlg__coll__graph.gif\
+	kover/diagrams/html/classinexact__dialog__inherit__graph.gif\
+	kover/diagrams/html/classinexact__dialog__coll__graph.gif\
+	kover/diagrams/html/class_k_dialog_base__inherit__graph.gif\
+	kover/diagrams/html/class_k_main_window__inherit__graph.gif\
+	kover/diagrams/html/class_kover_file__inherit__graph.gif\
+	kover/diagrams/html/class_kover_file__coll__graph.gif\
+	kover/diagrams/html/class_kover_top__inherit__graph.gif\
+	kover/diagrams/html/class_kover_top__coll__graph.gif\
+	kover/diagrams/html/class_preferences_dialog__inherit__graph.gif\
+	kover/diagrams/html/class_preferences_dialog__coll__graph.gif\
+	kover/diagrams/html/class_q_dialog__inherit__graph.gif\
+	kover/diagrams/html/class_q_frame__inherit__graph.gif\
+	kover/diagrams/html/class_q_object__inherit__graph.gif\
+	kover/diagrams/html/graph_legend.gif\
+	kover/diagrams/html/inherit__graph__class__c__d______info.gif\
+	kover/diagrams/html/inherit__graph__class__c__d__d__b.gif\
+	kover/diagrams/html/inherit__graph__classcddb____211____item.gif\
+	kover/diagrams/html/inherit__graph__classcdrom.gif\
+	kover/diagrams/html/inherit__graph__classconfig____class.gif\
+	kover/diagrams/html/inherit__graph__class__k__dialog__base.gif\
+	kover/diagrams/html/inherit__graph__class__k__main__window.gif\
+	kover/diagrams/html/inherit__graph__structkover____global.gif\
+	kover/diagrams/html/inherit__graph__class__q__dialog.gif\
+	kover/diagrams/html/inherit__graph__class__q__frame.gif\
+	kover/diagrams/html/inherit__graph__class__q__object.gif\
+	kover/diagrams/html/inherit__graph__classtrack____info.gif\
+	kover/diagrams/html/cddb-id_8cc__incl.gif\
+	kover/diagrams/html/_c_d_d_b_8cpp__incl.gif\
+	kover/diagrams/html/cddb__211__item_8cc__incl.gif\
+	kover/diagrams/html/cddb__211__item_8cc~__incl.gif\
+	kover/diagrams/html/cddb__fill_8cpp__incl.gif\
+	kover/diagrams/html/cddb__fill_8cpp~__incl.gif\
+	kover/diagrams/html/cddb__fill_8moc_8cc__incl.gif\
+	kover/diagrams/html/cdrom_8cc__incl.gif\
+	kover/diagrams/html/cdrom_8cc~__incl.gif\
+	kover/diagrams/html/cdrom__cddb_8cc__incl.gif\
+	kover/diagrams/html/cdrom__cddb_8cc~__incl.gif\
+	kover/diagrams/html/cdrom__cddb_8h__dep__incl.gif\
+	kover/diagrams/html/_c_d_view_8cpp__incl.gif\
+	kover/diagrams/html/_c_d_view_8moc_8cc__incl.gif\
+	kover/diagrams/html/config_8cc__incl.gif\
+	kover/diagrams/html/imagedlg_8cpp__incl.gif\
+	kover/diagrams/html/imagedlg_8h__dep__incl.gif\
+	kover/diagrams/html/imagedlgdata_8cpp__incl.gif\
+	kover/diagrams/html/inexact__dialog_8cc__incl.gif\
+	kover/diagrams/html/inexact__dialog_8h__dep__incl.gif\
+	kover/diagrams/html/kover__meta__unload_8cc__incl.gif\
+	kover/diagrams/html/koverfile_8cpp__incl.gif\
+	kover/diagrams/html/_kover_top_8cpp__incl.gif\
+	kover/diagrams/html/_kover_top_8h__dep__incl.gif\
+	kover/diagrams/html/main_8cpp__incl.gif\
+	kover/diagrams/html/_preferences_dialog_8cpp__incl.gif\
+	kover/test/POKE.bmp\
+	kover/test/PORCH.bmp\
+	kover/test/PUNKLON2.bmp\
+	kover/pics/front_title-content-right_content-left.png\
+	kover/pics/front_title_only.png\
+	kover/pics/front_title-right_content-left.png\
+	kover/pics/back_content.png\
+	kover/pics/back_title_content.png\
+	kover/pics/one_page.png\
+	kover/pics/.xvpics/one_page.png
+
+module.data.name=.
+module.data.type=
+module.data.expanded=0
+module.data.files=
+
+module.help.name=.
+module.help.type=
+module.help.expanded=0
+module.help.files=
+
+module.doc.name=.
+module.doc.type=
+module.doc.expanded=1
+module.doc.files=\
+	ChangeLog\
+	AUTHORS\
+	COPYING\
+	INSTALL\
+	NEWS\
+	README\
+	THANKS\
+	TODO\
+	admin/ChangeLog\
+	kover/docs/en/index.sgml\
+	kover/diagrams/html/index.html\
+	kover/diagrams/html/files.html\
+	kover/diagrams/html/_c_d_d_b_8h-source.html\
+	kover/diagrams/html/cddb__211__item_8h-source.html\
+	kover/diagrams/html/cddb__fill_8h-source.html\
+	kover/diagrams/html/cdrom_8h-source.html\
+	kover/diagrams/html/cdrom__cddb_8h-source.html\
+	kover/diagrams/html/_c_d_view_8h-source.html\
+	kover/diagrams/html/config_8h-source.html\
+	kover/diagrams/html/imagedlg_8h-source.html\
+	kover/diagrams/html/inexact__dialog_8h-source.html\
+	kover/diagrams/html/kover_8h-source.html\
+	kover/diagrams/html/kover__global_8h-source.html\
+	kover/diagrams/html/koverfile_8h-source.html\
+	kover/diagrams/html/_kover_top_8h-source.html\
+	kover/diagrams/html/_preferences_dialog_8h-source.html\
+	kover/diagrams/html/_c_d_d_b_8h.html\
+	kover/diagrams/html/cddb__211__item_8h.html\
+	kover/diagrams/html/cddb__fill_8h.html\
+	kover/diagrams/html/cdrom_8h.html\
+	kover/diagrams/html/globals.html\
+	kover/diagrams/html/cdrom__cddb_8h.html\
+	kover/diagrams/html/_c_d_view_8h.html\
+	kover/diagrams/html/config_8h.html\
+	kover/diagrams/html/imagedlg_8h.html\
+	kover/diagrams/html/inexact__dialog_8h.html\
+	kover/diagrams/html/kover_8h.html\
+	kover/diagrams/html/koverfile_8h.html\
+	kover/diagrams/html/kover__global_8h.html\
+	kover/diagrams/html/_kover_top_8h.html\
+	kover/diagrams/html/annotated.html\
+	kover/diagrams/html/_preferences_dialog_8h.html\
+	kover/diagrams/html/hierarchy.html\
+	kover/diagrams/html/functions.html\
+	kover/diagrams/html/classcdrom.html\
+	kover/diagrams/html/class_c_d___info.html\
+	kover/diagrams/html/class_c_d___info-members.html\
+	kover/diagrams/html/class_c_d_d_b.html\
+	kover/diagrams/html/class_c_d_d_b-members.html\
+	kover/diagrams/html/classcddb__211__item.html\
+	kover/diagrams/html/classcddb__211__item-members.html\
+	kover/diagrams/html/class_c_d_d_b___fill.html\
+	kover/diagrams/html/class_c_d_d_b___fill-members.html\
+	kover/diagrams/html/classcdrom-members.html\
+	kover/diagrams/html/classcdrom__cddb.html\
+	kover/diagrams/html/classcdrom__cddb-members.html\
+	kover/diagrams/html/class_c_d_view.html\
+	kover/diagrams/html/class_c_d_view-members.html\
+	kover/diagrams/html/classconfig__class.html\
+	kover/diagrams/html/classconfig__class-members.html\
+	kover/diagrams/html/class_image_dlg.html\
+	kover/diagrams/html/class_image_dlg-members.html\
+	kover/diagrams/html/classinexact__dialog.html\
+	kover/diagrams/html/classinexact__dialog-members.html\
+	kover/diagrams/html/class_k_dialog_base.html\
+	kover/diagrams/html/class_k_main_window.html\
+	kover/diagrams/html/structkover__global.html\
+	kover/diagrams/html/structkover__global-members.html\
+	kover/diagrams/html/class_kover_file.html\
+	kover/diagrams/html/class_kover_file-members.html\
+	kover/diagrams/html/class_kover_top.html\
+	kover/diagrams/html/class_kover_top-members.html\
+	kover/diagrams/html/class_preferences_dialog.html\
+	kover/diagrams/html/class_preferences_dialog-members.html\
+	kover/diagrams/html/class_q_dialog.html\
+	kover/diagrams/html/class_q_frame.html\
+	kover/diagrams/html/class_q_object.html\
+	kover/diagrams/html/classtrack__info.html\
+	kover/diagrams/html/classtrack__info-members.html\
+	kover/diagrams/html/graph_legend.html\
+	kover/diagrams/html/inherits.html\
+	kover/diagrams/html/cddb-id_8cc.html\
+	kover/diagrams/html/_c_d_d_b_8cpp.html\
+	kover/diagrams/html/cddb__211__item_8cc.html\
+	kover/diagrams/html/cddb__211__item_8cc~.html\
+	kover/diagrams/html/cddb__fill_8cpp.html\
+	kover/diagrams/html/cddb__fill_8cpp~.html\
+	kover/diagrams/html/cddb__fill_8moc_8cc.html\
+	kover/diagrams/html/cdrom_8cc.html\
+	kover/diagrams/html/cdrom_8cc~.html\
+	kover/diagrams/html/cdrom__cddb_8cc.html\
+	kover/diagrams/html/cdrom__cddb_8cc~.html\
+	kover/diagrams/html/_c_d_view_8cpp.html\
+	kover/diagrams/html/_c_d_view_8moc_8cc.html\
+	kover/diagrams/html/config_8cc.html\
+	kover/diagrams/html/imagedlg_8cpp.html\
+	kover/diagrams/html/imagedlgdata_8cpp.html\
+	kover/diagrams/html/inexact__dialog_8cc.html\
+	kover/diagrams/html/kover_8cfg.html\
+	kover/diagrams/html/kover__meta__unload_8cc.html\
+	kover/diagrams/html/koverfile_8cpp.html\
+	kover/diagrams/html/_kover_top_8cpp.html\
+	kover/diagrams/html/main_8cpp.html\
+	kover/diagrams/html/_preferences_dialog_8cpp.html\
+	admin.old/ChangeLog
+
+module.po.expanded=0
+module.po.files=\
+	de.po\
+	fr.po\
+	no.po\
+	it.po\
+	pl.po
+
+compiler.options.supports=
+compiler.options.include.paths=\
+	.\
+	..
+compiler.options.library.paths=
+compiler.options.libraries=
+compiler.options.libraries.selected=
+compiler.options.defines=\
+	HAVE_CONFIG_H
+compiler.options.warning.buttons=0 0 1 1 0 1 0 0 0 0 0 0 0 1 0 0 
+compiler.options.optimize.buttons=0 0 1 0 
+compiler.options.other.buttons=1 0 
+compiler.options.other.c.flags=
+compiler.options.other.l.flags=
+compiler.options.other.l.libs=
+project.source.paths=
+
