@@ -348,48 +348,47 @@ void CDView::mousePressEvent( QMouseEvent* evt ) {
 	 }
 }
 
-void CDView::dataChanged(bool image)
-{
-  if (image)
-	 {
-		for (int i=0; i<3; i++)
-		  {
-			 QImage load( kover_file->imageFile(i) );
-			 if (load.isNull())
-				{
-				  images[i].resize(0,0);
-				} else
-				  {
-					 switch (kover_file->imageMode(i))
-						{
-						case IMG_TILE:
-						case IMG_CENTER:
+void CDView::dataChanged(bool image) {
+	 int i=3;
+	 _DEBUG_ fprintf(stderr,"kover:CDView::dataChanged()\n");
+	 while (i--) {
+		  if (kover_file->imageFile(i).isEmpty())
+				images[i].resize(0,0);
+	 }
+	 if (image) {
+		  for (i=0; i<3; i++) {
+				QImage load( kover_file->imageFile(i) );
+				if (load.isNull()) {
+					 images[i].resize(0,0);
+				} else {
+					 switch (kover_file->imageMode(i)) {
+					 case IMG_TILE:
+					 case IMG_CENTER:
 						  images[i].convertFromImage( load );
 						  break;
-						case IMG_STRETCH:
-						  switch (kover_file->imageTarget(i))
-							 {
-							 case IMG_FRONT_LEFT:
-							 case IMG_FRONT_RIGHT:
+					 case IMG_STRETCH:
+						  switch (kover_file->imageTarget(i)) {
+						  case IMG_FRONT_LEFT:
+						  case IMG_FRONT_RIGHT:
 								images[i].convertFromImage( load.smoothScale( FRONT_H, FRONT_V ) );
 								break;
-							 case IMG_FRONT_FULL:
+						  case IMG_FRONT_FULL:
 								images[i].convertFromImage( load.smoothScale( FRONT_H*2, FRONT_V ) );
 								break;
-							 case IMG_BACK_INNER:
+						  case IMG_BACK_INNER:
 								images[i].convertFromImage( load.smoothScale( BACK_HI, BACK_V ) );
 								break;
-							 case IMG_BACK_FULL:
+						  case IMG_BACK_FULL:
 								images[i].convertFromImage( load.smoothScale( BACK_HI+BACK_HS*2, BACK_V ) );
 								break;
-							 }
+						  }
 						  break;
-						}
-				  }
+					 }
+				}
 		  }
 	 }
-
-  repaint(false);
+	 
+	 repaint(false);
 }
 
 

@@ -1,5 +1,5 @@
 /***************************************************************************
-                          koverfile.cpp  -  description                              
+                          koverfile.cpcd_image_file[_nr]p  -  description                              
                              -------------------                                         
 
     version              :                                   
@@ -19,8 +19,8 @@
 
 // alter mach kaffe
 
+#include "kover.h"
 #include "koverfile.h"
-#include "../config.h"
 #include <qfile.h>
 #include <qregexp.h>
 #include <qfileinfo.h>
@@ -197,9 +197,9 @@ int KoverFile::number() const
 	return cd_number;
 }
 
-QString KoverFile::imageFile(const int _nr) const
-{
-	return cd_image_file[_nr];
+QString KoverFile::imageFile(const int _nr) const {
+  _DEBUG_ fprintf(stderr,"kover:KoverFile::imageFile():%s\n",cd_image_file[_nr].latin1());
+  return cd_image_file[_nr];
 }
 
 int KoverFile::imageMode(const int _nr) const
