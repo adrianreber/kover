@@ -26,12 +26,13 @@
 
 */
 
-/* $Id: categories.cc,v 1.5 2001/11/18 23:59:33 adrian Exp $ */
+/* $Id: categories.cc,v 1.6 2003/01/13 00:04:25 adrian Exp $ */
 
 #include "categories.h"
 
 categories::categories() {
 	 //category.push_back("All");
+     category.push_back("Blues");
 	 category.push_back("Classical");
 	 category.push_back("Country");
 	 category.push_back("Data");

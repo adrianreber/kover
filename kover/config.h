@@ -33,15 +33,16 @@
 
 class config_class {
 
-public:
-	 config_class(KApplication *kover);
-	 void store_globals();
-	 void load_globals();
-	 void sync();
-private:
-	 char *check_cddb_dir();
-	 KApplication *kover;
-	 
+  public:
+    config_class(KApplication * kover);
+    void store_globals();
+    void load_globals();
+    void sync();
+  private:
+    void check_categories(char * check);
+    char *check_cddb_dir();
+    KApplication *kover;
+
 };
 
 #endif /* CONFIG_H */

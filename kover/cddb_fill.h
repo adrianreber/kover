@@ -27,7 +27,7 @@
 
 */
 
-/* $Id: cddb_fill.h,v 1.23 2002/09/11 14:35:32 adrian Exp $ */
+/* $Id: cddb_fill.h,v 1.24 2003/01/16 00:04:56 adrian Exp $ */
 
 #ifndef CDDB_FILL_H
 #define CDDB_FILL_H
@@ -128,7 +128,7 @@ public:
 private:
 
 	 bool do_authentification(char *query_buffer, int socket);
-	 bool getCDDBFromLocalFile();
+	 bool getCDDBFromLocalFile(bool without = false);
 	 int CDDBSkipHTTP(int socket);
 	 char * make_cddb_request(char *query_me, bool use_auth=false);
 	 char cddb_msg[255];	/* Return message of server info */

@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.15 2002/09/19 06:08:46 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.17 2003/01/16 00:04:56 adrian Exp $ */
 
 #include "cddb_fill.moc"
 
@@ -166,7 +166,7 @@ bool CDDB_Fill::execute_without_cd(const char *id, int cat)
     cdinfo.ntracks = 0;
     cdinfo.trk.clear();
 
-    if (!getCDDBFromLocalFile()) {
+    if (!getCDDBFromLocalFile(true)) {
         if (!cddb_connect()) {
 
             without = cddb_readcdinfo(sk_2, false, true, without);
@@ -227,7 +227,7 @@ void CDDB_Fill::setTitleAndContents()
         contents.append(tracks);
     }
     kover_file->setContents(contents);
-    cddb_id.sprintf("0x%lx",cdinfo.cddb_id);
+    cddb_id.sprintf("0x%lx", cdinfo.cddb_id);
     kover_file->set_cddb_id(cddb_id);
 }
 
@@ -445,7 +445,7 @@ char *CDDB_Fill::cddbHello()
  *
  */
 
-bool CDDB_Fill::getCDDBFromLocalFile()
+bool CDDB_Fill::getCDDBFromLocalFile(bool without)
 {
     if (!globals.read_local_cddb)
         return false;
@@ -457,11 +457,15 @@ bool CDDB_Fill::getCDDBFromLocalFile()
     if (globals.cddb_path) {
         _DEBUG_ fprintf(stderr, "CDDBDIR=%s\n", globals.cddb_path);
 
-        cddb_file = (char *) malloc(strlen(globals.cddb_path) + 9);
-        strcpy(cddb_file, globals.cddb_path);
+		 cddb_file = (char *) malloc(strlen(globals.cddb_path) + 10 + strlen(cdinfo.category));
+       strcpy(cddb_file, globals.cddb_path);
+       strncat(cddb_file, cdinfo.category, strlen(cdinfo.category));
+       strncat(cddb_file,"/",1);
+																						                     snprintf(help_string, 9, "%08lx", cdinfo.cddb_id);
+		 strncat(cddb_file, help_string, 8);
 
-        snprintf(help_string, 9, "%08x", (unsigned int) cdinfo.cddb_id);
-        strncat(cddb_file, help_string, 8);
+
+		  
         _DEBUG_ fprintf(stderr, "file : %s\n", cddb_file);
 
         cddb_file_descriptor = fopen(cddb_file, "r");
@@ -471,7 +475,7 @@ bool CDDB_Fill::getCDDBFromLocalFile()
         if (cddb_file_descriptor) {
             emit statusText(tr("Using local values for disc"));
 
-            cddb_readcdinfo(cddb_file_descriptor, true, true);
+            cddb_readcdinfo(cddb_file_descriptor, true, true,without);
             fclose(cddb_file_descriptor);
             return true;
         }
@@ -597,12 +601,15 @@ bool CDDB_Fill::cddb_query()
     while (bye) {
         code_string = readline(socket_1);
         code = atoi(code_string);
-        if (!code)
-            return false;
+        //if (!code)
+        //    return false;
+        if (strlen(code_string) < 5)
+            continue;
 
         _DEBUG_ fprintf(stderr, "answer: %d %s \n", code, code_string);
+
         if (strchr(code_string, 32))
-        strcpy(cddb_msg, strchr(code_string, 32) + 1);
+            strcpy(cddb_msg, strchr(code_string, 32) + 1);
         free(code_string);
         switch (code) {
         case 200:              /* Success, get the category ID */
@@ -634,7 +641,7 @@ bool CDDB_Fill::cddb_query()
                 if (!aber++)
                     continue;
                 if (s[0] != 48) {
-                    ss = strchr(s,13); // searching \r
+                    ss = strchr(s, 13); // searching \r
                     *ss = 0;
                     ref_211 = new cddb_211_item(s);
                     _DEBUG_ fprintf(stderr, "%s:read:%s\n", PACKAGE, s);
@@ -718,7 +725,7 @@ bool CDDB_Fill::cddb_query()
             return false;
         default:
             cddb_msg[strlen(cddb_msg) - 1] = 0;
-            _DEBUG_ fprintf(stderr, "(%02d): %s\n", code, cddb_msg);
+            _DEBUG_ fprintf(stderr, "here(%02d): %s\n", code, cddb_msg);
 
             /*fprintf(stderr, "kover:%s:%d: this should not happen\n", __FILE__,
                __LINE__);
@@ -808,18 +815,19 @@ bool CDDB_Fill::cddb_readcdinfo(FILE * desc, bool local, bool save_as_file,
             while (bye) {
                 code_string = readline(socket_2);
                 code = atoi(code_string);
-                if (!code)
-                    return false;
-
                 _DEBUG_ fprintf(stderr, "answer: %d %s \n", code,
                     code_string);
+                if (strlen(code_string) < 5)
+                    continue;
+                //if (!code)
+                //    return false;
                 if (strchr(code_string, 32))
-                strcpy(cddb_msg, strchr(code_string, 32) + 1);
+                    strcpy(cddb_msg, strchr(code_string, 32) + 1);
                 free(code_string);
                 switch (code) {
                 case 210:
                     emit statusText(tr("OK, CDDB database entry follows."));
-                    bye = 0;            // leave the while loop
+                    bye = 0;    // leave the while loop
                     break;
                 case 401:
                     emit statusText(tr("Specified CDDB entry not found."));
@@ -859,16 +867,17 @@ bool CDDB_Fill::cddb_readcdinfo(FILE * desc, bool local, bool save_as_file,
             if (!file_opened) {
                 if (globals.cddb_path) {
                     cddb_file =
-                        (char *) malloc(strlen(globals.cddb_path) + 9);
+                        (char *) malloc(strlen(globals.cddb_path) + 10 + strlen(cdinfo.category));
                     strcpy(cddb_file, globals.cddb_path);
 
+                    strncat(cddb_file, cdinfo.category, strlen(cdinfo.category));
+                    strncat(cddb_file,"/",1);
                     snprintf(help_string, 9, "%08lx", calcID());
                     strncat(cddb_file, help_string, 8);
 
                     _DEBUG_ fprintf(stderr, "using file: %s\n", cddb_file);
 
                     cddb_file_descriptor = fopen(cddb_file, "w");
-
                     free(cddb_file);
 
                     if (cddb_file_descriptor) {

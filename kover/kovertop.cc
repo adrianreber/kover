@@ -34,7 +34,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.cc,v 1.17 2002/10/13 18:32:15 adrian Exp $ */
+/* $Id: kovertop.cc,v 1.18 2003/01/13 00:04:25 adrian Exp $ */
 
 #include "kovertop.moc"
 
@@ -200,7 +200,7 @@ void KoverTop::make_option_frame()
 {
     QGroupBox *group_box = new QGroupBox(option_frame, "group");
 
-    group_box->setGeometry(10, 10, 500, 120);
+    group_box->setGeometry(10, 10, 500, 220);
     group_box->setTitle(tr("All this options are not global"));
 
     QVBoxLayout *vlay = new QVBoxLayout(group_box, 4);

@@ -25,12 +25,13 @@
 	 05 Apr 2001: initial thingy
 */
 
-/* $Id: config.cc,v 1.9 2002/10/09 07:06:52 adrian Exp $ */
+/* $Id: config.cc,v 1.11 2003/01/15 00:10:48 adrian Exp $ */
 
 #include "config.h"
 #include <kconfig.h>
 #include <sys/stat.h>
 #include <stdio.h>
+#include "categories.h"
 
 config_class::config_class(KApplication * kover)
 {
@@ -161,7 +162,7 @@ void config_class::load_globals()
         globals.disable_animation = 0;
     else
         globals.disable_animation = string->toInt();
-    
+
     *string = config->readEntry("display_track_duration");
     if (string->isNull())
         globals.display_track_duration = 1;
@@ -180,7 +181,7 @@ void config_class::load_globals()
         globals.one_page = 0;
     else
         globals.one_page = string->toInt();
-    
+
     *string = config->readEntry("inlet_only");
     if (string->isNull())
         globals.inlet_only = 0;
@@ -221,7 +222,8 @@ void config_class::load_globals()
         globals.inlet_title_font = new QFont(*bla);
         delete(bla);
         _DEBUG_ fprintf(stderr, "kover:font loaded: %s\n%s\n",
-            ((globals.inlet_title_font)->rawName()).latin1(),config->readEntry("inlet_title_font").latin1());
+            ((globals.inlet_title_font)->rawName()).latin1(),
+            config->readEntry("inlet_title_font").latin1());
     }
 
     delete(string);
@@ -277,13 +279,13 @@ void config_class::store_globals()
     string->sprintf("%d", globals.disable_animation);
     config->writeEntry("disable_animation", *string);
 
-    config->setGroup("cover"); 
+    config->setGroup("cover");
     string->sprintf("%d", globals.its_a_slim_case);
     config->writeEntry("its_a_slim_case", *string);
 
     string->sprintf("%d", globals.one_page);
     config->writeEntry("one_page", *string);
-    
+
     string->sprintf("%d", globals.inlet_only);
     config->writeEntry("inlet_only", *string);
 
@@ -304,8 +306,28 @@ char *config_class::check_cddb_dir()
     char *home_dir = NULL;
     char *cddb_file = NULL;
     struct stat stat_struct;
+
 #ifdef CDDB_PATH
-             return strdup(CDDB_PATH);
+    char *cddb_path = NULL;
+    cddb_path = strdup(CDDB_PATH);
+    if (cddb_path) {
+        if (cddb_path[strlen(cddb_path) -1] != '/') {
+            cddb_path = (char *) realloc(cddb_path,strlen(cddb_path)+1);
+            strcat(cddb_path,"/");
+        }
+    }
+    /* does the directory exist */
+        if (stat(cddb_path, &stat_struct) == -1)
+            /* no it doesn't... let's create one */
+            if (mkdir(cddb_path, 0777) == -1) {
+                /* failed */
+                fprintf(stderr,"%s:the directory %s could not be created. This might get a problem\n",
+                PACKAGE,cddb_path);
+                free(cddb_path);
+                return NULL;
+            }
+    check_categories(cddb_path);
+    return cddb_path;
 #endif
     home_dir = getenv("HOME");
     if (home_dir) {
@@ -328,10 +350,36 @@ char *config_class::check_cddb_dir()
                 return NULL;
             }
 
+        check_categories(cddb_file);
         return cddb_file;
     }
 
     return NULL;
+}
+
+void config_class::check_categories(char * check)
+{
+    struct stat stat_struct;
+    if (!check)
+        return;
+    categories *category = new categories();      
+    string path;
+    string cat;
+    
+    for (int i=0;i < category->how_many(); i++) {
+        path = check;
+        cat = category->get_category(i);
+        cat.replace(0,1,1,(char)tolower(cat[0]));
+        path += cat;
+        /* does the directory exist */
+        if (stat(path.c_str(), &stat_struct) == -1)
+            /* no it doesn't... let's create one */
+            if (mkdir(path.c_str(), 0777) == -1) {
+                /* failed */
+                fprintf(stderr,"%s:the directory %s could not be created. This might get a problem. Nevertheless we are continuing.\n",
+                PACKAGE,path.c_str());
+            }
+    }  
 }
 
 void config_class::sync()
