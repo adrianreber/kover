@@ -1,4 +1,8 @@
-$Id: ChangeLog,v 1.37 2004/04/20 21:05:42 adrian Exp $
+$Id: ChangeLog,v 1.38 2004/04/25 17:35:51 adrian Exp $
+
+2004-04-25 Adrian Reber <adrian@lisas.de>
+        * copied new files from kapptemplate to admin
+        * released as 2.9.5
 
 2004-04-20 Markus Brueffer <brueffer@phoenix-systems.de>
         * kover FreeBSD patches
