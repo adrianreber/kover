@@ -26,7 +26,7 @@
 	 
 */
 
-/* $Id: server.cc,v 1.3 2002/05/05 22:01:54 adrian Exp $ */
+/* $Id: server.cc,v 1.4 2002/07/23 14:35:35 adrian Exp $ */
 
 #include "server.h"
 #include <stdlib.h>
@@ -68,8 +68,8 @@ server::server(const char *cddb_answer) {
 	
 	 //description
 	 start = end;
-	 end = answer.find(" ",++start);
-	 description = answer.substr(start,answer.size());
+	 end = answer.find("\r",++start);
+	 description = answer.substr(start,end-start);
 }
 
 server::~server() {

@@ -25,7 +25,7 @@
 	 05 May 2002: Initial release
 */
 
-/* $Id: server_dialog.cc,v 1.2 2002/07/21 21:59:54 adrian Exp $ */
+/* $Id: server_dialog.cc,v 1.3 2002/07/23 14:35:35 adrian Exp $ */
 
 #include "server_dialog.moc"
 
@@ -45,11 +45,7 @@
 
 server_dialog::server_dialog() : QDialog(0,0,TRUE,0) {
 	 site_ref = new sites();
-	 if (site_ref->gen_server_list(server_list)) {
-		  list <server *> :: iterator bla;
-		  for (bla = server_list.begin(); bla !=  server_list.end(); bla++)
-				(*bla)->dump();
-	 }
+	 site_ref->gen_server_list(server_list);
 	 QVBoxLayout *top_layout = new QVBoxLayout(this);
 	 top_layout->setMargin(7);
 	 top_layout->addSpacing(10);
@@ -57,20 +53,20 @@ server_dialog::server_dialog() : QDialog(0,0,TRUE,0) {
 	 top_layout->addWidget(label);
 	 top_layout->addSpacing(10);
 	 box = new QListBox(this);
-     box->setColumnMode(2);
 	 list <server *> :: iterator item;
-	 
-     int i = 0;
+	
+	 QString string;
 	 for (item = server_list.begin(); item != server_list.end(); item++) {
 		  if (((*item)->get_proto()).compare("http")) {
-				
-              box->insertItem(((*item)->get_description()).c_str(),i);
-              box->insertItem(((*item)->get_site()).c_str(),i++);
+		string = ((*item)->get_site()).c_str();		
+		string += " (";
+		string += ((*item)->get_description()).c_str();
+		string += ")";
+              box->insertItem(string);
           }
          
 	 }
 	 box->setMinimumWidth(box->maxItemWidth()+30);
-	 
 	 connect(box, SIGNAL(doubleClicked(QListBoxItem *)), SLOT (double_clicked(QListBoxItem *)));
 
 	 top_layout->addWidget(box);

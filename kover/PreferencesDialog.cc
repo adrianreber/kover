@@ -32,7 +32,7 @@
 	 13 Mar 2002: Standard font page
 */
 
-/* $Id: PreferencesDialog.cc,v 1.8 2002/05/05 22:01:54 adrian Exp $ */
+/* $Id: PreferencesDialog.cc,v 1.9 2002/07/23 14:35:35 adrian Exp $ */
 
 #include "PreferencesDialog.moc"
 
@@ -617,5 +617,6 @@ void PreferencesDialog::browsing() {
 	 aber = dialog->exec();
 	 _DEBUG_ fprintf(stderr,"kover:server_dialog returns: %d %s\n",aber,(dialog->get(aber)).c_str());
 
+	 cddb_widgets.cddb_server->setText((dialog->get(aber)).c_str());
 	 delete (dialog);
 }
