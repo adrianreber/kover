@@ -24,9 +24,10 @@
 
 	 28 Apr 2002: Initial release
 
+
 */
 
-/* $Id: cddb.cc,v 1.5 2003/02/07 16:44:40 adrian Exp $ */
+/* $Id: cddb.cc,v 1.6 2003/06/14 15:49:14 adrian Exp $ */
 
 #include "cddb.h"
 #include "kover.h"
