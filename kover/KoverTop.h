@@ -22,7 +22,8 @@
 	 Description: TopLevelWidget
 	 
 	 Changes:
-
+	 
+	 29 Oct 2001: inlet title font stuff
 */
 
 #ifndef KOVER_TOP_H
@@ -88,7 +89,7 @@ void fileNew();
 	 void contentsFontColor();
 	 void backgroundColor();
 	 void cdrom_eject();
-	 void booklet_title_font();
+	 void inlet_title_font();
 
 private:
 	 QCheckBox *slim_case;

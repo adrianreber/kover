@@ -26,9 +26,11 @@
 
 	 09 Oct 2001: Better
 
+	 30 Oct 2001: Bugfix
+
 */
 
-/* $Id: inexact_dialog.cc,v 1.5 2001/10/28 23:00:14 adrian Exp $ */
+/* $Id: inexact_dialog.cc,v 1.6 2001/10/30 13:01:21 adrian Exp $ */
 
 #include "inexact_dialog.h"
 #include <qpushbutton.h>
@@ -135,8 +137,6 @@ char* inexact_dialog::get(int index) {
 	 for (item = local_list.begin(); item != local_list.end(); item++) {
 		  if (i++==index)
 				return strdup((*item)->get());
-		  else
-			  	return NULL;
 	 } 
 	 return NULL;
 }

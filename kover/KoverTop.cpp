@@ -29,6 +29,8 @@
 
 	 03 Jul 2001: now displaying CDDB id
 
+	 29 Oct 2001: inlet title font stuff
+
 */
 
 #include "KoverTop.h"
@@ -72,7 +74,7 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 	 (void)new KAction(i18n("Contents Font..."),"fonts",0,this,SLOT(contentsFont()),actionCollection(),"contents_font");
 	 (void)new KAction(i18n("Contents Fontcolor..."),"colorize",0,this,SLOT(contentsFontColor()),actionCollection(),"contents_font_color");
 	 (void)new KAction(i18n("Background Color..."),"colors",0,this,SLOT(backgroundColor()),actionCollection(),"background_color");
-	 (void)new KAction(i18n("Booklet Title Font..."),"fonts",0,this,SLOT(booklet_title_font()),actionCollection(),"booklet_title_font");
+	 (void)new KAction(i18n("Inlet Title Font..."),"fonts",0,this,SLOT(inlet_title_font()),actionCollection(),"inlet_title_font");
 	 (void)new KAction(i18n("Eject CD"),"player_eject",0,this,SLOT(cdrom_eject()),actionCollection(),"eject_cdrom");
 
 	 createGUI();
@@ -375,12 +377,12 @@ void KoverTop::titleFont() {
 	 delete kf;
 }
 
-void KoverTop::booklet_title_font() {
+void KoverTop::inlet_title_font() {
 	 QFont new_font;
-	 KFontDialog *kf = new KFontDialog(this, "booklet_font", true);
-	 new_font = kover_file.booklet_title_font();
+	 KFontDialog *kf = new KFontDialog(this, "inlet_font", true);
+	 new_font = kover_file.inlet_title_font();
 	 if (kf->getFont(new_font))
-		  kover_file.set_booklet_title_font(new_font);
+		  kover_file.set_inlet_title_font(new_font);
 	 delete kf;
 }
 

@@ -1,23 +1,33 @@
-/***************************************************************************
-                          koverfile.h  -  description                              
-                             -------------------                                         
+/** -*- adrian-c -*-
+	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
+	 Copyright (C) 1999, 2000 by Denis Oliver Kropp
+	 Copyright (C) 2000, 2001 by Adrian Reber
+	 
+	 This program is free software; you can redistribute it and/or modify
+	 it under the terms of the GNU General Public License as published by
+	 the Free Software Foundation; either version 2 of the License, or
+	 (at your option) any later version.
+	 
+	 This program is distributed in the hope that it will be useful,
+	 but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 GNU General Public License for more details.
+	 
+	 You should have received a copy of the GNU General Public License
+	 along with this program; if not, write to the Free Software
+	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+	 
+	 File: koverfile.h
+	 
+	 Description: storage of cover data
+	 
+	 Changes:
 
-    version              :                                   
-    begin                : Tue Dec 22 1998                                           
-    copyright            : (C) 1998 by Denis Oliver Kropp                         
-    email                : dok@fischlustig.de                                     
- ***************************************************************************/
+	 29 Oct 2001: variable inlet title font
+	 
+*/
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   * 
- *                                                                         *
- ***************************************************************************/
-
-// alter mach kaffe
+/* $Id: koverfile.h,v 1.3 2001/10/30 13:01:21 adrian Exp $ */
 
 #ifndef KOVERFILE_H
 #define KOVERFILE_H
@@ -59,7 +69,7 @@ public:
 	void setTitleFont( const QFont& _title_font );
 	void setTitleColor( const QColor& _title_color );
 	void setContentsFont( const QFont& _contents_font );
-	void set_booklet_title_font(const QFont& _booklet_title_font);
+	void set_inlet_title_font(const QFont& _inlet_title_font);
 	void setContentsColor( const QColor& _contents_color );
 	void setBackColor( const QColor& _back_color );
 	void setNumber( const int _number );
@@ -73,7 +83,7 @@ public:
 	QFont	titleFont() const;
 	QColor	titleColor() const;
 	QFont	contentsFont() const;
-	QFont booklet_title_font() const;
+	QFont inlet_title_font() const;
 	QColor	contentsColor() const;
 	QColor	backColor() const;
 	int		number() const;
@@ -98,7 +108,7 @@ private:
 	QFont	cd_title_font;
 	QColor	cd_title_color;
 	QFont	cd_contents_font;
-	QFont cd_booklet_title_font;
+	QFont cd_inlet_title_font;
 	QColor	cd_contents_color;
 	QColor	cd_back_color;
 	int		cd_number;
@@ -107,5 +117,5 @@ private:
 	int		cd_image_target[3];
 };
 
-#endif
+#endif /* KOVERFILE_H */
 

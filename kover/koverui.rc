@@ -13,7 +13,7 @@
    <Action name="title_font_color" />
    <Action name="contents_font" />
    <Action name="contents_font_color" />
-   <Action name="booklet_title_font" />
+   <Action name="inlet_title_font" />
    <Action name="eject_cdrom" />
   </Menu>
  </MenuBar>

@@ -38,6 +38,8 @@
 	 15 Jul 2001: 211(inexact match) support
 
 	 30 Sep 2001: proxy authentification support
+
+	 30 Oct 2001: Better error handling
 	
 */
 
@@ -610,7 +612,13 @@ bool CDDB_Fill::cddb_query() {
 		  }
 		  //getting the string
 		  ssss = inexact->get(aber);
-		  _DEBUG_ fprintf(stderr,"kover:inexact->get(%d) returns:%s\n",aber,s);
+		  if (!ssss) {
+				fprintf(stderr,"kover:%s:%d: this should not happen\n",__FILE__,__LINE__);
+				emit statusText("Why does the drum come hither?");
+				return false;
+		  }
+
+		  _DEBUG_ fprintf(stderr,"kover:inexact->get(%d) returns:%s\n",aber,ssss);
 		  //string looks like : rock bd09280d Pink Floyd / The Wall (CD1)
 		  //searching first space
 		  ss = strchr(ssss, 32);
@@ -619,6 +627,12 @@ bool CDDB_Fill::cddb_query() {
 		  cdinfo.category = ssss;
 		  free(ssss);
 		  ssss = inexact->get(aber);
+		  if (!ssss) {
+				fprintf(stderr,"kover:%s:%d: this should not happen\n",__FILE__,__LINE__);
+				emit statusText("Why does the drum come hither?");
+				return false;
+		  }
+
 		  ss = strchr(ssss, 32); //searching for " "
 		  //ss is now " bd09280d Pink Floyd / The Wall (CD1)"
 		  //watch out a leading space (32)

@@ -25,6 +25,7 @@
 	 
 	 14 Dec 1998: Initial release
 	 18 Oct 2001: Added routines for 'inlet only' option
+	 29 Oct 2001: Change size of the inlet title font
 */
   
 #include "CDView.h"
@@ -282,11 +283,11 @@ void CDView::drawInlet(QPainter *p, int X, int Y) {
 		  p->setFont(QFont("helvetica", 12, QFont::Bold));
 		  p->drawText( 10, 0, BACK_V-10, BACK_HS, AlignLeft | AlignVCenter, numberStr, numberStr.length() );
 		  p->setPen( kover_file->titleColor() );
-		  p->setFont(kover_file->booklet_title_font());
+		  p->setFont(kover_file->inlet_title_font());
 		  p->drawText( 38, 0, BACK_V-38, BACK_HS, AlignLeft | AlignVCenter, title, title.length() );
 	 } else {
 		  p->setPen(kover_file->titleColor());
-		  p->setFont(kover_file->booklet_title_font());
+		  p->setFont(kover_file->inlet_title_font());
 		  p->drawText( 10, 0, BACK_V-10, BACK_HS, AlignLeft | AlignVCenter, title, title.length() );
 	 }
 	 
@@ -300,11 +301,11 @@ void CDView::drawInlet(QPainter *p, int X, int Y) {
 		  p->setFont( QFont("helvetica", 12, QFont::Bold) );
 		  p->drawText( 10, -1, BACK_V-10, -BACK_HS, AlignLeft | AlignVCenter, numberStr, numberStr.length() );
 		  p->setPen( kover_file->titleColor() );
-		  p->setFont(kover_file->booklet_title_font());
+		  p->setFont(kover_file->inlet_title_font());
 		  p->drawText( 38, -1, BACK_V-38, -BACK_HS, AlignLeft | AlignVCenter, title, title.length() );
 	 } else {
 		  p->setPen( kover_file->titleColor() );
-		  p->setFont(kover_file->booklet_title_font());
+		  p->setFont(kover_file->inlet_title_font());
 		  p->drawText( 10, -1, BACK_V-10, -BACK_HS, AlignLeft | AlignVCenter, title, title.length() );
 	 }
 	 
