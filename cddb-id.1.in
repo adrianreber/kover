@@ -1,4 +1,4 @@
-.TH cddb-id "1" "September 2002" "kover @VERSION@" "User Commands"
+.TH cddb-id "1" "February 2003" "kover @VERSION@" "User Commands"
 .SH NAME
 cddb-id \- Display the CDDB id of CD in [\fIdevice\fR].
 .SH SYNOPSIS

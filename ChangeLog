@@ -1,4 +1,15 @@
-$Id: ChangeLog,v 1.31 2002/10/13 18:32:15 adrian Exp $
+$Id: ChangeLog,v 1.32 2003/02/09 23:30:47 adrian Exp $
+
+2003-02-09 Adrian <adrian@lisas.de>
+        * cddb_fill.cc: local cddb files are not longer loaded/written
+          to the cddb directory but to the cddb-directory/category
+          directory. This way it should be possible to use the cddb
+          directory from kscd.
+        * kover.pot: translation updated
+        * de.po: german translation updated
+        * pl.po: polish translation updated by
+                 Michal Rudolf <mrudolf@mercury.ci.uw.edu.pl>
+        * all files: code review
 
 2002-10-13 Adrian <adrian@lisas.de>
         * kovertop.cc: little GUI redesign

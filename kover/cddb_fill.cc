@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.19 2003/02/07 16:44:40 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.20 2003/02/07 22:33:13 adrian Exp $ */
 
 #include "cddb_fill.moc"
 
@@ -834,7 +834,7 @@ bool CDDB_Fill::cddb_readcdinfo(FILE * desc, bool local, bool save_as_file,
                     strncat(cddb_file, cdinfo.category,
                         strlen(cdinfo.category));
                     strncat(cddb_file, "/", 1);
-                    snprintf(help_string, 9, "%08lx", calcID());
+                    snprintf(help_string, 9, "%08lx", cdinfo.cddb_id);
                     strncat(cddb_file, help_string, 8);
 
                     _DEBUG_ fprintf(stderr, "using file: %s\n", cddb_file);
@@ -863,7 +863,7 @@ bool CDDB_Fill::cddb_readcdinfo(FILE * desc, bool local, bool save_as_file,
                             "#\n# Revenge his foul and most unnatural murder. (Hamlet I.5.25)\n#\n");
                     else if (strstr(s, "DISCID"))
                         fprintf(cddb_file_descriptor, "DISCID=%08lx\n",
-                            calcID());
+                            cdinfo.cddb_id);
                     else
                         fprintf(cddb_file_descriptor, "%s", s);
                 }

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-10-06 19:02+0200\n"
+"POT-Creation-Date: 2001-10-09 00:41+0200\n"
 "PO-Revision-Date: 2001-10-07 17:44GMT\n"
 "Last-Translator: Jean-Pierre VERRUE <jean-pierre.verrue@laposte.net>\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -71,10 +71,12 @@ msgid "Internal error: Filedescriptor is not -1, already opened?"
 msgstr "Erreur interne le 'file-desc' est diff. de 1, Déjà ouvert ?"
 
 #: cddb_fill.cpp:160
+#, fuzzy
 msgid "You dont have permission to read from "
 msgstr "Vous n'avez pas la permission de lire à partir de "
 
 #: cddb_fill.cpp:164
+#, fuzzy
 msgid "Theres no medium in "
 msgstr "Il n'y a pas de medium dans "
 
@@ -91,6 +93,7 @@ msgid "Oops. No information about disc. Will keep trying..."
 msgstr "Oops! Pas d'information à propos du disque. Essayez à nouveau..."
 
 #: cddb_fill.cpp:188
+#, fuzzy
 msgid "Theres no audio cd in "
 msgstr "Il n'y a pas de CD audio dans "
 
@@ -144,7 +147,9 @@ msgstr "Opération avortée."
 
 #: cddb_fill.cpp:581
 msgid "Found inexact matches, list follows (until terminating marker)"
-msgstr "Trouvé des correspondances imparfaites, la liste suit (jusqu'au marqueur de fin)"
+msgstr ""
+"Trouvé des correspondances imparfaites, la liste suit (jusqu'au marqueur de "
+"fin)"
 
 #: cddb_fill.cpp:640
 msgid "No match found."
@@ -370,6 +375,10 @@ msgstr ""
 "Imprimer le contenu au dos de la plaquette\n"
 "(Option pour boites minces)"
 
+#: inexact_dialog.cc:52
+msgid "Choose wisely!"
+msgstr ""
+
 #: proxy_auth.cc:49
 msgid "Enter username and password for proxy at "
 msgstr "Entrer le nom et le mot de passe pour le proxy "
@@ -378,3 +387,150 @@ msgstr "Entrer le nom et le mot de passe pour le proxy "
 msgid "User Name:"
 msgstr "Nom d'utilisateur :"
 
+#: cddb_fill.cc:139 cddb_fill.cc:187
+#, fuzzy
+msgid "No http_proxy environment variable found... Giving up..."
+msgstr "Utiliser la variable d'environnement 'http_proxy'"
+
+#: cddb_fill.cc:142 cddb_fill.cc:190
+#, fuzzy
+msgid "Don't understand http_proxy environment variable... Giving up..."
+msgstr "Utiliser la variable d'environnement 'http_proxy'"
+
+#: kovertop.cc:159
+#, fuzzy
+msgid "Spine Text Font..."
+msgstr "Police pour le contenu..."
+
+#: kovertop.cc:163
+msgid "CDDB without CD"
+msgstr ""
+
+#: kovertop.cc:204
+msgid "All this options are not global"
+msgstr ""
+
+#: kovertop.cc:215
+msgid "No title on booklet"
+msgstr ""
+
+#: kovertop.cc:221
+msgid "Separate Spine Text"
+msgstr ""
+
+#: kovertop.cc:404
+msgid ""
+"*.kover|Kover files\n"
+"*|All files\n"
+"*.k3b|k3b files"
+msgstr ""
+
+#: kovertop.cc:500
+msgid ""
+"*.kover|Kover files\n"
+"*|All files"
+msgstr ""
+
+#: PreferencesDialog.cc:499 PreferencesDialog.cc:503
+msgid "Cover"
+msgstr ""
+
+#: PreferencesDialog.cc:516
+#, fuzzy
+msgid "Display track duration after a CDDB request"
+msgstr "Afficher la durée des pistes après une requête CDDB"
+
+#: PreferencesDialog.cc:522
+msgid "Print inlet and booklet"
+msgstr ""
+
+#: PreferencesDialog.cc:531
+msgid ""
+"Don't print booklet.\n"
+"(inlet only option)"
+msgstr ""
+
+#: PreferencesDialog.cc:535
+msgid "Print all on one page"
+msgstr ""
+
+#: PreferencesDialog.cc:613
+msgid "Standard Fonts"
+msgstr ""
+
+#: PreferencesDialog.cc:617
+msgid "&Standard Fonts"
+msgstr ""
+
+#: PreferencesDialog.cc:627
+msgid "Changes to any of these fonts are global.\n"
+msgstr ""
+
+#: PreferencesDialog.cc:628
+msgid "This means, that changes will only be available\n"
+msgstr ""
+
+#: PreferencesDialog.cc:629
+msgid "for the next new cover.\n"
+msgstr ""
+
+#: PreferencesDialog.cc:630
+msgid "Except that the current cover is empty.\n"
+msgstr ""
+
+#: PreferencesDialog.cc:631
+msgid "Then changes are applied to the current cover."
+msgstr ""
+
+#: PreferencesDialog.cc:635
+#, fuzzy
+msgid "Content Font: "
+msgstr "Police pour le contenu..."
+
+#: PreferencesDialog.cc:645
+#, fuzzy
+msgid "Title Font: "
+msgstr "Police pour le titre..."
+
+#: PreferencesDialog.cc:654
+msgid "Spine Text Font: "
+msgstr ""
+
+#: PreferencesDialog.cc:756
+msgid "Save window position"
+msgstr ""
+
+#: PreferencesDialog.cc:760
+msgid "Disable unnecessary animation"
+msgstr ""
+
+#: PreferencesDialog.cc:765
+#, fuzzy
+msgid "Mouse click on kover preview triggers actual size"
+msgstr "Cliquer sur l'aperçu affiche en taille réelle"
+
+#: PreferencesDialog.cc:815
+msgid ""
+"Changes to the fonts will not be applied to the current cover, but for the "
+"next new cover."
+msgstr ""
+
+#: inexact_dialog.cc:80 proxy_auth.cc:76
+msgid "Ok"
+msgstr ""
+
+#: proxy_auth.cc:69
+msgid "Password:"
+msgstr ""
+
+#: without_cd.cc:54
+msgid "Select a category:"
+msgstr ""
+
+#: without_cd.cc:72
+msgid "Enter CDDB Id:"
+msgstr ""
+
+#: without_cd.cc:79
+msgid "Search"
+msgstr ""
