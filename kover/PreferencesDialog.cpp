@@ -30,11 +30,12 @@
 	 12 Jun 2001: Added slim case thingy
 */
 
+/* $Id: PreferencesDialog.cpp,v 1.12 2001/07/15 22:37:08 adrian Exp $ */
+
 #include "PreferencesDialog.h"
 #include "KoverTop.h"
 
-PreferencesDialog::PreferencesDialog(QWidget *parent, const QString &caption):KDialogBase(KJanusWidget::IconList,caption,Ok|Cancel,Ok,parent)
-{
+PreferencesDialog::PreferencesDialog(QWidget *parent, const QString &caption):KDialogBase(KJanusWidget::IconList,caption,Ok|Cancel,Ok,parent) {
 	 this->parent = parent;
 	 setupCDDBPage();
 	 setupCDROMPage();
@@ -42,8 +43,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent, const QString &caption):KD
 	 setup_misc_page();
 }
 
-void PreferencesDialog::setupCDDBPage( void )
-{
+void PreferencesDialog::setupCDDBPage( void ) {
 		  
 	 QFrame *page = addPage( i18n("CDDB"), i18n("CDDB options"),
 									 BarIcon("network", KIcon::SizeMedium ) );
@@ -105,9 +105,7 @@ void PreferencesDialog::setupCDDBPage( void )
 	 topLayout->addStretch(10);
 }
 
-void PreferencesDialog::setupCDROMPage( void )
-{
-		  
+void PreferencesDialog::setupCDROMPage( void ) {
 	 QFrame *page = addPage( i18n("CDROM"), i18n("CDROM options"),
 									 BarIcon("cdrom_unmount", KIcon::SizeMedium ) );
 	 QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );
@@ -137,30 +135,22 @@ void PreferencesDialog::setupCDROMPage( void )
 }
 
 
-void PreferencesDialog::use_proxy(bool status)
-{
-	 if (status)
-	 {
+void PreferencesDialog::use_proxy(bool status) {
+	 if (status) {
 		  cddb_widgets.proxy_from_env->setEnabled(false);
 		  cddb_widgets.proxy_server->setEnabled(true);
 		  cddb_widgets.proxy_port->setEnabled(true);
-	 }
-	 else
-	 {
+	 } else {
 		  cddb_widgets.proxy_from_env->setEnabled(false);
 		  cddb_widgets.proxy_server->setEnabled(false);
 		  cddb_widgets.proxy_port->setEnabled(false);
 	 }
-
 }
 
-void PreferencesDialog::slotOk()
-{
+void PreferencesDialog::slotOk() {
 	 static int i = 0;
-	 if ((((cddb_widgets.proxy_server)->text()).isEmpty() || ((cddb_widgets.proxy_port)->text()).isEmpty()) && (cddb_widgets.use_proxy)->isChecked())
-	 {
-		  switch (i)
-		  {
+	 if ((((cddb_widgets.proxy_server)->text()).isEmpty() || ((cddb_widgets.proxy_port)->text()).isEmpty()) && (cddb_widgets.use_proxy)->isChecked()) {
+		  switch (i) {
 		  case 0:
 				KMessageBox::information(this,"<NELSON>HAHA</NELSON>");
 				i++;
@@ -177,8 +167,7 @@ void PreferencesDialog::slotOk()
 		  }
 	 }
 
-	 if (((cdrom_widgets.cdrom_device)->text()).isEmpty())
-	 {
+	 if (((cdrom_widgets.cdrom_device)->text()).isEmpty()) {
 		  KMessageBox::sorry(this,"Please enter a cdrom device.");
 		  return;
 	 }
@@ -218,7 +207,6 @@ void PreferencesDialog::apply_settings() {
 		  globals.proxy_server = NULL;
 	 }
 		  
-		  
 	 if ((cddb_widgets.use_proxy)->isChecked())
 		  globals.use_proxy = 1;
 	 else
@@ -245,11 +233,9 @@ void PreferencesDialog::apply_settings() {
 	 }
 }
 
-void PreferencesDialog::slotDefault()
-{
+void PreferencesDialog::slotDefault() {
 	 //((KoverTop *)parent)->load_globals();
-	 switch( activePageIndex() )
-	 {
+	 switch( activePageIndex() ) {
 	 case page_cddb:
 		  set_cddb();
 		  break;
@@ -272,8 +258,7 @@ void PreferencesDialog::slotDefault()
 	 }
 }
 
-void PreferencesDialog::set_cddb()
-{
+void PreferencesDialog::set_cddb() {
 	 QString text;
 		  
 	 cddb_widgets.cddb_server->setText(globals.cddb_server);
@@ -285,13 +270,10 @@ void PreferencesDialog::set_cddb()
 		  
 	 cddb_widgets.proxy_port->setText(text.sprintf("%d",globals.proxy_port));
 		  
-	 if (globals.use_proxy)
-	 {
+	 if (globals.use_proxy) {
 		  use_proxy(true);
 		  cddb_widgets.use_proxy->setChecked(true);
-	 }
-	 else
-	 {
+	 }	else {
 		  use_proxy(false);
 		  cddb_widgets.use_proxy->setChecked(false);
 	 }
@@ -303,8 +285,7 @@ void PreferencesDialog::set_cddb()
 
 }
 
-void PreferencesDialog::set_cdrom()
-{
+void PreferencesDialog::set_cdrom() {
 	 cdrom_widgets.cdrom_device->setText(globals.cdrom_device);
 	 if (globals.eject_cdrom)
 		  cdrom_widgets.eject_cdrom->setChecked(true);
@@ -312,8 +293,7 @@ void PreferencesDialog::set_cdrom()
 		  cdrom_widgets.eject_cdrom->setChecked(false);
 }
 
-void PreferencesDialog::set_cddb_files()
-{
+void PreferencesDialog::set_cddb_files() {
 	 if (globals.read_local_cddb)
 		  cddb_files_widgets.read_local_cddb->setChecked(true);
 	 else
@@ -328,9 +308,7 @@ void PreferencesDialog::set_cddb_files()
 
 }
 
-void PreferencesDialog::setup_cddb_files_page(void)
-{
-		  
+void PreferencesDialog::setup_cddb_files_page(void) {
 	 QFrame *page = addPage( i18n("CDBB files"), i18n("Local CDDB files"),
 									 BarIcon("folder_blue", KIcon::SizeMedium ) );
 	 QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );
@@ -364,8 +342,7 @@ void PreferencesDialog::setup_cddb_files_page(void)
 	 topLayout->addStretch(10);
 }
 
-void PreferencesDialog::save_cddb_files()
-{
+void PreferencesDialog::save_cddb_files() {
 	 struct stat stat_struct;
 		  
 	 if ((cddb_files_widgets.read_local_cddb)->isChecked())
@@ -378,14 +355,12 @@ void PreferencesDialog::save_cddb_files()
 	 else
 		  globals.write_local_cddb = 0;
 		  
-	 if (!((cddb_files_widgets.cddb_path)->text()).isEmpty())
-	 {
+	 if (!((cddb_files_widgets.cddb_path)->text()).isEmpty()) {
 		  if (globals.cddb_path)
 				free(globals.cddb_path);
 		  globals.cddb_path = strdup(((cddb_files_widgets.cddb_path)->text()).latin1());
 		  /* checking for "/" at the end */
-		  if (globals.cddb_path[strlen(globals.cddb_path)-1]!='/')
-		  {
+		  if (globals.cddb_path[strlen(globals.cddb_path)-1]!='/') {
 				char *dummy = strdup(globals.cddb_path);
 				free(globals.cddb_path);
 				globals.cddb_path = (char *) malloc(strlen(dummy)+1);
@@ -393,21 +368,17 @@ void PreferencesDialog::save_cddb_files()
 				strcat(globals.cddb_path,"/");
 				free(dummy);
 		  }
-	 }
-	 else
-	 {
+	 } else {
 		  if (globals.cddb_path)
 				free(globals.cddb_path);
 		  globals.cddb_path = NULL;
 	 }
 		  
-	 if (globals.cddb_path)
-	 {
+	 if (globals.cddb_path) {
 		  /* does the directory exist */
 		  if (stat(globals.cddb_path,&stat_struct)==-1)
 				/* no it doesn't... let's create one */
-				if(mkdir(globals.cddb_path,0777)==-1)
-				{
+				if(mkdir(globals.cddb_path,0777)==-1) {
 					 /* failed */
 					 free(globals.cddb_path);
 					 globals.cddb_path = NULL;
@@ -415,8 +386,7 @@ void PreferencesDialog::save_cddb_files()
 	 }
 }
 
-void PreferencesDialog::setup_misc_page()
-{
+void PreferencesDialog::setup_misc_page() {
 	 QFrame *page = addPage( i18n("Miscellaneous"), i18n("Various properties"),
 									 BarIcon("misc", KIcon::SizeMedium ) );
 	 QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );
@@ -445,8 +415,7 @@ void PreferencesDialog::setup_misc_page()
 	 set_misc();
 }
 
-void PreferencesDialog::set_misc()
-{
+void PreferencesDialog::set_misc() {
 	 if (globals.trigger_actual_size)
 		  misc_widgets.trigger_actual_size->setChecked(true);
 	 else
@@ -461,11 +430,9 @@ void PreferencesDialog::set_misc()
 		  misc_widgets.its_a_slim_case->setChecked(true);
 	 else
 		  misc_widgets.its_a_slim_case->setChecked(false);
-		  
 }
 
-void PreferencesDialog::save_misc()
-{
+void PreferencesDialog::save_misc() {
 	 if ((misc_widgets.trigger_actual_size)->isChecked())
 		  globals.trigger_actual_size = 1;
 	 else

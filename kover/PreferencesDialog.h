@@ -21,13 +21,14 @@
 	Description: Header to PreferencesDialog.cpp
 */
 
+/* $Id: PreferencesDialog.h,v 1.9 2001/07/15 22:45:23 adrian Exp $ */
+
 #ifndef PREFERENCES_DIALOG_H
 #define PREFERENCES_DIALOG_H
 
 #include "kover.h"
 
-class PreferencesDialog : public KDialogBase
-{
+class PreferencesDialog : public KDialogBase {
 	 Q_OBJECT
 
 public:
@@ -50,8 +51,7 @@ private:
 	 void save_cddb_files();
 	 void save_misc();
 
-	 struct cddb_widgets
-	 {
+	 struct cddb_widgets {
 		  QLineEdit *cddb_server;
 		  QLineEdit *cgi_path;
 		  QCheckBox *use_proxy;
@@ -62,8 +62,7 @@ private:
 		  
 	 QWidget *parent;
 
-	 enum Page
-	 {
+	 enum Page {
 		  page_cddb = 0,
 		  page_cdrom,
 		  page_cddb_files,
@@ -71,21 +70,18 @@ private:
 		  page_max
 	 };
 
-	 struct cdrom_widgets
-	 {
+	 struct cdrom_widgets {
 		  QLineEdit *cdrom_device;
 		  QCheckBox *eject_cdrom;
 	 } cdrom_widgets;
 
-	 struct cddb_files_widgets
-	 {
+	 struct cddb_files_widgets {
 		  QCheckBox *read_local_cddb;
 		  QCheckBox *write_local_cddb;
 		  QLineEdit *cddb_path;
 	 } cddb_files_widgets;
 
-	 struct misc_widgets
-	 {
+	 struct misc_widgets {
 		  QCheckBox * trigger_actual_size;
 		  QCheckBox * display_track_duration;
 		  QCheckBox * its_a_slim_case;
@@ -95,7 +91,6 @@ private slots:
 void use_proxy(bool status);
 	 virtual void slotOk(void);
 	 virtual void slotDefault();
-		  
 };
 
 #endif /* PREFERENCES_DIALOG_H */
