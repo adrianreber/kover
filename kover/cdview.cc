@@ -1,7 +1,7 @@
 /**  emacs, I suggest you use: -*- adrian-c -*-
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-	 Copyright (C) 1998, 1999, 2000 by Denis Oliver Kropp
-	 Copyright (C) 2000, 2001 by Adrian Reber 
+	 Copyright (C) 1998-2000 by Denis Oliver Kropp
+	 Copyright (C) 2000-2003 by Adrian Reber 
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -28,10 +28,10 @@
 	 29 Oct 2001: Change size of the inlet title font
 */
 
-/* $Id: cdview.cc,v 1.8 2002/10/13 18:32:15 adrian Exp $ */
+/* $Id: cdview.cc,v 1.9 2003/02/07 16:44:40 adrian Exp $ */
 
 #include "cdview.moc"
-
+#include "koverfile.h"
 #include "cdview.h"
 
 #include <qimage.h>
@@ -43,21 +43,12 @@
 #include <kmessagebox.h>
 #include <math.h>
 #include <stdio.h>
-#include "koverfile.h"
 
 #define FRONT_H	343
 #define FRONT_V	338
-
-// #define FRONT_H 500 
-// #define FRONT_V 493
-
 #define BACK_HI	391
 #define BACK_HS	17
-#define BACK_V		334
-
-// #define BACK_HI      570
-// #define BACK_HS      25
-// #define BACK_V               487
+#define BACK_V 334
 
 CDView::CDView(KoverFile * _kover_file, QWidget * parent, const char *name)
 :QFrame(parent, name)
@@ -83,10 +74,8 @@ void CDView::paintEvent(QPaintEvent *)
     drawFrame(&paint);
 
     if (previewMode) {
-        //paint.scale( 0.68f, 0.68f );
         drawBooklet(&paint, 4, 4);
-        drawInlet(&paint, 150, 4 * 2 + FRONT_V);        //150
-
+        drawInlet(&paint, 150, 4 * 2 + FRONT_V);
         paint.setWorldMatrix(QWMatrix());
         paint.setFont(QFont("helvetica", 14));
         paint.setPen(black);
@@ -94,7 +83,7 @@ void CDView::paintEvent(QPaintEvent *)
     } else {
         paint.scale(0.4f, 0.4f);
         drawBooklet(&paint, 20, 15);
-        drawInlet(&paint, 140, 15 * 2 + FRONT_V);       //140
+        drawInlet(&paint, 140, 15 * 2 + FRONT_V);
     }
 }
 
@@ -116,20 +105,15 @@ void CDView::printKover()
 
         previewMode = true;     // hack
 
-        //paint->scale( 1.45783f, 1.45783f   );
-
         //this is getting ugly
         if (!globals.one_page) {
-
             if (!globals.inlet_only) {
                 if (printer->fromPage() == 1)
                     drawBooklet(paint, 20, 20);
             }
-
             if (!globals.its_a_slim_case) {
                 if (!globals.inlet_only)
                     printer->newPage();
-
                 if (printer->toPage() == 2)
                     drawInlet(paint, 20, 20);
             }
@@ -155,7 +139,6 @@ void CDView::drawBooklet(QPainter * p, int X, int Y)
 {
     if (globals.inlet_only)
         return;
-
     const float scale = 0.4;
 
     if (globals.one_page)
@@ -460,23 +443,6 @@ void CDView::drawInlet(QPainter * p, int X, int Y)
             BACK_HI - 5, BACK_V - 7, AlignLeft, kover_file->contents(),
             kover_file->contents().length());
     }
-
-    /*
-       cerr << "font: " << kover_file->titleFont ().pointSize () << endl;
-
-       cerr << "1 " << (p->pos()).x() << ".." << (p->pos()).y() << endl;
-
-       p->moveTo(30,30);
-
-       cerr << "2 " << (p->pos()).x() << ".." << (p->pos()).y() << endl;
-
-       QImage load ("hi48-app-kover.png");
-       QPixmap image;
-       image.convertFromImage(load);
-       p->drawPixmap (QRect(20,20,100,30), image);
-       cerr << "3 " << (p->pos()).x() << ".." << (p->pos()).y() << endl;
-     */
-
 }
 
 void CDView::mousePressEvent(QMouseEvent * evt)
@@ -545,6 +511,5 @@ void CDView::dataChanged(bool image)
             }
         }
     }
-
     repaint(false);
 }

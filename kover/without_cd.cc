@@ -1,6 +1,6 @@
 /** -*- adrian-c -*-
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-	 Copyright (C) 2001 by Adrian Reber 
+	 Copyright (C) 2001-2003 by Adrian Reber 
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -26,13 +26,11 @@
 
 */
 
-/* $Id: without_cd.cc,v 1.4 2002/01/13 00:33:21 adrian Exp $ */
+/* $Id: without_cd.cc,v 1.5 2003/02/07 16:44:40 adrian Exp $ */
 
 #include "without_cd.moc"
-
 #include "without_cd.h"
 #include "categories.h"
-
 #include "kover.h"
 
 #include <qpushbutton.h>
@@ -40,85 +38,98 @@
 #include <qlayout.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
-
 #include <stdlib.h>
 #include <stdio.h>
 
 using namespace std;
 
-without_cd::without_cd() : QDialog(0,0,TRUE,0) {
-	 QString greeting;
-	 QVBoxLayout *top_layout = new QVBoxLayout(this);
-	 top_layout->setMargin(7);
-	 top_layout->addSpacing(10);
-	 greeting = tr("Select a category:");
-	 QLabel *label = new QLabel(greeting,this);
-	 category = new QComboBox(this,"categories");
-	 categories *cat = new categories();
-	 for (int i=0;i<=cat->how_many();i++) {
-		  string insert = cat->get_category(i);
-		  if (!insert.empty())
-				category->insertItem(QString(insert.c_str()));
-	 }
-	 top_layout->addWidget(label);
-	 top_layout->addSpacing(5);
-	 top_layout->addWidget(category);
-	 top_layout->addSpacing(10);
+without_cd::without_cd():QDialog(0, 0, TRUE, 0)
+{
+    QString greeting;
+    QVBoxLayout *top_layout = new QVBoxLayout(this);
 
-	 cddb_id = new QLineEdit(this);
-	 cddb_id->setFocus();
+    top_layout->setMargin(7);
+    top_layout->addSpacing(10);
+    greeting = tr("Select a category:");
+    QLabel *label = new QLabel(greeting, this);
 
-	 //top_layout->addWidget(box);
-	 top_layout->addWidget(new QLabel(tr("Enter CDDB Id:"),this));
-	 top_layout->addSpacing(5);
-	 top_layout->addWidget(cddb_id);
-	 top_layout->addSpacing(10);
-	
-	 QBoxLayout *button_layout = new QBoxLayout(top_layout, QBoxLayout::RightToLeft, -10);
-	
-	 QPushButton *ok = new QPushButton(tr("Search"),this ,"ok");
-	 ok->setDefault(TRUE);
-	 
-	 ok->setMaximumWidth(70);
+    category = new QComboBox(this, "categories");
+    categories *cat = new categories();
 
-    connect( ok, SIGNAL(clicked()), SLOT(accept()) );
-	 //button_layout->addSpacing(5);
-	 button_layout->addWidget(ok,0,AlignRight);
-	 button_layout->addSpacing(10);
+    for (int i = 0; i <= cat->how_many(); i++) {
+        string insert = cat->get_category(i);
 
-	 QPushButton *quit = new QPushButton(tr("Cancel"), this, "quit");
-	 
-    connect( quit, SIGNAL(clicked()), SLOT(quit()) );
-	 quit->setMaximumWidth(70);
-	 button_layout->addWidget(quit,0,AlignRight);
-	 button_layout->addStretch(20);
-	 adjustSize();
+        if (!insert.empty())
+            category->insertItem(QString(insert.c_str()));
+    }
+    top_layout->addWidget(label);
+    top_layout->addSpacing(5);
+    top_layout->addWidget(category);
+    top_layout->addSpacing(10);
+
+    cddb_id = new QLineEdit(this);
+    cddb_id->setFocus();
+
+    top_layout->addWidget(new QLabel(tr("Enter CDDB Id:"), this));
+    top_layout->addSpacing(5);
+    top_layout->addWidget(cddb_id);
+    top_layout->addSpacing(10);
+
+    QBoxLayout *button_layout =
+        new QBoxLayout(top_layout, QBoxLayout::RightToLeft, -10);
+
+    QPushButton *ok = new QPushButton(tr("Search"), this, "ok");
+
+    ok->setDefault(TRUE);
+
+    ok->setMaximumWidth(70);
+
+    connect(ok, SIGNAL(clicked()), SLOT(accept()));
+    button_layout->addWidget(ok, 0, AlignRight);
+    button_layout->addSpacing(10);
+
+    QPushButton *quit = new QPushButton(tr("Cancel"), this, "quit");
+
+    connect(quit, SIGNAL(clicked()), SLOT(quit()));
+    quit->setMaximumWidth(70);
+    button_layout->addWidget(quit, 0, AlignRight);
+    button_layout->addStretch(20);
+    adjustSize();
 }
 
-without_cd::~without_cd() {
+without_cd::~without_cd()
+{
 }
 
-void without_cd::accept() {
-	 QString tmp;
-	 tmp = cddb_id->text();
-	 _DEBUG_ fprintf(stderr,"%s:id: %s\n",PACKAGE,tmp.latin1());
-	 tmp = category->currentText();
-	 _DEBUG_ fprintf(stderr,"%s:category: %d %s\n",PACKAGE,category->currentItem(),tmp.latin1());
-	 QDialog::done(0);
+void without_cd::accept()
+{
+    QString tmp;
+
+    tmp = cddb_id->text();
+    _DEBUG_ fprintf(stderr, "%s:id: %s\n", PACKAGE, tmp.latin1());
+
+    tmp = category->currentText();
+    _DEBUG_ fprintf(stderr, "%s:category: %d %s\n", PACKAGE,
+        category->currentItem(), tmp.latin1());
+    QDialog::done(0);
 }
 
-void without_cd::quit() {
-	 QDialog::done(-1);
+void without_cd::quit()
+{
+    QDialog::done(-1);
 }
 
-void without_cd::handle_input() {
-	 
+void without_cd::handle_input()
+{
+
 }
 
-int without_cd::get_category() {
-	 return category->currentItem();
+int without_cd::get_category()
+{
+    return category->currentItem();
 }
 
-char * without_cd::get_id() {
-	 return strdup((cddb_id->text()).latin1());
+char *without_cd::get_id()
+{
+    return strdup((cddb_id->text()).latin1());
 }

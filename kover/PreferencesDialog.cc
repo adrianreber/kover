@@ -1,6 +1,6 @@
 /**  hey emacs! please try this -*- adrian-c -*-
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-	 Copyright (C) 2000-2002 by Adrian Reber
+	 Copyright (C) 2000-2003 by Adrian Reber
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -32,16 +32,17 @@
 	 13 Mar 2002: Standard font page
 */
 
-/* $Id: PreferencesDialog.cc,v 1.15 2003/01/21 23:25:49 adrian Exp $ */
+/* $Id: PreferencesDialog.cc,v 1.16 2003/02/07 16:44:40 adrian Exp $ */
 
 #ifndef lint
 static char vcid[] =
-    "$Id: PreferencesDialog.cc,v 1.15 2003/01/21 23:25:49 adrian Exp $";
+    "$Id: PreferencesDialog.cc,v 1.16 2003/02/07 16:44:40 adrian Exp $";
 #endif /* lint */
 
 #include "PreferencesDialog.moc"
-
 #include "PreferencesDialog.h"
+#include "server_dialog.h"
+
 #include <qbuttongroup.h>
 #include <klocale.h>
 #include <kiconloader.h>
@@ -51,13 +52,10 @@ static char vcid[] =
 #include <qpushbutton.h>
 #include <qfontdialog.h>
 #include <kfontdialog.h>
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
-
-#include "server_dialog.h"
 
 PreferencesDialog::PreferencesDialog(QWidget * parent,
     const QString & caption, bool changed):KDialogBase(KJanusWidget::IconList,
@@ -95,7 +93,6 @@ void PreferencesDialog::setupCDDBPage(void)
     vlay->addLayout(gbox);
 
     QString text;
-
     QLabel *label = new QLabel(i18n("CDDB server:"), group, "cddblabel");
 
     gbox->addWidget(label, 0, 0);
@@ -113,7 +110,6 @@ void PreferencesDialog::setupCDDBPage(void)
     gbox->addWidget(label, 1, 0);
     cddb_widgets.cgi_path = new QLineEdit(group, "cgi");
     cddb_widgets.cgi_path->setMinimumWidth(fontMetrics().maxWidth() * 10);
-
     gbox->addWidget(cddb_widgets.cgi_path, 1, 1);
 
     group = new QGroupBox(i18n("&Proxy configuration"), page);
@@ -146,9 +142,7 @@ void PreferencesDialog::setupCDDBPage(void)
     cddb_widgets.proxy_port->setMaxLength(5);
 
     gbox->addMultiCellWidget(cddb_widgets.proxy_port, 3, 3, 1, 5);
-
     set_cddb();
-
     topLayout->addStretch(10);
 }
 
@@ -169,7 +163,6 @@ void PreferencesDialog::setupCDROMPage(void)
     vlay->addLayout(gbox);
 
     QString text;
-
     QLabel *label = new QLabel(i18n("CDROM device:"), group, "cdromlabel");
 
     gbox->addWidget(label, 0, 0);
@@ -244,7 +237,7 @@ void PreferencesDialog::slotOk()
     }
 
     if (((cdrom_widgets.cdrom_device)->text()).isEmpty()) {
-        KMessageBox::sorry(this, "Please enter a cdrom device.");
+        KMessageBox::sorry(this, i18n("Please enter a cdrom device."));
         return;
     }
 
@@ -356,7 +349,6 @@ void PreferencesDialog::set_cddb()
     QString text;
 
     cddb_widgets.cddb_server->setText(globals.cddb_server);
-
     cddb_widgets.cgi_path->setText(globals.cgi_path);
 
     if (globals.proxy_server)
@@ -403,7 +395,6 @@ void PreferencesDialog::set_cddb_files()
         cddb_files_widgets.write_local_cddb->setChecked(false);
 
     cddb_files_widgets.cddb_path->setText(globals.cddb_path);
-
 }
 
 void PreferencesDialog::setup_cddb_files_page(void)
@@ -443,7 +434,6 @@ void PreferencesDialog::setup_cddb_files_page(void)
     gbox->addMultiCellWidget(cddb_files_widgets.cddb_path, 2, 2, 1, 5);
 
     set_cddb_files();
-
     topLayout->addStretch(10);
 }
 
@@ -503,7 +493,6 @@ void PreferencesDialog::setup_cover_page()
     QButtonGroup *group = new QButtonGroup(i18n("Cover"), page);
 
     topLayout->addWidget(group);
-
     QVBoxLayout *vlay = new QVBoxLayout(group, spacingHint());
 
     vlay->addSpacing(fontMetrics().lineSpacing());
@@ -560,7 +549,6 @@ void PreferencesDialog::set_cover()
         cover_widgets.display_track_duration->setChecked(false);
 
     /* no comment */
-
     if (globals.its_a_slim_case) {
         cover_widgets.its_a_slim_case->setChecked(true);
         output_changed(2);
@@ -624,20 +612,23 @@ void PreferencesDialog::setup_font_page()
 
     vlay->addLayout(gbox);
 
-    QLabel *label = new QLabel(QString(i18n("Changes to any of these fonts are global.\n"))+
-                               QString(i18n("This means, that changes will only be available\n"))+
-                               QString(i18n("for the next new cover.\n"))+
-                               QString(i18n("Except that the current cover is empty.\n"))+
-                               QString(i18n("Then changes are applied to the current cover.")), group, "font_info");
-    
-    gbox->addMultiCellWidget(label, 0, 0,0, 1);
-    
+    QLabel *label =
+        new
+        QLabel(QString(i18n("Changes to any of these fonts are global.\n")) +
+        QString(i18n("This means, that changes will only be available\n")) +
+        QString(i18n("for the next new cover.\n")) +
+        QString(i18n("Except that the current cover is empty.\n")) +
+        QString(i18n("Then changes are applied to the current cover.")),
+        group, "font_info");
+
+    gbox->addMultiCellWidget(label, 0, 0, 0, 1);
+
     label = new QLabel(i18n("Content Font: "), group, "content_font");
 
     gbox->addWidget(label, 1, 0);
 
     font_widgets.change_content_font =
-        new QPushButton("Change", group, "change_content_font");
+        new QPushButton(i18n("Change"), group, "change_content_font");
     gbox->addWidget(font_widgets.change_content_font, 1, 1);
     connect(font_widgets.change_content_font, SIGNAL(clicked()),
         SLOT(content_font_dialog()));
@@ -646,7 +637,7 @@ void PreferencesDialog::setup_font_page()
     gbox->addWidget(label, 2, 0);
 
     font_widgets.change_title_font =
-        new QPushButton("Change", group, "change_title_font");
+        new QPushButton(i18n("Change"), group, "change_title_font");
     gbox->addWidget(font_widgets.change_title_font, 2, 1);
     connect(font_widgets.change_title_font, SIGNAL(clicked()), this,
         SLOT(title_font_dialog()));
@@ -655,11 +646,10 @@ void PreferencesDialog::setup_font_page()
     gbox->addWidget(label, 3, 0);
 
     font_widgets.change_inlet_title_font =
-        new QPushButton("Change", group, "change_inlet_title_font");
+        new QPushButton(i18n("Change"), group, "change_inlet_title_font");
     gbox->addWidget(font_widgets.change_inlet_title_font, 3, 1);
     connect(font_widgets.change_inlet_title_font, SIGNAL(clicked()), this,
         SLOT(inlet_title_font_dialog()));
-
 }
 
 void PreferencesDialog::content_font_dialog()
@@ -768,7 +758,6 @@ void PreferencesDialog::setup_misc_page(void)
     gbox->addWidget(misc_widgets.trigger_actual_size, 2, 0);
 
     set_misc();
-
     topLayout->addStretch(10);
 }
 

@@ -1,6 +1,6 @@
 /** -*- adrian-c -*-
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-	 Copyright (C) 2001-2002 by Adrian Reber 
+	 Copyright (C) 2001-2003 by Adrian Reber 
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -26,66 +26,67 @@
 
 */
 
-/* $Id: sites.cc,v 1.5 2002/05/05 22:01:54 adrian Exp $ */
+/* $Id: sites.cc,v 1.6 2003/02/07 16:44:40 adrian Exp $ */
 
 #include "sites.h"
 
 #include <unistd.h>
 
-sites::sites() {
-	 connect();
+sites::sites()
+{
+    connect();
 }
 
-sites::~sites() {
-	 disconnect();
+sites::~sites()
+{
+    disconnect();
 }
 
-bool sites::gen_server_list(list <server *> &server_list) {
-	 char cmd[] = "sites";
-	 char *request = NULL;
-	 char *code_string = NULL;
-	 int code = 0;
-	 char s[256];
+bool sites::gen_server_list(list < server * >&server_list)
+{
+    char cmd[] = "sites";
+    char *request = NULL;
+    char *code_string = NULL;
+    int code = 0;
+    char s[256];
 
-	 request = make_cddb_request(cmd,false);
+    request = make_cddb_request(cmd, false);
 
-	 _DEBUG_ fprintf(stderr,"%s:%s\n",PACKAGE,request);
-	 
-	 write(socket_1,request,strlen(request));
+    _DEBUG_ fprintf(stderr, "%s:%s\n", PACKAGE, request);
 
-	 code = skip_http_header(socket_1);
+    write(socket_1, request, strlen(request));
 
-	 _DEBUG_ fprintf(stderr,"%s:sites::gen_server_list():http code:%d\n",PACKAGE,code);
-	 code = 0;
-	 code_string = (char *)malloc(21);
-	 if (read(socket_1, code_string, 20) < 0)
-		  return false;
+    code = skip_http_header(socket_1);
 
-	 code_string[20] = 0;
+    _DEBUG_ fprintf(stderr, "%s:sites::gen_server_list():http code:%d\n",
+        PACKAGE, code);
+    code = 0;
+    code_string = (char *) malloc(21);
+    if (read(socket_1, code_string, 20) < 0)
+        return false;
 
-	 _DEBUG_ fprintf(stderr,"%s:cddb answer: %s\n",PACKAGE,code_string);
+    code_string[20] = 0;
 
-	 code = atoi(code_string);
-	 if (!code)
-		  return false;
-	 
-	 while (read(socket_1, code_string, 1) > 0) {
-		  if (code_string[0]==10)
-				break;
-	 }
-		  
+    _DEBUG_ fprintf(stderr, "%s:cddb answer: %s\n", PACKAGE, code_string);
 
-	 free (request);
-	 free (code_string);
+    code = atoi(code_string);
+    if (!code)
+        return false;
 
-	 while (1) {
-		  if (!fgets(s, 255, sk_1) || !strncmp(s,".", 1))
-				break;
-		  server_list.push_back(new server(s));
-		  _DEBUG_ fprintf(stderr,"answer: %s",s);
-	 }
+    while (read(socket_1, code_string, 1) > 0) {
+        if (code_string[0] == 10)
+            break;
+    }
 
-	 return true;
+    free(request);
+    free(code_string);
+
+    while (1) {
+        if (!fgets(s, 255, sk_1) || !strncmp(s, ".", 1))
+            break;
+        server_list.push_back(new server(s));
+        _DEBUG_ fprintf(stderr, "answer: %s", s);
+    }
+
+    return true;
 }
-
-

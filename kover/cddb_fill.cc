@@ -1,7 +1,7 @@
 /** Hey emacs! This is: -*- adrian-c -*-
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
 	 Copyright (C) 1999-2000 by Denis Oliver Kropp
-	 Copyright (C) 2000-2002 by Adrian Reber 
+	 Copyright (C) 2000-2003 by Adrian Reber 
 	   
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.18 2003/01/21 23:25:49 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.19 2003/02/07 16:44:40 adrian Exp $ */
 
 #include "cddb_fill.moc"
 
@@ -77,7 +77,9 @@ extern "C" {
 #include <linux/ucdrom.h>
 #endif
 
-} track_info::track_info(int _track, int _min, int _sec, int _frame)
+} 
+
+track_info::track_info(int _track, int _min, int _sec, int _frame)
 {
     track = _track;
     min = _min;
@@ -127,10 +129,10 @@ bool CDDB_Fill::execute()
         } else {
             if (errno < sys_nerr) {
                 message =
-                    (char *) malloc(strlen(sys_errlist[errno]) +
+                    (char *) malloc(strlen(strerror(errno)) +
                     strlen("Connecting to CDDB server failed: "));
                 sprintf(message, "Connecting to CDDB server failed: %s",
-                    sys_errlist[errno]);
+                    strerror(errno));
                 emit statusText(message);
 
                 //free (message);
@@ -175,10 +177,10 @@ bool CDDB_Fill::execute_without_cd(const char *id, int cat)
         } else {
             if (errno < sys_nerr) {
                 message =
-                    (char *) malloc(strlen(sys_errlist[errno]) +
+                    (char *) malloc(strlen(strerror(errno)) +
                     strlen("Connecting to CDDB server failed: "));
                 sprintf(message, "Connecting to CDDB server failed: %s",
-                    sys_errlist[errno]);
+                    strerror(errno));
                 emit statusText(message);
 
                 //free (message);
@@ -236,7 +238,7 @@ void CDDB_Fill::cdInfo()
     QString str;
 
     str.sprintf
-        ("CD contains %d tracks, total time is %d:%02d, the magic number is 0x%lx",
+        (tr("CD contains %d tracks, total time is %d:%02d, the magic number is 0x%lx"),
         cdinfo.ntracks, cdinfo.length / 60, cdinfo.length % 60,
         cdinfo.cddb_id);
     _DEBUG_ fprintf(stderr, "%s:%s\n", PACKAGE, str.latin1());
@@ -397,8 +399,6 @@ unsigned long CDDB_Fill::calcID()
     return ((n % 0xff) << 24 | t << 8 | cdinfo.ntracks);
 }
 
-///////////////////////////////////////////////
-
 void CDDB_Fill::parse_trails(char *ss)
 {
     unsigned int i;
@@ -408,10 +408,6 @@ void CDDB_Fill::parse_trails(char *ss)
             ss[i] = 0;
     }
 }
-
-/**** START GENERAL NETWORK CODE *****************************************/
-
-// opening to connections to the database server for a secret reason
 
 int CDDB_Fill::cddb_connect()
 {
@@ -431,10 +427,6 @@ void CDDB_Fill::cddb_disconnect()
     net::disconnect();
 }
 
-/**** END GENERAL NETWORK CODE *******************************************/
-
-/**** START CDDB INTENSIVE ROUTINES **************************************/
-
 char *CDDB_Fill::cddbHello()
 {
     return cddb_hello();
@@ -442,6 +434,7 @@ char *CDDB_Fill::cddbHello()
 
 /** getCDDBFromLocalFile checks if there is already a file containing the disc info we are looking for.
  *  Currently the .cddb directory is used to check for available cddb entries
+ *
  *
  */
 
@@ -457,15 +450,15 @@ bool CDDB_Fill::getCDDBFromLocalFile(bool without)
     if (globals.cddb_path) {
         _DEBUG_ fprintf(stderr, "CDDBDIR=%s\n", globals.cddb_path);
 
-		 cddb_file = (char *) malloc(strlen(globals.cddb_path) + 10 + strlen(cdinfo.category));
-       strcpy(cddb_file, globals.cddb_path);
-       strncat(cddb_file, cdinfo.category, strlen(cdinfo.category));
-       strncat(cddb_file,"/",1);
-																						                     snprintf(help_string, 9, "%08lx", cdinfo.cddb_id);
-		 strncat(cddb_file, help_string, 8);
+        cddb_file =
+            (char *) malloc(strlen(globals.cddb_path) + 10 +
+            strlen(cdinfo.category));
+        strcpy(cddb_file, globals.cddb_path);
+        strncat(cddb_file, cdinfo.category, strlen(cdinfo.category));
+        strncat(cddb_file, "/", 1);
+        snprintf(help_string, 9, "%08lx", cdinfo.cddb_id);
+        strncat(cddb_file, help_string, 8);
 
-
-		  
         _DEBUG_ fprintf(stderr, "file : %s\n", cddb_file);
 
         cddb_file_descriptor = fopen(cddb_file, "r");
@@ -475,7 +468,7 @@ bool CDDB_Fill::getCDDBFromLocalFile(bool without)
         if (cddb_file_descriptor) {
             emit statusText(tr("Using local values for disc"));
 
-            cddb_readcdinfo(cddb_file_descriptor, true, true,without);
+            cddb_readcdinfo(cddb_file_descriptor, true, true, without);
             fclose(cddb_file_descriptor);
             return true;
         }
@@ -530,8 +523,6 @@ bool CDDB_Fill::cddb_query()
 
     /* free free free */
 
-    //free(hello_buffer);
-    //free(query_buffer);
     free(http_buffer);
     free(offset_buffer);
 
@@ -543,12 +534,6 @@ bool CDDB_Fill::cddb_query()
 
     _DEBUG_ fprintf(stderr, "kover:CDDB_Fill::cddb_query():http code:%d\n",
         code);
-
-    //proxy_auth * proxy_auth_dialog = NULL;
-
-    //globals.base64encoded = NULL;
-
-    //int aber=0;
 
     switch (code) {
     case 407:
@@ -572,25 +557,7 @@ bool CDDB_Fill::cddb_query()
 
     // determining the code of the cddb answer see http://www.freedb.org/sections.php?op=viewarticle&artid=28 for details
     code = 0;
-    //code_string = (char *) malloc (21);
-    //if (read (socket_1, code_string, 20) < 0)
-    //    return false;
-
-    //code_string[20] = 0;
-
-    /*code_string = readline(socket_1);
-
-       _DEBUG_ fprintf(stderr, "answer: %s\n", code_string);
-
-       code = atoi(code_string);
-       if (!code)
-       return false;
-
-       strcpy(cddb_msg, strchr(code_string, 32) + 1);
-       free(code_string); */
-
-    //end cddb code stuff
-
+    
     // finally some STL
     list < cddb_211_item * >inexact_list;
     inexact_dialog *inexact;
@@ -601,8 +568,7 @@ bool CDDB_Fill::cddb_query()
     while (bye) {
         code_string = readline(socket_1);
         code = atoi(code_string);
-        //if (!code)
-        //    return false;
+        
         if (strlen(code_string) < 5)
             continue;
 
@@ -726,10 +692,6 @@ bool CDDB_Fill::cddb_query()
         default:
             cddb_msg[strlen(cddb_msg) - 1] = 0;
             _DEBUG_ fprintf(stderr, "here(%02d): %s\n", code, cddb_msg);
-
-            /*fprintf(stderr, "kover:%s:%d: this should not happen\n", __FILE__,
-               __LINE__);
-               return false; */
         }
     }
     cddb_readcdinfo(sk_2, false, true);
@@ -819,8 +781,6 @@ bool CDDB_Fill::cddb_readcdinfo(FILE * desc, bool local, bool save_as_file,
                     code_string);
                 if (strlen(code_string) < 5)
                     continue;
-                //if (!code)
-                //    return false;
                 if (strchr(code_string, 32))
                     strcpy(cddb_msg, strchr(code_string, 32) + 1);
                 free(code_string);
@@ -867,11 +827,13 @@ bool CDDB_Fill::cddb_readcdinfo(FILE * desc, bool local, bool save_as_file,
             if (!file_opened) {
                 if (globals.cddb_path) {
                     cddb_file =
-                        (char *) malloc(strlen(globals.cddb_path) + 10 + strlen(cdinfo.category));
+                        (char *) malloc(strlen(globals.cddb_path) + 10 +
+                        strlen(cdinfo.category));
                     strcpy(cddb_file, globals.cddb_path);
 
-                    strncat(cddb_file, cdinfo.category, strlen(cdinfo.category));
-                    strncat(cddb_file,"/",1);
+                    strncat(cddb_file, cdinfo.category,
+                        strlen(cdinfo.category));
+                    strncat(cddb_file, "/", 1);
                     snprintf(help_string, 9, "%08lx", calcID());
                     strncat(cddb_file, help_string, 8);
 
@@ -975,47 +937,6 @@ char *CDDB_Fill::make_cddb_request(char *query_me, bool use_auth)
     }
 
     return return_me;
-
-//       char *hello_buffer = NULL;
-//       char *return_me = NULL;
-//       int length;
-
-//       hello_buffer = cddbHello();
-
-//       if (!hello_buffer) {
-//                emit statusText(tr("Trouble creating cddb greeting... Giving up..."));
-//                return return_me;
-//       }
-
-//       length = strlen(hello_buffer);
-
-//       if (globals.use_proxy) {
-//                if (use_auth && globals.base64encoded) {
-//                              length += strlen("GET http://  /  ?cmd=    &proto=   HTTP/1.1    Host:       User-Agent:   /   Accept: text/plain  Proxy-authorization: Basic %s")+strlen(globals.cddb_server)
-//                                       +strlen(globals.cgi_path)+strlen(query_me)+strlen(KOVER_CDDB_LEVEL)+strlen(globals.cddb_server)+strlen(PACKAGE)+strlen(VERSION)+strlen(globals.base64encoded)+10; 
-//                } else {
-//                              length += strlen("GET http://  /  ?cmd=    &proto=   HTTP/1.1    Host:       User-Agent:   /   Accept: text/plain  ")+strlen(globals.cddb_server)
-//                                       +strlen(globals.cgi_path)+strlen(query_me)+strlen(KOVER_CDDB_LEVEL)+strlen(globals.cddb_server)+strlen(PACKAGE)+strlen(VERSION)+10; 
-//                }
-//                return_me = (char *)malloc(length);
-//                if (use_auth && globals.base64encoded ) {
-//                              snprintf(return_me,length,"GET http://%s/%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\nProxy-authorization: Basic %s\n\n",
-//                                                      globals.cddb_server,globals.cgi_path,query_me,hello_buffer,KOVER_CDDB_LEVEL,globals.cddb_server,PACKAGE,VERSION,globals.base64encoded);
-//                } else {
-//                              snprintf(return_me,length,"GET http://%s/%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\n\n",
-//                                                      globals.cddb_server,globals.cgi_path,query_me,hello_buffer,KOVER_CDDB_LEVEL,globals.cddb_server,PACKAGE,VERSION);
-//                }
-//       } else {
-//                length += strlen("GET /  ?cmd=    &proto=   HTTP/1.1    Host:       User-Agent:   /   Accept: text/plain  ")
-//                              +strlen(globals.cgi_path)+strlen(query_me)+strlen(KOVER_CDDB_LEVEL)+strlen(globals.cddb_server)+strlen(PACKAGE)+strlen(VERSION)+10;
-//                return_me = (char *)malloc(length);
-//                snprintf(return_me,length,"GET /%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\n\n",
-//                                        globals.cgi_path,query_me,hello_buffer,KOVER_CDDB_LEVEL,globals.cddb_server,PACKAGE,VERSION);
-//       }
-
-//       free(hello_buffer);
-
-//       return return_me;
 }
 
 bool CDDB_Fill::do_authentification(char *query_buffer, int socket)

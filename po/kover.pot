@@ -377,3 +377,144 @@ msgstr ""
 #: proxy_auth.cc:63
 msgid "User Name:"
 msgstr ""
+
+#: cddb_fill.cc:139 cddb_fill.cc:187
+msgid "No http_proxy environment variable found... Giving up..."
+msgstr ""
+
+#: cddb_fill.cc:142 cddb_fill.cc:190
+msgid "Don't understand http_proxy environment variable... Giving up..."
+msgstr ""
+
+#: kovertop.cc:159
+msgid "Spine Text Font..."
+msgstr ""
+
+#: kovertop.cc:163
+msgid "CDDB without CD"
+msgstr ""
+
+#: kovertop.cc:204
+msgid "All this options are not global"
+msgstr ""
+
+#: kovertop.cc:215
+msgid "No title on booklet"
+msgstr ""
+
+#: kovertop.cc:221
+msgid "Separate Spine Text"
+msgstr ""
+
+#: kovertop.cc:404
+msgid ""
+"*.kover|Kover files\n"
+"*|All files\n"
+"*.k3b|k3b files"
+msgstr ""
+
+#: kovertop.cc:500
+msgid ""
+"*.kover|Kover files\n"
+"*|All files"
+msgstr ""
+
+#: PreferencesDialog.cc:499 PreferencesDialog.cc:503
+msgid "Cover"
+msgstr ""
+
+#: PreferencesDialog.cc:516
+msgid "Display track duration after a CDDB request"
+msgstr ""
+
+#: PreferencesDialog.cc:522
+msgid "Print inlet and booklet"
+msgstr ""
+
+#: PreferencesDialog.cc:531
+msgid ""
+"Don't print booklet.\n"
+"(inlet only option)"
+msgstr ""
+
+#: PreferencesDialog.cc:535
+msgid "Print all on one page"
+msgstr ""
+
+#: PreferencesDialog.cc:613
+msgid "Standard Fonts"
+msgstr ""
+
+#: PreferencesDialog.cc:617
+msgid "&Standard Fonts"
+msgstr ""
+
+#: PreferencesDialog.cc:627
+msgid "Changes to any of these fonts are global.\n"
+msgstr ""
+
+#: PreferencesDialog.cc:628
+msgid "This means, that changes will only be available\n"
+msgstr ""
+
+#: PreferencesDialog.cc:629
+msgid "for the next new cover.\n"
+msgstr ""
+
+#: PreferencesDialog.cc:630
+msgid "Except that the current cover is empty.\n"
+msgstr ""
+
+#: PreferencesDialog.cc:631
+msgid "Then changes are applied to the current cover."
+msgstr ""
+
+#: PreferencesDialog.cc:635
+msgid "Content Font: "
+msgstr ""
+
+#: PreferencesDialog.cc:645
+msgid "Title Font: "
+msgstr ""
+
+#: PreferencesDialog.cc:654
+msgid "Spine Text Font: "
+msgstr ""
+
+#: PreferencesDialog.cc:756
+msgid "Save window position"
+msgstr ""
+
+#: PreferencesDialog.cc:760
+msgid "Disable unnecessary animation"
+msgstr ""
+
+#: PreferencesDialog.cc:765
+msgid "Mouse click on kover preview triggers actual size"
+msgstr ""
+
+#: PreferencesDialog.cc:815
+msgid ""
+"Changes to the fonts will not be applied to the current cover, but for the "
+"next new cover."
+msgstr ""
+
+#: inexact_dialog.cc:80 proxy_auth.cc:76
+msgid "Ok"
+msgstr ""
+
+#: proxy_auth.cc:69
+msgid "Password:"
+msgstr ""
+
+#: without_cd.cc:54
+msgid "Select a category:"
+msgstr ""
+
+#: without_cd.cc:72
+msgid "Enter CDDB Id:"
+msgstr ""
+
+#: without_cd.cc:79
+msgid "Search"
+msgstr ""

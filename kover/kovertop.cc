@@ -1,7 +1,7 @@
 /**  hey emacs! try -*- adrian-c -*- mode
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-	 Copyright (C) 1999, 2000 by Denis Oliver Kropp
-	 Copyright (C) 2000, 2001 by Adrian Reber 
+	 Copyright (C) 1998-2000 by Denis Oliver Kropp
+	 Copyright (C) 2000-2003 by Adrian Reber 
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -34,13 +34,14 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.cc,v 1.19 2003/01/21 23:25:49 adrian Exp $ */
+/* $Id: kovertop.cc,v 1.20 2003/02/07 16:44:40 adrian Exp $ */
 
 #include "kovertop.moc"
 
 #include "kovertop.h"
 #include "imagedlg.h"
 #include "without_cd.h"
+
 #include <klocale.h>
 #include <kmainwindow.h>
 #include <kapp.h>
@@ -59,7 +60,7 @@
 #include <qgroupbox.h>
 
 #define NORM_WIDTH 520
-#define NORM_HEIGHT 450
+#define NORM_HEIGHT 460
 #define MORE_HEIGHT 515
 
 #define MORE_FRAME_HEIGHT 40
@@ -86,11 +87,8 @@ KoverTop::KoverTop(const char *name):KMainWindow(0, name)
     status_bar->insertItem("Kover " VERSION " - http://lisas.de/kover/", 1);
 
     make_menu();
-
     make_main_frame();
-
     make_more_frame();
-
     make_option_frame();
 
     connect(&kover_file, SIGNAL(dataChanged(bool)), SLOT(dataChanged(bool)));
@@ -168,7 +166,6 @@ void KoverTop::make_menu()
 
 void KoverTop::make_main_frame()
 {
-
     title_label = new QLabel(i18n("Title"), main_frame, "title_label");
     title_label->move(5, 0);
 
@@ -179,7 +176,7 @@ void KoverTop::make_main_frame()
 
     contents_label =
         new QLabel(i18n("Contents"), main_frame, "contents_label");
-    contents_label->move(5, 90);
+    contents_label->move(5, 88);
 
     contents_edit = new QMultiLineEdit(main_frame, "contents_edit");
     contents_edit->resize(215, 215);
@@ -214,7 +211,6 @@ void KoverTop::make_option_frame()
     display_title =
         new QCheckBox(tr("No title on booklet"), group_box, "display_title");
     connect(display_title, SIGNAL(clicked()), SLOT(display_title_signal()));
-
     gbox->addMultiCellWidget(display_title, 0, 0, 0, 1);
 
     spine_text =
@@ -230,15 +226,11 @@ void KoverTop::make_option_frame()
 
     number_check =
         new QCheckBox(i18n("CD Number"), group_box, "number_check");
-    //number_check->resize(100, 25);
-    //number_check->move(50, 5);
     gbox->addMultiCellWidget(number_check, 3, 3, 0, 0);
     connect(number_check, SIGNAL(toggled(bool)), SLOT(numberChecked(bool)));
 
     number_spin = new QSpinBox(1, 999, 1, group_box, "numberspin");
     number_spin->setEnabled(false);
-    //number_spin->resize(50, 25);
-    //number_spin->move(170, 5);
     gbox->addMultiCellWidget(number_spin, 3, 3, 1, 1);
     connect(number_spin, SIGNAL(valueChanged(int)), SLOT(numberChanged(int)));
 
@@ -254,24 +246,13 @@ void KoverTop::make_more_frame()
     button_layout->setAlignment(Qt::AlignTop);
     button_layout->setMargin(7);
     more_frame->setMargin(0);
-//       more_frame->setFrameStyle( QFrame::Panel | QFrame::Plain );
     more_button = new QPushButton(i18n("Options"), more_frame, "more");
     button_layout->addWidget(more_button, 0, AlignRight);
     connect(more_button, SIGNAL(clicked()), SLOT(more_or_less()));
-//        QLabel *haha = new QLabel("Display Title", more_frame, "haha");
-//        button_layout->addWidget(haha,0,AlignRight);
-//       more_frame_2 = new QFrame(more_frame);
-//       more_frame_2->setFrameStyle( QFrame::Panel | QFrame::Raised );
-//       more_frame_2->setLineWidth( 7 );
-//       more_frame_2->resize(30,30);
     top_layout->addSpacing(5);
-//       top_layout->addWidget(more_frame_2);
-
     cddb_id = new QLabel("", more_frame, "cddb_id");
-    //cddb_id->move(CDVIEW_X, CDVIEW_Y - 48);
     button_layout->addWidget(cddb_id, 0, AlignLeft);
     more_frame->move(5, 70 + 310 + 15);
-
     more_frame->resize(MORE_FRAME_WIDTH, MORE_FRAME_HEIGHT);
 }
 
@@ -415,7 +396,6 @@ void KoverTop::fileOpen(const KURL & url)
             m_url = url;
 
             setCaption(i18n(m_url.url()), false);
-
             disconnect(contents_edit, SIGNAL(textChanged()), this,
                 SLOT(contentsBoxChanged()));
             title_edit->setText(kover_file.title());
@@ -424,7 +404,6 @@ void KoverTop::fileOpen(const KURL & url)
                 SLOT(contentsBoxChanged()));
 
             update_id(kover_file.cddb_id());
-
             display_title->setChecked(kover_file.display_title());
 
             if (!kover_file.spine_text()) {

@@ -1,18 +1,18 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# translation of de.po to 
+# translation of de.po to
+# Copyright (C) 2003 Free Software Foundation, Inc.
+# Adrian Reber <adrian@lisas.de>, 2003
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: de\n"
 "POT-Creation-Date: 2001-10-06 19:02+0200\n"
-"PO-Revision-Date: 2001-10-08 19:44GMT\n"
-"Last-Translator: Adrian <adrian@lisas.de>\n"
-"Language-Team:  <C@li.org>\n"
+"PO-Revision-Date: 2003-02-07 17:41+0100\n"
+"Last-Translator: Adrian Reber <adrian@lisas.de>\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 0.9.5\n"
 
 #: imagedlgdata.cpp:16
 msgid "First Image"
@@ -88,7 +88,9 @@ msgstr "Unaussprechlicher Fehler während des Öffnenes von "
 
 #: cddb_fill.cpp:185
 msgid "Oops. No information about disc. Will keep trying..."
-msgstr "Ups. Keine Informationen über die Disc. Aber ich werde es weiter versuchen..."
+msgstr ""
+"Ups. Keine Informationen über die Disc. Aber ich werde es weiter "
+"versuchen..."
 
 #: cddb_fill.cpp:188
 msgid "Theres no audio cd in "
@@ -100,7 +102,8 @@ msgstr "! (das wird konkret ignoriert)"
 
 #: cddb_fill.cpp:209
 msgid "Internal error: Filedescriptor is -1, not opened?"
-msgstr "Interner Fehler: Dateideskriptor ist -1. Irgendjemand sollte irgendwas tun."
+msgstr ""
+"Interner Fehler: Dateideskriptor ist -1. Irgendjemand sollte irgendwas tun."
 
 #: cddb_fill.cpp:213
 msgid "Reading table of contents..."
@@ -228,149 +231,298 @@ msgstr "CD Nummer"
 
 #: KoverTop.cpp:142
 msgid "Data changed"
-msgstr ""
+msgstr "Daten haben sich geändert"
 
 #: KoverTop.cpp:254
 msgid "File loaded"
-msgstr ""
+msgstr "Datei geladen"
 
 #: KoverTop.cpp:257 KoverTop.cpp:286 KoverTop.cpp:302
 msgid "Error while opening/reading file!"
-msgstr ""
+msgstr "Fehler beim lesen/schreiben der Datei!"
 
 #: KoverTop.cpp:263
 msgid ""
 "Data changed since last saving!\n"
 "Do you want to save the changes?"
 msgstr ""
+"Daten haben sich geändert seit dem letzten Speichern!\n"
+"Sollen diese Änderungen gespeichert werden?"
 
 #: KoverTop.cpp:283 KoverTop.cpp:299
 msgid "File saved"
-msgstr ""
+msgstr "Datei gespeichert"
 
 #: KoverTop.cpp:347
 msgid "Initiating CDDB lookup!"
-msgstr ""
+msgstr "CDDB Anfrage wird initialisiert!"
 
 #: KoverTop.cpp:365
 msgid "config me"
-msgstr ""
+msgstr "pass mich an"
 
 #: CDView.cpp:77
 msgid "Click to close"
-msgstr ""
+msgstr "Zum Schließen klicken."
 
 #: PreferencesDialog.cpp:48
 msgid "CDDB"
-msgstr ""
+msgstr "CDDB"
 
 #: PreferencesDialog.cpp:48
 msgid "CDDB options"
-msgstr ""
+msgstr "CDDB Optionen"
 
 #: PreferencesDialog.cpp:52
 msgid "&CDDB server"
-msgstr ""
+msgstr "&CDDB Server"
 
 #: PreferencesDialog.cpp:62
 msgid "CDDB server:"
-msgstr ""
+msgstr "CDDB Server:"
 
 #: PreferencesDialog.cpp:69
 msgid "CGI path:"
-msgstr ""
+msgstr "CGI Pfad:"
 
 #: PreferencesDialog.cpp:76
 msgid "&Proxy configuration"
-msgstr ""
+msgstr "&Proxy Konfiguration"
 
 #: PreferencesDialog.cpp:83
 msgid "Use proxy for CDDB lookups"
-msgstr ""
+msgstr "Proxy verwenden"
 
 #: PreferencesDialog.cpp:87
 msgid "Use 'http_proxy' environment variable"
-msgstr ""
+msgstr "Umgebungsvariable 'http_proxy' nutzen"
 
 #: PreferencesDialog.cpp:90
 msgid "Proxy server:"
-msgstr ""
+msgstr "Proxy Server"
 
 #: PreferencesDialog.cpp:96
 msgid "Proxy server port:"
-msgstr ""
+msgstr "Proxy Server Port"
 
 #: PreferencesDialog.cpp:109
 msgid "CDROM"
-msgstr ""
+msgstr "CDROM"
 
 #: PreferencesDialog.cpp:109
 msgid "CDROM options"
-msgstr ""
+msgstr "CDROM Optionen"
 
 #: PreferencesDialog.cpp:113
 msgid "&CDROM"
-msgstr ""
+msgstr "&CDROM"
 
 #: PreferencesDialog.cpp:122
 msgid "CDROM device:"
-msgstr ""
+msgstr "CDROM Gerät"
 
 #: PreferencesDialog.cpp:128
 msgid "Eject CD on exit"
-msgstr ""
+msgstr "CD auswerfen bei Programmende"
 
 #: PreferencesDialog.cpp:312
 msgid "CDDB files"
-msgstr ""
+msgstr "CDDB Dateien"
 
 #: PreferencesDialog.cpp:312
 msgid "Local CDDB files"
-msgstr ""
+msgstr "Lokale CDDB Dateien"
 
 #: PreferencesDialog.cpp:316
 msgid "&Local CDDB files"
-msgstr ""
+msgstr "&Lokale CDDB Dateien"
 
 #: PreferencesDialog.cpp:325
 msgid "Read CDDB data from file if available"
-msgstr ""
+msgstr "CDDB Daten aus einer Datei lesen, falls vorhanden"
 
 #: PreferencesDialog.cpp:329
 msgid "Write CDDB data to file"
-msgstr ""
+msgstr "CDDB Daten in einer Datei speichern"
 
 #: PreferencesDialog.cpp:334
 msgid "CDDB path:"
-msgstr ""
+msgstr "CDDB Pfad:"
 
 #: PreferencesDialog.cpp:390
 msgid "Various properties"
-msgstr ""
+msgstr "Verschiedenes"
 
 #: PreferencesDialog.cpp:394
 msgid "&Stuff"
-msgstr ""
-
-#: PreferencesDialog.cpp:403
-msgid "Mouse click on kover preview triggers actual size."
-msgstr ""
-
-#: PreferencesDialog.cpp:407
-msgid "Display track duration after a CDDB request."
-msgstr ""
+msgstr "Zeug&s"
 
 #: PreferencesDialog.cpp:411
 msgid ""
 "Print inlet on left side of booklet.\n"
 "(slim case option)"
 msgstr ""
+"Inhalt auf der linke Seite des Booklets drucken.\n"
+"(Slim Case Option)"
 
 #: proxy_auth.cc:49
 msgid "Enter username and password for proxy at "
-msgstr ""
+msgstr "Benutzername und Passwort eingeben für den Proxy "
 
 #: proxy_auth.cc:63
 msgid "User Name:"
 msgstr "Benuztername:"
+
+#: cddb_fill.cc:139 cddb_fill.cc:187
+msgid "No http_proxy environment variable found... Giving up..."
+msgstr "Die Umgebungsvariable http_proxy wurde nicht gefunden... Pech... "
+
+#: cddb_fill.cc:142 cddb_fill.cc:190
+msgid "Don't understand http_proxy environment variable... Giving up..."
+msgstr "Ich verstehe die http_proxy Umgebungsvariable nicht... Pech..."
+
+#: kovertop.cc:159
+msgid "Spine Text Font..."
+msgstr "Seiten Text Schriftart"
+
+#: kovertop.cc:163
+msgid "CDDB without CD"
+msgstr "CDDB ohne CD"
+
+#: kovertop.cc:204
+msgid "All this options are not global"
+msgstr "All diese Option sind nicht global"
+
+#: kovertop.cc:215
+msgid "No title on booklet"
+msgstr "Kein Titel auf dem Booklet"
+
+#: kovertop.cc:221
+msgid "Separate Spine Text"
+msgstr "Extra Seiten Text"
+
+#: kovertop.cc:404
+msgid ""
+"*.kover|Kover files\n"
+"*|All files\n"
+"*.k3b|k3b files"
+msgstr ""
+"*.kover|Kover Dateien\n"
+"*|Alle Dateien\n"
+"*.k3b|k3b Dateien"
+
+#: kovertop.cc:500
+msgid ""
+"*.kover|Kover files\n"
+"*|All files"
+msgstr ""
+"*.kover|Kover Dateien\n"
+"*|Alle Dateien"
+
+#: PreferencesDialog.cc:499 PreferencesDialog.cc:503
+msgid "Cover"
+msgstr "Cover"
+
+#: PreferencesDialog.cc:516
+msgid "Display track duration after a CDDB request"
+msgstr "Liedlänge nach einer CDDB Anfrage anzeigen"
+
+#: PreferencesDialog.cc:522
+msgid "Print inlet and booklet"
+msgstr "Inlet und Booklet drucken"
+
+#: PreferencesDialog.cc:531
+msgid ""
+"Don't print booklet.\n"
+"(inlet only option)"
+msgstr ""
+"Booklet nicht drucken.\n"
+"(nur Inlet Option)"
+
+#: PreferencesDialog.cc:535
+msgid "Print all on one page"
+msgstr "Alles auf einer Seite drucken"
+
+#: PreferencesDialog.cc:613
+msgid "Standard Fonts"
+msgstr "Standard Schriften"
+
+#: PreferencesDialog.cc:617
+msgid "&Standard Fonts"
+msgstr "&Standard Schriften"
+
+#: PreferencesDialog.cc:627
+msgid "Changes to any of these fonts are global.\n"
+msgstr "Änderungen an jeder dieser Schriften sind global.\n"
+
+#: PreferencesDialog.cc:628
+msgid "This means, that changes will only be available\n"
+msgstr "Das heißt, dass sie nur für das nächste\n"
+
+#: PreferencesDialog.cc:629
+msgid "for the next new cover.\n"
+msgstr "neue Cover verfügbar sein werden.\n"
+
+#: PreferencesDialog.cc:630
+msgid "Except that the current cover is empty.\n"
+msgstr "Außer das aktuelle Cover ist unbearbeitet.\n"
+
+#: PreferencesDialog.cc:631
+msgid "Then changes are applied to the current cover."
+msgstr "Dann werden die Änderungen sofort übernommen."
+
+#: PreferencesDialog.cc:635
+msgid "Content Font: "
+msgstr "Inhaltsschriftart: "
+
+#: PreferencesDialog.cc:645
+msgid "Title Font: "
+msgstr "Titelschriftart: "
+
+#: PreferencesDialog.cc:654
+msgid "Spine Text Font: "
+msgstr "Seiten Text Schriftart: "
+
+#: PreferencesDialog.cc:756
+msgid "Save window position"
+msgstr "Fensterposition speichern"
+
+#: PreferencesDialog.cc:760
+msgid "Disable unnecessary animation"
+msgstr "Unnötige Animationen abschalten"
+
+#: PreferencesDialog.cc:765
+msgid "Mouse click on kover preview triggers actual size"
+msgstr "Mausklick auf das Kover zeigt die aktuelle Größe an"
+
+#: PreferencesDialog.cc:815
+msgid ""
+"Changes to the fonts will not be applied to the current cover, but for the "
+"next new cover."
+msgstr ""
+"Änderungen an den Schriften werden nicht am aktuellen Cover durchgeführt, "
+"sondern erst beim nächsten neuen Cover."
+
+#: inexact_dialog.cc:80 proxy_auth.cc:76
+msgid "Ok"
+msgstr "In Ordnung."
+
+#: proxy_auth.cc:69
+msgid "Password:"
+msgstr "Passwort:"
+
+#: without_cd.cc:54
+msgid "Select a category:"
+msgstr "Kategorie auswählen:"
+
+#: without_cd.cc:72
+msgid "Enter CDDB Id:"
+msgstr "CDDB Id eingeben:"
+
+#: without_cd.cc:79
+msgid "Search"
+msgstr "Suchen"
+
+msgid "Choose wisely!"
+msgstr "Wähle weise!"
 

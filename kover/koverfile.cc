@@ -1,7 +1,7 @@
 /** -*- adrian-c -*-
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
 	 Copyright (C) 1999, 2000 by Denis Oliver Kropp
-	 Copyright (C) 2000-2002 by Adrian Reber
+	 Copyright (C) 2000-2003 by Adrian Reber
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 	 
 */
 
-/* $Id: koverfile.cc,v 1.17 2003/01/21 23:25:49 adrian Exp $ */
+/* $Id: koverfile.cc,v 1.18 2003/02/07 16:44:40 adrian Exp $ */
 
 using namespace std;
 
@@ -484,7 +484,6 @@ bool KoverFile::openFile(const KURL & url)
 
 bool KoverFile::saveFile(const KURL & url)
 {
-
     QString filename;
     KTempFile tempFile;
 
@@ -522,7 +521,6 @@ bool KoverFile::saveFile(const KURL & url)
 
 bool KoverFile::save_as_XML(const QString & filename)
 {
-
     QDomElement text;
     QDomElement img;
     QDomText the_text;

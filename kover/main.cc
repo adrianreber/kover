@@ -1,7 +1,7 @@
 /** -*- adrian-c -*-
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
 	 Copyright (C) 1999, 2000 by Denis Oliver Kropp
-	 Copyright (C) 2000, 2001 by Adrian Reber
+	 Copyright (C) 2000-2003 by Adrian Reber
 	
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 	 21 May 2002: Manual Connection to DCOP server
 */
 
-/* $Id: main.cc,v 1.7 2002/08/07 17:48:42 adrian Exp $ */
+/* $Id: main.cc,v 1.8 2003/02/07 16:44:40 adrian Exp $ */
 
 #include "kover.h"
 #include "kovertop.h"
@@ -86,11 +86,11 @@ void the_end()
 
 void sighandler(int i)
 {
-    if (i == 2)
+    if (i == 2) {
         _DEBUG_ fprintf(stderr, "kover:SIGINT received...");
-
-    else
-    _DEBUG_ fprintf(stderr, "kover:SIGTERM received...");
+    } else {
+        _DEBUG_ fprintf(stderr, "kover:SIGTERM received...");
+    }
     _DEBUG_ fprintf(stderr, "cleaning up...\n");
 
     the_end();

@@ -1,6 +1,6 @@
 /**  hey emacs! try -*- adrian-c -*- mode
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-	 Copyright (C) 2001, 2002 by Adrian Reber 
+	 Copyright (C) 2001-2003 by Adrian Reber 
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -23,15 +23,19 @@
 	 Changes:
 
 	 05 Apr 2001: initial thingy
+     
+     07 Feb 2003: create subdirs for categories in the cddb directory
 */
 
-/* $Id: config.cc,v 1.11 2003/01/15 00:10:48 adrian Exp $ */
+/* $Id: config.cc,v 1.12 2003/02/07 16:44:40 adrian Exp $ */
 
 #include "config.h"
+#include "categories.h"
+
 #include <kconfig.h>
 #include <sys/stat.h>
+#include <ctype.h>
 #include <stdio.h>
-#include "categories.h"
 
 config_class::config_class(KApplication * kover)
 {
