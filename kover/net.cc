@@ -27,7 +27,7 @@
 
 */
 
-/* $Id: net.cc,v 1.4 2002/09/13 21:32:06 adrian Exp $ */
+/* $Id: net.cc,v 1.5 2002/09/19 06:08:46 adrian Exp $ */
 
 #include "net.h"
 #include "kover.h"
@@ -66,20 +66,28 @@ int net::connect()
         }
         proxy_port = globals.proxy_port;
         //reading from environment
-        tmp = strdup(getenv("http_proxy"));
-        if (!tmp)
-            return sys_nerr + 101;
-        if (strncmp(tmp, "http://", 7))
-            return sys_nerr + 102;
-        else {
+        if (getenv("http_proxy"))
+            tmp = strdup(getenv("http_proxy"));
+        if (!tmp) {
+            errno = sys_nerr + 101;
+            return errno;
+        }
+        if (strncmp(tmp, "http://", 7)) {
+            errno = sys_nerr + 102;
+            return errno;
+        } else {
             //finding proxy server and port
             s = strchr(tmp + 7, 58);
-            if (!s)
-                return sys_nerr + 102;
+            if (!s) {
+                errno = sys_nerr + 102;
+                return errno;
+            }
             *s = 0;
             ss = strchr(s + 1, 47);
-            if (!ss)
-                return sys_nerr + 102;
+            if (!ss) {
+                errno = sys_nerr + 102;
+                return errno;
+            }
             *ss = 0;
             //now globals has the environment proxy information
             globals.proxy_server = strdup(tmp + 7);
@@ -157,16 +165,16 @@ void net::disconnect()
 char *net::readline(int socket)
 {
     char inchar, char2[255];
-    int i=0;
-    
+    int i = 0;
+
     while (1) {
         read(socket, &inchar, 1);
-        if (inchar==10)
+        if (inchar == 10)
             break;
-        char2[i++]=inchar;
-        if(i>=250)
+        char2[i++] = inchar;
+        if (i >= 250)
             break;
     }
-    char2[i]=0;
+    char2[i] = 0;
     return strdup(char2);
 }

@@ -27,7 +27,7 @@
 	 
 */
 
-/* $Id: koverfile.h,v 1.13 2002/09/17 22:02:57 adrian Exp $ */
+/* $Id: koverfile.h,v 1.14 2002/10/09 07:06:52 adrian Exp $ */
 
 #ifndef KOVERFILE_H
 #define KOVERFILE_H
@@ -107,6 +107,7 @@ public:
 	 bool openFile( const KURL& url );
 	 bool saveFile( const KURL& url );
 	 void reset();
+     bool empty();
 
 	 signals:
 	 /**

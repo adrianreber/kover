@@ -1,4 +1,4 @@
-/**   hey emacs! eat this: -*- adrian-c -*-
+/**  hey emacs! eat this: -*- adrian-c -*-
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
 	 Copyright (C) 2000-2002 by Adrian Reber
 	 
@@ -21,7 +21,7 @@
 	 Description: Header for the global struct
 */
 
-/* $Id: kover_global.h,v 1.14 2002/09/13 21:32:06 adrian Exp $ */
+/* $Id: kover_global.h,v 1.15 2002/09/19 06:08:46 adrian Exp $ */
 
 #ifndef _KOVER_GLOBAL_H
 #define _KOVER_GLOBAL_H
@@ -61,7 +61,7 @@ extern "C" {
         int xpos;
         int ypos;
         int save_position;
-        
+
         int disable_animation;
 
     } kover_global;

@@ -31,7 +31,7 @@
 	 
 */
 
-/* $Id: koverfile.cc,v 1.15 2002/09/17 22:02:57 adrian Exp $ */
+/* $Id: koverfile.cc,v 1.16 2002/10/09 07:06:52 adrian Exp $ */
 
 using namespace std;
 
@@ -82,6 +82,13 @@ void KoverFile::reset()
     cd_the_spine_text = "";
 
     emit dataChanged();
+}
+
+bool KoverFile::empty() {
+    if (cd_title == "" && cd_contents == "" && cd_the_spine_text == "")
+        return true;
+    else
+        return false;
 }
 
 void KoverFile::setTitle(const QString & _title)

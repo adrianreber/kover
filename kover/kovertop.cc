@@ -34,7 +34,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.cc,v 1.15 2002/09/18 13:55:13 adrian Exp $ */
+/* $Id: kovertop.cc,v 1.16 2002/10/09 07:06:52 adrian Exp $ */
 
 #include "kovertop.moc"
 
@@ -151,7 +151,7 @@ void KoverTop::make_menu()
         SLOT(contentsFontColor()), actionCollection(), "contents_font_color");
     (void) new KAction(i18n("Background Color..."), "colors", 0, this,
         SLOT(backgroundColor()), actionCollection(), "background_color");
-    (void) new KAction(i18n("Inlet Title Font..."), "fonts", 0, this,
+    (void) new KAction(i18n("Spine Text Font..."), "fonts", 0, this,
         SLOT(inlet_title_font()), actionCollection(), "inlet_title_font");
     (void) new KAction(i18n("Eject CD"), "player_eject", 0, this,
         SLOT(cdrom_eject()), actionCollection(), "eject_cdrom");
@@ -248,7 +248,7 @@ void KoverTop::make_more_frame()
     button_layout->setMargin(7);
     more_frame->setMargin(0);
 //       more_frame->setFrameStyle( QFrame::Panel | QFrame::Plain );
-    more_button = new QPushButton(i18n("More >>"), more_frame, "more");
+    more_button = new QPushButton(i18n("Options"), more_frame, "more");
     button_layout->addWidget(more_button, 0, AlignRight);
     connect(more_button, SIGNAL(clicked()), SLOT(more_or_less()));
 //        QLabel *haha = new QLabel("Display Title", more_frame, "haha");
@@ -566,10 +566,21 @@ void KoverTop::cddbFill()
 
 void KoverTop::preferences()
 {
-    PreferencesDialog *dialog =
-        new PreferencesDialog(this, i18n("config me"));
+    PreferencesDialog *dialog = NULL;
+    if (kover_file.empty())
+        dialog = new PreferencesDialog(this, i18n("config me"));
+    else
+        dialog = new PreferencesDialog(this, i18n("config me"), true);
     dialog->exec();
     delete dialog;
+    
+    if (!altered_data) {
+        if (kover_file.empty()) {
+            kover_file.reset();
+            altered_data = false;
+            setCaption(i18n("[New Document]"), false);     
+        }
+    } 
 }
 
 void KoverTop::titleFont()
@@ -691,9 +702,6 @@ void KoverTop::more_or_less()
 {
     if (more) {
         more = false;
-        more_button->setText("More >>");
-        _DEBUG_ fprintf(stderr, "More >>\n");
-
         if (globals.disable_animation)
             main_frame->move(0, 70);
         else {
@@ -707,9 +715,6 @@ void KoverTop::more_or_less()
         option_frame->hide();
     } else {
         more = true;
-        more_button->setText("<< Less");
-        _DEBUG_ fprintf(stderr, "<< Less\n");
-
         option_frame->move(-NORM_WIDTH, 70);
         option_frame->show();
         if (globals.disable_animation) {

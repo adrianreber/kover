@@ -25,7 +25,7 @@
 	 05 Apr 2001: initial thingy
 */
 
-/* $Id: config.cc,v 1.8 2002/09/18 13:55:13 adrian Exp $ */
+/* $Id: config.cc,v 1.9 2002/10/09 07:06:52 adrian Exp $ */
 
 #include "config.h"
 #include <kconfig.h>
@@ -213,7 +213,7 @@ void config_class::load_globals()
     }
 
     if ((config->readEntry("inlet_title_font_settings")).isEmpty())
-        globals.inlet_title_font = new QFont("helvetica", 32);
+        globals.inlet_title_font = new QFont("helvetica", 10);
     else {
         QFont *bla = new QFont();
 

@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.14 2002/09/15 21:20:27 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.15 2002/09/19 06:08:46 adrian Exp $ */
 
 #include "cddb_fill.moc"
 
@@ -185,7 +185,7 @@ bool CDDB_Fill::execute_without_cd(const char *id, int cat)
             } else if (errno == sys_nerr + 101) {
                 emit statusText(tr
                     ("No http_proxy environment variable found... Giving up..."));
-            } else if (errno == sys_nerr + 101) {
+            } else if (errno == sys_nerr + 102) {
                 emit statusText(tr
                     ("Don't understand http_proxy environment variable... Giving up..."));
             }

@@ -21,7 +21,7 @@
 	Description: Header to PreferencesDialog.h
 */
 
-/* $Id: PreferencesDialog.h,v 1.20 2002/09/11 14:35:32 adrian Exp $ */
+/* $Id: PreferencesDialog.h,v 1.21 2002/10/09 07:06:52 adrian Exp $ */
 
 #ifndef PREFERENCES_DIALOG_H
 #define PREFERENCES_DIALOG_H
@@ -37,7 +37,7 @@ using namespace std;
 
 class PreferencesDialog:public KDialogBase {
   Q_OBJECT public:
-      PreferencesDialog (QWidget * parent, const QString & caption);
+      PreferencesDialog (QWidget * parent, const QString & caption, bool changed=false);
      ~PreferencesDialog ();
 
   private:
@@ -59,6 +59,7 @@ class PreferencesDialog:public KDialogBase {
     void save_cddb_files ();
     void save_misc ();
     void save_cover ();
+    void show_font_warning();
 
     struct cddb_widgets {
         QLineEdit *cddb_server;
@@ -121,6 +122,8 @@ class PreferencesDialog:public KDialogBase {
         QButton *change_inlet_title_font;
     } font_widgets;
 
+    bool changed;
+    
     private slots:void use_proxy (bool status);
     void use_proxy_env (bool status);
     virtual void slotOk (void);
