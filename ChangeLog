@@ -1,11 +1,27 @@
-$Id: ChangeLog,v 1.30 2002/09/18 13:55:13 adrian Exp $
+$Id: ChangeLog,v 1.31 2002/10/13 18:32:15 adrian Exp $
 
+2002-10-13 Adrian <adrian@lisas.de>
+        * kovertop.cc: little GUI redesign
+        * When there is single front side (booklet and inlet of the same
+          page), picture set for both front sides is ignored (I think 
+          it should be applied to single side available);
+			 reported by Michal Rudolf <mrudolf@mercury.ci.uw.edu.pl>
+          and fixed in cdview.cc
+        * PreferencesDialog.cc: introduced some text to explain
+          how and when the font changes are applied
+        * As "Inlet Title" and "Spine Text" is the same, the use of the term 
+          is now project wide "Spine Text"
+        * The "More >>" button is now named "Options" to be better
+          translatable and to make more sense
+        * kovertop.cc: Added accelerator for Actual Size and Preview
+          Ctrl++ Ctrl+-
+		  
 2002-09-18 Adrian <adrian@lisas.de>
-	* config.cc: now writing the inlet_only option
-	  to the configuration file (seems like nobody is
-	  using this option)
-	* cdview.cc: bugfix to position the text correctly if
-	  the inlet_only option is selected
+        * config.cc: now writing the inlet_only option
+		    to the configuration file (seems like nobody is
+          using this option)
+        * cdview.cc: bugfix to position the text correctly if
+          the inlet_only option is selected
 
 2002-09-17 Adrian <adrian@lisas.de>
         * koverfile.cc: now reading .k3b files of type
@@ -15,7 +31,8 @@ $Id: ChangeLog,v 1.30 2002/09/18 13:55:13 adrian Exp $
 2002-09-13 Adrian <adrian@lisas.de>
         * seems like we are entering a time of heavy development activity???
         * net.cc: introduced the readline method
-          this should remove the bug reported by Jan Keirse <jan.keirse@pandora.be>
+          this should remove the bug reported 
+			 by Jan Keirse <jan.keirse@pandora.be>:
           kover:cddb_fill.cc:702: this should not happen
           kover:cddb_fill.cc:810: this should not happen
         * cddb_fill.cc: using now readline() method instead of trying

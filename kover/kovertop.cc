@@ -34,7 +34,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.cc,v 1.16 2002/10/09 07:06:52 adrian Exp $ */
+/* $Id: kovertop.cc,v 1.17 2002/10/13 18:32:15 adrian Exp $ */
 
 #include "kovertop.moc"
 
@@ -52,14 +52,15 @@
 #include <kfontdialog.h>
 #include <kcolordialog.h>
 #include <krecentdocument.h>
+#include <kstdaccel.h>
 #include <qlayout.h>
 #include <kurl.h>
 #include <qpoint.h>
 #include <qgroupbox.h>
 
 #define NORM_WIDTH 520
-#define NORM_HEIGHT 500
-#define MORE_HEIGHT 550
+#define NORM_HEIGHT 450
+#define MORE_HEIGHT 515
 
 #define MORE_FRAME_HEIGHT 40
 #define MORE_FRAME_WIDTH 510
@@ -68,7 +69,7 @@
 #define PREV_HEIGHT 684
 
 #define CDVIEW_X 224
-#define CDVIEW_Y 50
+#define CDVIEW_Y 15
 #define CDVIEW_WIDTH	291
 #define CDVIEW_HEIGHT 310
 
@@ -134,8 +135,12 @@ void KoverTop::make_menu()
     recent =
         KStdAction::openRecent(this, SLOT(fileOpen(const KURL &)),
         actionCollection());
-    (void) new KAction(i18n("&Actual size"), "viewmag", 0, this,
-        SLOT(actualSize()), actionCollection(), "actual_size");
+    (void) new KAction(i18n("&Actual size"), "viewmag",
+        KStdAccel::shortcut(KStdAccel::ZoomIn), this, SLOT(actualSize()),
+        actionCollection(), "actual_size");
+    (void) new KAction(i18n("&Actual size"), "viewmag",
+        KStdAccel::shortcut(KStdAccel::ZoomOut), this, SLOT(stopPreview()),
+        actionCollection(), "stop_preview");
     (void) new KAction(i18n("&CDDB lookup"), "network", 0, this,
         SLOT(cddbFill()), actionCollection(), "cddb");
     KStdAction::preferences(this, SLOT(preferences()), actionCollection());
@@ -163,37 +168,23 @@ void KoverTop::make_menu()
 
 void KoverTop::make_main_frame()
 {
-    number_spin = new QSpinBox(1, 999, 1, main_frame, "numberspin");
-    number_spin->setEnabled(false);
-    number_spin->resize(50, 25);
-    number_spin->move(170, 5);
-    connect(number_spin, SIGNAL(valueChanged(int)), SLOT(numberChanged(int)));
-
-    number_check =
-        new QCheckBox(i18n("CD Number"), main_frame, "number_check");
-    number_check->resize(100, 25);
-    number_check->move(50, 5);
-    connect(number_check, SIGNAL(toggled(bool)), SLOT(numberChecked(bool)));
 
     title_label = new QLabel(i18n("Title"), main_frame, "title_label");
-    title_label->move(5, 35);
+    title_label->move(5, 0);
 
     title_edit = new QMultiLineEdit(main_frame, "title_edit");
     title_edit->resize(215, 50);
-    title_edit->move(5, 60);
+    title_edit->move(5, 25);
     connect(title_edit, SIGNAL(textChanged()), SLOT(titleBoxChanged()));
 
     contents_label =
         new QLabel(i18n("Contents"), main_frame, "contents_label");
-    contents_label->move(5, 115);
+    contents_label->move(5, 90);
 
     contents_edit = new QMultiLineEdit(main_frame, "contents_edit");
     contents_edit->resize(215, 215);
-    contents_edit->move(5, 145);
+    contents_edit->move(5, 110);
     connect(contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()));
-
-    cddb_id = new QLabel("CDDB id:", main_frame, "cddb_id");
-    cddb_id->move(CDVIEW_X, CDVIEW_Y - 50);
 
     cdview = new CDView(&kover_file, main_frame);
     cdview->resize(CDVIEW_WIDTH, CDVIEW_HEIGHT);
@@ -216,7 +207,7 @@ void KoverTop::make_option_frame()
 
     vlay->addSpacing(fontMetrics().lineSpacing());
 
-    QGridLayout *gbox = new QGridLayout(5, 1);
+    QGridLayout *gbox = new QGridLayout(5, 4);
 
     vlay->addLayout(gbox);
 
@@ -224,17 +215,33 @@ void KoverTop::make_option_frame()
         new QCheckBox(tr("No title on booklet"), group_box, "display_title");
     connect(display_title, SIGNAL(clicked()), SLOT(display_title_signal()));
 
-    gbox->addWidget(display_title,0,0);
-    
-    spine_text = new QCheckBox(i18n("Seperate Spine Text"), group_box, "spine_text");
-    gbox->addWidget(spine_text,1,0);
+    gbox->addMultiCellWidget(display_title, 0, 0, 0, 1);
+
+    spine_text =
+        new QCheckBox(i18n("Seperate Spine Text"), group_box, "spine_text");
+    gbox->addMultiCellWidget(spine_text, 1, 1, 0, 1);
     connect(spine_text, SIGNAL(clicked()), SLOT(spine_text_method()));
-    
+
     the_spine_text = new QLineEdit(group_box, "the_spine_text");
-    gbox->addWidget(the_spine_text,2,0);
+    gbox->addMultiCellWidget(the_spine_text, 2, 2, 0, 4);
     the_spine_text->setEnabled(false);
-    connect(the_spine_text, SIGNAL(textChanged(const QString&)), SLOT(spine_text_changed_method(const QString&)));
-    
+    connect(the_spine_text, SIGNAL(textChanged(const QString &)),
+        SLOT(spine_text_changed_method(const QString &)));
+
+    number_check =
+        new QCheckBox(i18n("CD Number"), group_box, "number_check");
+    //number_check->resize(100, 25);
+    //number_check->move(50, 5);
+    gbox->addMultiCellWidget(number_check, 3, 3, 0, 0);
+    connect(number_check, SIGNAL(toggled(bool)), SLOT(numberChecked(bool)));
+
+    number_spin = new QSpinBox(1, 999, 1, group_box, "numberspin");
+    number_spin->setEnabled(false);
+    //number_spin->resize(50, 25);
+    //number_spin->move(170, 5);
+    gbox->addMultiCellWidget(number_spin, 3, 3, 1, 1);
+    connect(number_spin, SIGNAL(valueChanged(int)), SLOT(numberChanged(int)));
+
     option_frame->adjustSize();
     option_frame->hide();
 }
@@ -260,7 +267,10 @@ void KoverTop::make_more_frame()
     top_layout->addSpacing(5);
 //       top_layout->addWidget(more_frame_2);
 
-    more_frame->move(5, 70 + 310 + 50);
+    cddb_id = new QLabel("", more_frame, "cddb_id");
+    //cddb_id->move(CDVIEW_X, CDVIEW_Y - 48);
+    button_layout->addWidget(cddb_id, 0, AlignLeft);
+    more_frame->move(5, 70 + 310 + 15);
 
     more_frame->resize(MORE_FRAME_WIDTH, MORE_FRAME_HEIGHT);
 }
@@ -288,7 +298,7 @@ void KoverTop::setStatusText(const char *_status_text)
 
 void KoverTop::update_id(unsigned long id)
 {
-    QString string = "CDDB id:";
+    QString string = "";
 
     if (id != 0)
         string.sprintf("CDDB id: 0x%08lx", id);
@@ -296,8 +306,10 @@ void KoverTop::update_id(unsigned long id)
     cddb_id->adjustSize();
 }
 
-void KoverTop::update_id(QString id) {
-    QString string = "CDDB id:";
+void KoverTop::update_id(QString id)
+{
+    QString string = "";
+
     if (!id.isEmpty())
         string = "CDDB id: " + id;
     cddb_id->setText(string);
@@ -410,9 +422,9 @@ void KoverTop::fileOpen(const KURL & url)
             contents_edit->setText(kover_file.contents());
             connect(contents_edit, SIGNAL(textChanged()),
                 SLOT(contentsBoxChanged()));
-            
+
             update_id(kover_file.cddb_id());
-            
+
             display_title->setChecked(kover_file.display_title());
 
             if (!kover_file.spine_text()) {
@@ -424,7 +436,7 @@ void KoverTop::fileOpen(const KURL & url)
                 the_spine_text->setEnabled(kover_file.spine_text());
                 spine_text->setChecked(kover_file.spine_text());
             }
-            
+
             if (kover_file.number()) {
                 number_spin->setValue(kover_file.number());
                 number_spin->setEnabled(true);
@@ -567,20 +579,22 @@ void KoverTop::cddbFill()
 void KoverTop::preferences()
 {
     PreferencesDialog *dialog = NULL;
+
     if (kover_file.empty())
         dialog = new PreferencesDialog(this, i18n("config me"));
     else
         dialog = new PreferencesDialog(this, i18n("config me"), true);
-    dialog->exec();
+    if (dialog->exec())
+        cdview->dataChanged(true);
     delete dialog;
-    
+
     if (!altered_data) {
         if (kover_file.empty()) {
             kover_file.reset();
             altered_data = false;
-            setCaption(i18n("[New Document]"), false);     
+            setCaption(i18n("[New Document]"), false);
         }
-    } 
+    }
 }
 
 void KoverTop::titleFont()
@@ -609,7 +623,8 @@ void KoverTop::imageEmbedding()
 {
     ImageDlg *imgdlg = new ImageDlg(this, &kover_file);
 
-    imgdlg->exec();
+    if (imgdlg->exec())
+        cdview->dataChanged(true);
     delete imgdlg;
 }
 
@@ -674,7 +689,7 @@ void KoverTop::cddb_without_cd()
         if (how_about_saving())
             return;
     }
-    
+
     globals.display_track_duration = 0;
     without_cd *without = new without_cd();
 
@@ -736,7 +751,8 @@ void KoverTop::display_title_signal()
     kover_file.set_display_title(display_title->isChecked());
 }
 
-void KoverTop::spine_text_method() {
+void KoverTop::spine_text_method()
+{
     the_spine_text->setEnabled(spine_text->isChecked());
     kover_file.set_spine_text(spine_text->isChecked());
     if (!kover_file.spine_text())
@@ -746,7 +762,11 @@ void KoverTop::spine_text_method() {
     }
 }
 
-void KoverTop::spine_text_changed_method(const QString& s){
+void KoverTop::spine_text_changed_method(const QString & s)
+{
+    QString bla = s;
+
+    bla = "kk";
     if (kover_file.spine_text())
         kover_file.set_the_spine_text(the_spine_text->text());
 }
