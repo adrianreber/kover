@@ -39,9 +39,6 @@ dnl AM_GNU_GETTEXT
 
 AC_PATH_KDE
 
-dnl Perform program name transformation
-AC_ARG_PROGRAM
-
 dnl KDE_CHECK_THREADING
 
 dnl Image readers/writers
