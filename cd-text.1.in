@@ -1,0 +1,27 @@
+.TH cd-text "1" "September 2004" "kover @VERSION@" "User Commands"
+.SH NAME
+cd-text \- Display the CD-TEXT of CD in [\fIdevice\fR].
+.SH SYNOPSIS
+.B cd-text
+[\fIdevice\fR]
+.SH DESCRIPTION
+cd-text is a additional program for kover, which reads the CD-TEXT
+of the compact disc in [\fIdevice\fR] and prints it out.
+.SS "Options:"
+.TP
+\fB\-h\fR
+Print the not really helpful help.
+.SS "Arguments:"
+.TP
+\fIdevice\fR
+Device containing the compact disc. No argument means to look at
+\fI/dev/cdrom\fR.
+.SH SEE ALSO
+.BR kover (1)
+.SH AVAILABILITY
+cd-text can be found at http://lisas.de/kover/ as part of the kover package.
+.SH REPORTING BUGS
+Report bugs to <adrian@lisas.de>.
+.SH AUTHOR
+The manual page and software are written by Adrian Reber <adrian@lisas.de>.
+
