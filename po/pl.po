@@ -1,0 +1,468 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2001-11-21 19:22+0100\n"
+"PO-Revision-Date: 2001-11-21 20:13+0200\n"
+"Last-Translator: Micha³ Rudolf <mrudolf@mercury.ci.uw.edu.pl>\n"
+"Language-Team:  <pl@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-2\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 0.9.5\n"
+
+#: /tmp/from_rc.cc:1
+msgid "&View"
+msgstr "&Widok"
+
+#: /tmp/from_rc.cc:2
+msgid "&Kover"
+msgstr "&Kover"
+
+#: CDView.cpp:82
+msgid "Click to close"
+msgstr "Kliknij by zamkn±æ"
+
+#: KoverTop.cpp:68 KoverTop.cpp:164 KoverTop.cpp:241
+msgid "[New Document]"
+msgstr "[Nowy dokument]"
+
+#: KoverTop.cpp:84
+msgid "&Actual size"
+msgstr "&Naturalna wielko¶æ"
+
+#: KoverTop.cpp:85
+msgid "&CDDB lookup"
+msgstr "&Opis CDDB"
+
+#: KoverTop.cpp:87
+msgid "&Image Embedding..."
+msgstr "&Wstawianie obrazków..."
+
+#: KoverTop.cpp:88
+msgid "Title Font..."
+msgstr "Czcionka tytu³u..."
+
+#: KoverTop.cpp:89
+msgid "Title Fontcolor..."
+msgstr "Kolor tytu³u..."
+
+#: KoverTop.cpp:90
+msgid "Contents Font..."
+msgstr "Czcionka zawarto¶ci..."
+
+#: KoverTop.cpp:91
+msgid "Contents Fontcolor..."
+msgstr "Kolor zawarto¶ci..."
+
+#: KoverTop.cpp:92
+msgid "Background Color..."
+msgstr "Kolor t³a..."
+
+#: KoverTop.cpp:93
+msgid "Inlet Title Font..."
+msgstr "Czcionka grzbietu..."
+
+#: KoverTop.cpp:94
+msgid "Eject CD"
+msgstr "Wysuñ p³ytê"
+
+#: KoverTop.cpp:95
+msgid "CDDB without CD"
+msgstr "CDDB bez p³yty CD"
+
+#: KoverTop.cpp:106
+msgid "CD Number"
+msgstr "Numer CD"
+
+#: KoverTop.cpp:111
+msgid "Title"
+msgstr "Tytu³"
+
+#: KoverTop.cpp:119
+msgid "Contents"
+msgstr "Zawarto¶æ"
+
+#: KoverTop.cpp:162
+msgid "Data changed"
+msgstr "Dane zmienione"
+
+#: KoverTop.cpp:278
+msgid "File loaded"
+msgstr "Plik wczytany"
+
+#: KoverTop.cpp:281 KoverTop.cpp:309
+msgid "Error while opening/reading file!"
+msgstr "B³±d podczas odczytu/zapisu pliku!"
+
+#: KoverTop.cpp:286
+msgid ""
+"Data changed since last saving!\n"
+"Do you want to save the changes?"
+msgstr ""
+"Dane zosta³y zmienione od ostatniego zapisu!\n"
+"Zapisaæ zmiany?"
+
+#: KoverTop.cpp:304
+msgid "File saved"
+msgstr "Plik zapisany"
+
+#: KoverTop.cpp:369
+msgid "Initiating CDDB lookup!"
+msgstr "Inicjalizacja CDDB"
+
+#: KoverTop.cpp:387
+msgid "config me"
+msgstr "Konfiguracja"
+
+#: PreferencesDialog.cpp:60
+msgid "CDDB"
+msgstr "CDDB"
+
+#: PreferencesDialog.cpp:60
+msgid "CDDB options"
+msgstr "Opcje CDDB"
+
+#: PreferencesDialog.cpp:64
+msgid "&CDDB server"
+msgstr "&Serwer CDDB"
+
+#: PreferencesDialog.cpp:74
+msgid "CDDB server:"
+msgstr "Serwer CDDB:"
+
+#: PreferencesDialog.cpp:81
+msgid "CGI path:"
+msgstr "¦cie¿ka CGI:"
+
+#: PreferencesDialog.cpp:88
+msgid "&Proxy configuration"
+msgstr "&Konfiguracja proxy"
+
+#: PreferencesDialog.cpp:95
+msgid "Use proxy for CDDB lookups"
+msgstr "U¿yj proxy do zapytañ CDDB"
+
+#: PreferencesDialog.cpp:99
+msgid "Use 'http_proxy' environment variable"
+msgstr "U¿yj zmiennej ¶rodowiskowej 'http_proxy'"
+
+#: PreferencesDialog.cpp:102
+msgid "Proxy server:"
+msgstr "Serwer proxy:"
+
+#: PreferencesDialog.cpp:108
+msgid "Proxy server port:"
+msgstr "Port serwera proxy:"
+
+#: PreferencesDialog.cpp:121
+msgid "CDROM"
+msgstr "CDROM"
+
+#: PreferencesDialog.cpp:121
+msgid "CDROM options"
+msgstr "Opcje CDROM"
+
+#: PreferencesDialog.cpp:125
+msgid "&CDROM"
+msgstr "&CDROM"
+
+#: PreferencesDialog.cpp:134
+msgid "CDROM device:"
+msgstr "Napêd CDROM:"
+
+#: PreferencesDialog.cpp:140
+msgid "Eject CD on exit"
+msgstr "Wysuñ CD przy wyj¶ciu"
+
+#: PreferencesDialog.cpp:323
+msgid "CDDB files"
+msgstr "Pliki CDDB"
+
+#: PreferencesDialog.cpp:323
+msgid "Local CDDB files"
+msgstr "Lokalne pliki CDDB"
+
+#: PreferencesDialog.cpp:327
+msgid "&Local CDDB files"
+msgstr "&Lokalne pliki CDDB"
+
+#: PreferencesDialog.cpp:336
+msgid "Read CDDB data from file if available"
+msgstr "Czytaj dane CDDB z pliku"
+
+#: PreferencesDialog.cpp:340
+msgid "Write CDDB data to file"
+msgstr "Zapisz dane CDDB w pliku"
+
+#: PreferencesDialog.cpp:345
+msgid "CDDB path:"
+msgstr "¦cie¿ka CDDB:"
+
+#: PreferencesDialog.cpp:401
+msgid "Miscellaneous"
+msgstr "Inne"
+
+#: PreferencesDialog.cpp:401
+msgid "Various properties"
+msgstr "Inne w³a¶ciwo¶ci"
+
+#: PreferencesDialog.cpp:408
+msgid "&Stuff"
+msgstr "&W³a¶ciwo¶ci"
+
+#: PreferencesDialog.cpp:418
+msgid "Mouse click on kover preview triggers actual size."
+msgstr "Klikniêcie mysz± na podgl±dzie przywraca zwyk³y widok."
+
+#: PreferencesDialog.cpp:422
+msgid "Display track duration after a CDDB request."
+msgstr "Wy¶wietlaj d³ugo¶æ utworu po zapytaniu CDDB."
+
+#: PreferencesDialog.cpp:426
+msgid "Print inlet and booklet."
+msgstr "Drukuj ok³adkê i ksi±¿eczkê."
+
+#: PreferencesDialog.cpp:430
+msgid ""
+"Print inlet on left side of booklet.\n"
+"(slim case option)"
+msgstr ""
+"Drukuj ok³adkê razem z ksi±¿eczk±\n"
+"(w±skie pude³ko)"
+
+#: PreferencesDialog.cpp:434
+msgid ""
+"Don't print booklet.\n"
+"(inlet only option)"
+msgstr ""
+"Nie drukuj ksi±¿eczki\n"
+"(tylko ok³adka)."
+
+#: cddb_fill.cpp:221
+msgid "Internal error: Filedescriptor is not -1, already opened?"
+msgstr "B³±d wewnêtrzny: plik ju¿ otwarty?"
+
+#: cddb_fill.cpp:231
+msgid "You don´t have permission to read from "
+msgstr "Nie masz praw do czytania z "
+
+#: cddb_fill.cpp:235
+msgid "There´s no medium in "
+msgstr "Brak p³yty w "
+
+#: cddb_fill.cpp:240
+msgid " is busy!"
+msgstr " zajête!"
+
+#: cddb_fill.cpp:243
+msgid "Unknown error while opening "
+msgstr "B³±d podczas odczytu pliku!"
+
+#: cddb_fill.cpp:256
+msgid "Oops. No information about disc. Will keep trying..."
+msgstr "Brak informacji o p³ycie. Próbujê dalej..."
+
+#: cddb_fill.cpp:259
+msgid "There´s no audio cd in "
+msgstr "Brak p³yty audio w "
+
+#: cddb_fill.cpp:260
+msgid "! (ignoring)"
+msgstr "! (zignorowane)"
+
+#: cddb_fill.cpp:280
+msgid "Internal error: Filedescriptor is -1, not opened?"
+msgstr "B³±d wewnêtrzny: plik nieotwarty?"
+
+#: cddb_fill.cpp:284
+msgid "Reading table of contents..."
+msgstr "Odczyt zawarto¶ci..."
+
+#: cddb_fill.cpp:287
+msgid "Error while reading table of contents!"
+msgstr "B³±d podczas odczytu zawarto¶ci!"
+
+#: cddb_fill.cpp:305
+msgid "Error while reading TOC entry!"
+msgstr "B³±d podczas odczytu pozycji zawarto¶ci!"
+
+#: cddb_fill.cpp:323
+msgid "Table of contents successfully read"
+msgstr "Odczytano zawarto¶æ"
+
+#: cddb_fill.cpp:374 cddb_fill.cpp:377
+msgid "Connecting to "
+msgstr "Po³±czenie z "
+
+#: cddb_fill.cpp:400
+msgid "Connecting to CDDB server..."
+msgstr "Po³±czenie z serwerem CDDB..."
+
+#: cddb_fill.cpp:488
+msgid "Using local values for disc"
+msgstr "U¿ywam lokalnych warto¶ci dla p³yty"
+
+#: cddb_fill.cpp:507
+msgid "Querying database..."
+msgstr "Zapytanie do bazy..."
+
+#: cddb_fill.cpp:613
+msgid "Found inexact matches, list follows (until terminating marker)"
+msgstr "Znaleziono czê¶ciowe dopasowania, oto lista"
+
+#: cddb_fill.cpp:684
+msgid "No match found."
+msgstr "Brak dopasowañ."
+
+#: cddb_fill.cpp:687 cddb_fill.cpp:790
+msgid "Database entry is corrupt."
+msgstr "B³êdna pozycja bazy danych."
+
+#: cddb_fill.cpp:690 cddb_fill.cpp:793
+msgid "No handshake."
+msgstr "Brak synchronizacji."
+
+#: cddb_fill.cpp:722
+msgid "Downloading CD info..."
+msgstr "Wczytywanie danych o p³ycie..."
+
+#: cddb_fill.cpp:780
+msgid "OK, CDDB database entry follows."
+msgstr "OK, odczytano pozycjê bazy CDDB."
+
+#: cddb_fill.cpp:783
+msgid "Specified CDDB entry not found."
+msgstr "Nie znaleziono podanej pozycji CDDB."
+
+#: cddb_fill.cpp:787
+msgid "Server error."
+msgstr "B³±d serwera."
+
+#: cddb_fill.cpp:796
+msgid "ERROR: This should not happen."
+msgstr "Nieprzewidziany b³±d."
+
+#: cddb_fill.cpp:965
+msgid "Trouble creating cddb greeting... Giving up..."
+msgstr "B³±d przy po³±czeniu z CDDB. Roz³±czanie..."
+
+#: cddb_fill.cpp:1009
+msgid "Initializing authorization"
+msgstr "Rozpoczêcie autoryzacji"
+
+#: cddb_fill.cpp:1015
+msgid "Operation aborted."
+msgstr "Operacja przerwana."
+
+#: imagedlg.cpp:29
+msgid "Image Embedding"
+msgstr "Wstawianie obrazków"
+
+#: imagedlgdata.cpp:16
+msgid "First Image"
+msgstr "Pierwszy obrazek"
+
+#: imagedlgdata.cpp:23 imagedlgdata.cpp:57 imagedlgdata.cpp:94
+msgid "File"
+msgstr "Plik"
+
+#: imagedlgdata.cpp:27 imagedlgdata.cpp:64 imagedlgdata.cpp:101
+msgid "Browse"
+msgstr "Przegl±daj"
+
+#: imagedlgdata.cpp:31 imagedlgdata.cpp:72 imagedlgdata.cpp:109
+msgid "Front, left side"
+msgstr "Przód, Lewa strona"
+
+#: imagedlgdata.cpp:32 imagedlgdata.cpp:73 imagedlgdata.cpp:110
+msgid "Front, right side"
+msgstr "Przód, prawa strona"
+
+#: imagedlgdata.cpp:33 imagedlgdata.cpp:74 imagedlgdata.cpp:111
+msgid "Front, both sides"
+msgstr "Przód, obie strony"
+
+#: imagedlgdata.cpp:34 imagedlgdata.cpp:75 imagedlgdata.cpp:112
+msgid "Back, without sides"
+msgstr "Ty³, bez brzegów"
+
+#: imagedlgdata.cpp:35 imagedlgdata.cpp:76 imagedlgdata.cpp:113
+msgid "Back, with sides"
+msgstr "Ty³, z brzegami"
+
+#: imagedlgdata.cpp:39 imagedlgdata.cpp:80 imagedlgdata.cpp:117
+msgid "Centered"
+msgstr "Wy¶rodkowane"
+
+#: imagedlgdata.cpp:40 imagedlgdata.cpp:81 imagedlgdata.cpp:118
+msgid "Tiled"
+msgstr "Kafelkowe"
+
+#: imagedlgdata.cpp:41 imagedlgdata.cpp:82 imagedlgdata.cpp:119
+msgid "Stretched"
+msgstr "Rozci±gniête"
+
+#: imagedlgdata.cpp:45 imagedlgdata.cpp:68 imagedlgdata.cpp:105
+msgid "Target"
+msgstr "Miejsce"
+
+#: imagedlgdata.cpp:49 imagedlgdata.cpp:86 imagedlgdata.cpp:123
+msgid "Appearance"
+msgstr "Wygl±d"
+
+#: imagedlgdata.cpp:53
+msgid "Second Image"
+msgstr "Drugi obrazek"
+
+#: imagedlgdata.cpp:90
+msgid "Third Image"
+msgstr "Trzeci obrazek"
+
+#: imagedlgdata.cpp:127
+msgid "OK"
+msgstr "OK"
+
+#: imagedlgdata.cpp:132 proxy_auth.cc:84 without_cd.cc:87
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: inexact_dialog.cc:54
+msgid "Choose wisely!"
+msgstr "Wybierz rozs±dnie!"
+
+#: inexact_dialog.cc:72 proxy_auth.cc:74
+msgid "Ok"
+msgstr "Ok"
+
+#: inexact_dialog.cc:81
+msgid "Quit"
+msgstr "Zakoñcz"
+
+#: proxy_auth.cc:49
+msgid "Enter username and password for proxy at "
+msgstr "Podaj nazwê u¿ytkownika i has³a proxy dla "
+
+#: proxy_auth.cc:63
+msgid "User Name:"
+msgstr "U¿ytkownik:"
+
+#: proxy_auth.cc:67
+msgid "Password:"
+msgstr "Has³o:"
+
+#: without_cd.cc:52
+msgid "Select a category:"
+msgstr "Wybierz kategoriê:"
+
+#: without_cd.cc:70
+msgid "Enter CDDB Id:"
+msgstr "Podaj identyfikator CDDB:"
+
+#: without_cd.cc:77
+msgid "Search"
+msgstr "Szukaj"
+

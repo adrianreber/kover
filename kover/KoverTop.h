@@ -28,7 +28,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: KoverTop.h,v 1.19 2001/11/18 23:59:33 adrian Exp $ */
+/* $Id: KoverTop.h,v 1.21 2001/11/19 23:57:04 adrian Exp $ */
 
 #ifndef KOVER_TOP_H
 #define KOVER_TOP_H
@@ -61,7 +61,6 @@ class KoverTop : public KMainWindow {
 public:
 	 KoverTop(const char* name=NULL);
 	 ~KoverTop();
-	 void fileOpen( const KURL& );
 	 
 public slots:
 void contentsBoxChanged();
@@ -73,12 +72,15 @@ void contentsBoxChanged();
 	 void setStatusText( const char* _status_text );
 	 void actualSize();
 	 void update_id(unsigned long=0);
+	 void fileOpen( const KURL& );
 
+private:
+	 void saveFile( const KURL& );
+	 
 private slots:
 
 void fileNew();
 	 void fileOpen();
-	 void file_open(const KURL&);
 	 void fileSave();
 	 void fileSaveAs();
 	 void filePrint();

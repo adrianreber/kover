@@ -27,14 +27,19 @@
 	 
 */
 
-/* $Id: koverfile.cpp,v 1.5 2001/11/11 00:34:48 adrian Exp $ */
+/* $Id: koverfile.cpp,v 1.7 2001/11/19 23:57:04 adrian Exp $ */
+
+#include "koverfile.moc"
 
 #include "kover.h"
 #include "koverfile.h"
 #include <qfile.h>
 #include <qregexp.h>
 #include <qfileinfo.h>
+#include <kurl.h>
 #include <ksimpleconfig.h>
+#include <ktempfile.h>
+#include <kio/netaccess.h>
 
 KoverFile::KoverFile() {
 	 reset();
@@ -336,8 +341,16 @@ bool KoverFile::openECD( QString& filename )
 	 return true;  
 }
 
-bool KoverFile::openFile( QString& filename )
+bool KoverFile::openFile( const KURL& url )
 {
+	 QString filename;
+	 QString tempFile;
+
+	 if( !url.isLocalFile() )
+		  KIO::NetAccess::download( url, tempFile );
+	 else
+		  filename = url.path();
+	 
 	 QFileInfo fi( filename );
 	 if ( !fi.exists() )
 		  return false;
@@ -390,14 +403,27 @@ bool KoverFile::openFile( QString& filename )
 	 cd_title.replace( QRegExp(">|<"), "\n" );
 	
 	 emit dataChanged(true);
+
+	 if( !url.isLocalFile() )
+		  KIO::NetAccess::removeTempFile( tempFile );
 	
 	 return true;  
 }
 
-bool KoverFile::saveFile( QString& filename )
+bool KoverFile::saveFile( const KURL& url )
 {
 	 // Help! I´m looking for a better way of error handling. KSimpleConfig doesn´t return anything.
-	
+	 
+	 QString filename;
+	 KTempFile tempFile;
+
+	 tempFile.setAutoDelete( true );
+
+	 if( !url.isLocalFile() )
+		  filename = tempFile.name();
+	 else
+		  filename = url.path();
+	 
 	 QFileInfo fi( filename );
 	 if ( fi.exists() && !fi.isWritable() )
 		  return false;
@@ -457,6 +483,9 @@ bool KoverFile::saveFile( QString& filename )
 	 cd_contents.replace( QRegExp(">|<"), "\n" );
 	 cd_title.replace( QRegExp(">|<"), "\n" );
 
+	 if( !url.isLocalFile() )
+		  KIO::NetAccess::upload( filename, url );
+	 
 	 return true;
 }
-#include "koverfile.moc"
+

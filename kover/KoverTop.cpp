@@ -50,8 +50,6 @@
 #include <kfiledialog.h>
 #include <kfontdialog.h>
 #include <kcolordialog.h>
-#include <ktempfile.h>
-#include <kio/netaccess.h>
 #include <krecentdocument.h>
 
 #define NORM_WIDTH 520
@@ -82,7 +80,7 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 	 KStdAction::cut(this, SLOT(cut()), actionCollection());
 	 KStdAction::copy(this, SLOT(copy()), actionCollection());
 	 KStdAction::paste(this, SLOT(paste()), actionCollection());
-	 recent = KStdAction::openRecent(this, SLOT(file_open(const KURL&)), actionCollection());
+	 recent = KStdAction::openRecent(this, SLOT(fileOpen(const KURL&)), actionCollection());
 	 (void)new KAction(i18n("&Actual size"),"viewmag",0,this, SLOT(actualSize()),actionCollection(), "actual_size");
 	 (void)new KAction(i18n("&CDDB lookup"),"network",0,this, SLOT(cddbFill()),actionCollection(), "cddb");
 	 KStdAction::preferences(this,SLOT(preferences()),actionCollection());
@@ -256,21 +254,9 @@ void KoverTop::fileOpen() {
 	 }
 }
 
-void KoverTop::file_open(const KURL& url) {
-	 fileOpen(url);
-}
-
 void KoverTop::fileOpen( const KURL& url ) {
 	 if (!url.isEmpty()) {
-		  QString filename;
-		  QString tempFile;
-		  if( !url.isLocalFile() ) {
-				KIO::NetAccess::download( url, tempFile );
-				filename = tempFile;
-		  }
-		  else filename = url.path();
-		
-		  if (kover_file.openFile( filename )) {
+		  if (kover_file.openFile( url )) {
 				m_url = url;
 				
 				setCaption(i18n(m_url.url()), false);
@@ -293,10 +279,6 @@ void KoverTop::fileOpen( const KURL& url ) {
 				altered_data = false;
 		  } else 
 				KMessageBox::error( this, i18n("Error while opening/reading file!"));
-		
-		  if( !url.isLocalFile() )
-				KIO::NetAccess::removeTempFile( tempFile );
-		  
 	 }
 }
 
@@ -315,47 +297,32 @@ int KoverTop::how_about_saving() {
 	 return -1;
 }
 
-void KoverTop::fileSave() {
-	 if (m_url.isEmpty())
-		  fileSaveAs();
-	 else	{
-		  QString filename;					 
-		  KTempFile tempFile;
-			
-		  tempFile.setAutoDelete( true );
-			
-		  if( m_url.isLocalFile() )
-				filename = m_url.path();
-		  else
-				filename = tempFile.name();
-					 
-		  if (kover_file.saveFile( filename )) {
-				setCaption(i18n(m_url.url()), false);
-				setStatusText(i18n("File saved"));
-				altered_data = false;
-				recent->addURL(m_url.url());
-		  } else
-				KMessageBox::error( this, i18n("Error while opening/reading file!"));
-
-		  if( !m_url.isLocalFile() )
-				KIO::NetAccess::upload( filename, m_url );							
-	 }
+void KoverTop::saveFile( const KURL& url )
+{
+	 if (kover_file.saveFile( url )) {
+		  setCaption(i18n(url.url()), false);
+		  setStatusText(i18n("File saved"));
+		  altered_data = false;
+		  recent->addURL(url);
+		  m_url = url;
+	 } else
+		  KMessageBox::error( this, i18n("Error while opening/reading file!"));
 }
 
-void KoverTop::fileSaveAs() {
-	 KURL url = KFileDialog::getSaveURL( QString::null, "*.kover" );
-	 if (!url.isEmpty()) {
-		  QString file = url.path();					 
-		  if (kover_file.saveFile( file ))	{
-				m_url = url;							
+void KoverTop::fileSave()
+{
+	 if( m_url.isEmpty() )
+		  fileSaveAs();
+	 else
+		  saveFile( m_url );
+}
 
-				setCaption(i18n(url.url()), false);
-				setStatusText(i18n("File saved"));
-				altered_data = false;
-				recent->addURL(m_url.url());
-		  } else
-				KMessageBox::error( this, i18n("Error while opening/reading file!"));
-	 }
+void KoverTop::fileSaveAs()
+{
+	 KURL url = KFileDialog::getSaveURL( QString::null, "*.kover" );
+
+	 if (!url.isEmpty())
+		  saveFile( url );
 }
 
 void KoverTop::filePrint() {
