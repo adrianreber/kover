@@ -21,10 +21,12 @@
 	 Description: Header for the global struct
 */
 
-/* $Id: kover_global.h,v 1.10 2001/12/04 16:23:50 adrian Exp $ */
+/* $Id: kover_global.h,v 1.11 2002/04/20 22:29:13 adrian Exp $ */
 
 #ifndef _KOVER_GLOBAL_H
 #define _KOVER_GLOBAL_H
+
+#include <qfont.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,8 +52,12 @@ extern "C" {
 		  int its_a_slim_case;
         int inlet_only;
 		  int one_page;
-
+		  
 		  char *base64encoded;
+
+		  QFont *content_font;
+		  QFont *title_font;
+		  QFont *inlet_title_font;
 		  
 	 } kover_global;
 	 

@@ -1,4 +1,13 @@
-$Id: ChangeLog,v 1.13 2001/11/19 22:47:56 adrian Exp $
+$Id: ChangeLog,v 1.14 2002/04/20 22:29:13 adrian Exp $
+
+2002-04-07 Adrian <adrian@lisas.de>
+	* kover_file.cc: changed .kover file format to use XML.
+   * renamed some files from .cpp to .cc, so --enable-final
+     can optimize better. More renaming will follow
+	* created the qt3_version branch in the cvs
+
+2002-03-07 Alexander <alex@lisas.de>
+	* gcc3 and kde3 fixes
 
 2001-11-19  Michael  <konqueror@gmx.de>
 	* bufixes for the network transparency stuff

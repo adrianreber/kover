@@ -1,26 +1,9 @@
-[Contents]
-Color=0,0,0
-Font=helvetica,16,5,0,50,0
-Text=(ca:4)-1. Break Stuff / Limp Bizkit>|<(ca:4)-2. Lacquer Head / Primus>|<(ca:4)-3. Mudshovel / Staind>|<(ca:4)-4. Falling Away From Me / Korn>|<(ca:2)-5. Rockwilder / Method Man / Redman>|<(ca:7)-6. Hey Man, Nice Shot / Filter>|<(ca:5)-7. Rearranged / Limp Bizkit>|<(ca:6)-8. A.D.I.D.A.S / Korn>|<(ca:5)-9. My Name Is Mud / Primus>|<(ca:5)-10. Welcome To The Fold / Filter>|<(ca:6)-11. Keep Hope Alive / The Crystal Method>|<(ca:4)-12. I Would For You / Limp Bizkit>|<(ca:6)-13. Nookie / Limp Bizkit>|<(ca:5)-14. Outside / Staind with Fred Durst
-[General]
-BackgroundColor=255,255,255
-Number=0
-[Image1]
-Filename=
-Mode=0
-Target=0
-[Image2]
-Filename=
-Mode=0
-Target=0
-[Image3]
-Filename=
-Mode=0
-Target=0
-[Program]
-Name=Kover
-Version=0.4
-[Title]
-Color=0,0,0
-Font=times,32,5,0,50,0
-Text=Various Artists >|<The Family Values Tour 1999\r
+<!DOCTYPE kover ><kover version="0.8.3" name="kover" >
+ <title size="32" weight="50" color="#000000" font="times" italic="0" />
+ <img target="0" mode="0" src="" />
+ <img target="0" mode="0" src="" />
+ <img target="0" mode="0" src="" />
+ <general bgcolor="#ffffff" number="0" />
+ <inlet size="12" weight="50" font="helvetica" italic="0" />
+ <content size="16" weight="50" color="#000000" font="helvetica" italic="0" />
+</kover>

@@ -28,7 +28,7 @@
 	 29 Oct 2001: Change size of the inlet title font
 */
   
-/* $Id: cdview.cc,v 1.2 2001/12/04 23:00:35 adrian Exp $ */
+/* $Id: cdview.cc,v 1.4 2002/04/20 22:29:13 adrian Exp $ */
 
 #include "cdview.moc"
 
@@ -48,9 +48,16 @@
 #define FRONT_H	343
 #define FRONT_V	338
 
+// #define FRONT_H 500 
+// #define FRONT_V 493
+
 #define BACK_HI	391
 #define BACK_HS	17
 #define BACK_V		334
+
+// #define BACK_HI	570
+// #define BACK_HS	25
+// #define BACK_V		487
 
 CDView::CDView(KoverFile* _kover_file, QWidget* parent, const char* name) 
 	 : QFrame( parent, name ) {
@@ -62,7 +69,7 @@ CDView::CDView(KoverFile* _kover_file, QWidget* parent, const char* name)
 	 setFrameRect( QRect(0,0,0,0) );
 	 setFrameStyle( WinPanel | Sunken );
 	 
-	 printer = new KPrinter();
+	 printer = new KPrinter( QPrinter::Compatible );
 	 printer->setOrientation( KPrinter::Landscape );
 	 printer->setMinMax( 1, 2 );
 	 printer->setFromTo( 1, 2 );
@@ -73,8 +80,9 @@ void CDView::paintEvent( QPaintEvent * ) {
 	 drawFrame(&paint);
 	 
 	 if (previewMode) {
+		  //paint.scale( 0.68f, 0.68f );
 		  drawBooklet(&paint, 4, 4 );
-		  drawInlet(&paint, 140, 4*2 + 338 );
+		  drawInlet(&paint, 150, 4*2 + FRONT_V ); //150
 		  
 		  paint.setWorldMatrix( QWMatrix() );
 		  paint.setFont( QFont("helvetica",14) );
@@ -83,7 +91,7 @@ void CDView::paintEvent( QPaintEvent * ) {
 	 } else {
 		  paint.scale( 0.4f, 0.4f );
 		  drawBooklet( &paint, 20, 15 );
-		  drawInlet( &paint, 150, 15*2 + 338 );
+		  drawInlet( &paint, 140, 15*2 + FRONT_V ); //140
 	 }
 }
 
@@ -102,12 +110,14 @@ void CDView::printKover() {
 		  QPainter *paint = new QPainter( printer );
 		  previewMode = true; // hack
 
+		  //paint->scale( 1.45783f, 1.45783f   );
+
 		  //this is getting ugly
 		  if (!globals.one_page) {
 		  
 				if (!globals.inlet_only) {
 					 if (printer->fromPage() == 1) 
-						  drawBooklet(paint, 20, 15);
+						  drawBooklet(paint, 20, 20);
 				}
 				
 				if (!globals.its_a_slim_case) {
@@ -115,7 +125,7 @@ void CDView::printKover() {
 						  printer->newPage();
 					 
 					 if (printer->toPage() == 2) 
-						  drawInlet( paint, 20, 15 );
+						  drawInlet( paint, 20, 20 );
 				}
 		  } else {
 				printer->setOrientation( KPrinter::Portrait );
@@ -140,8 +150,11 @@ void CDView::drawBooklet(QPainter *p, int X, int Y) {
 		  return;
 	 
 	 const float scale = 0.4;
-	 p->fillRect( X, Y, FRONT_H*2, FRONT_V, kover_file->backColor() );
-	 
+	 if (globals.one_page)
+		  p->fillRect( X, Y, FRONT_H, FRONT_V, kover_file->backColor() );
+	 else
+		  p->fillRect( X, Y, FRONT_H*2, FRONT_V, kover_file->backColor() );
+
 	 for (int i=0; i<3; i++) {
 		  if (!images[i].isNull()) {
 				switch (kover_file->imageMode(i)) {
@@ -216,10 +229,12 @@ void CDView::drawBooklet(QPainter *p, int X, int Y) {
 	 p->setFont( kover_file->titleFont() );
 	 p->setPen( kover_file->titleColor() );
 
-	 if (globals.one_page)
-		  p->drawText( X+10, Y+10, FRONT_H-20, FRONT_V-10, AlignHCenter, kover_file->title(), kover_file->title().length() );
-	 else
-		  p->drawText( X+FRONT_H, Y+10, FRONT_H, FRONT_V-10, AlignHCenter, kover_file->title(), kover_file->title().length() );
+	 if (!kover_file->display_title()) {
+		  if (globals.one_page)
+				p->drawText( X+10, Y+10, FRONT_H-20, FRONT_V-10, AlignHCenter, kover_file->title(), kover_file->title().length() );
+		  else
+				p->drawText( X+FRONT_H, Y+10, FRONT_H, FRONT_V-10, AlignHCenter, kover_file->title(), kover_file->title().length() );
+	 }
 	 
 	 p->setPen( black );
 	 

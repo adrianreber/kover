@@ -1,4 +1,4 @@
-$Id: THANKS,v 1.4 2001/11/19 09:47:49 adrian Exp $
+$Id: THANKS,v 1.5 2002/04/20 22:29:13 adrian Exp $
 
 kover THANKS:
 
@@ -8,6 +8,10 @@ Using code and ideas from:
 - grip http://www.nostatic.org/grip/
 - kmail and kedit (see www.kde.org)
 - base64 encoding by unknown
+
+Alexander Koenig <alex@lisas.de>
+- gcc 3 patches
+- kde 3 patches
 
 Jean-Pierre VERRUE <jean-pierre.verrue@laposte.net>
 - french translation
@@ -29,3 +33,6 @@ of compilation speed.
 - included a mime-type application/x-kover
 - now using the KURL object to open and save files.
   it is now possible to save and open files via ftp...
+
+Denis Oliver Kropp
+- for the original version of kover

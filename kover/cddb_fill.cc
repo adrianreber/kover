@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.2 2001/12/01 23:17:42 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.3 2002/04/20 22:29:13 adrian Exp $ */
 
 #include "cddb_fill.moc"
 
@@ -721,8 +721,6 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file, bool w
 			
 				emit statusText(tr("Downloading CD info..."));
 					 
-					
-
 				t = strlen("cddb+read+%s+%08x")+strlen(cdinfo.category)+sizeof(cdinfo.cddb_id)+10;
 
 				query_buffer = (char *)malloc(t);

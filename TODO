@@ -1,3 +1,5 @@
+$Id: TODO,v 1.7 2002/04/20 22:29:13 adrian Exp $
+
 Kover TODO
 ===========
 
@@ -12,6 +14,8 @@ Kover TODO
 
 - directory tree as contents (ala cdrLabel)
 
+- use kscd cddb files
+
 General:
 
 -more error handling (especially file I/O)
@@ -22,7 +26,7 @@ General:
 -free positionable images
 
 
-Other suggestions that arrived me, i´ll think about them:
+Other suggestions that arrived me, i'll think about them:
 
 -print booklet/inlet on one page (will cut off an inner edge of the booklet)
 -directory tree as contents (could produce many booklet pages -> how to handle?)

@@ -25,7 +25,7 @@
 	 05 Apr 2001: initial thingy
 */
 
-/* $Id: config.cc,v 1.4 2001/12/04 16:23:50 adrian Exp $ */
+/* $Id: config.cc,v 1.5 2002/04/20 22:29:13 adrian Exp $ */
 
 #include "config.h"
 #include <kconfig.h>
@@ -148,6 +148,37 @@ void config_class::load_globals() {
 		  globals.one_page = 0;
 	 else
 		  globals.one_page = string->toInt();
+	 
+	 config->setGroup("fonts");
+	 if ((config->readEntry("content_font")).isEmpty())
+		  globals.content_font = new QFont("helvetica", 16);
+	 else {
+		  QFont *bla = new QFont();
+		  bla->setRawName(config->readEntry("content_font"));
+		  globals.content_font = new QFont(*bla);
+		  delete (bla);
+		  _DEBUG_ fprintf(stderr,"kover:font loaded: %s\n",((globals.content_font)->rawName()).latin1());
+	 }
+
+	 if ((config->readEntry("title_font")).isEmpty())
+		  globals.title_font = new QFont("helvetica", 32);
+	 else {
+		  QFont *bla = new QFont();
+		  bla->setRawName(config->readEntry("title_font"));
+		  globals.title_font = new QFont(*bla);
+		  delete (bla);
+		  _DEBUG_ fprintf(stderr,"kover:font loaded: %s\n",((globals.title_font)->rawName()).latin1());
+	 }
+
+	 if ((config->readEntry("inlet_title_font")).isEmpty())
+		  globals.inlet_title_font = new QFont("helvetica", 32);
+	 else {
+		  QFont *bla = new QFont();
+		  bla->setRawName(config->readEntry("inlet_title_font"));
+		  globals.inlet_title_font = new QFont(*bla);
+		  delete (bla);
+		  _DEBUG_ fprintf(stderr,"kover:font loaded: %s\n",((globals.inlet_title_font)->rawName()).latin1());
+	 }
 
 	 delete (string);
 	 globals.base64encoded = NULL;
@@ -192,6 +223,11 @@ void config_class::store_globals() {
 
 	 string->sprintf("%d",globals.one_page);
 	 config->writeEntry("one_page",*string);
+
+	 config->setGroup("fonts");
+	 config->writeEntry("content_font",((globals.content_font)->rawName()).latin1());
+	 config->writeEntry("title_font",((globals.title_font)->rawName()).latin1());
+	 config->writeEntry("inlet_title_font",((globals.inlet_title_font)->rawName()).latin1());
 
 	 delete (string);
 	 _DEBUG_ fprintf(stderr,"kover: leaving config_class::store_globals()\n");

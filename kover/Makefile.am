@@ -9,7 +9,8 @@ kover_SOURCES = imagedlgdata.cpp imagedlg.cpp cddb_fill.cc koverfile.cc \
 		cddb_211_item.cc inexact_dialog.cc proxy_auth.cc \
 		without_cd.cc categories.cc direntry.cc
 
-kover_LDADD   = $(LIB_KSYCOCA) $(LIB_KFILE) $(LIBSOCKET) -lkdeprint
+#kover_LDADD   = $(LIB_KSYCOCA) $(LIB_KFILE) $(LIBSOCKET) -lkdeprint
+kover_LDADD   = $(LIBSOCKET) -lkdeprint
 
 # the library search path. 
 kover_LDFLAGS = $(all_libraries) $(KDE_RPATH)

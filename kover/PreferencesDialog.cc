@@ -29,9 +29,10 @@
 	 27 Jan 2001: Added misc page
 	 12 Jun 2001: Added slim case thingy
 	 16 Oct 2001: Added 'inlet only' thingy
+	 13 Mar 2002: Standard font page
 */
 
-/* $Id: PreferencesDialog.cc,v 1.2 2001/12/04 16:23:50 adrian Exp $ */
+/* $Id: PreferencesDialog.cc,v 1.3 2002/04/20 22:29:13 adrian Exp $ */
 
 #include "PreferencesDialog.moc"
 
@@ -42,6 +43,9 @@
 #include <qlayout.h>
 #include <kmessagebox.h>
 #include <qlabel.h>
+#include <qpushbutton.h>
+#include <qfontdialog.h>
+#include <kfontdialog.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -54,7 +58,10 @@ PreferencesDialog::PreferencesDialog(QWidget *parent, const QString &caption):KD
 	 setupCDROMPage();
 	 setup_cddb_files_page();
 	 setup_misc_page();
+	 setup_font_page();
 }
+PreferencesDialog::~PreferencesDialog() {}
+
 
 void PreferencesDialog::setupCDDBPage( void ) {
 		  
@@ -244,6 +251,7 @@ void PreferencesDialog::apply_settings() {
 				free(globals.cdrom_device);
 		  globals.cdrom_device = NULL;
 	 }
+
 }
 
 void PreferencesDialog::slotDefault() {
@@ -264,8 +272,12 @@ void PreferencesDialog::slotDefault() {
 		  set_misc();
 		  break;
 
+	 case page_font:
+		  
+		  break;
+
 	 default:
-		  fprintf(stderr,"kover:%s:%d: this should not happen",__FILE__,__LINE__);
+		  fprintf(stderr,"kover:%s:%d: this should not happen\n",__FILE__,__LINE__);
 		  return;
 	 }
 }
@@ -411,7 +423,7 @@ void PreferencesDialog::setup_misc_page() {
 	 //topLayout->addWidget(bgroup);
 	 QVBoxLayout *vlay = new QVBoxLayout( group, spacingHint() );
 	 vlay->addSpacing( fontMetrics().lineSpacing() );
-	 QGridLayout *gbox = new QGridLayout( 5, 5 );
+	 QGridLayout *gbox = new QGridLayout( 6, 5 );
 	 vlay->addLayout(gbox);
 
 	 QString text;
@@ -426,19 +438,29 @@ void PreferencesDialog::setup_misc_page() {
 
 	 text = i18n("Print inlet and booklet.");
 	 misc_widgets.its_normal = new QRadioButton( text, group, "its_normal" );
-	 gbox->addMultiCellWidget( misc_widgets.its_normal,2,2,0,5);
+	 gbox->addMultiCellWidget( misc_widgets.its_normal,2,2,0,3);
 
 	 text = i18n("Print inlet on left side of booklet.\n(slim case option)");
 	 misc_widgets.its_a_slim_case = new QRadioButton( text, group, "its_a_slim_case" );
-	 gbox->addMultiCellWidget( misc_widgets.its_a_slim_case,3,3,0,5);
+	 gbox->addMultiCellWidget( misc_widgets.its_a_slim_case,3,3,0,3);
 
 	 text = i18n("Don't print booklet.\n(inlet only option)");
 	 misc_widgets.inlet_only = new QRadioButton( text, group, "inlet_only" );
-	 gbox->addMultiCellWidget( misc_widgets.inlet_only,4,4,0,5);
+	 gbox->addMultiCellWidget( misc_widgets.inlet_only,4,4,0,3);
 
 	 text = i18n("Print all on one page");
 	 misc_widgets.one_page = new QRadioButton( text, group, "one_page" );
-	 gbox->addMultiCellWidget( misc_widgets.one_page,5,5,0,5);
+	 gbox->addMultiCellWidget( misc_widgets.one_page,5,5,0,3);
+	 connect(group,SIGNAL(clicked(int)), SLOT(output_changed(int)));
+
+	 misc_widgets.inlet = new QLabel(group);
+	 KIconLoader pixmap = KIconLoader();
+	 misc_widgets.inlet->setPixmap(pixmap.loadIcon("back_content",KIcon::NoGroup));
+	 gbox->addMultiCellWidget(misc_widgets.inlet, 6,6,1,2);
+	 
+	 misc_widgets.booklet = new QLabel(group);
+	 misc_widgets.booklet->setPixmap(pixmap.loadIcon("front_title_only",KIcon::NoGroup));
+	 gbox->addMultiCellWidget(misc_widgets.booklet,6,6,3,4);
 
 	 set_misc();
 }
@@ -454,22 +476,29 @@ void PreferencesDialog::set_misc() {
 	 else
 		  misc_widgets.display_track_duration->setChecked(false);
 
-	 if (globals.its_a_slim_case)
+	 /* no comment */
+
+	 if (globals.its_a_slim_case) {
 		  misc_widgets.its_a_slim_case->setChecked(true);
-	 else
+		  output_changed(3);
+	 }	else
 		  misc_widgets.its_a_slim_case->setChecked(false);
 
-	 if (globals.inlet_only)
+	 if (globals.inlet_only) {
 		  misc_widgets.inlet_only->setChecked(true);
-	 else
+		  output_changed(4);
+	 } else
 		  misc_widgets.inlet_only->setChecked(false);
 	 
-	 if (!globals.inlet_only || !globals.its_a_slim_case)
+	 if (!globals.inlet_only && !globals.its_a_slim_case && !globals.one_page) {
 		  misc_widgets.its_normal->setChecked(true);
+		   output_changed(2);
+	 }
 	 
-	  if (globals.one_page)
+	 if (globals.one_page) {
 		  misc_widgets.one_page->setChecked(true);
-	 else
+		  output_changed(5);
+	 } else
 		  misc_widgets.one_page->setChecked(false);
 }
 
@@ -498,4 +527,77 @@ void PreferencesDialog::save_misc() {
 		  globals.one_page = 1;
 	 else
 		  globals.one_page = 0;
+}
+
+void PreferencesDialog::setup_font_page() {
+	 QFrame *page = addPage(i18n("Fonts"), i18n("Standard Fonts"),
+									BarIcon("fonts", KIcon::SizeMedium));
+	 QVBoxLayout *topLayout = new QVBoxLayout(page, 0, spacingHint());
+	 
+	 QGroupBox *group = new QGroupBox(i18n("&Standard Fonts"),page);
+	 topLayout->addWidget(group);
+	 QVBoxLayout *vlay = new QVBoxLayout(group, spacingHint());
+	 vlay->addSpacing(fontMetrics().lineSpacing());
+	 QGridLayout *gbox = new QGridLayout(2, 1);
+	 vlay->addLayout(gbox);
+	 
+	 QLabel *label = new QLabel(i18n("Content Font: "), group, "content_font" );
+	 gbox->addWidget(label, 0, 0);
+
+	 font_widgets.change_content_font = new QPushButton("Change",group,"change_content_font");
+	 gbox->addWidget(font_widgets.change_content_font,0,1);
+	 connect(font_widgets.change_content_font,SIGNAL(clicked()), SLOT(content_font_dialog()));
+
+	 label = new QLabel(i18n("Title Font: "), group, "title_font" );
+	 gbox->addWidget(label, 1, 0);
+
+	 font_widgets.change_title_font = new QPushButton("Change",group,"change_title_font");
+	 gbox->addWidget(font_widgets.change_title_font,1,1);
+	 connect(font_widgets.change_title_font,SIGNAL(clicked()), this,SLOT(title_font_dialog()));
+
+	 label = new QLabel(i18n("Inlet Title Font: "), group, "inlet_title_font" );
+	 gbox->addWidget(label, 2, 0);
+
+	 font_widgets.change_inlet_title_font = new QPushButton("Change",group,"change_inlet_title_font");
+	 gbox->addWidget(font_widgets.change_inlet_title_font,2,1);
+	 connect(font_widgets.change_inlet_title_font,SIGNAL(clicked()), this,SLOT(inlet_title_font_dialog()));
+
+}
+
+void PreferencesDialog::content_font_dialog() {
+	 _DEBUG_ fprintf(stderr,"%s:font name before: %s\n",PACKAGE,((globals.content_font)->rawName()).latin1());
+	 KFontDialog *kf = new KFontDialog(this, "kf", true);
+	 kf->getFont(*globals.content_font);
+	 _DEBUG_ fprintf(stderr,"%s:font name after: %s\n",PACKAGE,((globals.content_font)->rawName()).latin1());
+}
+
+void PreferencesDialog::title_font_dialog(){
+	 KFontDialog *kf = new KFontDialog(this, "kf",true);
+	 kf->getFont(*globals.title_font);
+}
+
+void PreferencesDialog::inlet_title_font_dialog(){
+	 KFontDialog *kf = new KFontDialog(this, "kf", true);
+	 kf->getFont(*globals.inlet_title_font);
+}
+
+void PreferencesDialog::output_changed(int type) {
+	 KIconLoader pixmap = KIconLoader();
+	 if (type==2) {
+		  misc_widgets.inlet->setPixmap(pixmap.loadIcon("back_content",KIcon::NoGroup));
+		  misc_widgets.booklet->setPixmap(pixmap.loadIcon("front_title_only",KIcon::NoGroup));
+	 }
+	 if (type==3) {
+		  misc_widgets.inlet->setPixmap(NULL);
+		  misc_widgets.booklet->setPixmap(pixmap.loadIcon("front_title-right_content-left",KIcon::NoGroup));
+	 }
+	 if (type==4) {
+		  misc_widgets.inlet->setPixmap(pixmap.loadIcon("back_title_content",KIcon::NoGroup));
+		  misc_widgets.booklet->setPixmap(NULL);
+	 }
+	 if (type==5) {
+		  misc_widgets.inlet->setPixmap(pixmap.loadIcon("back_content",KIcon::NoGroup));
+		  misc_widgets.booklet->setPixmap(pixmap.loadIcon("one_page",KIcon::NoGroup));
+	 }
+	 
 }

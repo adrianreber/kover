@@ -34,12 +34,13 @@
 	 11 Nov 2001: CDDB without CD
 */
 
+/* $Id: kovertop.cc,v 1.8 2002/04/20 22:29:13 adrian Exp $ */
+
 #include "kovertop.moc"
 
 #include "kovertop.h"
 #include "imagedlg.h"
 #include "without_cd.h"
-#include <math.h>
 #include <klocale.h>
 #include <kmainwindow.h>
 #include <kapp.h>
@@ -54,10 +55,11 @@
 #include <qlayout.h>
 #include <kurl.h>
 #include <qdom.h>
+#include <qvgroupbox.h>
 
 
 #define NORM_WIDTH 520
-#define NORM_HEIGHT 490
+#define NORM_HEIGHT 500
 #define MORE_HEIGHT 550
 
 #define MORE_FRAME_HEIGHT 40
@@ -67,13 +69,14 @@
 #define PREV_HEIGHT 684
 
 #define CDVIEW_X 224
-#define CDVIEW_Y 40
+#define CDVIEW_Y 50
 #define CDVIEW_WIDTH	291
 #define CDVIEW_HEIGHT 310
 
 KoverTop::KoverTop(const char* name) : KMainWindow(0, name) {
 	 main_frame = new QFrame(this);
 	 more_frame = new QFrame(this);
+	 option_frame = new QFrame(this);
 	 
 	 setCaption(i18n("[New Document]"), false);
 	 setFixedSize(NORM_WIDTH, NORM_HEIGHT);
@@ -86,6 +89,8 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0, name) {
 	 make_main_frame();
 
 	 make_more_frame();
+
+	 make_option_frame();
 
 	 connect(&kover_file, SIGNAL(dataChanged(bool)), SLOT(dataChanged(bool)));
 
@@ -148,23 +153,23 @@ void KoverTop::make_main_frame() {
 	 connect( number_check, SIGNAL(toggled(bool)), SLOT(numberChecked(bool)) );
 
 	 title_label = new QLabel(i18n("Title"), main_frame,"title_label");
-	 title_label->move( 5, 25 );
+	 title_label->move( 5, 35 );
 
 	 title_edit = new QMultiLineEdit( main_frame, "title_edit" );
 	 title_edit->resize( 215, 50 );
-	 title_edit->move( 5, 50 );
+	 title_edit->move( 5, 60 );
 	 connect( title_edit, SIGNAL(textChanged()), SLOT(titleBoxChanged()) );
   
 	 contents_label = new QLabel(i18n("Contents"), main_frame, "contents_label");
-	 contents_label->move( 5, 105 );
+	 contents_label->move( 5, 115 );
 
 	 contents_edit = new QMultiLineEdit( main_frame, "contents_edit" );
-	 contents_edit->resize( 215, 215 );
-	 contents_edit->move( 5, 135 );
+ 	 contents_edit->resize( 215, 215 );
+	 contents_edit->move( 5, 145 );
 	 connect(contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()));
 
 	 cddb_id = new QLabel("CDDB id:", main_frame, "cddb_id");
-	 cddb_id->move( CDVIEW_X, CDVIEW_Y - 40 );
+	 cddb_id->move( CDVIEW_X, CDVIEW_Y - 50 );
 	 
 	 cdview = new CDView(&kover_file, main_frame);
 	 cdview->resize(CDVIEW_WIDTH, CDVIEW_HEIGHT);
@@ -173,6 +178,19 @@ void KoverTop::make_main_frame() {
 	 connect(cdview, SIGNAL(actualSize()), SLOT(actualSize()));
 	 
 	 main_frame->move(0,70);
+	 title_edit->setFocus();
+}
+
+void KoverTop::make_option_frame() {
+	 QVGroupBox *group_box = new QVGroupBox(option_frame,"group");
+	 group_box->setGeometry(10,10,500,120);
+	 group_box->setTitle(tr("All this options are not global"));
+
+	 display_title = new QCheckBox(tr("No title on booklet"), group_box, "display_title");
+	 connect(display_title,SIGNAL(clicked()), SLOT(display_title_signal()));
+	
+	 option_frame->adjustSize();
+	 option_frame->hide();
 }
 
 void KoverTop::make_more_frame() {
@@ -283,6 +301,7 @@ void KoverTop::fileNew() {
 	 number_check->setChecked( false );
 	 title_edit->setFocus();
 	 kover_file.reset();
+	 display_title->setChecked(kover_file.display_title());
 	 setStatusText("Chop!");
 	 altered_data = false;
 	 m_url = KURL();
@@ -313,6 +332,9 @@ void KoverTop::fileOpen( const KURL& url ) {
 				title_edit->setText( kover_file.title() );
 				contents_edit->setText( kover_file.contents() );
 				connect( contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()) );
+
+				display_title->setChecked(kover_file.display_title());
+
 
 				if (kover_file.number()) {
 					 number_spin->setValue( kover_file.number() );
@@ -400,6 +422,8 @@ void KoverTop::paste() {
 }
 
 void KoverTop::actualSize() {
+	 if (more)
+		  return;
 	 cdview->resize( PREV_WIDTH, PREV_HEIGHT );
 	 cdview->move( 0, 0 );
 	 main_frame->move(0,0);
@@ -407,6 +431,7 @@ void KoverTop::actualSize() {
 	 cdview->showPreview();
 	 cdview->setFocus();
 	 more_frame->hide();
+	 option_frame->hide();
 	 menuBar()->hide();
 	 statusBar()->hide();
 	 toolBar("mainToolBar")->hide();
@@ -532,77 +557,27 @@ void KoverTop::more_or_less() {
 		  _DEBUG_ fprintf(stderr,"More >>\n");
 		  for (int i = NORM_WIDTH; i > 0; i--) {
 				main_frame->move(i,70);
-				if (i%20==0) kapp->processEvents();
+				option_frame->move(i-NORM_WIDTH,70);
+				if (i%10==0) kapp->processEvents();
 		  }
+		  option_frame->hide();
 	 } else {
 		  more = true;
 		  more_button->setText("<< Less");
 		  _DEBUG_ fprintf(stderr,"<< Less\n");
-		  for (double i = 0; i < M_PI/2; i += (M_PI/25000)) {
-				main_frame->move((int)(sin(i)*NORM_WIDTH),70);
-				if ((int)(sin(i)*NORM_WIDTH)%40==0) kapp->processEvents();
+		  option_frame->move(-NORM_WIDTH,70);
+		  option_frame->show();
+		  for (int i=0; i<NORM_WIDTH; i++) {
+				option_frame->move(-NORM_WIDTH+i,70);
+				main_frame->move(i,70);
+				if (i%10==0) kapp->processEvents();
 		  }
-	 }
-
-	 QDomDocument doc( "mydocument" );
-	 QFile f( "kover.xml" );
-	 if ( !f.open( IO_ReadOnly ) )
-		  return;
-	 if ( !doc.setContent( &f ) ) {
-		  f.close();
-		  return;
-	 }
-	 f.close();
-	 
-	 // print out the element names of all elements that are a direct child
-	 // of the outermost element.
-	 QDomElement docElem = doc.documentElement();
-	 cout << docElem.tagName() << endl;
-	 QDomNamedNodeMap nmm = docElem.attributes();
-	 for (uint length = 0; length < nmm.length(); length++) {
-		  cout << (nmm.item(length)).nodeName() << "..." << (nmm.item(length)).nodeValue() <<endl;
-	 }
-	 
-
-	 QDomNode n = docElem.firstChild();
-	 while( !n.isNull() ) {
-		  QDomElement e = n.toElement(); // try to convert the node to an element.
-		  if( !e.isNull() ) { // the node was really an element.
-				cout << e.tagName() << endl;
-				QDomNamedNodeMap nm = e.attributes();
-					 for (uint length = 0; length < nm.length(); length++) {
-						  cout << (nm.item(length)).nodeName() << "..." << (nm.item(length)).nodeValue() <<endl;
-					 }
-		  }
-		  QDomNode m = n.firstChild();
-		  while( !m.isNull() ) {
-				QDomElement ee = m.toElement();
-				if( !ee.isNull() ) { // the node was really an element.
-					 cout << ee.tagName() << "..." << ee.text() <<endl;
-					 
-					 
-				}
-				m = m.nextSibling();
-		  }
+		  //option_frame->move(0,70);
 		  
-		  n = n.nextSibling();
 	 }
-
-	 QDomElement elem = doc.createElement( "img" );
-	 elem.setAttribute( "src", "myimage.png" );
-	 docElem.appendChild(elem);
-
-	 QFile ff( "kover1.xml" );
-	 
-	 if ( !ff.open( IO_WriteOnly ) )
-		  return;
-	 
-	 ff.writeBlock((doc.toString()).latin1(),strlen((doc.toString()).latin1()));
-
-	 ff.close();
-  
-
  
 }
 
-
+void KoverTop::display_title_signal() {
+	 kover_file.set_display_title(display_title->isChecked());
+}

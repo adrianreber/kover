@@ -27,7 +27,7 @@
 	 
 */
 
-/* $Id: koverfile.h,v 1.5 2001/11/19 23:57:04 adrian Exp $ */
+/* $Id: koverfile.h,v 1.9 2002/02/07 21:46:18 adrian Exp $ */
 
 #ifndef KOVERFILE_H
 #define KOVERFILE_H
@@ -36,6 +36,7 @@
 #include <qstring.h>
 #include <qfont.h>
 #include <qcolor.h>
+#include <ksimpleconfig.h>
 
 class KURL;
 
@@ -80,6 +81,8 @@ public:
 	 void setImageMode( const int _nr, const int _image_mode );
 	 void setImageTarget( const int _nr, const int _image_target );
 
+	 void set_display_title(bool title);
+	 
 	 QString	title() const;
 	 QString	contents() const;
 	 QFont	titleFont() const;
@@ -92,13 +95,12 @@ public:
 	 QString	imageFile(const int _nr) const;
 	 int		imageMode(const int _nr) const;
 	 int		imageTarget(const int _nr) const;
+	 bool display_title() const;
 	
-	 bool checkForECD( QString& filename );
-	 bool openECD( QString& filename );
 	 bool openFile( const KURL& url );
 	 bool saveFile( const KURL& url );
-
 	 void reset();
+
 	 signals:
 	 /**
 	  * This signal is emitted when any data changed.
@@ -117,6 +119,13 @@ private:
 	 QString	cd_image_file[3];
 	 int		cd_image_mode[3];
 	 int		cd_image_target[3];
+	 bool cd_display_title;
+	 bool save_as_XML(const QString &filename);
+	 bool open_XML(const QString &filename);
+	 bool old_save_method(const QString &filename);
+	 void old_open_method(KSimpleConfig &file);
+	 bool checkForECD( QString& filename );
+	 bool openECD( QString& filename );
 };
 
 #endif /* KOVERFILE_H */

@@ -28,7 +28,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.h,v 1.2 2002/01/13 00:33:21 adrian Exp $ */
+/* $Id: kovertop.h,v 1.4 2002/04/20 22:29:13 adrian Exp $ */
 
 #ifndef KOVER_TOP_H
 #define KOVER_TOP_H
@@ -44,7 +44,7 @@
 #include <kapp.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
-#include <ktmainwindow.h>
+#include <kmainwindow.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qlabel.h>
@@ -52,6 +52,7 @@
 #include <ktoolbar.h>
 #include <kstatusbar.h>
 #include <kstddirs.h>
+#include <kurl.h>
 #include <kaction.h>
 
 /** KoverTop is the TopLevelWidget. */
@@ -100,6 +101,7 @@ void fileNew();
 	 void inlet_title_font();
 	 void cddb_without_cd();
 	 void more_or_less();
+	 void display_title_signal();
 	 
 private:
 	 
@@ -109,8 +111,10 @@ private:
 	 void make_menu();
 	 void make_main_frame();
 	 void make_more_frame();
-
-
+	 void make_option_frame();
+	 
+	 QFrame *option_frame;
+	 QCheckBox *display_title; 
 	
 	 KRecentFilesAction * recent;
 	 QCheckBox *slim_case;
