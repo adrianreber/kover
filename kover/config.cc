@@ -25,7 +25,7 @@
 	 05 Apr 2001: initial thingy
 */
 
-/* $Id: config.cc,v 1.7 2002/09/11 14:35:32 adrian Exp $ */
+/* $Id: config.cc,v 1.8 2002/09/18 13:55:13 adrian Exp $ */
 
 #include "config.h"
 #include <kconfig.h>
@@ -180,6 +180,12 @@ void config_class::load_globals()
         globals.one_page = 0;
     else
         globals.one_page = string->toInt();
+    
+    *string = config->readEntry("inlet_only");
+    if (string->isNull())
+        globals.inlet_only = 0;
+    else
+        globals.inlet_only = string->toInt();
 
     config->setGroup("fonts");
     if ((config->readEntry("content_font_settings")).isEmpty())
@@ -277,6 +283,9 @@ void config_class::store_globals()
 
     string->sprintf("%d", globals.one_page);
     config->writeEntry("one_page", *string);
+    
+    string->sprintf("%d", globals.inlet_only);
+    config->writeEntry("inlet_only", *string);
 
     config->setGroup("fonts");
     config->writeEntry("content_font_settings",

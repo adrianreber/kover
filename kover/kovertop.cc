@@ -34,7 +34,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.cc,v 1.14 2002/09/16 22:45:53 adrian Exp $ */
+/* $Id: kovertop.cc,v 1.15 2002/09/18 13:55:13 adrian Exp $ */
 
 #include "kovertop.moc"
 
@@ -389,7 +389,7 @@ void KoverTop::fileOpen()
     }
 
     KURL url = KFileDialog::getOpenURL(":koverfile",
-        i18n("*.kover|Kover files\n*|All files"));
+        i18n("*.kover|Kover files\n*|All files\n*.k3b|k3b files"));
 
     if (!url.isEmpty()) {
         fileOpen(url);

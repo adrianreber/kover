@@ -27,7 +27,7 @@
 
 */
 
-/* $Id: imagedlg.h,v 1.3 2002/09/18 13:02:06 adrian Exp $ */
+/* $Id: imagedlg.h,v 1.4 2002/09/18 13:55:13 adrian Exp $ */
 
 #ifndef IMAGEDLG_H
 #define IMAGEDLG_H
@@ -37,7 +37,7 @@
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qcombobox.h
+#include <qcombobox.h>
 
 #include <qdialog.h>
 
