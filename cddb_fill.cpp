@@ -1,0 +1,754 @@
+/***************************************************************************
+                          cddb_fill.cpp  -  CDDB client
+                             -------------------                                         
+
+    version              :                                   
+    begin                : Sun Jan 10 1999                                           
+    copyright            : (C) 1999 by Denis Oliver Kropp                         
+    email                : dok@fischlustig.de                                     
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   * 
+ *                                                                         *
+ ***************************************************************************/
+
+// alter mach kaffe
+
+#include "cddb_fill.h"
+#include <stdio.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+
+#include "../config.h"
+
+#ifdef HAVE_LINUX_CDROM_H
+#include <linux/cdrom.h>
+#endif
+
+#ifdef HAVE_LINUX_UCDROM_H
+#include <linux/ucdrom.h>
+#endif
+
+#include <kmessagebox.h>
+
+#define READ_WRITE	0x01
+#define READ_ONLY	0x02
+
+int code = 0;		/* Return value for sending data to the server */
+char cddb_msg[255];	/* Return message of server info */
+int sock = 0;		/* Descriptor for our socket */
+int sock_mode = 0;	/* Server read/write status */
+FILE *sk;		/* Stream descriptor for our socket */
+
+Track_Info::Track_Info( int _track, int _min, int _sec, int _frame )
+{
+  track = _track;
+  min = _min;
+  sec = _sec;
+  length = min * 60 + sec;
+  start = length * 75 + _frame;
+}
+
+CD_Info::CD_Info()
+{
+  trk.setAutoDelete(true);
+}
+
+CDDB_Fill::CDDB_Fill( KoverFile* _kover_file ) : QObject() 
+{
+  kover_file = _kover_file;
+  cd_fd = -1;
+}
+
+CDDB_Fill::~CDDB_Fill()
+{
+}
+
+bool CDDB_Fill::execute()
+{
+  char *message;
+  if (!openCD())
+	 {
+		return false;
+	 }
+  if (!readTOC())
+	 {
+		closeCD();
+		return false;
+	 }
+
+	
+  //if (!cddb_connect(CDDB_HOST, CDDB_PORT))
+	 if (cddb_connect(CDDB_HOST, CDDB_PORT)) //test
+	 {
+		cddb_query();
+		cddb_disconnect();
+	 }
+  else
+	 {
+		if (errno <sys_nerr)
+		  {
+			 message = (char *)malloc(strlen(sys_errlist[errno])+strlen("Connecting to CDDB server failed: "));
+			 sprintf(message,"Connecting to CDDB server failed: %s",sys_errlist[errno]);
+			 emit statusText(message);
+			 free (message);
+	    
+		  }
+		closeCD();
+		cddb_disconnect();
+		return false;
+		  
+	 }
+	
+	
+  QString tracks, contents;
+  kover_file->setTitle( cdinfo.artist + "\n" + cdinfo.cdname );
+  for (int i=0; i<cdinfo.ntracks; i++)
+	 {
+		tracks.sprintf( "%d. ", i+1 );
+		tracks.append( cdinfo.trk.at(i)->songname );
+		tracks.append( "\n" );
+		contents.append( tracks );
+	 }
+  kover_file->setContents( contents );
+	
+  closeCD();
+	
+  emit updateDisplay();
+  emit statusText("lalalalalalalala");
+
+  return true;
+}
+
+void CDDB_Fill::cdInfo()
+{
+  QString str;
+	
+  str.sprintf( "CD contains %d tracks, total time is %d:%02d, the magic number is 0x%x", cdinfo.ntracks, cdinfo.length/60, cdinfo.length%60, cdinfo.cddb_id );
+  emit statusText( str );
+}
+
+int CDDB_Fill::openCD()
+{
+  int ds;
+	
+  printf("CD opening\n");
+
+
+  if (cd_fd != -1)
+	 {
+		emit statusText( "Internal error: Filedescriptor is not -1, already opened?" );
+		return false;
+	 }
+	
+  if ((cd_fd = open(CD_DEVICE, O_RDONLY | O_NONBLOCK)) < 0)
+	 {
+		if (errno == EACCES)
+		  {
+			 emit statusText( "You don´t have permission to read from /dev/cdrom!" );
+		  } else
+			 if (errno == ENOMEDIUM)
+				{
+				  emit statusText( "There´s no medium in /dev/cdrom!" );
+				} else
+				  if (errno == EBUSY)
+					 {
+						emit statusText( "/dev/cdrom is busy!" );
+					 } else
+						{
+						  emit statusText( "Unknown error while opening /dev/cdrom!" );
+						}
+		return false;
+	 }
+
+  ds = ioctl(cd_fd, CDROM_DISC_STATUS);
+  if (ds != CDS_AUDIO && ds != CDS_MIXED)
+	 {
+		emit statusText( "There´s no audio cd in /dev/cdrom! (ignoring)" );
+		printf( "There´s no audio cd in /dev/cdrom! (ignoring)\n" );
+	 }
+	
+  printf("CD opened: %d\n",ds);
+
+  return true;
+}
+
+void CDDB_Fill::closeCD()
+{
+  if (cd_fd != -1)
+	 {
+		close(cd_fd);
+		cd_fd = -1;
+	 }
+}
+
+bool CDDB_Fill::readTOC()
+{
+  cdrom_tochdr	hdr;
+  cdrom_tocentry	entry;
+  int			i, pos;
+
+  printf("Reading TOC\n");
+
+  if (cd_fd < 0)
+	 {
+		emit statusText( "Internal error: Filedescriptor is -1, not opened?" );
+		return false;
+	 }
+
+  emit statusText( "Reading table of contents..." );
+	
+  if (ioctl(cd_fd, CDROMREADTOCHDR, &hdr))
+	 {
+		emit statusText( "Error while reading table of contents!" );
+		return false;
+	 }
+
+  cdinfo.artist = "Artist";
+  cdinfo.cdname = "Title";
+  cdinfo.length = 0;
+  cdinfo.ntracks = hdr.cdth_trk1;
+
+  cdinfo.trk.clear();
+	
+  for (i = 0; i <= cdinfo.ntracks; i++)
+	 {
+		if (i == cdinfo.ntracks)
+		  entry.cdte_track = CDROM_LEADOUT;
+		else
+		  entry.cdte_track = i + 1;
+		entry.cdte_format = CDROM_MSF;
+		if (ioctl(cd_fd, CDROMREADTOCENTRY, &entry))
+		  {
+			 emit statusText( "Error while reading TOC entry!" );
+			 return false;
+		  }
+
+		cdinfo.trk.append( new Track_Info(i+1, entry.cdte_addr.msf.minute, entry.cdte_addr.msf.second, entry.cdte_addr.msf.frame) );
+	 }
+
+  pos = cdinfo.trk.first()->length;
+
+  for (i = 0; i < cdinfo.ntracks; i++)
+	 {
+		cdinfo.trk.at(i)->length = cdinfo.trk.at(i+1)->length - pos;
+		pos = cdinfo.trk.at(i+1)->length;
+	 }
+
+  cdinfo.length = cdinfo.trk.last()->length;
+        
+  cdinfo.cddb_id = calcID();
+	
+  emit statusText( "Table of contents successfully read" );
+  printf("Table of contents successfully read: %08x\n",cdinfo.cddb_id);
+  return true;
+}
+
+
+int CDDB_Fill::cddb_sum(int n)
+{
+  char    buf[12],
+	 *p;
+  int     ret = 0;
+
+  sprintf(buf, "%lu", (unsigned long) n);
+  for (p = buf; *p != '\0'; p++)
+	 ret += (*p - '0');
+                        
+  return (ret);
+}
+
+unsigned long CDDB_Fill::calcID()
+{
+  int     i,
+	 t = 0,
+	 n = 0;
+           
+  for (i = 0; i < cdinfo.ntracks; i++)
+	 {
+      n += cddb_sum((cdinfo.trk.at(i)->min * 60) + cdinfo.trk.at(i)->sec);
+	 }
+                        
+  t = ((cdinfo.trk.last()->min * 60) + cdinfo.trk.last()->sec) -
+	 ((cdinfo.trk.first()->min * 60) + cdinfo.trk.first()->sec);
+                                             
+  return ((n % 0xff) << 24 | t << 8 | cdinfo.ntracks);
+}
+
+
+/*      
+      if (cddb_connect(CDDB_HOST, CDDB_PORT))
+	{
+	  if (cddb_login())
+	    {
+	      cddb_query();
+	      cddb_disconnect();
+	    }
+	  kover_file->setTitle( QString(thiscd.artist) + QString(" - ") + QString(thiscd.cdname) );
+	  kover_file->setContents( QString("") );
+	  for (i=0; i<thiscd.ntracks; i++)
+	    {
+	      tracks.sprintf( "%d. %s", i+1, thiscd.trk[i].songname );
+	      contents_edit->append( tracks );
+	    }
+ 	}
+*/
+
+
+
+
+
+///////////////////////////////////////////////
+
+void CDDB_Fill::parse_trails(char *ss)
+{
+  unsigned int i;
+   
+  for (i=0; i<strlen(ss); i++)
+	 {
+      if (ss[i] == '\r' || ss[i] == '\n')
+        ss[i] = 0;
+	 }
+}
+
+/**** START GENERAL NETWORK CODE *****************************************/
+
+int CDDB_Fill::cddb_code()
+{
+  char *s_code;
+  char help_code[10];
+  int i_code;
+
+
+  printf("cddb_code\n");
+
+  code = 0;
+
+  s_code = (char *)malloc(255);
+
+  if (read(sock, s_code, 255) < 0)
+	 return errno;
+   
+  printf ("lalala : %s\n",s_code);
+
+
+  code = atoi(s_code+9);
+
+  if (!code)
+	 return errno;
+  else
+	 snprintf(help_code,10,"%d ",code);
+	  
+	
+  strcpy(cddb_msg,strchr(s_code,10)+1);
+  strcpy(cddb_msg,strstr(cddb_msg,help_code));
+	
+  for (i_code=0; i_code < strlen(cddb_msg); i_code++)
+	 {
+		if (cddb_msg[i_code]==10)
+		  {
+			 cddb_msg[i_code]=0;
+			 break;
+		  }
+	 }
+	
+  strcpy(cddb_msg,strchr(cddb_msg,32)+1);
+	
+  printf("cddb_code done... code is : %i\n",code);
+  free (s_code);
+  return 0;
+}  
+
+int CDDB_Fill::cddb_connect(char *host, int port)
+{
+  sockaddr_in sin;
+  hostent *h;
+   
+  emit statusText(QString("Connecting to ") + QString(host) + "..." );
+
+  if ((h = gethostbyname(host)) == NULL)
+	 return errno;
+ 
+  bcopy(h->h_addr, (char *) &sin.sin_addr, h->h_length);
+                    
+  sin.sin_family = h->h_addrtype;
+  sin.sin_port   = htons(port);
+
+  emit statusText( "Connecting to CDDB server..." );
+                            
+  if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+	 return errno;
+                 
+  if (::connect(sock,(struct sockaddr*)&sin, sizeof(sin)) < 0)
+	 return errno;
+     
+  sk = fdopen(sock, "r+");
+  if (sk == NULL)
+	 {
+		close(sock);
+		return errno;
+	 }
+
+  return 0;   
+}
+
+void CDDB_Fill::cddb_disconnect()
+{
+  close(sock);
+  if (sk != NULL)
+	 fclose(sk);
+}
+
+char *CDDB_Fill::cddb_hello()
+{
+  char *hello_buffer = NULL;
+  char *logname = NULL;
+  char *hostname = NULL;
+
+  logname = getenv("LOGNAME");
+  hostname = getenv("HOSTNAME");
+  if (!logname)
+	 logname = strdup("Kover_User");
+  if (!hostname)
+	 hostname = strdup("Kover_Host");
+
+  hello_buffer = (char *) malloc(strlen(logname)+strlen(hostname)+strlen(VERSION)+strlen(PACKAGE)+12);
+
+  if (!hello_buffer)
+	 return NULL;
+  
+  snprintf(hello_buffer,strlen(logname)+strlen(hostname)+strlen(VERSION)+strlen(PACKAGE)+12,"&hello=%s+%s+%s+%s",logname,hostname,PACKAGE,VERSION);
+
+  return hello_buffer;
+
+}
+
+/**** END GENERAL NETWORK CODE *******************************************/
+
+/**** START CDDB INTENSIVE ROUTINES **************************************/
+
+
+int CDDB_Fill::CDDBReadLine(int sock,char *inbuffer,int len)
+{
+  int index;
+  char inchar;
+  char *pos;
+  
+  pos=inbuffer;
+
+  for(index = 0; index < len; index++) 
+	 {
+		read(sock, &inchar, 1);
+		
+		if(inchar == '\n') 
+		  {
+			 inbuffer[index] = '\0';
+			 
+			 printf("....[%s]\n",pos);
+			 pos=inbuffer+index;
+			 
+			 if(inbuffer[0] == '.')
+				return 1;
+			 
+			 return 0;
+		  }
+
+		inbuffer[index] = inchar;
+	 }
+  
+  return index;
+}
+
+
+/* Sends query to server -- this is the first thing to be done */
+void CDDB_Fill::cddb_query()
+{
+  char *hello_buffer = NULL;  
+  char help_string[10];
+  char *code_string = NULL;
+  char *home_dir = NULL;
+  char *cddb_file = NULL;
+  FILE *cddb_file_descriptor;
+
+  char *ss;
+  int i;
+  char *offset_buffer,*query_buffer,*http_buffer;
+  int tot_len,len;
+	
+  int i_code;
+  char *hostname, *logname;
+
+  home_dir = getenv("HOME");
+
+  printf("HOMEDIR=%s\n",home_dir);
+
+  if (home_dir)
+	 {
+		if (home_dir[strlen(home_dir)-1]!='/')
+		  {
+			 cddb_file = (char *) malloc(strlen(home_dir)+7+8);
+			 strcpy(cddb_file,home_dir);
+			 strcat(cddb_file, "/.cddb/");
+		  }
+		else
+		  {
+			 cddb_file = (char *) malloc(strlen(home_dir)+6+8);
+			 strcpy(cddb_file,home_dir);
+			 strcat(home_dir, ".cddb/");
+		  }
+		snprintf(help_string,9,"%08x",cdinfo.cddb_id);
+		strncat(cddb_file,help_string,8);
+
+		printf("datei ist : %s\n",cddb_file);
+		
+		cddb_file_descriptor = fopen(cddb_file, "r");
+		
+		free (cddb_file);
+
+		if (cddb_file_descriptor)
+		  {
+			 emit statusText("Using local values for disc");
+			 cddb_readcdinfo(cddb_file_descriptor,true);
+			 fclose(cddb_file_descriptor);
+			 return;
+		  }
+
+	 }
+   
+  emit statusText( "Logging in..." );
+     
+  emit statusText( "Querying database..." );
+   
+  /* Figure out a good buffer size -- 7 chars per track, plus 256 for the rest
+     of the query */
+
+  tot_len=(cdinfo.ntracks*7)+256;
+  offset_buffer=(char *)malloc(tot_len);
+  len=0;
+
+
+  // number ot tracks
+  len = snprintf(offset_buffer,tot_len,"%d",cdinfo.ntracks);
+
+  //all the offsets
+  for(i=0; i<cdinfo.ntracks; i++)
+	 len += snprintf(offset_buffer+len,tot_len-len,"+%d",cdinfo.trk.at(i)->start);
+
+  query_buffer=(char *)malloc(tot_len);
+	
+  //the query string
+  len += snprintf(query_buffer,tot_len,"cddb+query+%08x+%s+%d",
+						cdinfo.cddb_id, offset_buffer, cdinfo.length);
+
+  printf("the query string : %s\n", query_buffer);
+
+  //snprintf(hellobuf,256,"&hello=private+free.the.cddb+%s+%s","kover","3");
+
+  hello_buffer = cddb_hello();
+
+  tot_len += strlen(hello_buffer);
+
+  http_buffer=(char *)malloc(tot_len);
+
+  snprintf(http_buffer,tot_len,"GET /%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\n\n","~cddb/cddb.cgi",query_buffer,hello_buffer,"3","freedb.freedb.org","kover","3");
+	
+
+  printf("Query is [%s]..............\n",http_buffer);
+
+  write(sock,http_buffer,strlen(http_buffer));
+
+
+  /* free free free */
+
+  free (hello_buffer);
+
+  //cddb_code();
+
+  code = 0;
+
+  code_string = (char *)malloc(255);
+
+  if (read(sock, code_string, 255) < 0)
+	 return;
+   
+  code = atoi(code_string+9);
+
+  if (!code)
+	 return;
+  else
+	 snprintf(help_string,10,"%d ",code);
+	  
+  strcpy(cddb_msg,strchr(code_string,10)+1);
+  strcpy(cddb_msg,strstr(cddb_msg,help_string));
+	
+  for (i_code=0; i_code < strlen(cddb_msg); i_code++)
+	 {
+		if (cddb_msg[i_code]==10)
+		  {
+			 cddb_msg[i_code]=0;
+			 break;
+		  }
+	 }
+	
+  strcpy(cddb_msg,strchr(cddb_msg,32)+1);
+	
+  free (code_string);
+	
+  // *inbuffer='\0';
+  // 	 CDDBReadLine(sock,inbuffer,256);
+  //	 printf("Reply is [%s]\n",cddb_msg);
+  /* Skip the keep-alive */
+  // 	 if((strlen(inbuffer)<5)||!strncmp(inbuffer,"Keep",4)) 
+  // 		{
+  // 		  printf("Skipping keepalive\n");
+  // 		  CDDBReadLine(sock,inbuffer,256);
+  // 		}
+	 
+  //printf("\tReply is [%s]\n",cddb_msg);
+
+
+  //    for (i=0; i<cdinfo.ntracks; i++)
+  //    {
+  //       sprintf(s1,"%d ", cdinfo.trk.at(i)->start);
+  //       strcat(s, s1);
+  //    }
+   
+  //    sprintf(s1,"%d", cdinfo.length);
+  //    strcat(s, s1);
+     
+  //    SEND(s);
+  //    cddb_code();
+   
+  //   switch(strtol(strtok(inbuffer," "),NULL,10))
+  switch(code)
+	 {
+	 case 200:  /* Success, get the catagory ID */
+		printf("code 200... %s\n",cddb_msg);
+		ss = strchr(cddb_msg, 32);
+		*ss = 0;
+		cdinfo.catagory = cddb_msg;
+      
+		break;
+	 default:
+       
+		cddb_msg[strlen(cddb_msg)-1] = 0;
+       
+		printf( "(%02d): %s\n", code, cddb_msg );
+       
+		return;
+	 }
+  
+  cddb_readcdinfo(sk,false);
+}
+ 
+void CDDB_Fill::remove_line(char *string)
+{
+  strcpy(string,strchr(string,10)+1);
+}
+
+void CDDB_Fill::cddb_readcdinfo(FILE *desc, bool local)
+{
+  char *hello_buffer = NULL;
+  
+
+  char s[255], *ss;
+  int t;
+  char outbuffer[256], hellobuf[512],cmdbuffer[256];
+
+
+  if (!local)
+	 {
+  if (code != 69)
+	 {
+		if (code == 200)  // cddb_query was a success, request info
+		  {
+			 emit statusText( "Downloading CD info..." );
+       
+			 //sprintf(s,"cddb read %s %08x",(const char*)cdinfo.catagory, (unsigned int) cdinfo.cddb_id);
+			 //SEND(s);
+
+			 snprintf(cmdbuffer,256,"cddb+read+%s+%08x",(const char*)cdinfo.catagory, (unsigned int) cdinfo.cddb_id);
+		 
+			 hello_buffer = cddb_hello();
+
+			 if (!hello_buffer)
+				{
+				  emit statusText("Trouble creating cddb greeting... Giving up...");
+				  return;
+				}
+
+			 snprintf(outbuffer,256,"GET /%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\n\n","~cddb/cddb.cgi",cmdbuffer,hello_buffer,"3","freedb.freedb.org","kover","3");
+
+
+
+			 printf("Reading : %s\n",outbuffer);
+
+			 write(sock,outbuffer,strlen(outbuffer));
+
+			 //cddb_code();
+ 
+			 // if (code != 210) 
+			 //        {   
+			 //          printf("(%d): %s",code,cddb_msg);
+			 //          return;
+			 //}
+		  }
+	 }
+	 }
+  s[0] = 0;
+	
+  //remove_line(cddb_msg);
+   
+  while (strncmp(s,".", 1)!=0)
+	 {
+		if (!fgets(s, 255, desc))
+		  break;
+     
+		if ((ss=strstr(s, "DTITLE")) != NULL)
+		  { 
+			 ss += 7;
+			 ss[strlen(ss)-1] = 0;
+			 cdinfo.cdnames = ss;
+              
+			 ss = strchr(s,'/');
+			 *ss = 0;
+			 cdinfo.artist = s+7;
+			 cdinfo.cdname = ss+2;
+		  }
+     
+       
+     
+		if ((ss=strstr(s, "TTITLE")) == NULL)
+		  continue;
+     
+		/* Yeah, yeah. Cheap hack, but it's guarenteed to work! :)
+		 * The following just hacks the returned track name into the variable 
+		 */
+     
+		ss += 6;
+		t = atoi(ss);
+		if (t < 100)
+		  ss += t < 10 ? 2 : 3;
+		else
+		  ss += 4;    
+       
+		parse_trails(ss);
+     
+		if (cdinfo.trk.at(t)->songname.length())
+		  {       
+			 cdinfo.trk.at(t)->songname += ss;
+		  } else {
+			 cdinfo.trk.at(t)->songname = ss;
+		  }
+	 }
+   
+}
+

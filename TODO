@@ -1,0 +1,26 @@
+Kover TODO
+===========
+
+General:
+
+-more error handling (especially file I/O)
+-the UI layout is not the best
+-po files
+-Documentation
+-handle toolbar movements
+-transparency bugs
+
+
+For 0.50:
+
+-integrate CDDB classes from kscd and read local CDDB entries
+-handle CDDB error 211, inexact match
+-free positionable images
+
+
+Other suggestions that arrived me, i´ll think about them:
+
+-print booklet/inlet on one page (will cut off an inner edge of the booklet)
+-directory tree as contents (could produce many booklet pages -> how to handle?)
+
+

@@ -1,0 +1,379 @@
+// KDevelop Dialog Editor File (.kdevdlg)
+// 
+// Created by KDlgEdit Version 0.1alpha (C) 1999 by Pascal Krahmer
+// Get KDevelop including KDlgEdit at "www.beast.de/kdevelop"
+// 
+// This file is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+
+data Information
+{
+   Filename="/home/dk/kover/kover-0.31/kover/image_dlg.kdevdlg"
+   KDevelopVersion="0.4"
+   DlgEditVersion="0.1alpha"
+   LastChanged="Mon Jun 14 21:32:43 1999"
+}
+
+data SessionManagement
+{
+   OpenedRoot_1="C++ Code"
+   OpenedRoot_2="General"
+   OpenedRoot_3="Geometry"
+   OpenedRootCount="3"
+}
+
+item QWidget
+{
+   Name="NoName"
+   VarName="this"
+   X="0"
+   Y="0"
+   Width="500"
+   Height="440"
+   MinWidth="0"
+   MinHeight="0"
+
+   item QGroupBox
+   {
+      Name="ImageGroup_1"
+      VarName="ImageGroup_1"
+      X="10"
+      Y="10"
+      Width="480"
+      Height="120"
+      MinWidth="0"
+      MinHeight="0"
+      Title="First Image"
+   }
+
+   item QLineEdit
+   {
+      Name="FileEdit_1"
+      VarName="FileEdit_1"
+      X="80"
+      Y="40"
+      Width="280"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+   }
+
+   item QLabel
+   {
+      Name="FileLabel_1"
+      VarName="FileLabel_1"
+      X="30"
+      Y="40"
+      Width="30"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="File"
+   }
+
+   item QPushButton
+   {
+      Name="BrowseButton_1"
+      VarName="BrowseButton_1"
+      X="370"
+      Y="40"
+      Width="100"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Browse"
+   }
+
+   item QComboBox
+   {
+      Name="NoName"
+      VarName="TargetCombo_1"
+      X="80"
+      Y="80"
+      Width="150"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Entries="Front, left side\nFront, right side\nFront, both sides\nBack, without sides\nBack, with sides"
+      InsertionPolicy="AtTop"
+   }
+
+   item QComboBox
+   {
+      Name="NoName"
+      VarName="AppearanceCombo_1"
+      X="320"
+      Y="80"
+      Width="150"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Entries="Centered\nTiled\nStretched"
+      InsertionPolicy="AtTop"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_2"
+      X="30"
+      Y="80"
+      Width="40"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Target"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_3"
+      X="240"
+      Y="80"
+      Width="70"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Appearance"
+   }
+
+   item QGroupBox
+   {
+      Name="NoName"
+      VarName="QGroupBox_2"
+      X="10"
+      Y="140"
+      Width="480"
+      Height="120"
+      MinWidth="0"
+      MinHeight="0"
+      Title="Second Image"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_4"
+      X="30"
+      Y="170"
+      Width="40"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="File"
+   }
+
+   item QLineEdit
+   {
+      Name="NoName"
+      VarName="FileEdit_2"
+      X="80"
+      Y="170"
+      Width="280"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+   }
+
+   item QPushButton
+   {
+      Name="NoName"
+      VarName="BrowseButton_2"
+      X="370"
+      Y="170"
+      Width="100"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Browse"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_5"
+      X="30"
+      Y="210"
+      Width="40"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Target"
+   }
+
+   item QComboBox
+   {
+      Name="NoName"
+      VarName="TargetCombo_2"
+      X="80"
+      Y="210"
+      Width="150"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Entries="Front, left side\nFront, right side\nFront, both sides\nBack, without sides\nBack, with sides"
+      InsertionPolicy="AtTop"
+   }
+
+   item QComboBox
+   {
+      Name="NoName"
+      VarName="AppearanceCombo_2"
+      X="320"
+      Y="210"
+      Width="150"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Entries="Centered\nTiled\nStretched"
+      InsertionPolicy="AtTop"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_6"
+      X="240"
+      Y="210"
+      Width="70"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Appearance"
+   }
+
+   item QGroupBox
+   {
+      Name="NoName"
+      VarName="QGroupBox_3"
+      X="10"
+      Y="270"
+      Width="480"
+      Height="120"
+      MinWidth="0"
+      MinHeight="0"
+      Title="Third Image"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_7"
+      X="30"
+      Y="300"
+      Width="40"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="File"
+   }
+
+   item QLineEdit
+   {
+      Name="NoName"
+      VarName="FileEdit_3"
+      X="80"
+      Y="300"
+      Width="280"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+   }
+
+   item QPushButton
+   {
+      Name="NoName"
+      VarName="BrowseButton_3"
+      X="370"
+      Y="300"
+      Width="100"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Browse"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_8"
+      X="30"
+      Y="340"
+      Width="40"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Target"
+   }
+
+   item QComboBox
+   {
+      Name="NoName"
+      VarName="TargetCombo_3"
+      X="80"
+      Y="340"
+      Width="150"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Entries="Front, left side\nFront, right side\nFront, both sides\nBack, without sides\nBack, with sides"
+      InsertionPolicy="AtTop"
+   }
+
+   item QComboBox
+   {
+      Name="NoName"
+      VarName="AppearanceCombo_3"
+      X="320"
+      Y="340"
+      Width="150"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Entries="Centered\nTiled\nStretched"
+      InsertionPolicy="AtTop"
+   }
+
+   item QLabel
+   {
+      Name="NoName"
+      VarName="QLabel_9"
+      X="240"
+      Y="340"
+      Width="70"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Appearance"
+   }
+
+   item QPushButton
+   {
+      Name="NoName"
+      VarName="OKButton"
+      X="140"
+      Y="400"
+      Width="100"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="OK"
+      isDefault="true"
+   }
+
+   item QPushButton
+   {
+      Name="NoName"
+      VarName="CancelButton"
+      X="260"
+      Y="400"
+      Width="100"
+      Height="30"
+      MinWidth="0"
+      MinHeight="0"
+      Text="Cancel"
+   }
+}

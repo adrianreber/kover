@@ -1,0 +1,26 @@
+[Contents]
+Color=0,0,0
+Font=helvetica,16,5,0,50,0
+Text=1. papercut>|<2. one step closer>|<3. with you>|<4. points of authority>|<5. crawling>|<6. runaway>|<7. by myself>|<8. in the end>|<9. a place for my head>|<10. forgotten>|<11. cure for the itch>|<12. pushing me away>|<
+[General]
+BackgroundColor=255,255,255
+Number=0
+[Image1]
+Filename=
+Mode=0
+Target=0
+[Image2]
+Filename=
+Mode=0
+Target=0
+[Image3]
+Filename=
+Mode=0
+Target=0
+[Program]
+Name=Kover
+Version=0.4
+[Title]
+Color=0,0,0
+Font=times,32,5,0,50,0
+Text=linkin park >|<hybrid theory

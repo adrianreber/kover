@@ -1,0 +1,47 @@
+Kover ChangeLog
+================
+* Bugfix
++ New Feature
+
+0.4
+  *inner lines are white if background is black
+  *title on the side gets same color as front title
+  +title can have several lines
+  +you can have three images with lots of configuration
+
+0.31
+  *use KTopLevelImage instead of KTMainWindow (comapatible with KDE 1.0)
+  *include ucdrom.h and/or cdrom.h depending on configure script
+  *clipped centered image
+  +support jpeg, tiff, png
+
+0.30
+  *corrected cd number load/save
+  *cd number is now on both sides
+  *found out why QPrinter prints only standard X fonts: Ghostscript has its own fontmap (/etc/gs.Fontmap)
+  *fixed exit/autochange bug
+  *replaces every %number in the filename
+  +autofilling with CDDB data
+  +image embedding (center/tile/stretch)
+  +added a status bar for more feedback on actions (essential for CDDB)
+  +added support for files of "Easy CD Pro 2.0" (autodetection!)
+
+0.20
+  *corrected the lsm file
+  *changed e-mail address to dok@fischlustig.de
+  *don´t ask for filename every time (save/save as)
+  *store applink in Utilities
+  +"Choose Font" moved into second toolbar
+  +color settings for text/background
+  +optional cd number
+  +use KSimpleConfig
+  +change detection (load/new/exit)
+
+0.10
+  +initial version
+  +save/load
+  +print
+  +preview
+  +font settings
+
+

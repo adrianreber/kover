@@ -1,0 +1,179 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:554: checking how to run the C++ preprocessor
+configure:572: g++ -E  conftest.C >/dev/null 2>conftest.out
+configure:598: checking for X
+configure:615: g++ -E  conftest.C >/dev/null 2>conftest.out
+configure:691: g++ -o conftest    conftest.C -lXt  1>&5
+configure: In function `int main ()':
+configure:687: `XtMalloc' undeclared (first use this function)
+configure:687: (Each undeclared identifier is reported only once for 
+each function it appears in.)
+configure: failed program was:
+#line 684 "configure"
+#include "confdefs.h"
+
+int main() {
+XtMalloc()
+; return 0; }
+configure:860: checking for a BSD compatible install
+configure:913: checking whether build environment is sane
+configure:951: checking whether make sets ${MAKE}
+configure:980: checking for ranlib
+configure:1041: checking for non-GNU ld
+configure:1077: checking if the linker (/usr/bin/ld) is GNU ld
+GNU ld version 2.10.90 (with BFD 2.10.0.18)
+configure:1093: checking for BSD-compatible nm
+configure:1130: checking whether ln -s works
+configure:1159: checking for main in -lcompat
+configure:1174: cc -o conftest    conftest.c -lcompat   1>&5
+/usr/bin/ld: cannot find -lcompat
+collect2: ld returned 1 exit status
+configure: failed program was:
+#line 1167 "configure"
+#include "confdefs.h"
+
+int main() {
+main()
+; return 0; }
+configure:1195: checking for main in -lcrypt
+configure:1210: cc -o conftest    conftest.c -lcrypt   1>&5
+configure:1231: checking for the third argument of getsockname
+configure:1256: g++ -c   conftest.C 1>&5
+configure:1313: checking for dnet_ntoa in -ldnet
+configure:1335: g++ -o conftest    conftest.C -ldnet   1>&5
+/usr/bin/ld: cannot find -ldnet
+collect2: ld returned 1 exit status
+configure: failed program was:
+#line 1321 "configure"
+#include "confdefs.h"
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char dnet_ntoa();
+
+int main() {
+dnet_ntoa()
+; return 0; }
+configure:1357: checking for dnet_ntoa in -ldnet_stub
+configure:1379: g++ -o conftest    conftest.C -ldnet_stub   1>&5
+/usr/bin/ld: cannot find -ldnet_stub
+collect2: ld returned 1 exit status
+configure: failed program was:
+#line 1365 "configure"
+#include "confdefs.h"
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char dnet_ntoa();
+
+int main() {
+dnet_ntoa()
+; return 0; }
+configure:1401: checking for gethostbyname
+configure:1432: g++ -o conftest    conftest.C  1>&5
+configure:1497: checking for connect
+configure:1528: g++ -o conftest    conftest.C  1>&5
+configure:1594: checking for remove
+configure:1625: g++ -o conftest    conftest.C  1>&5
+configure:1692: checking for shmat
+configure:1723: g++ -o conftest    conftest.C  1>&5
+configure:1792: checking for killpg in -lucb
+configure:1814: g++ -o conftest    conftest.C -lucb   1>&5
+/usr/bin/ld: cannot find -lucb
+collect2: ld returned 1 exit status
+configure: failed program was:
+#line 1800 "configure"
+#include "confdefs.h"
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char killpg();
+
+int main() {
+killpg()
+; return 0; }
+configure:1891: checking for QT
+configure:1991: g++ -o conftest  -I/usr/lib/qt-2.2.1/include  -L/usr/lib/qt-2.2.1/lib -L/usr/X11R6/lib conftest.C  -lqt -lXext -lX11  1>&5
+configure:2043: checking if Qt compiles without flags
+configure:2081: g++ -o conftest  -I/usr/lib/qt-2.2.1/include  -L/usr/X11R6/lib conftest.C -lqt -lXext -lX11  1>&5
+/usr/bin/ld: cannot find -lqt
+collect2: ld returned 1 exit status
+configure: failed program was:
+#include "confdefs.h"
+#include <qmovie.h>
+int main() {
+  QMovie m;
+  m.setSpeed(20);
+  return 0;
+}
+configure:2134: checking for moc
+configure:2172: checking for rpath
+configure:2201: checking for bool
+configure:2221: g++ -c   conftest.C 1>&5
+configure:2270: checking host system type
+configure:2291: checking target system type
+configure:2309: checking build system type
+configure:2370: checking for working aclocal
+configure:2383: checking for working autoconf
+configure:2396: checking for working automake
+configure:2409: checking for working autoheader
+configure:2422: checking for working makeinfo
+configure:2459: checking for a C-Compiler
+configure:2465: checking for gcc
+configure:2571: checking whether the C compiler (gcc  ) works
+configure:2587: gcc -o conftest    conftest.c  1>&5
+configure:2613: checking whether the C compiler (gcc  ) is a cross-compiler
+configure:2618: checking whether we are using GNU C
+configure:2627: gcc -E conftest.c
+configure:2684: checking how to run the C preprocessor
+configure:2705: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:2746: checking for a C++-Compiler
+configure:2752: checking for g++
+configure:2868: checking whether the C++ compiler (g++  -s) works
+configure:2884: g++ -o conftest   -s conftest.C  1>&5
+configure:2910: checking whether the C++ compiler (g++  -s) is a cross-compiler
+configure:2915: checking whether we are using GNU C++
+configure:2924: g++ -E conftest.C
+configure:3052: checking whether NLS is requested
+configure:3080: checking for msgfmt
+configure:3114: checking for gmsgfmt
+configure:3156: checking for xgettext
+configure:3205: checking for KDE
+configure:3340: checking for extra includes
+configure:3367: checking for extra libs
+configure:3491: checking for kde headers installed
+configure:3532: g++ -c -O2 -Wall -I/usr/include/kde -I/usr/lib/qt-2.2.1/include -I/usr/X11R6/include  conftest.C
+configure:3540: checking for kde libraries installed
+configure:3543: /bin/sh ./libtool --mode=link g++ -o conftest -O2 -Wall -I/usr/include/kde -I/usr/lib/qt-2.2.1/include -I/usr/X11R6/include  -s -L/usr/lib -L/usr/lib/qt-2.2.1/lib -L/usr/X11R6/lib conftest.C  -lkdecore -lqt -lXext -lX11  -rpath /usr/lib -rpath /usr/lib/qt-2.2.1/lib  1>&5
+g++ -o conftest -O2 -Wall -I/usr/include/kde -I/usr/lib/qt-2.2.1/include -I/usr/X11R6/include -s -L/usr/lib -L/usr/lib/qt-2.2.1/lib -L/usr/X11R6/lib conftest.C -lkdecore -lqt -lXext -lX11 -Wl,--rpath -Wl,/usr/lib -Wl,--rpath -Wl,/usr/lib/qt-2.2.1/lib
+configure:3552: checking for KDE paths
+configure:3666: checking for linux/cdrom.h
+configure:3676: g++ -E  conftest.C >/dev/null 2>conftest.out
+configure:3666: checking for linux/ucdrom.h
+configure:3676: g++ -E  conftest.C >/dev/null 2>conftest.out
+configure:3672:26: linux/ucdrom.h: No such file or directory
+configure: failed program was:
+#line 3671 "configure"
+#include "confdefs.h"
+#include <linux/ucdrom.h>
+configure:3705: checking for giflib
+configure:3729: g++ -o conftest -O2 -Wall  -s conftest.C -L/usr/lib -L/usr/lib/qt-2.2.1/lib -L/usr/X11R6/lib -lgif -lX11  1>&5
+configure:3753: checking for jpeglib
+configure:3781: g++ -o conftest -O2 -Wall  -s conftest.C -L/usr/lib -L/usr/lib/qt-2.2.1/lib -L/usr/X11R6/lib -ljpeg -lm 1>&5
+configure:3828: checking for libz
+configure:3844: g++ -o conftest -O2 -Wall  -s conftest.C -L/usr/lib -L/usr/lib/qt-2.2.1/lib -L/usr/X11R6/lib -lz  1>&5
+configure:3874: checking for libtiff tiff
+configure:3893: g++ -o conftest -O2 -Wall  -s conftest.C -L/usr/lib -L/usr/lib/qt-2.2.1/lib -L/usr/X11R6/lib -ltiff -ljpeg -lz -lX11  -lm 1>&5
+configure:3991: checking for libpng
+configure:4018: gcc -o conftest -O2 -Wall  -s conftest.c -L/usr/lib -L/usr/lib/qt-2.2.1/lib -L/usr/X11R6/lib -lpng -lz -lm -lX11  1>&5

@@ -1,0 +1,28 @@
+
+dnl without this order in this file, autoconf will not work!
+dnl the argument is a source file out of your sources. But
+dnl acinclude.m4 makes the job for all programs ;-)
+AC_INIT(acinclude.m4)
+
+dnl without this order in this file, automake will be confused!
+dnl the argument 
+AM_CONFIG_HEADER(config.h)
+
+dnl insert here your program name and version number
+KDE_DO_IT_ALL(kover,0.4)
+
+AC_CHECK_HEADERS(linux/cdrom.h linux/ucdrom.h)
+
+dnl Image readers/writers
+
+AC_FIND_GIF
+AC_FIND_JPEG
+AC_FIND_TIFF
+KDE_CHECK_KIMGIO
+
+dnl in this space add everything you want to check for
+dnl examples are specific headers, libraries, etc.
+dnl everything to compile and run a KDE program is already checked
+
+dnl add here all your Makefiles. This are created by configure
+AC_OUTPUT(Makefile kover/Makefile kover/docs/Makefile kover/docs/en/Makefile kover/xpm/Makefile )

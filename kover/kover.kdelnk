@@ -1,0 +1,11 @@
+# KDE Config File  
+[KDE Desktop Entry]
+Type=Application
+Exec=kover  
+Icon=kover.xpm
+DocPath=kover/index.html
+Comment=CD Kover Printer
+Comment[de]=Kompakt Disk Hüllen Drucker
+Terminal=0
+Name=Kover
+Name[de]=Kover
