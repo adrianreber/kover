@@ -61,20 +61,20 @@ void CDView::paintEvent( QPaintEvent * )
   drawFrame(&paint);
 
   if (previewMode)
-  {
-    drawBooklet( &paint, 4, 4 );
-    drawInlet( &paint, 140, 4*2 + 338 );
+	 {
+		drawBooklet( &paint, 4, 4 );
+		drawInlet( &paint, 140, 4*2 + 338 );
     
-    paint.setWorldMatrix( QWMatrix() );
-    paint.setFont( QFont("helvetica",14) );
-    paint.setPen( black );
-    paint.drawText( 20, 400, "Click to close" );
-  } else
-  {
-    paint.scale( 0.4f, 0.4f );
-    drawBooklet( &paint, 20, 15 );
-    drawInlet( &paint, 150, 15*2 + 338 );
-  }
+		paint.setWorldMatrix( QWMatrix() );
+		paint.setFont( QFont("helvetica",14) );
+		paint.setPen( black );
+		paint.drawText( 20, 400, "Click to close" );
+	 } else
+		{
+		  paint.scale( 0.4f, 0.4f );
+		  drawBooklet( &paint, 20, 15 );
+		  drawInlet( &paint, 150, 15*2 + 338 );
+		}
 }
 
 
@@ -91,28 +91,37 @@ void CDView::printKover()
 {
   if ( printer->setup(this) ) 
     {
-		QPainter paint( printer );
+		QPainter *paint = new QPainter( printer );
+
+	
 
 		//paint1 = new QPainter(printer);
       
-       previewMode = true; // hack
+		previewMode = true; // hack
       
       if (printer->fromPage() == 1)
 		  {
 			 //pthread_create(&print_thread, NULL,printThreadPage1,(void *)this);
-			 drawBooklet(&paint, 20, 15);
+			 drawBooklet(paint, 20, 15);
+			 printf("Printing booklet done\n");
  		  }
       
       printer->newPage();
       
-       if (printer->toPage() == 2)
+		if (printer->toPage() == 2)
  		  {
- 			 drawInlet( &paint, 20, 15 );
+			 printf("Printing inlet\n");
+ 			 drawInlet( paint, 20, 15 );
+			 printf("Printing inlet done\n");
  		  }
-
+		printf("Printing done\n");
 		previewMode = false;
-		
+		printer->newPage();
+		paint->end();
+		delete (paint);
     }
+  printf("Printing done\n");
+  return;
 }
 
 void *printThreadPage1(void *parm)
@@ -133,10 +142,7 @@ void *printThreadPage1(void *parm)
 
 void CDView::drawBooklet( QPainter *p, int X, int Y )
 {
-  
-  float sc;
-  sc = previewMode ? 1 : 0.4f; // hack
-
+  const float scale = 0.4;
   p->fillRect( X, Y, FRONT_H*2, FRONT_V, kover_file->backColor() );
 	
   for (int i=0; i<3; i++)
@@ -149,17 +155,26 @@ void CDView::drawBooklet( QPainter *p, int X, int Y )
 				  switch (kover_file->imageTarget(i))
 					 {
 					 case IMG_FRONT_LEFT:
-						p->setClipRect( X*sc, Y*sc, FRONT_H*sc, FRONT_V*sc );
+						if (previewMode)
+						  p->setClipRect( X, Y, FRONT_H, FRONT_V );
+						else
+						  p->setClipRect( (int)(X*scale), (int)(Y*scale), (int)(FRONT_H*scale), (int)(FRONT_V*scale) );
 						p->drawPixmap( X + FRONT_H/2 - images[i].width()/2, Y + FRONT_V/2 - images[i].height()/2, images[i] );
 						p->setClipping( false );
 						break;
 					 case IMG_FRONT_RIGHT:
-						p->setClipRect( (X+FRONT_H)*sc, Y*sc, FRONT_H*sc, FRONT_V*sc );
+						if (previewMode)
+						  p->setClipRect(X+FRONT_H, Y, FRONT_H, FRONT_V );
+						else
+						  p->setClipRect((int)((X+FRONT_H)*scale), (int)(Y*scale), (int)(FRONT_H*scale), (int)(FRONT_V*scale));
 						p->drawPixmap( X+FRONT_H + FRONT_H/2 - images[i].width()/2, Y + FRONT_V/2 - images[i].height()/2, images[i] );
 						p->setClipping( false );
 						break;
 					 case IMG_FRONT_FULL:
-						p->setClipRect( X*sc, Y*sc, FRONT_H*2*sc, FRONT_V*sc );
+						if (previewMode)
+						  p->setClipRect( X, Y, FRONT_H*2, FRONT_V );
+						else
+						  p->setClipRect( (int)(X*scale), (int)(Y*scale), (int)(FRONT_H*2*scale), (int)(FRONT_V*scale) );
 						p->drawPixmap( X + FRONT_H - images[i].width()/2, Y + FRONT_V/2 - images[i].height()/2, images[i] );
 						p->setClipping( false );
 						break;
@@ -216,82 +231,86 @@ void CDView::drawBooklet( QPainter *p, int X, int Y )
 
 void CDView::drawInlet( QPainter *p, int X, int Y )
 {
-	float sc;
-	sc = previewMode ? 1 : 0.402f; // hack
+  const float scale = 0.4;
+  QString title = kover_file->title();
+  title.replace( QRegExp("\n"), " - " );
 
-	QString title = kover_file->title();
-	title.replace( QRegExp("\n"), " - " );
-
-	p->fillRect( X, Y, BACK_HI+BACK_HS*2, BACK_V, kover_file->backColor() );
+  p->fillRect( X, Y, BACK_HI+BACK_HS*2, BACK_V, kover_file->backColor() );
 	
-	for (int i=0; i<3; i++)
-	{
+  for (int i=0; i<3; i++)
+	 {
 		if (!images[i].isNull())
-		{
-			switch (kover_file->imageMode(i))
-			{
+		  {
+			 switch (kover_file->imageMode(i))
+				{
 				case IMG_CENTER:
-					switch (kover_file->imageTarget(i))
-					{
-						case IMG_BACK_INNER:
-							p->setClipRect( (X+BACK_HS)*sc, Y*sc, BACK_HI*sc, BACK_V*sc );
-							p->drawPixmap( X+BACK_HS + BACK_HI/2 - images[i].width()/2, Y + BACK_V/2 - images[i].height()/2, images[i] );
-							p->setClipping( false );
+				  switch (kover_file->imageTarget(i))
+					 {
+					 case IMG_BACK_INNER:
+						if (previewMode)
+						  p->setClipRect( (X+BACK_HS), Y, BACK_HI, BACK_V );
+						else
+						  p->setClipRect( (int)((X+BACK_HS)*scale), (int)(Y*scale),(int) (BACK_HI*scale), (int)(BACK_V*scale) );
+						p->drawPixmap( X+BACK_HS + BACK_HI/2 - images[i].width()/2, Y + BACK_V/2 - images[i].height()/2, images[i] );
+						p->setClipping( false );
 						break;
-						case IMG_BACK_FULL:
-							p->setClipRect( X*sc, Y*sc, (BACK_HI+BACK_HS*2)*sc, BACK_V*sc );
-							p->drawPixmap( X+BACK_HS + BACK_HI/2 - images[i].width()/2, Y + BACK_V/2 - images[i].height()/2, images[i] );
-							p->setClipping( false );
+					 case IMG_BACK_FULL:
+						if (previewMode)
+						  p->setClipRect( X, Y, (BACK_HI+BACK_HS*2), BACK_V );
+						else
+						  p->setClipRect( (int)(X*scale),(int)(Y*scale), (int)((BACK_HI+BACK_HS*2)*scale), (int)(BACK_V*scale) );
+						p->drawPixmap( X+BACK_HS + BACK_HI/2 - images[i].width()/2, Y + BACK_V/2 - images[i].height()/2, images[i] );
+						p->setClipping( false );
 						break;
-					}
-				break;
+					 }
+				  break;
 				case IMG_TILE:
-					switch (kover_file->imageTarget(i))
-					{
-						case IMG_BACK_INNER:
-							p->drawTiledPixmap( X+BACK_HS, Y, BACK_HI, BACK_V, images[i] );
+				  switch (kover_file->imageTarget(i))
+					 {
+					 case IMG_BACK_INNER:
+						p->drawTiledPixmap( X+BACK_HS, Y, BACK_HI, BACK_V, images[i] );
 						break;
-						case IMG_BACK_FULL:
-							p->drawTiledPixmap( X, Y, BACK_HI+BACK_HS*2, BACK_V, images[i] );
+					 case IMG_BACK_FULL:
+						p->drawTiledPixmap( X, Y, BACK_HI+BACK_HS*2, BACK_V, images[i] );
 						break;
-					}
-				break;
+					 }
+				  break;
 				case IMG_STRETCH:
-					switch (kover_file->imageTarget(i))
-					{
-						case IMG_BACK_INNER:
-							p->drawPixmap( X+BACK_HS, Y, images[i] );
+				  switch (kover_file->imageTarget(i))
+					 {
+					 case IMG_BACK_INNER:
+						p->drawPixmap( X+BACK_HS, Y, images[i] );
 						break;
-						case IMG_BACK_FULL:
-							p->drawPixmap( X, Y, images[i] );
+					 case IMG_BACK_FULL:
+						p->drawPixmap( X, Y, images[i] );
 						break;
-					}
-				break;
-			}
-		}
-	}
+					 }
+				  break;
+				}
+		  }
+	 }
 	
-	p->setPen( black );
+  p->setPen( black );
 
-	p->drawLine( X, Y, X+BACK_HI+BACK_HS*2, Y );
-	p->drawLine( X, Y+BACK_V, X+BACK_HI+BACK_HS*2, Y+BACK_V );
-	p->drawLine( X, Y, X, Y+BACK_V );
-	p->drawLine( X+BACK_HI+BACK_HS*2, Y, X+BACK_HI+BACK_HS*2, Y+BACK_V );
+  p->drawLine( X, Y, X+BACK_HI+BACK_HS*2, Y );
+  p->drawLine( X, Y+BACK_V, X+BACK_HI+BACK_HS*2, Y+BACK_V );
+  p->drawLine( X, Y, X, Y+BACK_V );
+  p->drawLine( X+BACK_HI+BACK_HS*2, Y, X+BACK_HI+BACK_HS*2, Y+BACK_V );
   
-	if (kover_file->backColor() == black)
-	{
+  if (kover_file->backColor() == black)
+	 {
 		p->setPen( white );
-	}
+	 }
 	
-	p->drawLine( X+BACK_HS, Y, X+BACK_HS, Y+BACK_V );
-	p->drawLine( X+BACK_HS+BACK_HI, Y, X+BACK_HS+BACK_HI, Y+BACK_V );
+  p->drawLine( X+BACK_HS, Y, X+BACK_HS, Y+BACK_V );
+  p->drawLine( X+BACK_HS+BACK_HI, Y, X+BACK_HS+BACK_HI, Y+BACK_V );
 
 
-	p->translate( X, Y+BACK_V );
-	p->rotate( -90 );
+  p->translate( X, Y+BACK_V );
+  p->rotate( -90 );
   
-	if (kover_file->number())
-	{
+  if (kover_file->number())
+	 {
 		QString numberStr;
 		numberStr.setNum( kover_file->number() );
 		p->setPen( red );
@@ -300,18 +319,18 @@ void CDView::drawInlet( QPainter *p, int X, int Y )
 		p->setPen( kover_file->titleColor() );
 		p->setFont( QFont("helvetica", 12) );
 		p->drawText( 38, 0, BACK_V-38, BACK_HS, AlignLeft | AlignVCenter, title, title.length() );
-	} else
-	{
-		p->setPen( kover_file->titleColor() );
-		p->setFont( QFont("helvetica", 12) );
-		p->drawText( 10, 0, BACK_V-10, BACK_HS, AlignLeft | AlignVCenter, title, title.length() );
-	}
+	 } else
+		{
+		  p->setPen( kover_file->titleColor() );
+		  p->setFont( QFont("helvetica", 12) );
+		  p->drawText( 10, 0, BACK_V-10, BACK_HS, AlignLeft | AlignVCenter, title, title.length() );
+		}
   
-	p->translate( BACK_V, BACK_HS+BACK_HI );
-	p->rotate( -180 );
+  p->translate( BACK_V, BACK_HS+BACK_HI );
+  p->rotate( -180 );
 
-	if (kover_file->number())
-	{
+  if (kover_file->number())
+	 {
 		QString numberStr;
 		numberStr.setNum( kover_file->number() );
 		p->setPen( red );
@@ -320,20 +339,20 @@ void CDView::drawInlet( QPainter *p, int X, int Y )
 		p->setPen( kover_file->titleColor() );
 		p->setFont( QFont("helvetica", 12) );
 		p->drawText( 38, -1, BACK_V-38, -BACK_HS, AlignLeft | AlignVCenter, title, title.length() );
-	} else
-	{
-		p->setPen( kover_file->titleColor() );
-		p->setFont( QFont("helvetica", 12) );
-		p->drawText( 10, -1, BACK_V-10, -BACK_HS, AlignLeft | AlignVCenter, title, title.length() );
-	}
+	 } else
+		{
+		  p->setPen( kover_file->titleColor() );
+		  p->setFont( QFont("helvetica", 12) );
+		  p->drawText( 10, -1, BACK_V-10, -BACK_HS, AlignLeft | AlignVCenter, title, title.length() );
+		}
 
 
-	p->translate( 0, BACK_HI );
-	p->rotate( -90 );
+  p->translate( 0, BACK_HI );
+  p->rotate( -90 );
   
-	p->setFont( kover_file->contentsFont() );
-	p->setPen( kover_file->contentsColor() );
-	p->drawText( 5, 7, BACK_HI-5, BACK_V-7, AlignLeft, kover_file->contents(), kover_file->contents().length() );
+  p->setFont( kover_file->contentsFont() );
+  p->setPen( kover_file->contentsColor() );
+  p->drawText( 5, 7, BACK_HI-5, BACK_V-7, AlignLeft, kover_file->contents(), kover_file->contents().length() );
 }
 
 void CDView::mousePressEvent( QMouseEvent* evt )
@@ -341,54 +360,51 @@ void CDView::mousePressEvent( QMouseEvent* evt )
   if (previewMode)
 	 emit stopPreview();
   else
-	 {
-		printf("emitting actualSize()\n");
-		emit actualSize();
-	 }
+	 emit actualSize();
 }
 
 void CDView::dataChanged(bool image)
 {
-	if (image)
-	{
+  if (image)
+	 {
 		for (int i=0; i<3; i++)
-		{
-			QImage load( kover_file->imageFile(i) );
-			if (load.isNull())
-			{
-				images[i].resize(0,0);
-			} else
-			{
-				switch (kover_file->imageMode(i))
+		  {
+			 QImage load( kover_file->imageFile(i) );
+			 if (load.isNull())
 				{
-					case IMG_TILE:
-					case IMG_CENTER:
-						images[i].convertFromImage( load );
-					break;
-					case IMG_STRETCH:
-						switch (kover_file->imageTarget(i))
+				  images[i].resize(0,0);
+				} else
+				  {
+					 switch (kover_file->imageMode(i))
 						{
-							case IMG_FRONT_LEFT:
-							case IMG_FRONT_RIGHT:
+						case IMG_TILE:
+						case IMG_CENTER:
+						  images[i].convertFromImage( load );
+						  break;
+						case IMG_STRETCH:
+						  switch (kover_file->imageTarget(i))
+							 {
+							 case IMG_FRONT_LEFT:
+							 case IMG_FRONT_RIGHT:
 								images[i].convertFromImage( load.smoothScale( FRONT_H, FRONT_V ) );
-							break;
-							case IMG_FRONT_FULL:
+								break;
+							 case IMG_FRONT_FULL:
 								images[i].convertFromImage( load.smoothScale( FRONT_H*2, FRONT_V ) );
-							break;
-							case IMG_BACK_INNER:
+								break;
+							 case IMG_BACK_INNER:
 								images[i].convertFromImage( load.smoothScale( BACK_HI, BACK_V ) );
-							break;
-							case IMG_BACK_FULL:
+								break;
+							 case IMG_BACK_FULL:
 								images[i].convertFromImage( load.smoothScale( BACK_HI+BACK_HS*2, BACK_V ) );
-							break;
+								break;
+							 }
+						  break;
 						}
-					break;
-				}
-			}
-		}
-	}
+				  }
+		  }
+	 }
 
-	repaint(false);
+  repaint(false);
 }
 
 

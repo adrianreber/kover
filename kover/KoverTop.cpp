@@ -53,15 +53,18 @@
 
 KoverTop::KoverTop(QApplication *parent, const char* name=NULL ) : KMainWindow(0,name)
 {
+#ifdef USE_THREADS
+   if(( semid = semget( SEMKEY, SEM_CNT, MODE | IPC_CREAT )) < 0 )
+    {
+        perror("ERROE");
+        exit(-1);
+    }
+	update_display = false;
+	end_loop = false;
+#endif
+
   main_frame = new QFrame(this);
-  //main_frame->resize(200,200);
-
   this->parent=parent;
-
-  //setCaption("kover",true);
-  cddb_thread=0;
-  update_display = false;
-  end_loop = false;
   setCaption(i18n("[New Document]"), false);
   setFixedSize( NORM_WIDTH, NORM_HEIGHT );
   filename = "untitled";
@@ -88,9 +91,12 @@ KoverTop::KoverTop(QApplication *parent, const char* name=NULL ) : KMainWindow(0
 	 (void)new KAction(i18n("&Actual size"),"viewmag",0,this, SLOT(actualSize()),actionCollection(), "actual_size");
 	 (void)new KAction(i18n("&CDDB lookup"),dataIcon("cddb.png"),0,this, SLOT(cddbFill()),actionCollection(), "cddb");
 	 KStdAction::preferences(this,SLOT(preferences()),actionCollection());
-	 (void)new KAction(i18n("&Image Embedding"),"background",0,this,SLOT(imageEmbedding()),actionCollection(),"image_embedding");
-
-
+	 (void)new KAction(i18n("&Image Embedding..."),"background",0,this,SLOT(imageEmbedding()),actionCollection(),"image_embedding");
+	  (void)new KAction(i18n("Title Font..."),"fonts",0,this,SLOT(titleFont()),actionCollection(),"title_font");
+	  (void)new KAction(i18n("Title Fontcolor..."),dataIcon("text_color.png"),0,this,SLOT(titleFontColor()),actionCollection(),"title_font_color");
+	  (void)new KAction(i18n("Contents Font..."),"fonts",0,this,SLOT(contentsFont()),actionCollection(),"contents_font");
+	  (void)new KAction(i18n("Contents Fontcolor..."),dataIcon("text_color.png"),0,this,SLOT(contentsFontColor()),actionCollection(),"contents_font_color");
+	  (void)new KAction(i18n("Background Color..."),"colors",0,this,SLOT(backgroundColor()),actionCollection(),"background_color");
   //menu_bar = menuBar();
   //file_menu = new KPopupMenu(this,"File");
 //   file_menu->insertItem("New",this, SLOT(fileNew()),CTRL+Key_N);
@@ -168,7 +174,7 @@ KoverTop::KoverTop(QApplication *parent, const char* name=NULL ) : KMainWindow(0
   contents_edit = new QMultiLineEdit( main_frame, "contents_edit" );
   contents_edit->resize( 215, 175 );
   contents_edit->move( 5, 135 );
-  connect( contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()) );
+  connect(contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()));
   
         
   cdview = new CDView( &kover_file, main_frame );
@@ -179,8 +185,12 @@ KoverTop::KoverTop(QApplication *parent, const char* name=NULL ) : KMainWindow(0
   
   connect( &kover_file, SIGNAL(dataChanged(bool)), SLOT(dataChanged(bool)) );
 
+#ifdef USE_THREADS
+  cddb_fill = new CDDBFill();
+#else
   cddb_fill = new CDDB_Fill( &kover_file );
-  connect( cddb_fill, SIGNAL(statusText(const char*)), SLOT(setStatusText(const char*)) );
+#endif
+  connect(cddb_fill, SIGNAL(statusText(const char*)), SLOT(setStatusText(const char*)));
   connect(cddb_fill, SIGNAL(updateDisplay(bool)), SLOT(updateDisplay(bool)) );
 
   altered_data = false;
@@ -198,14 +208,19 @@ KoverTop::~KoverTop()
 
 void KoverTop::dataChanged(bool image)
 {
-  //setStatusText( "Data changed" );
+  setStatusText( "Data changed" );
+  if (filename == "untitled")
+	 setCaption(i18n("[New Document]"), true);
+  else
+	 setCaption(i18n(filename), true);
+	 
   altered_data = true;
 }
 
 void KoverTop::setStatusText( const char* _status_text )
 {
   status_bar->changeItem( _status_text, 1 );
-  kapp->processEvents();
+  parent->processEvents();
 }
 
 void KoverTop::titleBoxChanged()
@@ -310,216 +325,70 @@ QString KoverTop::dataIcon(QString filename)
   return locate("data","kover/" + filename);
 }
 
-void KoverTop::handleMainToolBar(int id)
-{
-  QString newfilename;
 
-  switch (id)
-	 {
-	 case ID_MAIN_NEW:
-		// if (altered_data)
-// 		  {
-// 			 switch (KMessageBox::warningYesNoCancel( this, "Data changed since last saving!\nDo you want to save the changes?"))
-// 				{
-// 				case 1:
-// 				  handleMainToolBar( ID_MAIN_SAVE );
-// 				  if (altered_data)
-// 					 {
-// 						return;
-// 					 }
-// 				  break;
-// 				case 2:
-// 				  break;
-// 				case 3:
-// 				  return;
-// 				}
-// 		  }
-// 		title_edit->clear();
-// 		contents_edit->clear();
-// 		number_spin->setValue( 1 );
-// 		number_spin->setEnabled( false );
-// 		number_check->setChecked( false );
-// 		title_edit->setFocus();
-// 		kover_file.reset();
-// 		setStatusText( "Chop!" );
-// 		altered_data = false;
-// 		filename = "untitled";
-// 		setCaption( "Kover - untitled" );
-		break;
-	 case ID_MAIN_OPEN:
-// 		if (altered_data)
-// 		  {
-// 			 switch (KMessageBox::warningYesNoCancel( this, "Data changed since last saving!\nDo you want to save the changes?"))
-// 				{
-// 				case 1:
-// 				  handleMainToolBar( ID_MAIN_SAVE );
-// 				  if (altered_data)
-// 					 {
-// 						return;
-// 					 }
-// 				  break;
-// 				case 2:
-// 				  break;
-// 				case 3:
-// 				  return;
-// 				}
-// 		  }
-// 		newfilename = KFileDialog::getOpenFileName( NULL, NULL, this );
-// 		if (newfilename.length())
-// 		  {
-// 			 parseFilename( newfilename );
-// 			 if (kover_file.openFile( newfilename ))
-// 				{
-// 				  filename = newfilename;
-              
-// 				  QString newCaption;
-// 				  newCaption.append( "Kover - " );
-// 				  newCaption.append( filename );
-// 				  setCaption( newCaption );
-              
-// 				  disconnect( contents_edit, SIGNAL(textChanged()), this, SLOT(contentsBoxChanged()) );
-// 				  title_edit->setText( kover_file.title() );
-// 				  contents_edit->setText( kover_file.contents() );
-// 				  connect( contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()) );
 
-// 				  if (kover_file.number())
-// 					 {
-// 						number_spin->setValue( kover_file.number() );
-// 						number_spin->setEnabled( true );
-// 						number_check->setChecked( true );
-// 					 } else
-// 						{
-// 						  number_spin->setEnabled( false );
-// 						  number_check->setChecked( false );
-// 						}
-              
-// 				  setStatusText( "File loaded" );
-// 				  altered_data = false;
-// 				} else
-// 				  {
-// 					 KMessageBox::error( this, "Error while opening/reading file!");
-// 				  }
-// 		  }
-		break;
-	 case ID_MAIN_SAVE:
-	// 	if (filename == "untitled")
-// 		  {
-// 			 handleMainToolBar( ID_MAIN_SAVEAS );
-// 		  } else
-// 			 {
-// 				if (kover_file.saveFile( filename ))
-// 				  {
-// 					 setStatusText( "File saved" );
-// 					 altered_data = false;
-// 				  } else
-// 					 {
-// 						KMessageBox::error( this, "Error while opening/reading file!");
-// 					 }
-// 			 }
-		break;
-	 case ID_MAIN_SAVEAS:
-		// newfilename = KFileDialog::getSaveFileName( 0, 0, this);
-// 		if (newfilename.length())
-// 		  {
-// 			 parseFilename( newfilename );
-// 			 if (kover_file.saveFile( newfilename ))
-// 				{
-// 				  filename = newfilename;
-
-// 				  QString newCaption;
-// 				  newCaption.append( "Kover - " );
-// 				  newCaption.append( filename );
-// 				  setCaption( newCaption );
-// 				  setStatusText( "File saved" );
-// 				  altered_data = false;
-// 				} else
-// 				  {
-// 					 KMessageBox::error( this, "Error while opening/reading file!");
-// 				  }
-// 		  }
-		break;
-	 case ID_MAIN_PRINT:
-		//		cdview->printKover();
-		break;
-	 case ID_MAIN_VIEW:
-// 		cdview->resize( PREV_WIDTH, PREV_HEIGHT );
-// 		cdview->move( 0, 0 );
-// 		setFixedSize( PREV_WIDTH, PREV_HEIGHT );
-// 		resize( PREV_WIDTH, PREV_HEIGHT );
-// 		cdview->showPreview();
-// 		cdview->setFocus();
-		break;
-	 case ID_MAIN_ABOUT:
-		showAboutApplication();
-		break;
-	 case ID_MAIN_EXIT:
-		close();
-		break;
-	 }
-}
-
-void KoverTop::handleCdToolBar(int id)
-{
-  QColor        new_color;
-  QFont         new_font;
-  KColorDialog* kc;
-  KFontDialog*  kf;
-  QString       tracks;
+// void KoverTop::handleCdToolBar(int id)
+// {
+//   QColor        new_color;
+//   QFont         new_font;
+//   KColorDialog* kc;
+//   KFontDialog*  kf;
+//   QString       tracks;
   
-  switch (id)
-	 {
-	 case ID_CD_BGCOLOR:
-		kc = new KColorDialog(this, "kc", true);
-		new_color = kover_file.backColor();
-		if (kc->getColor( new_color ))
-		  {
-			 kover_file.setBackColor( new_color );
-		  }
-		delete kc;
-		break;
-	 case ID_CD_TITLEFONT:
-		kf = new KFontDialog(this, "kf", true);
-		new_font = kover_file.titleFont();
-		if (kf->getFont( new_font ))
-		  {
-			 kover_file.setTitleFont( new_font );
-		  }
-		delete kf;
-		break;
-	 case ID_CD_TITLECOLOR:
-		kc = new KColorDialog(this, "kc", true);
-		new_color = kover_file.titleColor();
-		if (kc->getColor( new_color ))
-		  {
-			 kover_file.setTitleColor( new_color );
-		  }
-		delete kc;
-		break;
-	 case ID_CD_CONTENTSFONT:
-		kf = new KFontDialog(this, "kf", true);
-		new_font = kover_file.contentsFont();
-		if (kf->getFont( new_font ))
-		  {
-			 kover_file.setContentsFont( new_font );
-		  }
-		delete kf;
-		break;
-	 case ID_CD_CONTENTSCOLOR:
-		kc = new KColorDialog(this, "kc", true);
-		new_color = kover_file.contentsColor();
-		if (kc->getColor( new_color ))
-		  {
-			 kover_file.setContentsColor( new_color );
-		  }
-		delete kc;
-		break;
-	 case ID_CD_IMAGES:
-		ImageDlg* imgdlg;
-		imgdlg = new ImageDlg(this,&kover_file);
-		imgdlg->exec();
-		delete imgdlg;
-		break;
-	 case ID_CD_CDDBFILL:
+//   switch (id)
+// 	 {
+// 	 case ID_CD_BGCOLOR:
+// 		kc = new KColorDialog(this, "kc", true);
+// 		new_color = kover_file.backColor();
+// 		if (kc->getColor( new_color ))
+// 		  {
+// 			 kover_file.setBackColor( new_color );
+// 		  }
+// 		delete kc;
+// 		break;
+// 	 case ID_CD_TITLEFONT:
+		// kf = new KFontDialog(this, "kf", true);
+// 		new_font = kover_file.titleFont();
+// 		if (kf->getFont( new_font ))
+// 		  {
+// 			 kover_file.setTitleFont( new_font );
+// 		  }
+// 		delete kf;
+// 		break;
+// 	 case ID_CD_TITLECOLOR:
+// 		kc = new KColorDialog(this, "kc", true);
+// 		new_color = kover_file.titleColor();
+// 		if (kc->getColor( new_color ))
+// 		  {
+// 			 kover_file.setTitleColor( new_color );
+// 		  }
+// 		delete kc;
+// 		break;
+// 	 case ID_CD_CONTENTSFONT:
+	// 	kf = new KFontDialog(this, "kf", true);
+// 		new_font = kover_file.contentsFont();
+// 		if (kf->getFont( new_font ))
+// 		  {
+// 			 kover_file.setContentsFont( new_font );
+// 		  }
+// 		delete kf;
+// 		break;
+// 	 case ID_CD_CONTENTSCOLOR:
+	// 	kc = new KColorDialog(this, "kc", true);
+// 		new_color = kover_file.contentsColor();
+// 		if (kc->getColor( new_color ))
+// 		  {
+// 			 kover_file.setContentsColor( new_color );
+// 		  }
+// 		delete kc;
+// 		break;
+// 	 case ID_CD_IMAGES:
+// 		ImageDlg* imgdlg;
+// 		imgdlg = new ImageDlg(this,&kover_file);
+// 		imgdlg->exec();
+// 		delete imgdlg;
+// 		break;
+// 	 case ID_CD_CDDBFILL:
 	// 	if (altered_data)
 // 		  {
 // 			 if(howAboutSaving())
@@ -535,9 +404,9 @@ void KoverTop::handleCdToolBar(int id)
 // 			 altered_data = false;
 // 			 cddb_fill->cdInfo();
 // 		  }
-		break;
-	 }
-}
+// 		break;
+// 	 }
+// }
 
 void KoverTop::stopPreview()
 {
@@ -552,17 +421,6 @@ void KoverTop::stopPreview()
   toolBar("mainToolBar")->show();
 } 
 
-// void KoverTop::closeEvent(QCloseEvent* event)
-// {
-//   if (altered_data)
-// 	 {
-// 		if(howAboutSaving())
-// 		  return;
-// 	 }
-//   event->accept();
-	
-// }
-
 bool KoverTop::queryClose()
 {
    if (altered_data)
@@ -570,7 +428,13 @@ bool KoverTop::queryClose()
 		 if(howAboutSaving())
 			return false;
 	  }
+#ifdef USE_THREADS
 	cddb_fill->killThread();
+	 if( semctl( semid, 0, IPC_RMID) < 0 )
+    {
+        perror("ERROR");
+	 }
+#endif
 	return true;
 }
 
@@ -597,7 +461,8 @@ void KoverTop::fileNew()
   setStatusText( "Chop!" );
   altered_data = false;
   filename = "untitled";
-  setCaption( "- untitled",true );
+  setCaption(i18n("[New Document]"), false);
+  cddb_fill->killThread();
 }
 
 void KoverTop::fileOpen()
@@ -618,11 +483,8 @@ void KoverTop::fileOpen()
 		  {
 			 filename = newfilename;
               
-			 QString newCaption;
-			 newCaption.append( "Kover - " );
-			 newCaption.append( filename );
-			 setCaption( newCaption );
-              
+			 setCaption(i18n(filename), false);
+
 			 disconnect( contents_edit, SIGNAL(textChanged()), this, SLOT(contentsBoxChanged()) );
 			 title_edit->setText( kover_file.title() );
 			 contents_edit->setText( kover_file.contents() );
@@ -633,7 +495,8 @@ void KoverTop::fileOpen()
 				  number_spin->setValue( kover_file.number() );
 				  number_spin->setEnabled( true );
 				  number_check->setChecked( true );
-				} else
+				} 
+			 else
 				  {
 					 number_spin->setEnabled( false );
 					 number_check->setChecked( false );
@@ -673,13 +536,15 @@ void KoverTop::fileSave()
 	if (filename == "untitled")
 		  {
 			 fileSaveAs();
-		  } else
+		  } 
+	else
 			 {
 				if (kover_file.saveFile( filename ))
 				  {
 					 setStatusText( "File saved" );
 					 altered_data = false;
-				  } else
+				  } 
+				else
 					 {
 						KMessageBox::error( this, "Error while opening/reading file!");
 					 }
@@ -698,13 +563,11 @@ void KoverTop::fileSaveAs()
 				{
 				  filename = newfilename;
 
-				  QString newCaption;
-				  newCaption.append( "Kover - " );
-				  newCaption.append( filename );
-				  setCaption( newCaption );
+				  setCaption(i18n(filename), false);
 				  setStatusText( "File saved" );
 				  altered_data = false;
-				} else
+				} 
+			 else
 				  {
 					 KMessageBox::error( this, "Error while opening/reading file!");
 				  }
@@ -714,6 +577,9 @@ void KoverTop::fileSaveAs()
 void KoverTop::filePrint()
 {
   cdview->printKover();
+#ifdef ENABLE_DEBUG_OUTPUT
+  printf("Printing done\n");
+#endif
 }
 
 void KoverTop::cut()
@@ -799,27 +665,36 @@ void KoverTop::editToolbars()
 
 void KoverTop::cddbFill()
 {
+#ifdef USE_THREADS
+   timer = new QTimer(this);
+   connect(timer, SIGNAL(timeout()),this, SLOT(cddbDone()));
+#endif
+
   if (altered_data)
 	 {
 		if(howAboutSaving())
 		  return;
 	 }
 
-  cddb_fill->execute();
+  if(cddb_fill->execute())
+	 {
+#ifdef USE_THREADS
+		 sops[0].sem_num = 0;
+		 sops[0].sem_flg = IPC_NOWAIT;
+		 sops[0].sem_op  = 1;
+		 semop(semid,sops,1);
+		 timer->start(20);
 
-  printf("before while\n");
-	
-
-  while (!end_loop) 
+   while (!end_loop) 
 	 {
 		parent->processEvents();
 	 }
   
-  printf("after while\n");
+
 
   if (update_display)
 	 {
-		
+#endif
 		cddb_fill->setTitleAndContents();
 		disconnect( contents_edit, SIGNAL(textChanged()), this, SLOT(contentsBoxChanged()) );
 		title_edit->setText( kover_file.title() );
@@ -827,21 +702,41 @@ void KoverTop::cddbFill()
 		connect( contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()) );
 		altered_data = false;
 		cddb_fill->cdInfo();
+#ifdef USE_THREADS
+		cddb_fill->killThread(); // actualy just joining... to prevent memory leaks
+	 }
+#endif
 	 }
   update_display = false;
   end_loop = false;
-  cddb_fill->killThread(); // actualy just joining... to prevent memory leaks
+}
 
-  //if (cddb_fill->start())
-	 {
-//  disconnect( contents_edit, SIGNAL(textChanged()), this, SLOT(contentsBoxChanged()) );
-//   title_edit->setText( kover_file.title() );
-//   contents_edit->setText( kover_file.contents() );
-//   connect( contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()) );
-//   altered_data = false;
-//   cddb_fill->cdInfo();
-	 }
-  //pthread_create(&cddb_thread, NULL,cddbThread,(void *)this);
+void KoverTop::cddbDone()
+{
+
+#ifdef USE_THREADS
+
+  sops[0].sem_num = 0;
+  sops[0].sem_flg = IPC_NOWAIT;
+  sops[0].sem_op  = 0;
+  
+  parent->processEvents();
+  if (semop(semid,sops,1) > 0);
+  {
+#ifdef ENABLE_DEBUG_OUTPUT
+	 printf("cddb lookup done\n");
+#endif
+	 timer->stop();
+	 cddb_fill->setTitleAndContents();
+	 disconnect( contents_edit, SIGNAL(textChanged()), this, SLOT(contentsBoxChanged()) );
+	 title_edit->setText( kover_file.title() );
+	 contents_edit->setText( kover_file.contents() );
+	 connect( contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()) );
+	 altered_data = false;
+	 cddb_fill->cdInfo();
+  }
+
+#endif
 }
 
 void KoverTop::preferences()
@@ -874,54 +769,75 @@ void KoverTop::preferences()
   
 }
 
+void KoverTop::titleFont()
+{
+  QFont new_font;
+  KFontDialog *kf = new KFontDialog(this, "kf", true);
+  new_font = kover_file.titleFont();
+  if (kf->getFont( new_font ))
+	 {
+		kover_file.setTitleFont( new_font );
+	 }
+  delete kf;
+}
+
 void KoverTop::imageEmbedding()
 {
-  	ImageDlg* imgdlg;
-	imgdlg = new ImageDlg(this,&kover_file);
+  	ImageDlg *imgdlg = new ImageDlg(this,&kover_file);
 	imgdlg->exec();
 	delete imgdlg;
 }
 
 void KoverTop::updateDisplay(bool update_really = false)
 {
-  printf("updateDisplay()\n");
-  printf("update_display = %d\n",update_display);  
-  printf("end_loop = %d\n",end_loop);
   update_display = update_really;
   end_loop = true;
-  printf("update_display = %d\n",update_display);
- printf("end_loop = %d\n",end_loop);
-//   cddb_fill->setTitleAndContents();
-//   disconnect( contents_edit, SIGNAL(textChanged()), this, SLOT(contentsBoxChanged()) );
-//   title_edit->setText( kover_file.title() );
-//   contents_edit->setText( kover_file.contents() );
-//   connect( contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()) );
-//   altered_data = false;
-//   cddb_fill->cdInfo();
-  
 }
 
-void *cddbThread_old(void *parm)
+void KoverTop::titleFontColor()
 {
-  KoverTop *kover_top = (KoverTop *) parm;
+  QColor new_color;
+  KColorDialog *kc = new KColorDialog(this, "kc", true);
+  new_color = kover_file.titleColor();
+  if (kc->getColor( new_color ))
+	 {
+		kover_file.setTitleColor( new_color );
+	 }
+  delete kc; 
+}
 
-#ifdef ENABLE_DEBUG_OUTPUT
-	fprintf(stderr, "[cddbThread()] CDDB thread up, PID: %i\n", getpid());
-#endif
-  
-  // if (kover_top->cddb_fill->execute())
-//  		  {
-//  			 kover_top->disconnect( kover_top->contents_edit, SIGNAL(textChanged()), kover_top, SLOT(contentsBoxChanged()) );
-//  			 kover_top->title_edit->setText( kover_top->kover_file.title() );
-// 			 kover_top->contents_edit->setText( kover_top->kover_file.contents() );
-//  			 kover_top->connect( kover_top->contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()) );
-//  			 kover_top->altered_data = false;
-//  			 kover_top->cddb_fill->cdInfo();
-//  		  } 
-	
-	
-	//	kover_top->cddb_fill->execute();
+void KoverTop::contentsFont()
+{
+  QFont new_font;
+  KFontDialog *kf = new KFontDialog(this, "kf", true);
+  new_font = kover_file.contentsFont();
+  if (kf->getFont( new_font ))
+	 {
+		kover_file.setContentsFont( new_font );
+	 }
+  delete kf;
+}
 
-  
-	return NULL;
+void KoverTop::contentsFontColor()
+{
+  QColor new_color;
+  KColorDialog *kc = new KColorDialog(this, "kc", true);
+  new_color = kover_file.contentsColor();
+  if (kc->getColor( new_color ))
+	 {
+		kover_file.setContentsColor( new_color );
+	 }
+  delete kc;
+}
+
+void KoverTop::backgroundColor()
+{
+  QColor new_color;
+  KColorDialog *kc = new KColorDialog(this, "kc", true);
+  new_color = kover_file.backColor();
+  if (kc->getColor( new_color ))
+	 {
+		kover_file.setBackColor( new_color );
+	 }
+  delete kc;
 }

@@ -66,28 +66,36 @@ CDDB_Fill::CDDB_Fill( KoverFile* _kover_file ) : QObject()
 {
   kover_file = _kover_file;
   cd_fd = -1;
+#ifdef USE_THREADS
   cddb_thread=0;
-  //cddb_lock = PTHREAD_MUTEX_INITIALIZER;
   pthread_mutex_init(&cddb_lock,NULL);
+  if(( semid = semget( SEMKEY, SEM_CNT, MODE | IPC_CREAT )) < 0 )
+    {
+		perror("ERROR");
+	 }
+#endif
 }
 
 CDDB_Fill::~CDDB_Fill()
 {
+
+#ifdef USE_THREADS
   killThread();
+#endif
+
 }
 
+#ifdef USE_THREADS
 
 void *cddbThread(void *parm)
 {
   CDDB_Fill *cddb_fill = (CDDB_Fill *) parm;
   
   pthread_mutex_lock(&cddb_fill->cddb_lock);
-	
   
 #ifdef ENABLE_DEBUG_OUTPUT
-	fprintf(stderr, "[cddbThread()] CDDB thread up, PID: %i\n", getpid());
+  fprintf(stderr, "[cddbThread()] CDDB thread up, PID: %i\nParent has PID %i\n", getpid(),getppid());
 #endif
-
 
   char *message;
   if (!cddb_fill->openCD())
@@ -99,107 +107,123 @@ void *cddbThread(void *parm)
 		cddb_fill->closeCD();
 		return NULL;
 	 }
-  //if (!cddb_fill->cddb_connect(CDDB_HOST, CDDB_PORT))
-	 if (cddb_fill->cddb_connect(CDDB_HOST, CDDB_PORT)) //test
+  
+  
+  if(!cddb_fill->getCDDBFromLocalFile())
 	 {
-		cddb_fill->cddb_query();
-		cddb_fill->cddb_disconnect();
-	 }
-  else
-	 {
-		if (errno <sys_nerr)
+
+
+		if (!cddb_fill->cddb_connect(CDDB_HOST, CDDB_PORT))
 		  {
-			 message = (char *)malloc(strlen(sys_errlist[errno])+strlen("Connecting to CDDB server failed: "));
-			 sprintf(message,"Connecting to CDDB server failed: %s",sys_errlist[errno]);
-			 emit cddb_fill->statusText(message);
-			 free (message);
-			 emit cddb_fill->updateDisplay();
-			 
+			 cddb_fill->cddb_query();
+			 cddb_fill->cddb_disconnect();
 		  }
-		cddb_fill->closeCD();
-		cddb_fill->cddb_disconnect();
+		else
+		  {
+			 if (errno <sys_nerr)
+				{
+				  message = (char *)malloc(strlen(sys_errlist[errno])+strlen("Connecting to CDDB server failed: "));
+				  sprintf(message,"Connecting to CDDB server failed: %s",sys_errlist[errno]);
+				  emit cddb_fill->statusText(message);
+				  free (message);
+				  emit cddb_fill->updateDisplay();
+			 
+				}
+			 cddb_fill->closeCD();
+			 cddb_fill->cddb_disconnect();
 
-		pthread_mutex_unlock(&cddb_fill->cddb_lock);
-
-		pthread_exit(NULL);
+			 pthread_mutex_unlock(&cddb_fill->cddb_lock);
 		
+			 return NULL;
+		
+		  }
 	 }
-  
-  //setTitleAndContents();
-  
+   
   cddb_fill->closeCD();
 	
   emit cddb_fill->updateDisplay(true);
   
+  cddb_fill->sops[0].sem_num = 0;
+  cddb_fill->sops[0].sem_flg = IPC_NOWAIT;
+  cddb_fill->sops[0].sem_op  = -1;
+  semop(cddb_fill->semid,cddb_fill->sops,1);
+
   pthread_mutex_unlock(&cddb_fill->cddb_lock);
    
   return NULL;
 }
 
+#endif
+
 void CDDB_Fill::killThread()
 {
+#ifdef USE_THREAD
   void *dummy;
+  pthread_detach(cddb_thread);
   pthread_join(cddb_thread,&dummy);
+#endif
 }
 
 
 bool CDDB_Fill::execute()
-  //void CDDB_Fill::run()
 {
-  void *dummy;
-
+#ifdef USE_THREADS
   if (pthread_mutex_trylock(&cddb_lock)!=EBUSY)
 	 {
 		pthread_mutex_unlock(&cddb_lock);
 	   pthread_create(&cddb_thread, NULL, cddbThread, (void *)this);
+		pthread_detach(cddb_thread);
+	 }
+  else
+	 {
+		printf("CDDB lookup thread seems busy...\n");
+		return false;
 	 }
 
-  pthread_join(cddb_thread,&dummy);
-	
-
   return true;
+#else
 
-//   char *message;
-//   if (!openCD())
-// 	 {
-// 		return;
-// 	 }
-//   if (!readTOC())
-// 	 {
-// 		closeCD();
-// 		return;
-// 	 }
+  char *message;
+  if (!openCD())
+	 {
+		return false;
+	 }
+  if (!readTOC())
+	 {
+		closeCD();
+		return false;
+	 }
+
+  if(!getCDDBFromLocalFile())
+	 {
 
 	
-//   // //if (!cddb_connect(CDDB_HOST, CDDB_PORT))
-//   if (cddb_connect(CDDB_HOST, CDDB_PORT)) //test
-// 	 {
-// 		cddb_query();
-// 		cddb_disconnect();
-// 	 }
-//   else
-// 	 {
-// 		if (errno <sys_nerr)
-// 		  {
-// 			 message = (char *)malloc(strlen(sys_errlist[errno])+strlen("Connecting to CDDB server failed: "));
-// 			 sprintf(message,"Connecting to CDDB server failed: %s",sys_errlist[errno]);
-// 			 emit statusText(message);
-// 			 free (message);
+		if (!cddb_connect(CDDB_HOST, CDDB_PORT))
+		  {
+			 cddb_query();
+			 cddb_disconnect();
+		  }
+		else
+		  {
+			 if (errno <sys_nerr)
+				{
+				  message = (char *)malloc(strlen(sys_errlist[errno])+strlen("Connecting to CDDB server failed: "));
+				  sprintf(message,"Connecting to CDDB server failed: %s",sys_errlist[errno]);
+				  emit statusText(message);
+				  free (message);
 			 
-// 		  }
-// 		closeCD();
-// 		cddb_disconnect();
-// 		return;
+				}
+			 closeCD();
+			 cddb_disconnect();
+			 return false;
 		
-// 	 }
-  
-//   //setTitleAndContents();
-  
-//   closeCD();
-	
-//   emit updateDisplay();
-  
-//   return;
+		  }
+	 }
+    
+  closeCD();
+	  
+  return true;
+#endif
 }
 
 void CDDB_Fill::setTitleAndContents()
@@ -228,9 +252,10 @@ void CDDB_Fill::cdInfo()
 int CDDB_Fill::openCD()
 {
   int ds;
-	
-  printf("CD opening\n");
 
+#ifdef ENABLE_DEBUG_OUTPUT
+  printf("CD opening\n");
+#endif
 
   if (cd_fd != -1)
 	 {
@@ -243,18 +268,21 @@ int CDDB_Fill::openCD()
 		if (errno == EACCES)
 		  {
 			 emit statusText( "You don´t have permission to read from /dev/cdrom!" );
-		  } else
-			 if (errno == ENOMEDIUM)
+		  } 
+		else
+		  if (errno == ENOMEDIUM)
+			 {
+				emit statusText( "There´s no medium in /dev/cdrom!" );
+			 } 
+		  else
+			 if (errno == EBUSY)
 				{
-				  emit statusText( "There´s no medium in /dev/cdrom!" );
-				} else
-				  if (errno == EBUSY)
-					 {
-						emit statusText( "/dev/cdrom is busy!" );
-					 } else
-						{
-						  emit statusText( "Unknown error while opening /dev/cdrom!" );
-						}
+				  emit statusText( "/dev/cdrom is busy!" );
+				} 
+			 else
+				{
+				  emit statusText( "Unknown error while opening /dev/cdrom!" );
+				}
 		return false;
 	 }
 
@@ -264,9 +292,9 @@ int CDDB_Fill::openCD()
 		emit statusText( "There´s no audio cd in /dev/cdrom! (ignoring)" );
 		printf( "There´s no audio cd in /dev/cdrom! (ignoring)\n" );
 	 }
-	
+#ifdef ENABLE_DEBUG_OUTPUT	
   printf("CD opened: %d\n",ds);
-
+#endif
   return true;
 }
 
@@ -556,6 +584,58 @@ int CDDB_Fill::CDDBReadLine(int sock,char *inbuffer,int len)
   return index;
 }
 
+/** getCDDBFromLocalFile checks if there is already a file containing the disc info we are looking for.
+ *  Currently the .cddb directory is used to check for available cddb entries
+ *
+ */
+
+bool CDDB_Fill::getCDDBFromLocalFile()
+{
+  char *home_dir = NULL;
+  char *cddb_file = NULL;
+  FILE *cddb_file_descriptor = NULL;
+  char help_string[10];
+  
+  home_dir = getenv("HOME");
+
+  printf("HOMEDIR=%s\n",home_dir);
+
+  if (home_dir)
+	 {
+		if (home_dir[strlen(home_dir)-1]!='/')
+		  {
+			 cddb_file = (char *) malloc(strlen(home_dir)+7+8);
+			 strcpy(cddb_file,home_dir);
+			 strcat(cddb_file, "/.cddb/");
+		  }
+		else
+		  {
+			 cddb_file = (char *) malloc(strlen(home_dir)+6+8);
+			 strcpy(cddb_file,home_dir);
+			 strcat(cddb_file, ".cddb/");
+		  }
+		snprintf(help_string,9,"%08x",cdinfo.cddb_id);
+		strncat(cddb_file,help_string,8);
+
+		printf("datei ist : %s\n",cddb_file);
+		
+		cddb_file_descriptor = fopen(cddb_file, "r");
+		
+		free (cddb_file);
+
+		if (cddb_file_descriptor)
+		  {
+			 emit statusText("Using local values for disc");
+			 cddb_readcdinfo(cddb_file_descriptor,true);
+			 fclose(cddb_file_descriptor);
+			 return true;
+		  }
+
+	 }
+  
+  return false;
+}
+
 
 /* Sends query to server -- this is the first thing to be done */
 void CDDB_Fill::cddb_query()
@@ -575,42 +655,7 @@ void CDDB_Fill::cddb_query()
   int i_code;
   char *hostname, *logname;
 
-  home_dir = getenv("HOME");
-
-  printf("HOMEDIR=%s\n",home_dir);
-
-  if (home_dir)
-	 {
-		if (home_dir[strlen(home_dir)-1]!='/')
-		  {
-			 cddb_file = (char *) malloc(strlen(home_dir)+7+8);
-			 strcpy(cddb_file,home_dir);
-			 strcat(cddb_file, "/.cddb/");
-		  }
-		else
-		  {
-			 cddb_file = (char *) malloc(strlen(home_dir)+6+8);
-			 strcpy(cddb_file,home_dir);
-			 strcat(home_dir, ".cddb/");
-		  }
-		snprintf(help_string,9,"%08x",cdinfo.cddb_id);
-		strncat(cddb_file,help_string,8);
-
-		printf("datei ist : %s\n",cddb_file);
-		
-		cddb_file_descriptor = fopen(cddb_file, "r");
-		
-		free (cddb_file);
-
-		if (cddb_file_descriptor)
-		  {
-			 emit statusText("Using local values for disc");
-			 cddb_readcdinfo(cddb_file_descriptor,true);
-			 fclose(cddb_file_descriptor);
-			 return;
-		  }
-
-	 }
+  
    
   emit statusText( "Logging in..." );
      
@@ -745,8 +790,16 @@ void CDDB_Fill::remove_line(char *string)
 
 void CDDB_Fill::cddb_readcdinfo(FILE *desc, bool local)
 {
+  char *home_dir = NULL;
+  char *cddb_file = NULL;
+  FILE *cddb_file_descriptor = NULL;
+  char help_string[10];
+  bool file_opened = false;
+ 
   char *hello_buffer = NULL;
   
+
+
 
   char s[255], *ss;
   int t;
@@ -755,42 +808,42 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc, bool local)
 
   if (!local)
 	 {
-  if (code != 69)
-	 {
-		if (code == 200)  // cddb_query was a success, request info
+		if (code != 69)
 		  {
-			 emit statusText( "Downloading CD info..." );
-       
-			 //sprintf(s,"cddb read %s %08x",(const char*)cdinfo.catagory, (unsigned int) cdinfo.cddb_id);
-			 //SEND(s);
-
-			 snprintf(cmdbuffer,256,"cddb+read+%s+%08x",(const char*)cdinfo.catagory, (unsigned int) cdinfo.cddb_id);
-		 
-			 hello_buffer = cddb_hello();
-
-			 if (!hello_buffer)
+			 if (code == 200)  // cddb_query was a success, request info
 				{
-				  emit statusText("Trouble creating cddb greeting... Giving up...");
-				  return;
-				}
+				  emit statusText( "Downloading CD info..." );
+       
+				  //sprintf(s,"cddb read %s %08x",(const char*)cdinfo.catagory, (unsigned int) cdinfo.cddb_id);
+				  //SEND(s);
 
-			 snprintf(outbuffer,256,"GET /%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\n\n","~cddb/cddb.cgi",cmdbuffer,hello_buffer,"3","freedb.freedb.org","kover","3");
+				  snprintf(cmdbuffer,256,"cddb+read+%s+%08x",(const char*)cdinfo.catagory, (unsigned int) cdinfo.cddb_id);
+		 
+				  hello_buffer = cddb_hello();
+
+				  if (!hello_buffer)
+					 {
+						emit statusText("Trouble creating cddb greeting... Giving up...");
+						return;
+					 }
+
+				  snprintf(outbuffer,256,"GET /%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\n\n","~cddb/cddb.cgi",cmdbuffer,hello_buffer,"3","freedb.freedb.org","kover","3");
 
 
 
-			 printf("Reading : %s\n",outbuffer);
+				  printf("Reading : %s\n",outbuffer);
 
-			 write(sock,outbuffer,strlen(outbuffer));
+				  write(sock,outbuffer,strlen(outbuffer));
 
-			 //cddb_code();
+				  //cddb_code();
  
-			 // if (code != 210) 
-			 //        {   
-			 //          printf("(%d): %s",code,cddb_msg);
-			 //          return;
-			 //}
+				  // if (code != 210) 
+				  //        {   
+				  //          printf("(%d): %s",code,cddb_msg);
+				  //          return;
+				  //}
+				}
 		  }
-	 }
 	 }
   s[0] = 0;
 	
@@ -801,6 +854,56 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc, bool local)
 		if (!fgets(s, 255, desc))
 		  break;
      
+		if (!local)
+		  {
+			 if (!file_opened)
+				{
+				  home_dir = getenv("HOME");
+				  if (home_dir)
+					 {
+						if (home_dir[strlen(home_dir)-1]!='/')
+						  {
+							 cddb_file = (char *) malloc(strlen(home_dir)+7+8);
+							 strcpy(cddb_file,home_dir);
+							 strcat(cddb_file, "/.cddb/");
+						  }
+						else
+						  {
+							 cddb_file = (char *) malloc(strlen(home_dir)+6+8);
+							 strcpy(cddb_file,home_dir);
+							 strcat(cddb_file, ".cddb/");
+						  }
+						snprintf(help_string,9,"%08x",cdinfo.cddb_id);
+						strncat(cddb_file,help_string,8);
+
+						printf("datei ist : %s\n",cddb_file);
+		
+						cddb_file_descriptor = fopen(cddb_file, "w");
+		
+						free (cddb_file);
+
+						if (cddb_file_descriptor)
+						  {
+							 file_opened = true;
+						  }
+
+					 }
+				  
+				}
+			 if (cddb_file_descriptor)
+				{
+				  if (strstr(s,"#") || strstr(s,"="))
+					 {
+						if (strstr(s,"# Submitted via:"))
+						  fprintf(cddb_file_descriptor,"# Submitted via: %s %s\n",PACKAGE,VERSION);
+						else if (strstr(s,"# xmcd CD database file generated by"))
+						  fprintf(cddb_file_descriptor,"# xmcd CD database file generated by %s %s\n",PACKAGE,VERSION);
+						else
+						  fprintf(cddb_file_descriptor,"%s",s);
+					 }
+				}
+		  }
+
 		if ((ss=strstr(s, "DTITLE")) != NULL)
 		  { 
 			 ss += 7;
@@ -838,6 +941,8 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc, bool local)
 			 cdinfo.trk.at(t)->songname = ss;
 		  }
 	 }
+  if (file_opened && cddb_file_descriptor)
+	 fclose(cddb_file_descriptor);
    
 }
 

@@ -108,7 +108,7 @@ protected:
 	void	cddb_disconnect();
 	char *cddb_hello();
 	
-void	cddb_query();
+	void	cddb_query();
 	void	cddb_readcdinfo(FILE *desc, bool local);
 	int CDDBReadLine(int sock,char *inbuffer,int len);
 	void remove_line(char *string);
@@ -117,11 +117,13 @@ public:
 	void setTitleAndContents();
 	void killThread();
 
-
 private:
+#ifdef USE_THREADS
 	friend void *cddbThread(void *parm);
 	pthread_t cddb_thread;
 	pthread_mutex_t cddb_lock;
+#endif
+	bool getCDDBFromLocalFile();
 
 
 };

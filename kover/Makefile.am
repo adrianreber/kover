@@ -1,38 +1,23 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 bin_PROGRAMS = kover
-kover_SOURCES = imagedlgdata.cpp imagedlg.cpp cddb_fill.cpp koverfile.cpp KoverTop.cpp CDView.cpp main.cpp 
-kover_LDADD   = $(LIB_KIMGIO) -lkfile -lkfm -lkdeui -lkdecore -lqt -lXext -lX11 $(LIBSOCKET)
+kover_SOURCES = imagedlgdata.cpp imagedlg.cpp cddb_fill.cpp koverfile.cpp KoverTop.cpp CDView.cpp main.cpp \
+		PreferencesDialog.cpp CDDB.cpp
+kover_LDADD   = $(LIB_KSYCOCA) $(LIB_KFILE) $(LIBPTHREAD) $(LIBSOCKET)
 
-SUBDIRS = docs xpm 
+SUBDIRS =  
 
-EXTRA_DIST = main.cpp kover.kdelnk kover.xpm mini-kover.xpm CDView.h CDView.cpp KoverTop.cpp KoverTop.h koverfile.cpp koverfile.h cddb_fill.cpp cddb_fill.h image_dlg.kdevdlg imagedlg.h imagedlg.cpp imagedlgdata.cpp 
+rcdir = $(kde_datadir)/kover
+rc_DATA = koverui.rc
 
-install-data-local:
-	$(mkinstalldirs) $(kde_appsdir)/Utilities/
-	$(INSTALL_DATA) kover.kdelnk $(kde_appsdir)/Utilities/kover.kdelnk
-	$(mkinstalldirs) $(kde_icondir)/
-	$(INSTALL_DATA) kover.xpm $(kde_icondir)/kover.xpm
-	$(mkinstalldirs) $(kde_minidir)/
-	$(INSTALL_DATA) mini-kover.xpm $(kde_minidir)/mini-kover.xpm
+appsdir = $(kde_appsdir)/Multimedia
+apps_DATA = kover.desktop
 
-uninstall-local:
-	-rm -f $(kde_appsdir)/Utilities/kover.kdelnk
-	-rm -f $(kde_icondir)/kover.xpm
-	-rm -f $(kde_minidir)/mini-kover.xpm
+KDE_ICON = AUTO
 
-####### kdevelop will overwrite this part!!! (end)############
-# this 10 paths are KDE specific. Use them:
-# kde_htmldir       Where your docs should go to. (contains lang subdirs)
-# kde_appsdir       Where your application file (.kdelnk) should go to. 
-# kde_icondir       Where your icon should go to.
-# kde_minidir       Where your mini icon should go to.
-# kde_datadir       Where you install application data. (Use a subdir)
-# kde_locale        Where translation files should go to.(contains lang subdirs)
-# kde_cgidir        Where cgi-bin executables should go to.
-# kde_confdir       Where config files should go to.
-# kde_mimedir       Where mimetypes should go to.
-# kde_toolbardir    Where general toolbar icons should go to.
-# kde_wallpaperdir  Where general wallpapers should go to.
+EXTRA_DIST = kover.desktop
+
+noinst_HEADERS = CDDB.h KoverTop.h cddb_fill.h kover.h \
+		 CDView.h PreferencesDialog.h imagedlg.h koverfile.h
 
 # set the include path for X, qt and KDE
 INCLUDES= $(all_includes)
@@ -40,7 +25,8 @@ INCLUDES= $(all_includes)
 # you can add here more. This one gets installed 
 bin_PROGRAMS = kover 
 
-kover_METASOURCES = USE_AUTOMOC
+# let automoc handle all of the meta source files (moc)
+METASOURCES = AUTO 
 
 # the library search path. 
 kover_LDFLAGS = $(all_libraries) $(KDE_RPATH)

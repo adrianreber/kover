@@ -26,6 +26,7 @@
 #include "CDView.h"
 #include "koverfile.h"
 #include "cddb_fill.h"
+#include "CDDB.h"
 #include <kapp.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
@@ -39,22 +40,7 @@
 #include <kstatusbar.h>
 #include <kstddirs.h>
 
-#define ID_MAIN_NEW    11
-#define ID_MAIN_OPEN   12
-#define ID_MAIN_SAVE   13
-#define ID_MAIN_SAVEAS 14
-#define ID_MAIN_PRINT  15
-#define ID_MAIN_VIEW   16
-#define ID_MAIN_ABOUT  17
-#define ID_MAIN_EXIT   18
 
-#define ID_CD_BGCOLOR		21
-#define ID_CD_TITLEFONT		22
-#define ID_CD_TITLECOLOR	23
-#define ID_CD_CONTENTSFONT	24
-#define ID_CD_CONTENTSCOLOR	25
-#define ID_CD_IMAGES		26
-#define ID_CD_CDDBFILL		27
 
 /** KoverTop is the TopLevelWidget. */
 //class KoverTop : public KTopLevelWidget
@@ -67,8 +53,8 @@ class KoverTop : public KMainWindow
   public slots:
 	 void contentsBoxChanged();
   void titleBoxChanged();
-  void handleMainToolBar(int id);
-  void handleCdToolBar(int id);
+  //void handleMainToolBar(int id);
+  //void handleCdToolBar(int id);
   void stopPreview();
 	void numberChecked(bool checked);
 	void numberChanged(int number);
@@ -76,6 +62,7 @@ class KoverTop : public KMainWindow
 	void setStatusText( const char* _status_text );
 	void actualSize();
 	void updateDisplay( bool update_really = false);
+
 	private slots:  
 	 void fileNew();
 	void fileOpen();
@@ -91,15 +78,25 @@ class KoverTop : public KMainWindow
 	void cddbFill();
 	void preferences();
 	void imageEmbedding();
- 
+	void titleFont();
+	void titleFontColor();
+	void contentsFont();
+	void contentsFontColor();
+	void backgroundColor();
+	void cddbDone();
+
 private:
- //void closeEvent( QCloseEvent* e );
 	char hexToChar( char hexc );
 	bool queryClose();
 	void parseFilename( QString& filename );
 	void showAboutApplication();
 	int howAboutSaving();
-	friend void *cddbThread_old(void *parm); 
+
+#ifdef USE_THREADS	
+	int semid;
+	struct sembuf sops[1];
+	QTimer *timer;
+#endif
 
 	QApplication *parent;
 
@@ -112,6 +109,8 @@ private:
 	
 	KoverFile	kover_file;
 	CDDB_Fill*	cddb_fill;
+
+	CDDB *cddb__fill;
   
 	QString		filename;
 	bool		altered_data;
@@ -141,7 +140,6 @@ private:
 
 	CDView*		cdview;
 	
-	pthread_t cddb_thread;
 
 /* 	bool toolbar_active; */
 /* 	bool statusbar_active; */

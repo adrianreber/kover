@@ -1,6 +1,28 @@
+/**
+	kover -
+
+	
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+	
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+	
+	File: kover.h
+	
+	Description: Header to all files
+*/
+
 #ifndef KOVER_H
 #define KOVER_H
-
 
 #include <ktoolbarbutton.h>
 #include <kaboutapplication.h>
@@ -18,14 +40,28 @@
 #include <qframe.h>
 #include <qlayout.h>
 #include <qlineedit.h>
+#include <qtimer.h>
 
 
 #include <pthread.h>
 #include <unistd.h>
+#include <string>
+#include <sys/stat.h>
+#include <sys/sem.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
 #include "../config.h"
 #include "PreferencesDialog.h"
 
+using std::string;
+
 #define MAIN_TOOLBAR 1
 #define CD_TOOLBAR 2
+#define SEM_CNT 2
+#define SEMKEY  5
+
+#define MODE    0600
+
+
 
 #endif

@@ -1,6 +1,12 @@
 Kover TODO
 ===========
 
+- thread support failed. but i keep trying. It is all in the code just
+define USE_THREADS. Works stable only printing doesn't work then anymore.
+It looks like whenever a kde or qt thread is started my threads turn into
+zombies.
+
+
 General:
 
 -more error handling (especially file I/O)

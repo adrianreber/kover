@@ -1,0 +1,28 @@
+<!DOCTYPE kpartgui ><kpartgui version="1" name="kover" >
+ <MenuBar>
+  <Menu name="view" >
+   <text>&amp;View</text>
+   <Action name="actual_size"/>
+  </Menu>
+  <Menu name="kover" >
+   <text>&amp;Kover</text>
+   <Action name="cddb" />
+   <Action name="image_embedding" />
+   <Action name="background_color" />
+   <Action name="title_font" />
+   <Action name="title_font_color" />
+   <Action name="contents_font" />
+   <Action name="contents_font_color" />
+  </Menu>
+ </MenuBar>
+ <ToolBar noMerge="0" name="koverToolBar" >
+  <Action name="cddb" />
+  <Action name="actual_size" />
+  <Action name="background_color" />
+  <Action name="image_embedding" />
+  <Action name="title_font" />
+  <Action name="title_font_color" />
+  <Action name="contents_font" />
+  <Action name="contents_font_color" />
+ </ToolBar>
+</kpartgui>
