@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.8 2002/04/28 21:55:24 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.10 2002/05/05 22:01:54 adrian Exp $ */
 
 #include "cddb_fill.moc"
 
@@ -593,7 +593,7 @@ bool CDDB_Fill::cddb_query() {
 
 		  ss = strchr(ssss, 32); //searching for " "
 		  //ss is now " bd09280d Pink Floyd / The Wall (CD1)"
-		  //watch out a leading space (32)
+		  //watch out, a leading space (32)
 		  sss = strchr(ss+1, 32);
 		  *sss = 0;
 		  //strtoul - convert a string to an unsigned long integer
@@ -928,8 +928,4 @@ bool CDDB_Fill::do_authentification(char *query_buffer, int socket) {
 		  }
 	 }
 	 return true;
-}
-
-void CDDB_Fill::get_sites() {
-	printf("Signal received...\n");
 }

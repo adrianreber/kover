@@ -32,7 +32,7 @@
 	 13 Mar 2002: Standard font page
 */
 
-/* $Id: PreferencesDialog.cc,v 1.6 2002/04/28 21:55:24 adrian Exp $ */
+/* $Id: PreferencesDialog.cc,v 1.8 2002/05/05 22:01:54 adrian Exp $ */
 
 #include "PreferencesDialog.moc"
 
@@ -52,7 +52,7 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#include "sites.h"
+#include "server_dialog.h"
 
 PreferencesDialog::PreferencesDialog(QWidget *parent, const QString &caption):KDialogBase(KJanusWidget::IconList,caption,Ok|Cancel,Ok,parent) {
 	 this->parent = parent;
@@ -609,7 +609,13 @@ void PreferencesDialog::output_changed(int type) {
 }
 
 void PreferencesDialog::browsing() {
-	emit get_sites();
-	sites *test = new sites();
-   test->how_many();	
+
+	 server_dialog * dialog;
+	 int aber = 0;
+
+	 dialog = new server_dialog();
+	 aber = dialog->exec();
+	 _DEBUG_ fprintf(stderr,"kover:server_dialog returns: %d %s\n",aber,(dialog->get(aber)).c_str());
+
+	 delete (dialog);
 }

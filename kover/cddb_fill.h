@@ -27,7 +27,7 @@
 
 */
 
-/* $Id: cddb_fill.h,v 1.21 2002/04/28 21:55:24 adrian Exp $ */
+/* $Id: cddb_fill.h,v 1.22 2002/05/05 22:01:54 adrian Exp $ */
 
 #ifndef CDDB_FILL_H
 #define CDDB_FILL_H
@@ -102,9 +102,6 @@ public:
 	 void statusText( const char* );
 	 void update_id(unsigned long);
 
-	 public slots:
-		 void get_sites();
-	 
 protected:
 	 int			openCD();
 	 void			closeCD();

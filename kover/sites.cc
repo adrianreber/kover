@@ -26,48 +26,66 @@
 
 */
 
-/* $Id: sites.cc,v 1.2 2002/04/28 21:55:24 adrian Exp $ */
+/* $Id: sites.cc,v 1.5 2002/05/05 22:01:54 adrian Exp $ */
 
 #include "sites.h"
 
+#include <unistd.h>
+
 sites::sites() {
-	 //category.push_back("All");
-	 site.push_back("Classical");
-	 site.push_back("Country");
-	 site.push_back("Data");
-	 site.push_back("Folk");
-	 site.push_back("Jazz");
-	 site.push_back("Misc");
-	 site.push_back("Newage");
-	 site.push_back("Reggae");
-	 site.push_back("Rock");
-	 site.push_back("Soundtrack");
 	 connect();
 }
 
 sites::~sites() {
-	disconnect();
+	 disconnect();
 }
 
-int sites::how_many() {
-	 //return (int)site.size();
-	 char * bla = "sites";
-	 char *test = NULL;
-	 test = make_cddb_request(bla,false);
+bool sites::gen_server_list(list <server *> &server_list) {
+	 char cmd[] = "sites";
+	 char *request = NULL;
+	 char *code_string = NULL;
+	 int code = 0;
+	 char s[256];
 
-	 printf("%s\n",test);
+	 request = make_cddb_request(cmd,false);
+
+	 _DEBUG_ fprintf(stderr,"%s:%s\n",PACKAGE,request);
 	 
-	 return 0;
+	 write(socket_1,request,strlen(request));
+
+	 code = skip_http_header(socket_1);
+
+	 _DEBUG_ fprintf(stderr,"%s:sites::gen_server_list():http code:%d\n",PACKAGE,code);
+	 code = 0;
+	 code_string = (char *)malloc(21);
+	 if (read(socket_1, code_string, 20) < 0)
+		  return false;
+
+	 code_string[20] = 0;
+
+	 _DEBUG_ fprintf(stderr,"%s:cddb answer: %s\n",PACKAGE,code_string);
+
+	 code = atoi(code_string);
+	 if (!code)
+		  return false;
+	 
+	 while (read(socket_1, code_string, 1) > 0) {
+		  if (code_string[0]==10)
+				break;
+	 }
+		  
+
+	 free (request);
+	 free (code_string);
+
+	 while (1) {
+		  if (!fgets(s, 255, sk_1) || !strncmp(s,".", 1))
+				break;
+		  server_list.push_back(new server(s));
+		  _DEBUG_ fprintf(stderr,"answer: %s",s);
+	 }
+
+	 return true;
 }
 
-string sites::get_site(int id) {
-	 if (id < 0 || id >= how_many())
-		  return string();
-	 list <string> :: iterator sit;
-	 int i = 0;
-	 for (sit = site.begin(); sit != site.end(); sit++) {
-		  if (i++ == id)
-				return *sit;
-    }
-	 return string();
-}
+

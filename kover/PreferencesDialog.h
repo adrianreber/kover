@@ -21,7 +21,7 @@
 	Description: Header to PreferencesDialog.h
 */
 
-/* $Id: PreferencesDialog.h,v 1.15 2002/04/24 15:51:21 adrian Exp $ */
+/* $Id: PreferencesDialog.h,v 1.16 2002/05/05 22:01:54 adrian Exp $ */
 
 #ifndef PREFERENCES_DIALOG_H
 #define PREFERENCES_DIALOG_H
@@ -124,8 +124,6 @@ void use_proxy(bool status);
 	 //void output_changed(PreferencesDialog::output type);
 	 void output_changed(int type);
 	 void browsing();
-signals:
-	 void get_sites();
 };
 
 #endif /* PREFERENCES_DIALOG_H */

@@ -16,38 +16,48 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: sites.h
+	 File: server.h
 	 
-	 Description: entity for the sites
+	 Description: entity for the server
 
 	 Changes:
 	 
-	 24 Apr 2002: Initial release
+	 04 May 2002: Initial release
 	 
 */
 
-/* $Id: sites.h,v 1.6 2002/05/05 22:01:54 adrian Exp $ */
+/* $Id: server.h,v 1.3 2002/05/05 22:01:54 adrian Exp $ */
 
-#ifndef SITES_H
-#define SITES_H
+#ifndef SERVER_H
+#define SERVER_H
 
 #include "../config.h"
 #include "kover.h"
-#include "net.h"
-#include "cddb.h"
-#include "server.h"
 
 using namespace std;
 
-class sites : public net, cddb {
+class server {
 
 public:
-	 sites();
-	 ~sites();
-	 bool gen_server_list(list <server *> &server_list);
+	 server(const char *cddb_answer);
+	 ~server();
+	 string get_site();
+	 string get_proto();
+	 int get_port();
+	 string get_path();
+	 string get_latitude();
+	 string get_longitude();
+	 string get_description();
+	 void dump();
 private:
-	 list <string> site;
+	 string site;
+	 string proto;
+	 int port;
+	 string path;
+	 string latitude;
+	 string longitude;
+	 string description;
 
 };
 
-#endif /* SITES_H */
+#endif /* SERVER_H */
