@@ -1,4 +1,4 @@
-$Id: THANKS,v 1.9 2003/03/11 22:52:38 adrian Exp $
+$Id: THANKS,v 1.10 2004/04/29 07:54:31 adrian Exp $
 
 kover THANKS:
 
@@ -54,3 +54,9 @@ Nils Philippsen <nils@fht-esslingen.de>
 
 Quique <quique@sindominio.net>
 - spanish translation
+
+Markus Brueffer <brueffer@phoenix-systems.de>
+- kover FreeBSD patches
+
+Laurent Montel <lmontel@mandrakesoft.com>
+- Patch to add config shortcut.
