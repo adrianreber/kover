@@ -27,7 +27,7 @@
 	 
 */
 
-/* $Id: koverfile.h,v 1.12 2002/09/13 21:32:06 adrian Exp $ */
+/* $Id: koverfile.h,v 1.13 2002/09/17 22:02:57 adrian Exp $ */
 
 #ifndef KOVERFILE_H
 #define KOVERFILE_H
@@ -137,6 +137,7 @@ private:
 	 bool checkForECD( QString& filename );
 	 bool openECD( QString& filename );
      void open_k3b_audio_project(QDomDocument doc);
+     void open_k3b_data_project(QDomDocument doc);
 };
 
 #endif /* KOVERFILE_H */

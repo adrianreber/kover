@@ -31,7 +31,7 @@
 	 
 */
 
-/* $Id: koverfile.cc,v 1.14 2002/09/16 22:45:53 adrian Exp $ */
+/* $Id: koverfile.cc,v 1.15 2002/09/17 22:02:57 adrian Exp $ */
 
 using namespace std;
 
@@ -649,6 +649,11 @@ bool KoverFile::open_XML(const QString & filename)
         return true;
     }
 
+    if (docElem.tagName() == "k3b_data_project") {
+        open_k3b_data_project(doc);
+        return true;
+    }
+
     QDomNamedNodeMap nmm = docElem.attributes();
 
     for (uint length = 0; length < nmm.length(); length++) {
@@ -864,7 +869,7 @@ void KoverFile::open_k3b_audio_project(QDomDocument doc)
                     artist = ee.text();
                 if (ee.tagName() == "disc_id")
                     cd_cddb_id = ee.text();
-                
+
                 m = m.nextSibling();
             }
 
@@ -919,5 +924,42 @@ void KoverFile::open_k3b_audio_project(QDomDocument doc)
         n = n.nextSibling();
     }
 
+    cd_contents.truncate(cd_contents.length() - 1);
+}
+
+void KoverFile::open_k3b_data_project(QDomDocument doc)
+{
+    //QDomElement docElem = doc.documentElement();
+    QDomNode n = (doc.documentElement()).firstChild();
+
+    while (!n.isNull()) {
+        QDomElement e = n.toElement();
+        
+        if (e.tagName() == "header") {
+            QDomNode m = n.firstChild();
+
+            while (!m.isNull()) {
+                QDomElement ee = m.toElement();
+                if (ee.tagName() =="volume_id")
+                    cd_title = ee.text();
+                m = m.nextSibling();
+            }
+        }       
+        if (e.tagName() == "files") {
+            QDomNode m = n.firstChild();
+            
+            while (!m.isNull()) {
+                QDomElement ee = m.toElement();
+                QDomNamedNodeMap nm = ee.attributes();
+                if (ee.tagName() =="directory")
+                    cd_contents += (nm.namedItem("name")).nodeValue() + "\n";
+                if (ee.tagName() =="file")
+                    cd_contents += (nm.namedItem("name")).nodeValue() + "\n";
+                
+                m = m.nextSibling();
+            }
+        }       
+        n = n.nextSibling();
+    }   
     cd_contents.truncate(cd_contents.length() - 1);
 }

@@ -1,4 +1,9 @@
-$Id: ChangeLog,v 1.27 2002/09/13 21:39:11 adrian Exp $
+$Id: ChangeLog,v 1.28 2002/09/17 22:02:57 adrian Exp $
+
+2002-09-17 Adrian <adrian@lisas.de>
+        * koverfile.cc: now reading .k3b files of type
+          k3b_data_project and k3b_audio_project
+        * *_dialog.cc: quit button works now how it is supposed to
 
 2002-09-13 Adrian <adrian@lisas.de>
         * seems like we are entering a time of heavy development activity???
