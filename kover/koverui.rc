@@ -8,7 +8,7 @@
    <text>&amp;Kover</text>
    <Action name="cddb" />
    <Action name="cddb_without_cd" />
-   <Action name="file_mode" />
+   <Action name="read_cd_text" />
    <Action name="image_embedding" />
    <Action name="background_color" />
    <Action name="title_font" />
