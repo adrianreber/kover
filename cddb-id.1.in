@@ -1,11 +1,11 @@
-.TH cddb-id "1" "March 2003" "kover @VERSION@" "User Commands"
+.TH cddb-id "1" "September 2004" "kover @VERSION@" "User Commands"
 .SH NAME
 cddb-id \- Display the CDDB id of CD in [\fIdevice\fR].
 .SH SYNOPSIS
 .B cddb-id
 [\fIdevice\fR]
 .SH DESCRIPTION
-cddb-id is a additional program for kover, with reads the table of
+cddb-id is a additional program for kover, which reads the table of
 contents of the compact disc in [\fIdevice\fR] and calculates the CDDB ID
 of this disc.
 .SS "Options:"
