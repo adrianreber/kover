@@ -6,6 +6,9 @@
 /* Define if you can safely include both <sys/time.h> and <time.h>.  */
 #undef TIME_WITH_SYS_TIME
 
+/* Define for debug messages */
+#undef ENABLE_DEBUG_OUTPUT
+
 /* The number of bytes in a char *.  */
 #undef SIZEOF_CHAR_P
 
@@ -35,6 +38,9 @@
 
 /* Define if you have the <paths.h> header file.  */
 #undef HAVE_PATHS_H
+
+/* Define if you have the <pthread/linuxthreads/pthread.h> header file.  */
+#undef HAVE_PTHREAD_LINUXTHREADS_PTHREAD_H
 
 /* Define if you have the <stdlib.h> header file.  */
 #undef HAVE_STDLIB_H
@@ -79,16 +85,12 @@
 /* Define if you have libjpeg */
 #undef HAVE_LIBJPEG
 
-/* Define if you have libtiff */
-#undef HAVE_LIBTIFF
+/* Define if you have a working libpthread (will enable threaded code) */
+#undef HAVE_LIBPTHREAD
 
 /* Define if you have libtiff */
 #undef HAVE_LIBTIFF
 
+/* Define if you have libtiff */
+#undef HAVE_LIBTIFF
 
-#ifndef HAVE_BOOL
-#define HAVE_BOOL
-typedef int bool;
-const bool false = 0;
-const bool true = 1;
-#endif

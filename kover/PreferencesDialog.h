@@ -1,4 +1,5 @@
 /**
+	-*- adrian-c -*-
 	kover -
 
 	
@@ -28,15 +29,72 @@
 
 class PreferencesDialog : public KDialogBase
 {
-  Q_OBJECT
+		  Q_OBJECT
 
 public:
-  PreferencesDialog(QWidget *parent, const QString &caption);
-  //~PreferencesDialog();
+		  PreferencesDialog(QWidget *parent, const QString &caption);
+		  //~PreferencesDialog();
 
 private:
+		  void setupCDDBPage();
+		  void setupCDROMPage();
+		  void setup_cddb_files_page();
+		  void setup_misc_page();
 
+		  void apply_settings();
 
+		  void set_cddb();
+		  void set_cdrom();
+		  void set_cddb_files();
+		  void set_misc();
+
+		  void save_cddb_files();
+		  void save_misc();
+
+		  struct cddb_widgets
+		  {
+					 QLineEdit *cddb_server;
+					 QLineEdit *cgi_path;
+					 QCheckBox *use_proxy;
+					 QCheckBox *proxy_from_env;
+					 QLineEdit *proxy_server;
+					 QLineEdit *proxy_port;
+		  } cddb_widgets;
+		  
+		  QWidget *parent;
+
+		  enum Page
+		  {
+					 page_cddb = 0,
+					 page_cdrom,
+					 page_cddb_files,
+					 page_misc,
+					 page_max
+		  };
+
+		  struct cdrom_widgets
+		  {
+					 QLineEdit *cdrom_device;
+					 QCheckBox *eject_cdrom;
+		  } cdrom_widgets;
+
+		  struct cddb_files_widgets
+		  {
+					 QCheckBox *read_local_cddb;
+					 QCheckBox *write_local_cddb;
+					 QLineEdit *cddb_path;
+		  } cddb_files_widgets;
+
+		  struct misc_widgets
+		  {
+					 QCheckBox * trigger_actual_size;
+		  } misc_widgets;
+		  
+private slots:
+		  void use_proxy(bool status);
+		  virtual void slotOk(void);
+		  virtual void slotDefault();
+		  
 };
 
 #endif

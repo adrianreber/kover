@@ -14,10 +14,11 @@ apps_DATA = kover.desktop
 
 KDE_ICON = AUTO
 
-EXTRA_DIST = kover.desktop
+EXTRA_DIST = kover.desktop koverui.rc lo16-app-kover.png lo32-app-kover.png hi32-app-kover.png hi48-app-kover.png
 
 noinst_HEADERS = CDDB.h KoverTop.h cddb_fill.h kover.h \
-		 CDView.h PreferencesDialog.h imagedlg.h koverfile.h
+		 CDView.h PreferencesDialog.h imagedlg.h koverfile.h \
+		 kover_global.h
 
 # set the include path for X, qt and KDE
 INCLUDES= $(all_includes)

@@ -1,10 +1,18 @@
+2001-01-22    <adrian@lisas.de>
+
+	* main.cpp: great new command line option
+	* cddb_fill.cpp: have a look at the cddb code from grip...
+	  you will find similarities :)
+	  the threading (currently disabled) is mainly from terminatorX
+	* PreferencesDialog.cpp: cdrom and cddb page added
+
 2001-01-11    <adrian@lisas.de>
 
 	* ported to KDE 2.0 an qt 2.2
 	* KoverTop.cpp: rewritten
 	  - using KDE 2 style menus and XML file (koverui.rc)
-	* cddb_fill.cpp: changed cddb lookup to use port 80
-	  instead of 888 (or whatever)
+	* cddb_fill.cpp: rewritten (partly)
+	  changed cddb lookup to use port 80 instead of 888 (or whatever)
 	* cddb_fill.cpp: first looking for local cddb data before connecting
 	  to a cddb server
 	* PreferencesDialog.cpp: new file creating a Preferences Dialog

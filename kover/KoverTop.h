@@ -27,10 +27,12 @@
 #include "koverfile.h"
 #include "cddb_fill.h"
 #include "CDDB.h"
+
+#include "PreferencesDialog.h"
+
 #include <kapp.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
-//#include <ktopwidget.h>
 #include <ktmainwindow.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
@@ -43,90 +45,91 @@
 
 
 /** KoverTop is the TopLevelWidget. */
-//class KoverTop : public KTopLevelWidget
 class KoverTop : public KMainWindow
 {
-  Q_OBJECT
-	 public:
-  KoverTop(QApplication *parent, const char* name=NULL );
-  ~KoverTop();
-  public slots:
-	 void contentsBoxChanged();
-  void titleBoxChanged();
-  //void handleMainToolBar(int id);
-  //void handleCdToolBar(int id);
-  void stopPreview();
-	void numberChecked(bool checked);
-	void numberChanged(int number);
-	void dataChanged(bool image);
-	void setStatusText( const char* _status_text );
-	void actualSize();
-	void updateDisplay( bool update_really = false);
+		  Q_OBJECT
+public:
+		  KoverTop(const char* name=NULL );
+		  ~KoverTop();
+		  void load_globals();
+		  void store_globals();
+public slots:
+void contentsBoxChanged();
+		  void titleBoxChanged();
+		  //void handleMainToolBar(int id);
+		  //void handleCdToolBar(int id);
+		  void stopPreview();
+		  void numberChecked(bool checked);
+		  void numberChanged(int number);
+		  void dataChanged(bool image);
+		  void setStatusText( const char* _status_text );
+		  void actualSize();
+		  void updateDisplay( bool update_really = false);
 
-	private slots:  
-	 void fileNew();
-	void fileOpen();
-	void fileSave();
-	void fileSaveAs();
-	void filePrint();
-	void cut();
-	void copy();
-	void paste();
+private slots:  
+void fileNew();
+		  void fileOpen();
+		  void fileSave();
+		  void fileSaveAs();
+		  void filePrint();
+		  void cut();
+		  void copy();
+		  void paste();
 /* 	void toggleStatusBar(); */
 /* 	void toggleToolBar(); */
-	void editToolbars();
-	void cddbFill();
-	void preferences();
-	void imageEmbedding();
-	void titleFont();
-	void titleFontColor();
-	void contentsFont();
-	void contentsFontColor();
-	void backgroundColor();
-	void cddbDone();
+		  void editToolbars();
+		  void cddbFill();
+		  void preferences();
+		  void imageEmbedding();
+		  void titleFont();
+		  void titleFontColor();
+		  void contentsFont();
+		  void contentsFontColor();
+		  void backgroundColor();
+		  void cddbDone();
 
 private:
-	char hexToChar( char hexc );
-	bool queryClose();
-	void parseFilename( QString& filename );
-	void showAboutApplication();
-	int howAboutSaving();
+		  char hexToChar( char hexc );
+		  bool queryClose();
+		  void parseFilename( QString& filename );
+		  int howAboutSaving();
+		  char *check_cddb_dir();
 
 #ifdef USE_THREADS	
-	int semid;
-	struct sembuf sops[1];
-	QTimer *timer;
+		  int semid;
+		  struct sembuf sops[1];
+		  QTimer *timer;
 #endif
 
-	QApplication *parent;
+		  //QApplication *parent;
 
-	bool update_display;
-	bool end_loop;
+		  bool update_display;
+		  bool end_loop;
 
-	QFrame *main_frame;
+		  QFrame *main_frame;
  
-	QString dataIcon (QString filename);
+		  QString dataIcon (QString filename);
 	
-	KoverFile	kover_file;
-	CDDB_Fill*	cddb_fill;
+		  KoverFile	kover_file;
+		  CDDB_Fill*	cddb_fill;
 
-	CDDB *cddb__fill;
+		  CDDB *cddb__fill;
   
-	QString		filename;
-	bool		altered_data;
+		  QString		filename;
+		  bool		altered_data;
 
-	QLabel*		title_label;
-	QMultiLineEdit*	title_edit;
+		  QLabel*		title_label;
+		  QMultiLineEdit*	title_edit;
 
-	QLabel*		contents_label;
-	QMultiLineEdit*	contents_edit;
+		  QLabel*		contents_label;
+		  QMultiLineEdit*	contents_edit;
   
-	QCheckBox*	number_check;
-	QSpinBox*	number_spin;
+		  QCheckBox*	number_check;
+		  QSpinBox*	number_spin;
 
-	KToolBar*	main_toolbar;
-	KToolBar*	cd_toolbar;
-	KStatusBar*	status_bar;
+		  KToolBar*	main_toolbar;
+		  KToolBar*	cd_toolbar;
+		  KStatusBar*	status_bar;
 
 /* 	KMenuBar *menu_bar; */
 /* 	KPopupMenu *file_menu; */
@@ -138,7 +141,7 @@ private:
 /* 	KToggleAction *toolbarAction; */
 
 
-	CDView*		cdview;
+		  CDView*		cdview;
 	
 
 /* 	bool toolbar_active; */

@@ -6,6 +6,9 @@ define USE_THREADS. Works stable only printing doesn't work then anymore.
 It looks like whenever a kde or qt thread is started my threads turn into
 zombies.
 
+- icons for text and contents are for font selection and color selection
+  still the same... bad.
+
 
 General:
 

@@ -46,11 +46,11 @@ public:
 	~ImageDlg();
 
 protected slots:
-	void OK();
-	void Cancel();
-	void Browse1();
-	void Browse2();
-	void Browse3();
+void OK();
+		  void Cancel();
+		  void Browse1();
+		  void Browse2();
+		  void Browse3();
 
 protected: 
 	void initDialog();

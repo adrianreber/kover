@@ -1,13 +1,17 @@
-####### kdevelop will overwrite this part!!! (begin)##########
+
 dist-hook:
-	-perl automoc
+	perl admin/am_edit
 
-SUBDIRS = kover 
+AUTOMAKE_OPTIONS = foreign 1.4
 
-EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README TODO 
+SUBDIRS = $(TOPSUBDIRS)
 
-####### kdevelop will overwrite this part!!! (end)############
-# not a GNU package. You can remove this line, if 
-# have all needed files, that a GNU package needs
-AUTOMAKE_OPTIONS = foreign 
+$(top_srcdir)/subdirs:
+	cd $(top_srcdir) && $(MAKE) -f admin/Makefile.common subdirs
+ 
+$(top_srcdir)/acinclude.m4: $(top_srcdir)/admin/acinclude.m4.in $(top_srcdir)/admin/libtool.m4.in
+	@cd $(top_srcdir) && cat admin/acinclude.m4.in admin/libtool.m4.in > acinclude.m4
+ 
+MAINTAINERCLEANFILES = subdirs configure.in acinclude.m4 SUBDIRS
 
+EXTRA_DIST = admin

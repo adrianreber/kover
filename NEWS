@@ -1,0 +1,8 @@
+kover 0.5
+	* kde 2 and qt 2.2
+	* using local (~/.cddb) files if available
+	* saving data retreived from cddb server locally
+	* introduced menus
+	* using standard kde icons where possible
+	* using kde 2 XML gui creation features
+	* introducing settings dialog 

@@ -1,55 +1,52 @@
-/***************************************************************************
-                          cddb_fill.h  -  description                              
-                             -------------------                                         
+/** -*- adrian-c -*-
+	 
+	kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
+	Copyright (C) 1999, 2000 by Denis Oliver Kropp
+	Copyright (C) 2000, 2001 by Adrian Reber 
+	
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+	
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+	
+	File: cddb_fill.h 
 
-    version              :                                   
-    begin                : Sun Jan 10 1999                                           
-    copyright            : (C) 1999 by Denis Oliver Kropp                         
-    email                : dok@fischlustig.de                                     
- ***************************************************************************/
+	Description: the cddb header
 
-/*************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   * 
- *                                                                         *
- ***************************************************************************/
+	Changes: 
 
-// alter mach kaffe
+	10 Jan 1999: Initial release
+
+*/
 
 #ifndef CDDB_FILL_H
 #define CDDB_FILL_H
 
 #include "kover.h"
 
-#include <qobject.h>
-#include <qstring.h>
-#include <qlist.h>
 #include "koverfile.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-
-#define CD_DEVICE		"/dev/cdrom"
-
-#define CDDB_HOST		"212.86.129.227"
 #define CDDB_PORT		80
 
+#define KOVER_CDDB_LEVEL "3"  /* Current CDDB protocol level supported */
 
-#define SEND(x)	fprintf(sk, "%s\n", x); fflush(sk);
 /**
   *@author Denis Oliver Kropp
   */
 
-class Track_Info
+class track_info
 {
 public:
-	Track_Info( int _track, int _min, int _sec, int _frame );
+	track_info( int _track, int _min, int _sec, int _frame );
 
 	QString	songname;	/* Name of song, dynamically allocated */
 	int	min; //starting minute of the track
@@ -63,16 +60,23 @@ class CD_Info
 {
 public:
 	CD_Info();
+	/* Artist's name */
+	QString artist;
+	/* Disc's name */
+	QString cdname; 
+	/* CDDB artist and CD name string */
+	QString cdnames;	
+	/* CDDB category */
+	QString category;
+	/* Number of tracks on the disc */
+	int ntracks;	
+	/* Total running time in seconds */
+	int length; /* Total running time in seconds */
 
-	QString	artist;		/* Artist's name */
-	QString	cdname;		/* Disc's name */
-	QString	cdnames;	/* CDDB artist and CD name string */
-	QString	catagory;	/* CDDB catagory */
-	int	ntracks;	/* Number of tracks on the disc */
-	int	length;		/* Total running time in seconds */
-
-	QList<Track_Info>	trk;		/* struct trackinfo[ntracks] */
-	unsigned long		cddb_id;	/* CDDB ID which gets calculated */
+	/* struct trackinfo[ntracks] */
+	QList<track_info>	trk;		
+	/* CDDB ID which gets calculated */
+	unsigned long cddb_id;	
 };
 
 class CDDB_Fill : public QObject
@@ -96,23 +100,21 @@ protected:
 	bool			readTOC();
 	unsigned long	calcID();
 	
-	KoverFile*	kover_file;
-	CD_Info		cdinfo;
-	int			cd_fd;
+	KoverFile* kover_file;
+	CD_Info cdinfo;
+	int cd_fd;
 	
-	int	cddb_sum(int n);
+	int cddb_sum(int n);
 	
-	void	parse_trails(char *ss);
-	int	cddb_code();
-	int	cddb_connect(char *host, int port);
-	void	cddb_disconnect();
-	char *cddb_hello();
+	void parse_trails(char *ss);
+	int cddb_connect();
+	void cddb_disconnect();
+	char *cddbHello();
 	
-	void	cddb_query();
-	void	cddb_readcdinfo(FILE *desc, bool local);
-	int CDDBReadLine(int sock,char *inbuffer,int len);
-	void remove_line(char *string);
-
+	void cddb_query();
+	void cddb_readcdinfo(FILE *desc, bool local, bool save_as_file);
+	int CDDBReadLine(int socket_1,char *inbuffer,int len);
+	
 public:
 	void setTitleAndContents();
 	void killThread();
@@ -124,8 +126,15 @@ private:
 	pthread_mutex_t cddb_lock;
 #endif
 	bool getCDDBFromLocalFile();
-
-
+	void CDDBSkipHTTP(int socket);
+	char * make_cddb_request(char *query_me);
+	char cddb_msg[255];	/* Return message of server info */
+	int code;		/* Return value for sending data to the server */
+	int socket_1;		/* Descriptor for our first socket */
+	int socket_2;		/* Descriptor for our second socket */
+	int sock_mode;	/* Server read/write status */
+	FILE *sk_1;		/* Stream descriptor for our first socket */
+	FILE *sk_2;		/* Stream descriptor for our second socket */
 };
 
 #endif
