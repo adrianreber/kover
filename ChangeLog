@@ -1,4 +1,25 @@
-$Id: ChangeLog,v 1.17 2002/04/28 21:55:23 adrian Exp $
+$Id: ChangeLog,v 1.18 2002/04/28 22:08:49 adrian Exp $
+
+2002-04-29 Adrian <adrian@lisas.de>
+	* PreferencesDialog.cc: added small preview pictures
+	  for the different cover layouts
+	* PreferencesDialog.cc: added page for global font
+	  properties
+	* PreferencesDialog.cc: added button to select one
+	  of the freedb mirror sites 
+	* net.cc: general network code
+	* cddb.cc: general cddb code
+	* sites.cc: this retrieves all available cddb sites
+	  as advertised by the freedb servers using the
+	  cddb command: "sites"
+	* proxy_auth.cc: removed \n from the password
+	  before base64 encoding
+	* cddb_fill.cc: removed some of the global cddb and network
+	  methods. they are now in cddb.cc and net.cc
+	* cddb_fill.cc: also small bugfixes
+	* kovertop.cc: added a unnecessary animation to display
+	  a second page with current cover related options
+	* I love my ChangeLog
 
 2002-04-22 Adrian <adrian@lisas.de>
 	* released as 2.8.3
