@@ -1,5 +1,8 @@
 /* config.h.in.  Generated automatically from configure.in by autoheader.  */
 
+/* Define if you need to in order for stat and other things to work.  */
+#undef _POSIX_SOURCE
+
 /* Define if you have the ANSI C header files.  */
 #undef STDC_HEADERS
 
@@ -38,9 +41,6 @@
 
 /* Define if you have the <paths.h> header file.  */
 #undef HAVE_PATHS_H
-
-/* Define if you have the <pthread/linuxthreads/pthread.h> header file.  */
-#undef HAVE_PTHREAD_LINUXTHREADS_PTHREAD_H
 
 /* Define if you have the <stdlib.h> header file.  */
 #undef HAVE_STDLIB_H
@@ -84,9 +84,6 @@
 
 /* Define if you have libjpeg */
 #undef HAVE_LIBJPEG
-
-/* Define if you have a working libpthread (will enable threaded code) */
-#undef HAVE_LIBPTHREAD
 
 /* Define if you have libtiff */
 #undef HAVE_LIBTIFF

@@ -28,28 +28,44 @@
 
 #include "cdrom.h"
 
-cdrom::cdrom(char *_path)
-{
-  path = strdup(_path);
-  cdrom_fd = -42;
+cdrom::cdrom(char *_path) {
+	 path = strdup(_path);
+	 cdrom_fd = -42;
+	 cdrom_open = false;
 }
 
-cdrom::~cdrom()
-{
-  free (path);
+cdrom::~cdrom() {
+	 free (path);
 }
 
-int cdrom::open()
-{
-  return 0;
+int cdrom::open() {
+	 if ((cdrom_fd = ::open(path, O_RDONLY | O_NONBLOCK)) >= 0) {
+		  cdrom_open = true;
+		  return 0;
+	 }
+	 else 
+		  return -1;
 }
 
-int cdrom::eject()
-{
-  if ((cdrom_fd = ::open(path, O_RDONLY | O_NONBLOCK)) >= 0)
-	 ioctl(cdrom_fd,CDROMEJECT);
-  close(cdrom_fd);
-  cdrom_fd = -42;
+int cdrom::close() {
+	 if(::close(cdrom_fd) >=0) {
+		  cdrom_fd = -42;
+		  cdrom_open = false;
+		  return 0;
+	 }
+	 else
+		  return -1;
+}
 
-  return 0;
+int cdrom::eject() {
+	 if (!cdrom_open) { 
+		  if (open() < 0)
+				return -1;
+	 }
+	 if (cdrom_fd > 0)
+		  ioctl(cdrom_fd,CDROMEJECT);
+	 else
+		  return -1;
+	 close();
+	 return 0;
 }

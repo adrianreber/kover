@@ -11,7 +11,7 @@
 	 but WITHOUT ANY WARRANTY; without even the implied warranty of
 	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	 GNU General Public License for more details.
-	
+	 
 	 You should have received a copy of the GNU General Public License
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -21,9 +21,9 @@
 	 Description: cdrom class header
 	 
 	 Changes:
-
+	 
 	 24 Apr 2001: Initial release
-
+	 
 */
 
 #ifndef CDROM_H
@@ -39,7 +39,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-
 #ifdef HAVE_LINUX_CDROM_H
 #include <linux/cdrom.h>
 #endif
@@ -48,17 +47,17 @@
 #include <linux/ucdrom.h>
 #endif
 
-
-class cdrom
-{
- public:
-  cdrom(char *_path);
-  ~cdrom();
-  int open();
-  int eject();
- private:
-  int cdrom_fd;
-  char *path;
+class cdrom {
+public:
+	 cdrom(char *_path);
+	 ~cdrom();
+	 int open();
+	 int close();
+	 int eject();
+private:
+	 int cdrom_fd;
+	 char *path;
+	 bool cdrom_open;
 };
 
 #endif

@@ -1,9 +1,16 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
-bin_PROGRAMS = kover
+bin_PROGRAMS = kover cddb-id 
+
 kover_SOURCES = imagedlgdata.cpp imagedlg.cpp cddb_fill.cpp koverfile.cpp \
 		KoverTop.cpp CDView.cpp main.cpp \
 		PreferencesDialog.cpp CDDB.cpp cdrom.cc config.cc
-kover_LDADD   = $(LIB_KSYCOCA) $(LIB_KFILE) $(LIBPTHREAD) $(LIBSOCKET)
+
+kover_LDADD   = $(LIB_KSYCOCA) $(LIB_KFILE) $(LIBSOCKET)
+
+# the library search path. 
+kover_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+
+cddb_id_SOURCES = cdrom.cc cddb-id.c cdrom_cddb.cc
 
 SUBDIRS =  
 
@@ -19,19 +26,15 @@ EXTRA_DIST = kover.desktop koverui.rc lo16-app-kover.png lo32-app-kover.png hi32
 
 noinst_HEADERS = CDDB.h KoverTop.h cddb_fill.h kover.h \
 		 CDView.h PreferencesDialog.h imagedlg.h koverfile.h \
-		 kover_global.h cdrom.h config.h
+		 kover_global.h cdrom.h config.h cdrom_cddb.h
 
 # set the include path for X, qt and KDE
 INCLUDES= $(all_includes)
 # claim, which subdirectories you want to install
 # you can add here more. This one gets installed 
-bin_PROGRAMS = kover 
 
 # let automoc handle all of the meta source files (moc)
 METASOURCES = AUTO 
-
-# the library search path. 
-kover_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 # them while "make clean", use CLEANFILES
 DISTCLEANFILES = $(kover_METASOURCES)

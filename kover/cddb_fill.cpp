@@ -82,6 +82,7 @@ bool CDDB_Fill::execute() {
 	 if(!getCDDBFromLocalFile()) {
 		  if (!cddb_connect()) {
 				if (!cddb_query()) {
+					 closeCD();
 					 cddb_disconnect();
 					 return false;
 				}

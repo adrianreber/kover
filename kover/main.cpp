@@ -24,6 +24,8 @@
 	 Changes:
 
 	 22 Jan 2001: Great new commandline options
+
+	 20 Jun 2001: Lot of undocumented changes
 */
 
 #include "kover.h"
@@ -38,15 +40,13 @@ config_class *config=NULL;
 
 int _debug_ = 0;
 
-static const KCmdLineOptions options[] =
-{
+static const KCmdLineOptions options[] = {
 	 { "advise", I18N_NOOP("Help me now!"), 0 },
 	 { "debug", I18N_NOOP("Enable debug output."), 0 },
 	 { 0, 0, 0}
 };
 
-void cleanup()
-{
+void cleanup() {
 	 free (globals.cddb_server);
 	 free (globals.cgi_path);
 	 free (globals.proxy_server);
@@ -54,32 +54,24 @@ void cleanup()
 	 free (globals.cddb_path);
 }
 
-void the_end()
-{
+void the_end() {
 	 config->store_globals();
 	 config->sync();
-	 //delete (kovertop);
-	 cleanup();
+	 	 cleanup();
 	 fprintf(stderr,"In Double Vision where drunk.\n");
 }
 
-void sighandler(int i)
-{
-	 if (i==2)
-	 {
+void sighandler(int i) {
+	 if (i==2) 
 		  _DEBUG_ fprintf(stderr,"kover:SIGINT received...");
-	 }
 	 else
-	 {
-		  _DEBUG_ fprintf(stderr,"kover:SIGTERM received...");
-	 }
+	 		  _DEBUG_ fprintf(stderr,"kover:SIGTERM received...");
 	 _DEBUG_ fprintf(stderr,"cleaning up...\n");
 	 the_end();
 	 exit (0);
 }
 
-int main(int argc, char* argv[]) 
-{
+int main(int argc, char* argv[]) {
 	 signal(SIGTERM,sighandler);
 	 signal(SIGINT,sighandler);
  
@@ -90,7 +82,7 @@ int main(int argc, char* argv[])
 	 KAboutData aboutData(PACKAGE, I18N_NOOP(PACKAGE),VERSION, "Kover is an easy to use WYSIWYG CD cover printer with CDDB support.", KAboutData::License_GPL_V2,"(C) 1999, 2000 Denis Oliver Kropp\n(C) 2000, 2001 Adrian Reber");
 	 aboutData.addAuthor("Denis Oliver Kropp",0, "dok@fischlustig.de");
 	 aboutData.addAuthor("Adrian Reber",0,"adrian@lisas.de");
-
+ 
 	 KCmdLineArgs::init(argc,argv,&aboutData);
 	 KCmdLineArgs::addCmdLineOptions(options);
 
@@ -100,14 +92,12 @@ int main(int argc, char* argv[])
   
 	 KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
   
-	 if (args->isSet("advise"))
-	 {
+	 if (args->isSet("advise")) {
 		  fprintf(stderr,"Don't Panic!\n");
 		  exit(42);
 	 }
 
-	 if (args->isSet("debug"))
-	 {
+	 if (args->isSet("debug")) {
 		  _debug_ = 1;
 		  _DEBUG_ { fprintf(stderr,"kover:debug output enabled\n"); }
 		  else { fprintf(stderr,"kover:not with debug support compiled - no debug output\n"); }
@@ -125,10 +115,8 @@ int main(int argc, char* argv[])
 	 int i = kover.exec();
 		  
 	 if (globals.eject_cdrom)
-	 {
-		  cdrom_class->eject();
-	 }
-
+			  cdrom_class->eject();
+	
 	 the_end();
 
 	 return i;

@@ -137,6 +137,7 @@ KoverTop::KoverTop(cdrom *cdrom_device, const char* name) : KMainWindow(0,name)
 	 altered_data = false;
 	 main_frame->move(0,70);
 	 main_frame->adjustSize();
+	  fprintf(stderr, i18n("lalala\n"));
 }
 
 KoverTop::~KoverTop()
