@@ -32,11 +32,11 @@
 	 13 Mar 2002: Standard font page
 */
 
-/* $Id: PreferencesDialog.cc,v 1.16 2003/02/07 16:44:40 adrian Exp $ */
+/* $Id: PreferencesDialog.cc,v 1.17 2003/06/14 23:46:31 adrian Exp $ */
 
 #ifndef lint
 static char vcid[] =
-    "$Id: PreferencesDialog.cc,v 1.16 2003/02/07 16:44:40 adrian Exp $";
+    "$Id: PreferencesDialog.cc,v 1.17 2003/06/14 23:46:31 adrian Exp $";
 #endif /* lint */
 
 #include "PreferencesDialog.moc"
@@ -200,13 +200,8 @@ void PreferencesDialog::use_proxy(bool status)
 
 void PreferencesDialog::use_proxy_env(bool status)
 {
-    if (status) {
-        cddb_widgets.proxy_server->setEnabled(false);
-        cddb_widgets.proxy_port->setEnabled(false);
-    } else {
-        cddb_widgets.proxy_server->setEnabled(true);
-        cddb_widgets.proxy_port->setEnabled(true);
-    }
+    cddb_widgets.proxy_server->setEnabled(!status);
+    cddb_widgets.proxy_port->setEnabled(!status);
 }
 
 void PreferencesDialog::slotOk()
@@ -282,20 +277,10 @@ void PreferencesDialog::apply_settings()
         globals.proxy_server = NULL;
     }
 
-    if ((cddb_widgets.use_proxy)->isChecked())
-        globals.use_proxy = 1;
-    else
-        globals.use_proxy = 0;
-
-    if ((cddb_widgets.proxy_from_env)->isChecked())
-        globals.proxy_from_env = 1;
-    else
-        globals.proxy_from_env = 0;
-
-    if ((cdrom_widgets.eject_cdrom)->isChecked())
-        globals.eject_cdrom = 1;
-    else
-        globals.eject_cdrom = 0;
+    globals.use_proxy = ((cddb_widgets.use_proxy)->isChecked())? 1 : 0;
+    globals.proxy_from_env =
+        ((cddb_widgets.proxy_from_env)->isChecked())? 1 : 0;
+    globals.eject_cdrom = ((cdrom_widgets.eject_cdrom)->isChecked())? 1 : 0;
 
     if (!((cdrom_widgets.cdrom_device)->text()).isEmpty()) {
         if (globals.cdrom_device)
@@ -441,15 +426,11 @@ void PreferencesDialog::save_cddb_files()
 {
     struct stat stat_struct;
 
-    if ((cddb_files_widgets.read_local_cddb)->isChecked())
-        globals.read_local_cddb = 1;
-    else
-        globals.read_local_cddb = 0;
+    globals.read_local_cddb =
+        ((cddb_files_widgets.read_local_cddb)->isChecked())? 1 : 0;
 
-    if ((cddb_files_widgets.write_local_cddb)->isChecked())
-        globals.write_local_cddb = 1;
-    else
-        globals.write_local_cddb = 0;
+    globals.write_local_cddb =
+        ((cddb_files_widgets.write_local_cddb)->isChecked())? 1 : 0;
 
     if (!((cddb_files_widgets.cddb_path)->text()).isEmpty()) {
         if (globals.cddb_path)
@@ -614,11 +595,11 @@ void PreferencesDialog::setup_font_page()
 
     QLabel *label =
         new
-        QLabel(QString(i18n("Changes to any of these fonts are global.\n")) +
-        QString(i18n("This means, that changes will only be available\n")) +
-        QString(i18n("for the next new cover.\n")) +
-        QString(i18n("Except that the current cover is empty.\n")) +
-        QString(i18n("Then changes are applied to the current cover.")),
+        QLabel(i18n("<qt>Changes to any of these fonts are global. "
+            "This means, that changes will only be available "
+            "for the next new cover. "
+            "Except that the current cover is empty. "
+            "Then changes are applied to the current cover.</qt>"),
         group, "font_info");
 
     gbox->addMultiCellWidget(label, 0, 0, 0, 1);
@@ -650,6 +631,8 @@ void PreferencesDialog::setup_font_page()
     gbox->addWidget(font_widgets.change_inlet_title_font, 3, 1);
     connect(font_widgets.change_inlet_title_font, SIGNAL(clicked()), this,
         SLOT(inlet_title_font_dialog()));
+
+    topLayout->addStretch();
 }
 
 void PreferencesDialog::content_font_dialog()
