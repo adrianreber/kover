@@ -28,12 +28,14 @@
 	 25 Jan 2001: Added entries for cddb, cdrom and cddb_file page
 	 27 Jan 2001: Added misc page
 	 12 Jun 2001: Added slim case thingy
+	 16 Oct 2001: Added 'inlet only' thingy
 */
 
-/* $Id: PreferencesDialog.cpp,v 1.14 2001/10/01 22:35:12 adrian Exp $ */
+/* $Id: PreferencesDialog.cpp,v 1.15 2001/10/28 23:00:14 adrian Exp $ */
 
 #include "PreferencesDialog.h"
 #include "KoverTop.h"
+#include <qbuttongroup.h>
 
 PreferencesDialog::PreferencesDialog(QWidget *parent, const QString &caption):KDialogBase(KJanusWidget::IconList,caption,Ok|Cancel,Ok,parent) {
 	 this->parent = parent;
@@ -234,8 +236,7 @@ void PreferencesDialog::apply_settings() {
 }
 
 void PreferencesDialog::slotDefault() {
-	 //((KoverTop *)parent)->load_globals();
-	 switch( activePageIndex() ) {
+	 switch(activePageIndex()) {
 	 case page_cddb:
 		  set_cddb();
 		  break;
@@ -391,12 +392,16 @@ void PreferencesDialog::setup_misc_page() {
 									 BarIcon("misc", KIcon::SizeMedium ) );
 	 QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );
 
-	 QGroupBox *group = new QGroupBox(i18n("&Stuff"),page );
-	 topLayout->addWidget( group );
+	 //QButtonGroup *bgroup = new QButtonGroup(page);
+
+	 //QGroupBox *group = new QGroupBox(i18n("&Stuff"),page );
+	 QButtonGroup *group = new QButtonGroup(i18n("&Stuff"),page );
+	 topLayout->addWidget(group);
+	 //topLayout->addWidget(bgroup);
 	 QVBoxLayout *vlay = new QVBoxLayout( group, spacingHint() );
 	 vlay->addSpacing( fontMetrics().lineSpacing() );
 	 QGridLayout *gbox = new QGridLayout( 5, 5 );
-	 vlay->addLayout( gbox );
+	 vlay->addLayout(gbox);
 
 	 QString text;
 
@@ -408,9 +413,17 @@ void PreferencesDialog::setup_misc_page() {
 	 misc_widgets.display_track_duration = new QCheckBox( text, group, "display_track_duration" );
 	 gbox->addMultiCellWidget( misc_widgets.display_track_duration,1,1,0,5);
 
+	 text = i18n("Print inlet and booklet.");
+	 misc_widgets.its_normal = new QRadioButton( text, group, "its_normal" );
+	 gbox->addMultiCellWidget( misc_widgets.its_normal,2,2,0,5);
+
 	 text = i18n("Print inlet on left side of booklet.\n(slim case option)");
-	 misc_widgets.its_a_slim_case = new QCheckBox( text, group, "its_a_slim_case" );
-	 gbox->addMultiCellWidget( misc_widgets.its_a_slim_case,2,2,0,5);
+	 misc_widgets.its_a_slim_case = new QRadioButton( text, group, "its_a_slim_case" );
+	 gbox->addMultiCellWidget( misc_widgets.its_a_slim_case,3,3,0,5);
+
+	 text = i18n("Don't print booklet.\n(inlet only option)");
+	 misc_widgets.inlet_only = new QRadioButton( text, group, "inlet_only" );
+	 gbox->addMultiCellWidget( misc_widgets.inlet_only,4,4,0,5);
 
 	 set_misc();
 }
@@ -430,6 +443,14 @@ void PreferencesDialog::set_misc() {
 		  misc_widgets.its_a_slim_case->setChecked(true);
 	 else
 		  misc_widgets.its_a_slim_case->setChecked(false);
+
+	 if (globals.inlet_only)
+		  misc_widgets.inlet_only->setChecked(true);
+	 else
+		  misc_widgets.inlet_only->setChecked(false);
+	 
+	 if (!globals.inlet_only || !globals.its_a_slim_case)
+		  misc_widgets.its_normal->setChecked(true);
 }
 
 void PreferencesDialog::save_misc() {
@@ -447,4 +468,9 @@ void PreferencesDialog::save_misc() {
 		  globals.its_a_slim_case = 1;
 	 else
 		  globals.its_a_slim_case = 0;
+
+	 if ((misc_widgets.inlet_only)->isChecked())
+		  globals.inlet_only = 1;
+	 else
+		  globals.inlet_only = 0;
 }

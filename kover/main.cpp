@@ -28,7 +28,7 @@
 	 20 Jun 2001: Lot of undocumented changes
 */
 
-/* $Id: main.cpp,v 1.21 2001/07/09 09:12:37 adrian Exp $ */
+/* $Id: main.cpp,v 1.22 2001/10/28 23:00:14 adrian Exp $ */
 
 #include "kover.h"
 #include "KoverTop.h"
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
 	 signal(SIGINT,sighandler);
  
 	 fprintf(stderr, "%s Release %s - Copyright (C) 1999, 2000 by Denis Oliver Kropp\n",PACKAGE,VERSION);
-	 fprintf(stderr, "                    Copyright (C) 2000, 2001 by Adrian Reber\n");
+	 fprintf(stderr, "                      Copyright (C) 2000, 2001 by Adrian Reber\n");
 	 fprintf(stderr, "%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n",PACKAGE);
 
 	 KAboutData aboutData(PACKAGE, I18N_NOOP(PACKAGE),VERSION, "Kover is an easy to use WYSIWYG CD cover printer with CDDB support.", KAboutData::License_GPL_V2,"(C) 1999, 2000 Denis Oliver Kropp\n(C) 2000, 2001 Adrian Reber");

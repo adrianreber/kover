@@ -26,7 +26,7 @@
 	 
 */
 
-/* $Id: inexact_dialog.h,v 1.2 2001/07/18 23:26:58 adrian Exp $ */
+/* $Id: inexact_dialog.h,v 1.3 2001/10/08 22:36:55 adrian Exp $ */
 
 #ifndef INEXACT_DIALOG_H
 #define INEXACT_DIALOG_H
@@ -37,6 +37,10 @@
 #include <list>
 #include <qlistbox.h>
 
+/**
+ * The inexact_dialog class
+ * A dialog used to choose one of the 211 matches.
+ */
 class inexact_dialog : public QDialog {
 	 Q_OBJECT
 public:

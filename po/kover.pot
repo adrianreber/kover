@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-10-06 18:14+0200\n"
+"POT-Creation-Date: 2001-10-09 00:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -364,6 +364,10 @@ msgstr ""
 msgid ""
 "Print inlet on left side of booklet.\n"
 "(slim case option)"
+msgstr ""
+
+#: inexact_dialog.cc:52
+msgid "Choose wisely!"
 msgstr ""
 
 #: proxy_auth.cc:49

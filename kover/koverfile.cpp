@@ -26,21 +26,19 @@
 #include <qfileinfo.h>
 #include <ksimpleconfig.h>
 
-KoverFile::KoverFile()
-{
+KoverFile::KoverFile() {
 	reset();
 }
 
-KoverFile::~KoverFile()
-{
+KoverFile::~KoverFile() {
 }
 
-void KoverFile::reset()
-{
+void KoverFile::reset() {
 	cd_title = "";
 	cd_title_font = QFont("times", 32);
 	cd_contents = "";
 	cd_contents_font = QFont("helvetica", 16);
+	cd_booklet_title_font = QFont("helvetica", 12);
 	cd_title_color = black;
 	cd_contents_color = black;
 	cd_back_color = white;
@@ -58,10 +56,8 @@ void KoverFile::reset()
 	emit dataChanged();
 }
 
-void KoverFile::setTitle( const QString& _title )
-{
-	if (cd_title != _title)
-	{
+void KoverFile::setTitle(const QString& _title) {
+	if (cd_title != _title) {
 		cd_title = _title;
 		emit dataChanged();
 	}
@@ -100,6 +96,13 @@ void KoverFile::setContentsFont( const QFont& _contents_font )
 	{
 		cd_contents_font = _contents_font;
 		emit dataChanged();
+	}
+}
+
+void KoverFile::set_booklet_title_font(const QFont& _booklet_title_font) {
+  if (cd_booklet_title_font != _booklet_title_font) {
+	 cd_booklet_title_font = _booklet_title_font;
+	 	emit dataChanged();
 	}
 }
 
@@ -180,6 +183,10 @@ QColor KoverFile::titleColor() const
 QFont KoverFile::contentsFont() const
 {
 	return cd_contents_font;
+}
+
+QFont KoverFile::booklet_title_font() const {
+  return cd_booklet_title_font;
 }
 
 QColor KoverFile::contentsColor() const
@@ -346,6 +353,10 @@ bool KoverFile::openFile( QString& filename )
 	cd_contents_font	= file.readFontEntry( "Font", new QFont("helvetica",16) );
 	cd_contents_color	= file.readColorEntry( "Color", new QColor(0,0,0) );
 	
+	file.setGroup("Booklet");
+	cd_booklet_title_font = file.readFontEntry("Font", new QFont("helvetica",12));
+	
+
 	file.setGroup( "Image1" );
 	cd_image_file[0]	= file.readEntry( "Filename", "" );
 	cd_image_mode[0]	= file.readNumEntry( "Mode", IMG_CENTER );
@@ -409,6 +420,9 @@ bool KoverFile::saveFile( QString& filename )
 	file.writeEntry( "Font", cd_contents_font );
 	file.writeEntry( "Color", cd_contents_color );
 	
+	file.setGroup("Booklet");
+	file.writeEntry("Font",cd_booklet_title_font);
+
 	file.setGroup( "Image1" );
 	file.writeEntry( "Filename", cd_image_file[0] );
 	file.writeEntry( "Mode", cd_image_mode[0] );

@@ -88,6 +88,7 @@ void fileNew();
 	 void contentsFontColor();
 	 void backgroundColor();
 	 void cdrom_eject();
+	 void booklet_title_font();
 
 private:
 	 QCheckBox *slim_case;

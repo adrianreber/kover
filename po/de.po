@@ -1,26 +1,376 @@
-# $Id: de.po,v 1.3 2001/10/05 22:55:27 adrian Exp $
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.7\n"
-"POT-Creation-Date: 2001-09-28 20:51+0200\n"
-"PO-Revision-Date: 2001-09-28 14:44+02:00\n"
-"Last-Translator: Adrian Reber <adrian@lisas.de>\n"
-"Language-Team: German\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2001-10-06 19:02+0200\n"
+"PO-Revision-Date: 2001-10-08 19:44GMT\n"
+"Last-Translator: Adrian <adrian@lisas.de>\n"
+"Language-Team:  <C@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 0.9.5\n"
 
-#: main.cpp:87
-msgid "lalala\n"
-msgstr "blub\n"
+#: imagedlgdata.cpp:16
+msgid "First Image"
+msgstr "Erstes Bild"
 
-#: Kovertop.cpp:140
-msgid "lalala\n"
-msgstr "blub\n"
+#: imagedlgdata.cpp:31 imagedlgdata.cpp:72 imagedlgdata.cpp:109
+msgid "Front, left side"
+msgstr "Vorne, linke Seite"
 
+#: imagedlgdata.cpp:32 imagedlgdata.cpp:73 imagedlgdata.cpp:110
+msgid "Front, right side"
+msgstr "Vorne, rechte Seite"
+
+#: imagedlgdata.cpp:33 imagedlgdata.cpp:74 imagedlgdata.cpp:111
+msgid "Front, both sides"
+msgstr "Vorne, beidseitig"
+
+#: imagedlgdata.cpp:34 imagedlgdata.cpp:75 imagedlgdata.cpp:112
+msgid "Back, without sides"
+msgstr "Hinten, ohne Seiten"
+
+#: imagedlgdata.cpp:35 imagedlgdata.cpp:76 imagedlgdata.cpp:113
+msgid "Back, with sides"
+msgstr "Hinten, mit Seiten"
+
+#: imagedlgdata.cpp:39 imagedlgdata.cpp:80 imagedlgdata.cpp:117
+msgid "Centered"
+msgstr "Zentriert"
+
+#: imagedlgdata.cpp:40 imagedlgdata.cpp:81 imagedlgdata.cpp:118
+msgid "Tiled"
+msgstr "Gekachelt"
+
+#: imagedlgdata.cpp:41 imagedlgdata.cpp:82 imagedlgdata.cpp:119
+msgid "Stretched"
+msgstr "Gestreckt"
+
+#: imagedlgdata.cpp:45 imagedlgdata.cpp:68 imagedlgdata.cpp:105
+msgid "Target"
+msgstr "Ziel"
+
+#: imagedlgdata.cpp:53
+msgid "Second Image"
+msgstr "Zweites Bild"
+
+#: imagedlgdata.cpp:90
+msgid "Third Image"
+msgstr "Drittes Bild"
+
+#: imagedlg.cpp:29
+msgid "Image Embedding"
+msgstr "Bild Einfügen"
+
+#: cddb_fill.cpp:150
+msgid "Internal error: Filedescriptor is not -1, already opened?"
+msgstr "Interner Fehler: Dateideskriptor ist nicht -1; schon geöffnet?"
+
+#: cddb_fill.cpp:160
+msgid "You dont have permission to read from "
+msgstr "Verboten für dich das Lesen von "
+
+#: cddb_fill.cpp:164
+msgid "Theres no medium in "
+msgstr "Da ist kein Medium in "
+
+#: cddb_fill.cpp:169
+msgid " is busy!"
+msgstr " ist sehr sehr beschäftigt!"
+
+#: cddb_fill.cpp:172
+msgid "Unknown error while opening "
+msgstr "Unaussprechlicher Fehler während des Öffnenes von "
+
+#: cddb_fill.cpp:185
+msgid "Oops. No information about disc. Will keep trying..."
+msgstr "Ups. Keine Informationen über die Disc. Aber ich werde es weiter versuchen..."
+
+#: cddb_fill.cpp:188
+msgid "Theres no audio cd in "
+msgstr "Keine Audio CD in "
+
+#: cddb_fill.cpp:189
+msgid "! (ignoring)"
+msgstr "! (das wird konkret ignoriert)"
+
+#: cddb_fill.cpp:209
+msgid "Internal error: Filedescriptor is -1, not opened?"
+msgstr "Interner Fehler: Dateideskriptor ist -1. Irgendjemand sollte irgendwas tun."
+
+#: cddb_fill.cpp:213
+msgid "Reading table of contents..."
+msgstr "Lese Tabelle der Inhalte..."
+
+#: cddb_fill.cpp:216
+msgid "Error while reading table of contents!"
+msgstr "Fehler während des Lesens der Tabelle der Inhalte!"
+
+#: cddb_fill.cpp:234
+msgid "Error while reading TOC entry!"
+msgstr "Fehler während des Lesens eines TOC (Inhaltstabelle) Eintrages!"
+
+#: cddb_fill.cpp:252
+msgid "Table of contents successfully read"
+msgstr "Inhaltstabelle erfolgreich gelesen."
+
+#: cddb_fill.cpp:303 cddb_fill.cpp:306
+msgid "Connecting to "
+msgstr "Verbinden nach "
+
+#: cddb_fill.cpp:329
+msgid "Connecting to CDDB server..."
+msgstr "Verbinden zum CDDB Server..."
+
+#: cddb_fill.cpp:417
+msgid "Using local values for disc"
+msgstr "Lokale Werte der Disc werden verwendet."
+
+#: cddb_fill.cpp:436
+msgid "Querying database..."
+msgstr "Abfragen der Datenbank..."
+
+#: cddb_fill.cpp:494
+msgid "Initializing authorization"
+msgstr "Einleiten der Authorisation."
+
+#: cddb_fill.cpp:500
+msgid "Operation aborted."
+msgstr "Vorgang abgebrochen."
+
+#: cddb_fill.cpp:581
+msgid "Found inexact matches, list follows (until terminating marker)"
+msgstr "Ungenauer Treffer, Möglichkeiten folgen."
+
+#: cddb_fill.cpp:640
+msgid "No match found."
+msgstr "Kein Treffer."
+
+#: cddb_fill.cpp:643 cddb_fill.cpp:750
+msgid "Database entry is corrupt."
+msgstr "Datenbankeintrag ist Schrott."
+
+#: cddb_fill.cpp:646 cddb_fill.cpp:753
+msgid "No handshake."
+msgstr "Kein handshake."
+
+#: cddb_fill.cpp:675
+msgid "Downloading CD info..."
+msgstr "CD Informationen werden heruntergeladen..."
+
+#: cddb_fill.cpp:741
+msgid "OK, CDDB database entry follows."
+msgstr "OK, CDDB Datenbankeintrag folgt."
+
+#: cddb_fill.cpp:744
+msgid "Specified CDDB entry not found."
+msgstr "Angegebener CDDB Eintrag nicht gefunden!"
+
+#: cddb_fill.cpp:747
+msgid "Server error."
+msgstr "Nicht mein Fehler. Der andere wars."
+
+#: cddb_fill.cpp:756
+msgid "ERROR: This should not happen."
+msgstr "FEHLER: Das sollte nicht passieren... Hmm?"
+
+#: cddb_fill.cpp:911
+msgid "Trouble creating cddb greeting... Giving up..."
+msgstr "Probleme beim Erstellen der CDDB Begrüßung... Ich geb auf."
+
+#: KoverTop.cpp:52 KoverTop.cpp:144 KoverTop.cpp:221
+msgid "[New Document]"
+msgstr "[Neues Dokument]"
+
+#: KoverTop.cpp:68
 msgid "&Actual size"
-msgstr "Tatsächliche Grösse"
+msgstr "T&atsächliche Größe"
+
+#: KoverTop.cpp:69
+msgid "&CDDB lookup"
+msgstr "&CDDB Anfrage"
+
+#: KoverTop.cpp:71
+msgid "&Image Embedding..."
+msgstr "B&ild Einfügen"
+
+#: KoverTop.cpp:72
+msgid "Title Font..."
+msgstr "Titel Font..."
+
+#: KoverTop.cpp:73
+msgid "Title Fontcolor..."
+msgstr "Titel Fontfarbe..."
+
+#: KoverTop.cpp:74
+msgid "Contents Font..."
+msgstr "Inhalt Font..."
+
+#: KoverTop.cpp:75
+msgid "Contents Fontcolor..."
+msgstr "Inhalt Fontfarbe..."
+
+#: KoverTop.cpp:76
+msgid "Background Color..."
+msgstr "Hintergrund Farbe..."
+
+#: KoverTop.cpp:77
+msgid "Eject CD"
+msgstr "CD Auswerfen"
+
+#: KoverTop.cpp:87
+msgid "CD Number"
+msgstr "CD Nummer"
+
+#: KoverTop.cpp:142
+msgid "Data changed"
+msgstr ""
+
+#: KoverTop.cpp:254
+msgid "File loaded"
+msgstr ""
+
+#: KoverTop.cpp:257 KoverTop.cpp:286 KoverTop.cpp:302
+msgid "Error while opening/reading file!"
+msgstr ""
+
+#: KoverTop.cpp:263
+msgid ""
+"Data changed since last saving!\n"
+"Do you want to save the changes?"
+msgstr ""
+
+#: KoverTop.cpp:283 KoverTop.cpp:299
+msgid "File saved"
+msgstr ""
+
+#: KoverTop.cpp:347
+msgid "Initiating CDDB lookup!"
+msgstr ""
+
+#: KoverTop.cpp:365
+msgid "config me"
+msgstr ""
+
+#: CDView.cpp:77
+msgid "Click to close"
+msgstr ""
+
+#: PreferencesDialog.cpp:48
+msgid "CDDB"
+msgstr ""
+
+#: PreferencesDialog.cpp:48
+msgid "CDDB options"
+msgstr ""
+
+#: PreferencesDialog.cpp:52
+msgid "&CDDB server"
+msgstr ""
+
+#: PreferencesDialog.cpp:62
+msgid "CDDB server:"
+msgstr ""
+
+#: PreferencesDialog.cpp:69
+msgid "CGI path:"
+msgstr ""
+
+#: PreferencesDialog.cpp:76
+msgid "&Proxy configuration"
+msgstr ""
+
+#: PreferencesDialog.cpp:83
+msgid "Use proxy for CDDB lookups"
+msgstr ""
+
+#: PreferencesDialog.cpp:87
+msgid "Use 'http_proxy' environment variable"
+msgstr ""
+
+#: PreferencesDialog.cpp:90
+msgid "Proxy server:"
+msgstr ""
+
+#: PreferencesDialog.cpp:96
+msgid "Proxy server port:"
+msgstr ""
+
+#: PreferencesDialog.cpp:109
+msgid "CDROM"
+msgstr ""
+
+#: PreferencesDialog.cpp:109
+msgid "CDROM options"
+msgstr ""
+
+#: PreferencesDialog.cpp:113
+msgid "&CDROM"
+msgstr ""
+
+#: PreferencesDialog.cpp:122
+msgid "CDROM device:"
+msgstr ""
+
+#: PreferencesDialog.cpp:128
+msgid "Eject CD on exit"
+msgstr ""
+
+#: PreferencesDialog.cpp:312
+msgid "CDDB files"
+msgstr ""
+
+#: PreferencesDialog.cpp:312
+msgid "Local CDDB files"
+msgstr ""
+
+#: PreferencesDialog.cpp:316
+msgid "&Local CDDB files"
+msgstr ""
+
+#: PreferencesDialog.cpp:325
+msgid "Read CDDB data from file if available"
+msgstr ""
+
+#: PreferencesDialog.cpp:329
+msgid "Write CDDB data to file"
+msgstr ""
+
+#: PreferencesDialog.cpp:334
+msgid "CDDB path:"
+msgstr ""
+
+#: PreferencesDialog.cpp:390
+msgid "Various properties"
+msgstr ""
+
+#: PreferencesDialog.cpp:394
+msgid "&Stuff"
+msgstr ""
+
+#: PreferencesDialog.cpp:403
+msgid "Mouse click on kover preview triggers actual size."
+msgstr ""
+
+#: PreferencesDialog.cpp:407
+msgid "Display track duration after a CDDB request."
+msgstr ""
+
+#: PreferencesDialog.cpp:411
+msgid ""
+"Print inlet on left side of booklet.\n"
+"(slim case option)"
+msgstr ""
 
 #: proxy_auth.cc:49
 msgid "Enter username and password for proxy at "
-msgstr "hahahaha "
+msgstr ""
+
+#: proxy_auth.cc:63
+msgid "User Name:"
+msgstr "Benuztername:"
+

@@ -46,6 +46,7 @@ extern "C" {
 		  int trigger_actual_size;
 		  int display_track_duration;
 		  int its_a_slim_case;
+                  int inlet_only;
 
 		  char *base64encoded;
 		  

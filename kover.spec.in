@@ -16,7 +16,7 @@ Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
 ./configure --prefix=%{_prefix}
 
 %build
-make -j4
+make -j2
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -30,6 +30,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/apps/kover/koverui.rc
 %{_datadir}/applnk/Multimedia/kover.desktop
 %{_datadir}/icons/*/*/*/*
+%{_datadir}/locale/*/*/*
 %attr(755,root,root)%{_bindir}/kover 
 
 %changelog

@@ -4,13 +4,10 @@ Kover TODO
 - icons for text and contents are for font selection and color selection
   still the same... bad.
 
-- handle inexact CDDB match
-
 General:
 
 -more error handling (especially file I/O)
 -the UI layout is not the best
--po files
 -Documentation
 -handle toolbar movements
 -transparency bugs

@@ -59,6 +59,7 @@ public:
 	void setTitleFont( const QFont& _title_font );
 	void setTitleColor( const QColor& _title_color );
 	void setContentsFont( const QFont& _contents_font );
+	void set_booklet_title_font(const QFont& _booklet_title_font);
 	void setContentsColor( const QColor& _contents_color );
 	void setBackColor( const QColor& _back_color );
 	void setNumber( const int _number );
@@ -72,6 +73,7 @@ public:
 	QFont	titleFont() const;
 	QColor	titleColor() const;
 	QFont	contentsFont() const;
+	QFont booklet_title_font() const;
 	QColor	contentsColor() const;
 	QColor	backColor() const;
 	int		number() const;
@@ -96,6 +98,7 @@ private:
 	QFont	cd_title_font;
 	QColor	cd_title_color;
 	QFont	cd_contents_font;
+	QFont cd_booklet_title_font;
 	QColor	cd_contents_color;
 	QColor	cd_back_color;
 	int		cd_number;

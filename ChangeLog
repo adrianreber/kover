@@ -1,3 +1,31 @@
+$Id: ChangeLog,v 1.8 2001/10/28 23:00:14 adrian Exp $
+
+2001-10-28  Adrian  <adrian@lisas.de>
+	* some files: patch from Håvard Dahle <havardda-i18n@orakel.ntnu.no>
+     included for inlet only option.
+	* PreferencesDialog.cpp: inlet only option to radio buttons
+	* KoverTop.cpp: new font selection dialog for booklet
+	  booklet title font
+	* koverfile.cpp CDView.cpp: changes to handle booklet title font
+	* no.po: norwegian translation by
+	  Håvard Dahle <havardda-i18n@orakel.ntnu.no>
+
+2001-10-12  Adrian  <adrian@lisas.de>
+	
+	* all files: prepared for translation
+	* fr.po: french translation by
+	  Jean-Pierre VERRUE <jean-pierre.verrue@laposte.net>
+	* de.po: german translation all by myself
+	* more code cleanups
+	* cddb-id.cc: new file. using the new cdrom_cddb class
+	  to calculate the cddb-id and prints it to stdout.
+	  cddb id calculation will be removed from cddb_fill.cpp
+	* cddb_211_item.cc: storage for the inexact matches
+	* inexact_dialog.cc: dialog to display the the inexact matches
+	* kover.spec.in: used to create a rpm specfile via configure
+	  rpm -ta kover-x.x.tar.gz gives you a nice rpm
+	* CDView.cpp:48+341: removed compiler warnings
+
 2001-10-01  Adrian  <adrian@lisas.de>
 
 	* cddb_fill.cpp: proxy authentification implemented

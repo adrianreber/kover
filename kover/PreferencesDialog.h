@@ -21,12 +21,13 @@
 	Description: Header to PreferencesDialog.cpp
 */
 
-/* $Id: PreferencesDialog.h,v 1.9 2001/07/15 22:45:23 adrian Exp $ */
+/* $Id: PreferencesDialog.h,v 1.10 2001/10/28 23:00:14 adrian Exp $ */
 
 #ifndef PREFERENCES_DIALOG_H
 #define PREFERENCES_DIALOG_H
 
 #include "kover.h"
+#include <qradiobutton.h>
 
 class PreferencesDialog : public KDialogBase {
 	 Q_OBJECT
@@ -84,7 +85,9 @@ private:
 	 struct misc_widgets {
 		  QCheckBox * trigger_actual_size;
 		  QCheckBox * display_track_duration;
-		  QCheckBox * its_a_slim_case;
+		  QRadioButton * its_a_slim_case;
+		  QRadioButton * inlet_only;
+		  QRadioButton * its_normal;
 	 } misc_widgets;
 		  
 private slots:

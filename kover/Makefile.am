@@ -13,7 +13,7 @@ kover_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 cddb_id_SOURCES = cdrom.cc cddb-id.cc cdrom_cddb.cc
 
-SUBDIRS =  
+SUBDIRS = .
 
 rcdir = $(kde_datadir)/kover
 rc_DATA = koverui.rc
