@@ -26,12 +26,13 @@ mime_DATA = x-kover.desktop
 
 KDE_ICON = AUTO
 
-EXTRA_DIST = kover.desktop koverui.rc lo16-app-kover.png lo32-app-kover.png hi32-app-kover.png hi48-app-kover.png
+EXTRA_DIST = kover.desktop koverui.rc lo16-app-kover.png lo32-app-kover.png hi32-app-kover.png hi48-app-kover.png x-kover.desktop
 
 noinst_HEADERS = KoverTop.h cddb_fill.h kover.h \
 		 CDView.h PreferencesDialog.h imagedlg.h koverfile.h \
 		 kover_global.h cdrom.h config.h cdrom_cddb.h \
-		 cddb_211_item.h inexact_dialog.h proxy_auth.h
+		 cddb_211_item.h inexact_dialog.h proxy_auth.h \
+		 categories.h without_cd.h
 
 INCLUDES= $(all_includes)
 
