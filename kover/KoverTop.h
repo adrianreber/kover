@@ -67,7 +67,7 @@ void contentsBoxChanged();
 	 void dataChanged(bool image);
 	 void setStatusText( const char* _status_text );
 	 void actualSize();
-	 void update_id(unsigned long);
+	 void update_id(unsigned long=0);
 
 private slots:
 

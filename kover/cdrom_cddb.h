@@ -16,53 +16,34 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: cdrom.h 
+	 File: cdrom_cddb.h 
 	 
-	 Description: cdrom class header
+	 Description: cdrom cddb class header
 	 
 	 Changes:
 	 
-	 24 Apr 2001: Initial release
+	 2 Jul 2001: Initial release
 	 
 */
 
-#ifndef CDROM_H
-#define CDROM_H
+/* $Id: cdrom_cddb.h,v 1.1 2001/07/09 09:15:27 adrian Exp $ */
 
-extern "C" {
+#ifndef CDROM_CDDB_H
+#define CDROM_CDBB_H
 
 #include "../config.h"
+#include "cdrom.h"
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
-#ifdef HAVE_LINUX_CDROM_H
-#include <linux/cdrom.h>
-#endif
-
-#ifdef HAVE_LINUX_UCDROM_H
-#include <linux/ucdrom.h>
-#endif
-
-}
-
-class cdrom {
+class cdrom_cddb : public cdrom {
 public:
-	 cdrom(char *_path);
-	 ~cdrom();
-	 int open();
-	 int close();
-	 int eject();
-protected:
-	 int cdrom_fd;
+	 cdrom_cddb(char *path = "/dev/cdrom");
+	 ~cdrom_cddb();
+	 unsigned long get_cddb_id();
 private:
-	 char *path;
-	 bool cdrom_open;
+	 void calc_cddb_id();
+	 unsigned long cddb_id;	
+	 int cddb_sum(int n);
 };
 
-#endif
+#endif /* CDROM_CDBB_H */

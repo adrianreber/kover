@@ -153,8 +153,9 @@ void KoverTop::setStatusText( const char* _status_text ) {
 }
 
 void KoverTop::update_id(unsigned long id) {
-	 QString string;
-	 string.sprintf("CDDB id: 0x%08lx",id);
+	 QString string="CDDB id:";
+	 if (id!=0)
+		  string.sprintf("CDDB id: 0x%08lx",id);
 	 cddb_id->setText(string);
 	 cddb_id->adjustSize();
 }
@@ -217,6 +218,7 @@ void KoverTop::fileNew() {
 	 altered_data = false;
 	 filename = "untitled";
 	 setCaption(i18n("[New Document]"), false);
+	 update_id();
 }
 
 void KoverTop::fileOpen() {

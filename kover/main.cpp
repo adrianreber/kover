@@ -28,6 +28,8 @@
 	 20 Jun 2001: Lot of undocumented changes
 */
 
+/* $Id: main.cpp,v 1.21 2001/07/09 09:12:37 adrian Exp $ */
+
 #include "kover.h"
 #include "KoverTop.h"
 #include "config.h"

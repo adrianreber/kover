@@ -35,8 +35,9 @@
 
 #include "koverfile.h"
 
-#define CDDB_PORT		80
 
+#define CDDB_PORT		80
+ 
 #define KOVER_CDDB_LEVEL "3"  /* Current CDDB protocol level supported */
 
 /**

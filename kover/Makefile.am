@@ -3,7 +3,8 @@ bin_PROGRAMS = kover cddb-id
 
 kover_SOURCES = imagedlgdata.cpp imagedlg.cpp cddb_fill.cpp koverfile.cpp \
 		KoverTop.cpp CDView.cpp main.cpp \
-		PreferencesDialog.cpp CDDB.cpp cdrom.cc config.cc
+		PreferencesDialog.cpp CDDB.cpp cdrom.cc config.cc \
+		cddb_211_item.cc
 
 kover_LDADD   = $(LIB_KSYCOCA) $(LIB_KFILE) $(LIBSOCKET)
 
@@ -26,7 +27,8 @@ EXTRA_DIST = kover.desktop koverui.rc lo16-app-kover.png lo32-app-kover.png hi32
 
 noinst_HEADERS = CDDB.h KoverTop.h cddb_fill.h kover.h \
 		 CDView.h PreferencesDialog.h imagedlg.h koverfile.h \
-		 kover_global.h cdrom.h config.h cdrom_cddb.h
+		 kover_global.h cdrom.h config.h cdrom_cddb.h \
+		 cddb_211_item.h
 
 # set the include path for X, qt and KDE
 INCLUDES= $(all_includes)

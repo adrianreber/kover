@@ -82,8 +82,11 @@
 #include <sys/ioctl.h>
 
 #include <string>
+#include <list>
 
 #include "kover_global.h"
+
+extern "C" {
 
 #ifdef HAVE_LINUX_CDROM_H
 #include <linux/cdrom.h>
@@ -92,6 +95,9 @@
 #ifdef HAVE_LINUX_UCDROM_H
 #include <linux/ucdrom.h>
 #endif
+
+}
+
 using std::string;
 
 #define MAIN_TOOLBAR 1

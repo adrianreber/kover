@@ -39,6 +39,10 @@
 
 #include "cddb_fill.h"
 
+#include <string>
+
+#include "cddb_211_item.h"
+
 track_info::track_info( int _track, int _min, int _sec, int _frame )
 {
 	 track = _track;
@@ -48,8 +52,7 @@ track_info::track_info( int _track, int _min, int _sec, int _frame )
 	 start = length * 75 + _frame;
 }
 
-CD_Info::CD_Info()
-{
+CD_Info::CD_Info() {
 	 trk.setAutoDelete(true);
 }
 
@@ -433,7 +436,7 @@ bool CDDB_Fill::cddb_query()
 	 char *ss;
 	 int i;
 	 int tot_len,len;
-
+	 	 	 
 	 emit statusText( "Querying database..." );
    
 	 /* Figure out a good buffer size -- 7 chars per track, plus 256 for the rest
@@ -493,10 +496,11 @@ bool CDDB_Fill::cddb_query()
 	 free (code_string);
 
 	 //end cddb code stuff
-
+	 
+	 list <cddb_211_item *> list1;
+	 
 	 //what category
-	 switch(code)
-	 {
+	 switch(code) {
 	 case 200:  /* Success, get the category ID */
 		  //cddb_msg looks like : "newage 670db908....."
 		  _DEBUG_ fprintf(stderr,"code 200... %s\n",cddb_msg);
@@ -505,7 +509,22 @@ bool CDDB_Fill::cddb_query()
 		  cdinfo.category = cddb_msg; //bla bla. cddb_msg now contains only the category
 		  break;
 	 case 211:
+		  _DEBUG_ fprintf(stderr,"Found inexact matches, list follows (until terminating marker)\n");
 		  emit statusText("Found inexact matches, list follows (until terminating marker)");
+		  char s[256];
+		  s[0] = 0;
+		  
+		  cddb_211_item *ref_211;
+
+		  while (strncmp(s,".", 1)!=0) {
+				if (!fgets(s, 255, sk_1))
+					 break;
+				if (s[0]!=48) {
+					 ref_211 = new cddb_211_item(s);
+					 _DEBUG_ fprintf(stderr,"%s:%s",PACKAGE,s);
+					 list1.push_back(ref_211);
+				}
+		  }
 		  return false;
 	 case 202:
 		  emit statusText("No match found.");

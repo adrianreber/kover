@@ -16,53 +16,30 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: cdrom.h 
+	 File: cddb_211_item.h 
 	 
-	 Description: cdrom class header
+	 Description: cddb 211 items
 	 
 	 Changes:
 	 
-	 24 Apr 2001: Initial release
+	 8 Jul 2001: Initial release
 	 
 */
 
-#ifndef CDROM_H
-#define CDROM_H
+/* $Id: cddb_211_item.h,v 1.2 2001/07/10 22:48:03 adrian Exp $ */
 
-extern "C" {
+#ifndef CDDB_211_ITEM_H
+#define CDDB_211_ITEM_H
 
 #include "../config.h"
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#ifdef HAVE_LINUX_CDROM_H
-#include <linux/cdrom.h>
-#endif
-
-#ifdef HAVE_LINUX_UCDROM_H
-#include <linux/ucdrom.h>
-#endif
-
-}
-
-class cdrom {
+class cddb_211_item {
 public:
-	 cdrom(char *_path);
-	 ~cdrom();
-	 int open();
-	 int close();
-	 int eject();
-protected:
-	 int cdrom_fd;
+	 cddb_211_item();	 
+	 cddb_211_item(char *);
+	 ~cddb_211_item();
 private:
-	 char *path;
-	 bool cdrom_open;
+	 char *cddb_data;
 };
 
-#endif
+#endif /* CDDB_211_ITEM_H */
