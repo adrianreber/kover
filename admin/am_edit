@@ -1351,9 +1351,6 @@ sub handle_POFILES($$)
   $tmp .= "\tfor file in \$(POFILES); do \\\n";
   $tmp .= "\t  cp \$(srcdir)/\$\$file \$(distdir); \\\n";
   $tmp .= "\tdone\n";
-  $tmp .= "\tfor file in \$(GMOFILES); do \\\n";
-  $tmp .= "\t  cp \$(srcdir)/\$\$file \$(distdir); \\\n";
-  $tmp .= "\tdone\n";
 
   appendLines ($tmp);
 
@@ -1926,7 +1923,7 @@ sub updateMakefile ()
     open (FILEOUT, "> $makefile")
                         || die "Could not create $makefile: $!\n";
 
-    print FILEOUT "\# $progId - " . '$Revision: 1.3 $ '  . "\n";
+    print FILEOUT "\# $progId - " . '$Revision: 1.4 $ '  . "\n";
     $MakefileData =~ s/\034/\\\n\t/g;    # Restore continuation lines
     print FILEOUT $MakefileData;
     close FILEOUT;
