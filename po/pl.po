@@ -1,20 +1,21 @@
+# translation of pl.po to Polish
 # translation of kover.po to Polish
 # translation of kover.po to
 # Copyright (C) 2002,2003 Free Software Foundation, Inc.
-# Michał Rudolf <mrudolf@mercury.ci.uw.edu.pl>, 2002
-# Michal Rudolf <mrudolf@mercury.ci.uw.edu.pl>, 2003
+# Michał Rudolf <mrudolf@mercury.ci.uw.edu.pl>, 2002.
+# Michal Rudolf <mrudolf@mercury.ci.uw.edu.pl>, 2003.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: kover\n"
+"Project-Id-Version: pl\n"
 "POT-Creation-Date: 2001-10-09 00:41+0200\n"
-"PO-Revision-Date: 2003-02-08 00:12+0100\n"
+"PO-Revision-Date: 2003-05-31 13:27+0200\n"
 "Last-Translator: Michal Rudolf <mrudolf@mercury.ci.uw.edu.pl>\n"
 "Language-Team: Polish <kde-transl@mer.chemia.polsl.gliwice.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.2\n"
+"X-Generator: KBabel 1.2beta2\n"
 
 #: imagedlgdata.cpp:16
 msgid "First Image"
@@ -22,7 +23,7 @@ msgstr "Pierwszy obrazek"
 
 #: imagedlgdata.cpp:31 imagedlgdata.cpp:72 imagedlgdata.cpp:109
 msgid "Front, left side"
-msgstr "Przód, Lewa strona"
+msgstr "Przód, lewa strona"
 
 #: imagedlgdata.cpp:32 imagedlgdata.cpp:73 imagedlgdata.cpp:110
 msgid "Front, right side"
@@ -286,11 +287,11 @@ msgstr "Ścieżka CGI:"
 
 #: PreferencesDialog.cpp:76
 msgid "&Proxy configuration"
-msgstr "&Konfiguracja proxy"
+msgstr "&Konfiguracja serwera pośredniczącego"
 
 #: PreferencesDialog.cpp:83
 msgid "Use proxy for CDDB lookups"
-msgstr "Użyj proxy do zapytań CDDB"
+msgstr "Użyj serwera pośredniczącego do zapytań CDDB"
 
 #: PreferencesDialog.cpp:87
 msgid "Use 'http_proxy' environment variable"
@@ -298,11 +299,11 @@ msgstr "Użyj zmiennej środowiskowej 'http_proxy'"
 
 #: PreferencesDialog.cpp:90
 msgid "Proxy server:"
-msgstr "Serwer proxy:"
+msgstr "Serwer pośredniczący:"
 
 #: PreferencesDialog.cpp:96
 msgid "Proxy server port:"
-msgstr "Port serwera proxy:"
+msgstr "Port serwera pośredniczącego:"
 
 #: PreferencesDialog.cpp:109
 msgid "CDROM"
@@ -378,7 +379,7 @@ msgstr "Wybierz rozsądnie!"
 
 #: proxy_auth.cc:49
 msgid "Enter username and password for proxy at "
-msgstr "Podaj nazwę użytkownika i hasła proxy dla "
+msgstr "Podaj nazwę użytkownika i hasła serwera pośredniczącego "
 
 #: proxy_auth.cc:63
 msgid "User Name:"
@@ -464,7 +465,7 @@ msgstr "&Standardowe czcionki"
 
 #: PreferencesDialog.cc:627
 msgid "Changes to any of these fonts are global.\n"
-msgstr "Wszystkie zmiany tych czionek są globalne.\n"
+msgstr "Wszystkie zmiany tych czcionek są globalne.\n"
 
 #: PreferencesDialog.cc:628
 msgid "This means, that changes will only be available\n"
@@ -534,6 +535,9 @@ msgstr "Podaj identyfikator CDDB:"
 msgid "Search"
 msgstr "Szukaj"
 
+msgid "&Kover"
+msgstr "O&kładka"
+
 #~ msgid "&View"
 #~ msgstr "&Widok"
 
@@ -569,7 +573,4 @@ msgstr "Szukaj"
 
 #~ msgid "More >>"
 #~ msgstr "Więcej >>"
-
-msgid "&Kover"
-msgstr ""
 
