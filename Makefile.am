@@ -17,3 +17,4 @@ MAINTAINERCLEANFILES = subdirs configure.in acinclude.m4 SUBDIRS kover.spec.in
 EXTRA_DIST = admin ABOUT-NLS kover.spec
 
 man_MANS = kover.1 cddb-id.1
+

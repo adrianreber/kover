@@ -1,4 +1,4 @@
-$Id: THANKS,v 1.7 2002/05/12 16:32:29 adrian Exp $
+$Id: THANKS,v 1.8 2002/06/17 22:26:03 adrian Exp $
 
 kover THANKS:
 
@@ -46,3 +46,7 @@ Micha Rudolf <mrudolf@mercury.ci.uw.edu.pl>
 Rene Engelhard <mail@rene-engelhard.de>
 - debian package
 - man pages
+
+Nils Philippsen <nils@fht-esslingen.de>
+- php code for the wepages taken from
+  RACE: http://lisas.de/race/
