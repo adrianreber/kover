@@ -1,0 +1,383 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# FIRST TRANSLATOR <havardda-i18n@orakel.ntnu.no>, 2001
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1\n"
+"POT-Creation-Date: 2001-10-06 18:14+0200\n"
+"PO-Revision-Date: 2001-10-16 17:49GMT+1\n"
+"Last-Translator: Håvard Dahle <havardda-i18n@orakel.ntnu.no>\n"
+"Language-Team: Norwegian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 0.9.5\n"
+
+#: imagedlgdata.cpp:16
+msgid "First Image"
+msgstr "Første bilde"
+
+#: imagedlgdata.cpp:31 imagedlgdata.cpp:72 imagedlgdata.cpp:109
+msgid "Front, left side"
+msgstr "Forside, venstre"
+
+#: imagedlgdata.cpp:32 imagedlgdata.cpp:73 imagedlgdata.cpp:110
+msgid "Front, right side"
+msgstr "Forside, høyre"
+
+#: imagedlgdata.cpp:33 imagedlgdata.cpp:74 imagedlgdata.cpp:111
+msgid "Front, both sides"
+msgstr "Forside, begge sidene"
+
+#: imagedlgdata.cpp:34 imagedlgdata.cpp:75 imagedlgdata.cpp:112
+msgid "Back, without sides"
+msgstr "Bakside, uten sider"
+
+#: imagedlgdata.cpp:35 imagedlgdata.cpp:76 imagedlgdata.cpp:113
+msgid "Back, with sides"
+msgstr "Bakside, med sider"
+
+#: imagedlgdata.cpp:39 imagedlgdata.cpp:80 imagedlgdata.cpp:117
+msgid "Centered"
+msgstr "Sentrert"
+
+#: imagedlgdata.cpp:40 imagedlgdata.cpp:81 imagedlgdata.cpp:118
+msgid "Tiled"
+msgstr "Flislagt"
+
+#: imagedlgdata.cpp:41 imagedlgdata.cpp:82 imagedlgdata.cpp:119
+msgid "Stretched"
+msgstr "Strukket"
+
+#: imagedlgdata.cpp:45 imagedlgdata.cpp:68 imagedlgdata.cpp:105
+msgid "Target"
+msgstr "Mål"
+
+#: imagedlgdata.cpp:53
+msgid "Second Image"
+msgstr "Bilde nummer to"
+
+#: imagedlgdata.cpp:90
+msgid "Third Image"
+msgstr "Bilde nummer tre"
+
+#: imagedlg.cpp:29
+msgid "Image Embedding"
+msgstr "Sett inn bilde"
+
+#: cddb_fill.cpp:150
+msgid "Internal error: Filedescriptor is not -1, already opened?"
+msgstr "Intern feil: Fildeskriptoren er ikke -1; er filen allerede åpnet?"
+
+#: cddb_fill.cpp:160
+msgid "You dont have permission to read from "
+msgstr "Du har ikke tilgang til å lese fra "
+
+#: cddb_fill.cpp:164
+msgid "Theres no medium in "
+msgstr "Det er ikke noe medium i "
+
+#: cddb_fill.cpp:169
+msgid " is busy!"
+msgstr " er opptatt!"
+
+#: cddb_fill.cpp:172
+msgid "Unknown error while opening "
+msgstr "Ukjent feil ved åpning av "
+
+#: cddb_fill.cpp:185
+msgid "Oops. No information about disc. Will keep trying..."
+msgstr ""
+"Oops. Fant ingen informasjon om cd-en. Fortsetter å "
+"prøve..."
+
+#: cddb_fill.cpp:188
+msgid "Theres no audio cd in "
+msgstr "Det er ingen lyd-cd i "
+
+#: cddb_fill.cpp:189
+msgid "! (ignoring)"
+msgstr "! (overser)"
+
+#: cddb_fill.cpp:209
+msgid "Internal error: Filedescriptor is -1, not opened?"
+msgstr "Intern feil: Fildeskriptoren er -1; er filen ikke åpnet?"
+
+#: cddb_fill.cpp:213
+msgid "Reading table of contents..."
+msgstr "Leser innholdsfortegnelse..."
+
+#: cddb_fill.cpp:216
+msgid "Error while reading table of contents!"
+msgstr "En feil oppstod ved lesing av innholdsfortegnelse!"
+
+#: cddb_fill.cpp:234
+msgid "Error while reading TOC entry!"
+msgstr "En feil oppsto ved lesing av TOC!"
+
+#: cddb_fill.cpp:252
+msgid "Table of contents successfully read"
+msgstr "Innholdsfortegnelsen lest"
+
+#: cddb_fill.cpp:303 cddb_fill.cpp:306
+msgid "Connecting to "
+msgstr "Kobler til "
+
+#: cddb_fill.cpp:329
+msgid "Connecting to CDDB server..."
+msgstr "Kobler til CDDB-server..."
+
+#: cddb_fill.cpp:417
+msgid "Using local values for disc"
+msgstr "Bruker lokale verdier for cd"
+
+#: cddb_fill.cpp:436
+msgid "Querying database..."
+msgstr "Slår opp i databasen..."
+
+#: cddb_fill.cpp:494
+msgid "Initializing authorization"
+msgstr "Autoriserer"
+
+#: cddb_fill.cpp:500
+msgid "Operation aborted."
+msgstr "Handling avbrutt."
+
+#: cddb_fill.cpp:581
+msgid "Found inexact matches, list follows (until terminating marker)"
+msgstr "Fant unøyaktige treff, liste følger (fram til avsluttende tegn)"
+
+#: cddb_fill.cpp:640
+msgid "No match found."
+msgstr "Fant ingen treff."
+
+#: cddb_fill.cpp:643 cddb_fill.cpp:750
+msgid "Database entry is corrupt."
+msgstr "Database-oppføringen er ødelagt."
+
+#: cddb_fill.cpp:646 cddb_fill.cpp:753
+msgid "No handshake."
+msgstr "Ingen 'handshake'"
+
+#: cddb_fill.cpp:675
+msgid "Downloading CD info..."
+msgstr "Laster ned cd-info..."
+
+#: cddb_fill.cpp:741
+msgid "OK, CDDB database entry follows."
+msgstr "OK, database-oppføring fra CDDB følger."
+
+#: cddb_fill.cpp:744
+msgid "Specified CDDB entry not found."
+msgstr "Den forespurte CDDB-oppføringen ble ikke funnet."
+
+#: cddb_fill.cpp:747
+msgid "Server error."
+msgstr "Server-feil."
+
+#: cddb_fill.cpp:756
+msgid "ERROR: This should not happen."
+msgstr "FEIL: Dette skulle ikke skje."
+
+#: cddb_fill.cpp:911
+msgid "Trouble creating cddb greeting... Giving up..."
+msgstr "Klarte ikke forme korrekt CDDB-hilsen... Gir opp..."
+
+#: KoverTop.cpp:52 KoverTop.cpp:144 KoverTop.cpp:221
+msgid "[New Document]"
+msgstr "[Nytt dokument]"
+
+#: KoverTop.cpp:68
+msgid "&Actual size"
+msgstr "&Faktisk størrelse"
+
+#: KoverTop.cpp:69
+msgid "&CDDB lookup"
+msgstr "&CDDB-søk"
+
+#: KoverTop.cpp:71
+msgid "&Image Embedding..."
+msgstr "Sett inn &bilde..."
+
+#: KoverTop.cpp:72
+msgid "Title Font..."
+msgstr "Skrifttype for tittel..."
+
+#: KoverTop.cpp:73
+msgid "Title Fontcolor..."
+msgstr "Skriftfarge for tittel..."
+
+#: KoverTop.cpp:74
+msgid "Contents Font..."
+msgstr "Skrifttype for innhold..."
+
+#: KoverTop.cpp:75
+msgid "Contents Fontcolor..."
+msgstr "Skriftfarge for innhold..."
+
+#: KoverTop.cpp:76
+msgid "Background Color..."
+msgstr "Bakgrunnsfarge..."
+
+#: KoverTop.cpp:77
+msgid "Eject CD"
+msgstr "Spytt ut cd"
+
+#: KoverTop.cpp:87
+msgid "CD Number"
+msgstr "Cd-nummer"
+
+#: KoverTop.cpp:142
+msgid "Data changed"
+msgstr "Data endret"
+
+#: KoverTop.cpp:254
+msgid "File loaded"
+msgstr "Fil lastet"
+
+#: KoverTop.cpp:257 KoverTop.cpp:286 KoverTop.cpp:302
+msgid "Error while opening/reading file!"
+msgstr "Feil ved åpning/lesing av fil!"
+
+#: KoverTop.cpp:263
+msgid ""
+"Data changed since last saving!\n"
+"Do you want to save the changes?"
+msgstr ""
+"Data har blitt endret.\n"
+"Ønsker du å lagre endingene?"
+
+#: KoverTop.cpp:283 KoverTop.cpp:299
+msgid "File saved"
+msgstr "Fil lagret"
+
+#: KoverTop.cpp:347
+msgid "Initiating CDDB lookup!"
+msgstr "Starter CDDB-oppslag"
+
+#: KoverTop.cpp:365
+msgid "config me"
+msgstr "konfigurér meg"
+
+#: CDView.cpp:77
+msgid "Click to close"
+msgstr "Klikk for å lukke"
+
+#: PreferencesDialog.cpp:48
+msgid "CDDB"
+msgstr "CDDB"
+
+#: PreferencesDialog.cpp:48
+msgid "CDDB options"
+msgstr "CDDB-innstillinger"
+
+#: PreferencesDialog.cpp:52
+msgid "&CDDB server"
+msgstr "&CDDB-server"
+
+#: PreferencesDialog.cpp:62
+msgid "CDDB server:"
+msgstr "CDDB-server:"
+
+#: PreferencesDialog.cpp:69
+msgid "CGI path:"
+msgstr "CGI-sti:"
+
+#: PreferencesDialog.cpp:76
+msgid "&Proxy configuration"
+msgstr "&Proxy-innstillinger"
+
+#: PreferencesDialog.cpp:83
+msgid "Use proxy for CDDB lookups"
+msgstr "Bruk proxy ved CDDB-oppslag"
+
+#: PreferencesDialog.cpp:87
+msgid "Use 'http_proxy' environment variable"
+msgstr "Bruk miljøvariabelen 'http_proxy'"
+
+#: PreferencesDialog.cpp:90
+msgid "Proxy server:"
+msgstr "Proxy-server:"
+
+#: PreferencesDialog.cpp:96
+msgid "Proxy server port:"
+msgstr "Proxy-servers portnummer:"
+
+#: PreferencesDialog.cpp:109
+msgid "CDROM"
+msgstr "CDROM"
+
+#: PreferencesDialog.cpp:109
+msgid "CDROM options"
+msgstr "CDROM-innstillinger"
+
+#: PreferencesDialog.cpp:113
+msgid "&CDROM"
+msgstr "&CDROM"
+
+#: PreferencesDialog.cpp:122
+msgid "CDROM device:"
+msgstr "CDROM-enhet"
+
+#: PreferencesDialog.cpp:128
+msgid "Eject CD on exit"
+msgstr "Spytt ut CD ved avslutning"
+
+#: PreferencesDialog.cpp:312
+msgid "CDDB files"
+msgstr "CDDB-filer"
+
+#: PreferencesDialog.cpp:312
+msgid "Local CDDB files"
+msgstr "Lokale CDDB-filer"
+
+#: PreferencesDialog.cpp:316
+msgid "&Local CDDB files"
+msgstr "&Lokale CDDB-filer"
+
+#: PreferencesDialog.cpp:325
+msgid "Read CDDB data from file if available"
+msgstr "Les CDDB-data fra fil dersom mulig"
+
+#: PreferencesDialog.cpp:329
+msgid "Write CDDB data to file"
+msgstr "Skriv CDDB-data til fil"
+
+#: PreferencesDialog.cpp:334
+msgid "CDDB path:"
+msgstr "CDDB-sti:"
+
+#: PreferencesDialog.cpp:390
+msgid "Various properties"
+msgstr "Diverse egenskaper"
+
+#: PreferencesDialog.cpp:394
+msgid "&Stuff"
+msgstr "&Ting"
+
+#: PreferencesDialog.cpp:403
+msgid "Mouse click on kover preview triggers actual size."
+msgstr "Museklikk på kovers forhåndsvisning endrer til faktisk størrelse."
+
+#: PreferencesDialog.cpp:407
+msgid "Display track duration after a CDDB request."
+msgstr "Vis cd-sporets lengde etter en CDDB-forespørsel."
+
+#: PreferencesDialog.cpp:411
+msgid ""
+"Print inlet on left side of booklet.\n"
+"(slim case option)"
+msgstr ""
+"Skriv innlegget på venstre side av boken.\n"
+"(for tynne cd-etui)"
+
+#: proxy_auth.cc:49
+msgid "Enter username and password for proxy at "
+msgstr "Skriv inn brukernavn og passord for proxy "
+
+#: proxy_auth.cc:63
+msgid "User Name:"
+msgstr "Brukernavn:"
+
