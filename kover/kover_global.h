@@ -21,6 +21,8 @@
 	 Description: Header for the global struct
 */
 
+/* $Id: kover_global.h,v 1.10 2001/12/04 16:23:50 adrian Exp $ */
+
 #ifndef _KOVER_GLOBAL_H
 #define _KOVER_GLOBAL_H
 
@@ -46,7 +48,8 @@ extern "C" {
 		  int trigger_actual_size;
 		  int display_track_duration;
 		  int its_a_slim_case;
-                  int inlet_only;
+        int inlet_only;
+		  int one_page;
 
 		  char *base64encoded;
 		  

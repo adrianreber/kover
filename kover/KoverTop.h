@@ -28,13 +28,13 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: KoverTop.h,v 1.21 2001/11/19 23:57:04 adrian Exp $ */
+/* $Id: KoverTop.h,v 1.22 2001/12/04 16:23:50 adrian Exp $ */
 
 #ifndef KOVER_TOP_H
 #define KOVER_TOP_H
 
 #include "kover.h"
-#include "CDView.h"
+#include "cdview.h"
 #include "koverfile.h"
 #include "cddb_fill.h"
 #include "cdrom.h"

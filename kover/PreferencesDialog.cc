@@ -31,7 +31,7 @@
 	 16 Oct 2001: Added 'inlet only' thingy
 */
 
-/* $Id: PreferencesDialog.cc,v 1.1 2001/12/04 15:31:22 adrian Exp $ */
+/* $Id: PreferencesDialog.cc,v 1.2 2001/12/04 16:23:50 adrian Exp $ */
 
 #include "PreferencesDialog.moc"
 
@@ -47,7 +47,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
-
 
 PreferencesDialog::PreferencesDialog(QWidget *parent, const QString &caption):KDialogBase(KJanusWidget::IconList,caption,Ok|Cancel,Ok,parent) {
 	 this->parent = parent;

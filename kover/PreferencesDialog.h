@@ -21,7 +21,7 @@
 	Description: Header to PreferencesDialog.cpp
 */
 
-/* $Id: PreferencesDialog.h,v 1.11 2001/11/11 22:58:38 adrian Exp $ */
+/* $Id: PreferencesDialog.h,v 1.12 2001/12/04 16:23:50 adrian Exp $ */
 
 #ifndef PREFERENCES_DIALOG_H
 #define PREFERENCES_DIALOG_H
@@ -91,6 +91,7 @@ private:
 		  QRadioButton * its_a_slim_case;
 		  QRadioButton * inlet_only;
 		  QRadioButton * its_normal;
+		  QRadioButton * one_page;
 	 } misc_widgets;
 		  
 private slots:

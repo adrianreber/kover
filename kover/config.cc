@@ -25,6 +25,8 @@
 	 05 Apr 2001: initial thingy
 */
 
+/* $Id: config.cc,v 1.4 2001/12/04 16:23:50 adrian Exp $ */
+
 #include "config.h"
 #include <kconfig.h>
 #include <sys/stat.h>
@@ -141,6 +143,12 @@ void config_class::load_globals() {
 	 else
 		  globals.its_a_slim_case = string->toInt();
 
+	 *string = config->readEntry("one_page");
+	 if (string->isNull())
+		  globals.one_page = 0;
+	 else
+		  globals.one_page = string->toInt();
+
 	 delete (string);
 	 globals.base64encoded = NULL;
 }
@@ -181,6 +189,9 @@ void config_class::store_globals() {
 
 	 string->sprintf("%d",globals.its_a_slim_case);
 	 config->writeEntry("its_a_slim_case",*string);
+
+	 string->sprintf("%d",globals.one_page);
+	 config->writeEntry("one_page",*string);
 
 	 delete (string);
 	 _DEBUG_ fprintf(stderr,"kover: leaving config_class::store_globals()\n");

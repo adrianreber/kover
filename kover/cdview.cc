@@ -17,7 +17,7 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: CDView.cpp
+	 File: cdview.cc
 	 
 	 Description: Implements CDView Widget
 	 
@@ -28,11 +28,11 @@
 	 29 Oct 2001: Change size of the inlet title font
 */
   
-/* $Id: CDView.cpp,v 1.12 2001/11/18 23:59:33 adrian Exp $ */
+/* $Id: cdview.cc,v 1.2 2001/12/04 23:00:35 adrian Exp $ */
 
-#include "CDView.moc"
+#include "cdview.moc"
 
-#include "CDView.h"
+#include "cdview.h"
 
 #include <qimage.h>
 #include <qregexp.h>
@@ -93,21 +93,39 @@ void CDView::showPreview(bool preview) {
 }
 
 void CDView::printKover() {
+	 if (globals.one_page) {
+		  	printer->setOrientation( KPrinter::Portrait );
+			printer->setMinMax( 1, 1 );
+			printer->setFromTo( 1, 1 );
+	 }
 	 if (printer->setup(this)) {
 		  QPainter *paint = new QPainter( printer );
 		  previewMode = true; // hack
+
+		  //this is getting ugly
+		  if (!globals.one_page) {
 		  
-		  if (!globals.inlet_only) {
-				if (printer->fromPage() == 1) 
-					 drawBooklet(paint, 20, 15);
-		  }
-		  
-		  if (!globals.its_a_slim_case) {
-				if(!globals.inlet_only) 
-					 printer->newPage();
+				if (!globals.inlet_only) {
+					 if (printer->fromPage() == 1) 
+						  drawBooklet(paint, 20, 15);
+				}
 				
-				if (printer->toPage() == 2) 
-					 drawInlet( paint, 20, 15 );
+				if (!globals.its_a_slim_case) {
+					 if(!globals.inlet_only) 
+						  printer->newPage();
+					 
+					 if (printer->toPage() == 2) 
+						  drawInlet( paint, 20, 15 );
+				}
+		  } else {
+				printer->setOrientation( KPrinter::Portrait );
+				printer->setMinMax( 1, 1 );
+				printer->setFromTo( 1, 1 );
+				drawBooklet(paint, 20, 15);
+				drawInlet(paint, 20, 370);
+				printer->setOrientation( KPrinter::Landscape );
+				printer->setMinMax( 1, 2 );
+				printer->setFromTo( 1, 2 );
 		  }
 		  
 		  previewMode = false;
@@ -138,6 +156,8 @@ void CDView::drawBooklet(QPainter *p, int X, int Y) {
 						  p->setClipping( false );
 						  break;
 					 case IMG_FRONT_RIGHT:
+						  if (globals.one_page)
+								break;
 						  if (previewMode)
 								p->setClipRect(X+FRONT_H, Y, FRONT_H, FRONT_V );
 						  else
@@ -146,6 +166,8 @@ void CDView::drawBooklet(QPainter *p, int X, int Y) {
 						  p->setClipping( false );
 						  break;
 					 case IMG_FRONT_FULL:
+						  if (globals.one_page)
+								break;
 						  if (previewMode)
 								p->setClipRect( X, Y, FRONT_H*2, FRONT_V );
 						  else
@@ -161,20 +183,28 @@ void CDView::drawBooklet(QPainter *p, int X, int Y) {
 						  p->drawTiledPixmap( X, Y, FRONT_H, FRONT_V, images[i] );
 						  break;
 					 case IMG_FRONT_RIGHT:
+						  if (globals.one_page)
+								break;
 						  p->drawTiledPixmap( X+FRONT_H, Y, FRONT_H, FRONT_V, images[i] );
 						  break;
 					 case IMG_FRONT_FULL:
+						  if (globals.one_page)
+								break;
 						  p->drawTiledPixmap( X, Y, FRONT_H*2, FRONT_V, images[i] );
 						  break;
 					 }
 					 break;
 				case IMG_STRETCH:
 					 switch (kover_file->imageTarget(i)) {
-					 case IMG_FRONT_LEFT:
 					 case IMG_FRONT_FULL:
+						  if (globals.one_page)
+								break;
+					 case IMG_FRONT_LEFT:
 						  p->drawPixmap( X, Y, images[i] );
 						  break;
 					 case IMG_FRONT_RIGHT:
+						  if (globals.one_page)
+								break;
 						  p->drawPixmap( X+FRONT_H, Y, images[i] );
 						  break;
 					 }
@@ -185,19 +215,36 @@ void CDView::drawBooklet(QPainter *p, int X, int Y) {
 	 
 	 p->setFont( kover_file->titleFont() );
 	 p->setPen( kover_file->titleColor() );
-	 p->drawText( X+FRONT_H, Y+10, FRONT_H, FRONT_V-10, AlignHCenter, kover_file->title(), kover_file->title().length() );
+
+	 if (globals.one_page)
+		  p->drawText( X+10, Y+10, FRONT_H-20, FRONT_V-10, AlignHCenter, kover_file->title(), kover_file->title().length() );
+	 else
+		  p->drawText( X+FRONT_H, Y+10, FRONT_H, FRONT_V-10, AlignHCenter, kover_file->title(), kover_file->title().length() );
 	 
 	 p->setPen( black );
 	 
-	 p->drawLine( X, Y, X+FRONT_H*2, Y );
-	 p->drawLine( X, Y+FRONT_V, X+FRONT_H*2, Y+FRONT_V );
-
+	 if (globals.one_page) {
+		  //top
+		  p->drawLine( X, Y, X+FRONT_H, Y );
+		  //bottom
+		  p->drawLine( X, Y+FRONT_V, X+FRONT_H, Y+FRONT_V );
+		  //right
+	 } else {
+		  //top
+		  p->drawLine( X, Y, X+FRONT_H*2, Y );
+		  //bottom
+		  p->drawLine( X, Y+FRONT_V, X+FRONT_H*2, Y+FRONT_V );
+		  //right
+		  p->drawLine( X+FRONT_H*2, Y, X+FRONT_H*2, Y+FRONT_V );
+	 }
+	 //left
 	 p->drawLine( X, Y, X, Y+FRONT_V );
-	 p->drawLine( X+FRONT_H*2, Y, X+FRONT_H*2, Y+FRONT_V );
+	
 	 
 	 if (kover_file->backColor() == black) 
 		  p->setPen( white );
 	 
+	 //middle
 	 p->drawLine( X+FRONT_H, Y, X+FRONT_H, Y+FRONT_V );
 	 
 	 if (globals.its_a_slim_case) {

@@ -17,7 +17,7 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: KoverTop.cpp  
+	 File: KoverTop.cc
 	 
 	 Description: TopLevelWidget
 	 
@@ -52,7 +52,7 @@
 #include <kcolordialog.h>
 #include <krecentdocument.h>
 
-#define NORM_WIDTH 520
+#define NORM_WIDTH 720
 #define NORM_HEIGHT 440
 #define PREV_WIDTH 695
 #define PREV_HEIGHT 684
@@ -126,6 +126,9 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 
 	 cddb_id = new QLabel("CDDB id:", main_frame, "cddb_id");
 	 cddb_id->move( CDVIEW_X, CDVIEW_Y - 40 );
+
+	 QLabel *haha = new QLabel("Display Title", main_frame, "haha");
+	 haha->move(CDVIEW_X + CDVIEW_WIDTH, CDVIEW_Y - 40);
 	 
 	 cdview = new CDView( &kover_file, main_frame );
 	 cdview->resize( CDVIEW_WIDTH, CDVIEW_HEIGHT );
