@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Id: cdtext.cc,v 1.3 2004/09/17 20:05:15 adrian Exp $
+ * $Id: cdtext.cc,v 1.4 2004/09/20 14:56:03 adrian Exp $
  *
  * $Author: adrian $
  */
@@ -86,7 +86,7 @@ void cdtext::dump()
 }
 
 //from k3b
-void cdtext::read_cdtext()
+int cdtext::read_cdtext()
 {
 	struct cdrom_generic_command m_cmd;
 
@@ -97,7 +97,8 @@ void cdtext::read_cdtext()
 	int track = 0;
 	unsigned char header[2048];
 
-	open();
+	if(open())
+		return -1;
 
 	m_cmd.cmd[0] = 0x43;
 	m_cmd.cmd[1] = (time ? 0x2 : 0x0);
@@ -108,7 +109,11 @@ void cdtext::read_cdtext()
 	m_cmd.buffer = (unsigned char *) header;
 	m_cmd.buflen = 2;
 	m_cmd.data_direction = CGC_DATA_READ;
-	::ioctl(cdrom_fd, CDROM_SEND_PACKET, &m_cmd);
+
+	if (ioctl(cdrom_fd, CDROM_SEND_PACKET, &m_cmd)) {
+		fprintf(stderr, "%s:%d:error accessing cdrom drive!\n", __FILE__,__LINE__);
+		return -1;
+	}
 
 	dataLen = from2Byte(header) + 2;
 	m_cmd.cmd[7] = 2048 >> 8;
@@ -127,6 +132,7 @@ void cdtext::read_cdtext()
 
 	parse_cdtext(header);
 
+	return 0;
 }
 
 #define SIZE 61

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Id: cdtext.h,v 1.1 2004/09/17 18:23:36 adrian Exp $
+ * $Id: cdtext.h,v 1.2 2004/09/20 14:56:03 adrian Exp $
  *
  * $Author: adrian $
  */
@@ -41,7 +41,7 @@ class cdtext:public cdrom {
 	void add_disc_discid(string discid);
 	void add_disc_upc(string upc);
 	 cdtext(char *path);
-	void read_cdtext();
+	int read_cdtext();
 	string get_name(int track);
 	string get_performer(int track);
 	string get_disc_title();

@@ -16,13 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Id: cd-text.cc,v 1.2 2004/09/17 19:07:14 adrian Exp $
+ * $Id: cd-text.cc,v 1.3 2004/09/20 14:56:03 adrian Exp $
  *
  * $Author: adrian $
  */
 
 #include "cdtext.h"
 #include <stdio.h>
+#include <unistd.h>
 
 int main(int argc, char *argv[])
 {
@@ -43,7 +44,9 @@ int main(int argc, char *argv[])
 
 	cdtext *cd_text = new cdtext(device);
 
-	cd_text->read_cdtext();
+	usleep(10);
+	if(cd_text->read_cdtext())
+		return 1;
 	cd_text->dump();
 
 	return 0;
