@@ -26,6 +26,12 @@
 
 #include "../config.h"
 
+#ifdef ENABLE_DEBUG_OUTPUT
+#define _DEBUG_ if(_debug_)
+#else
+#define _DEBUG_ if(0)
+#endif
+
 #include <ktoolbarbutton.h>
 #include <kaboutapplication.h>
 #include <kaboutdata.h>
@@ -94,5 +100,7 @@ using std::string;
 #define SEMKEY  5
 
 #define MODE    0600
+
+extern int _debug_;
 
 #endif

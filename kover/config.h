@@ -1,6 +1,6 @@
-/** hey emacs! eat this: -*- adrian-c -*-
+/** -*- adrian-c -*-, ho!
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-	 Copyright (C) 2000, 2001 by Adrian Reber
+	 Copyright (C) 2001 by Adrian Reber
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -11,48 +11,37 @@
 	 but WITHOUT ANY WARRANTY; without even the implied warranty of
 	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	 GNU General Public License for more details.
-	
+	 
 	 You should have received a copy of the GNU General Public License
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: kover_global.h
+	 File: config.h
 	 
-	 Description: Header for the global struct
+	 Description: header for the config class
+	 
+	 Changes:
+	 
+	 13 Jun 2001: Initial creation 
 */
 
-#ifndef _KOVER_GLOBAL_H
-#define _KOVER_GLOBAL_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-	 
-	 typedef struct {
-		  char *cddb_server;
-		  char *cgi_path;
-		  int use_proxy;
-		  int proxy_from_env;
-		  char *proxy_server;
-		  int proxy_port;
-		  
-		  char *cdrom_device;
-		  int eject_cdrom;
-		  
-		  int read_local_cddb;
-		  int write_local_cddb;
-		  char *cddb_path;
-		  
-		  int trigger_actual_size;
-		  int display_track_duration;
-		  int its_a_slim_case;
-		  
-	 } kover_global;
-	 
-	 extern kover_global globals;
-	 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+#include "kover.h"
+#include <kapp.h>
 
-#endif /* _KOVER_GLOBAL_H */
+class config_class {
+
+public:
+	 config_class(KApplication *kover);
+	 void store_globals();
+	 void load_globals();
+	 void sync();
+private:
+	 char *check_cddb_dir();
+	 KApplication *kover;
+	 
+};
+
+#endif /* CONFIG_H */

@@ -13,6 +13,7 @@
    <Action name="title_font_color" />
    <Action name="contents_font" />
    <Action name="contents_font_color" />
+   <Action name="eject_cdrom" />
   </Menu>
  </MenuBar>
  <ToolBar noMerge="0" name="koverToolBar" >
@@ -24,5 +25,6 @@
   <Action name="title_font_color" />
   <Action name="contents_font" />
   <Action name="contents_font_color" />
+  <Action name="eject_cdrom" />
  </ToolBar>
 </kpartgui>

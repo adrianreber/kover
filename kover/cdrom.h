@@ -1,6 +1,6 @@
-/** hey emacs! eat this: -*- adrian-c -*-
+/** -*- adrian-c -*-
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-	 Copyright (C) 2000, 2001 by Adrian Reber
+	 Copyright (C) 2001 by Adrian Reber 
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -16,43 +16,49 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: kover_global.h
+	 File: cdrom.h 
 	 
-	 Description: Header for the global struct
+	 Description: cdrom class header
+	 
+	 Changes:
+
+	 24 Apr 2001: Initial release
+
 */
 
-#ifndef _KOVER_GLOBAL_H
-#define _KOVER_GLOBAL_H
+#ifndef CDROM_H
+#define CDROM_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-	 
-	 typedef struct {
-		  char *cddb_server;
-		  char *cgi_path;
-		  int use_proxy;
-		  int proxy_from_env;
-		  char *proxy_server;
-		  int proxy_port;
-		  
-		  char *cdrom_device;
-		  int eject_cdrom;
-		  
-		  int read_local_cddb;
-		  int write_local_cddb;
-		  char *cddb_path;
-		  
-		  int trigger_actual_size;
-		  int display_track_duration;
-		  int its_a_slim_case;
-		  
-	 } kover_global;
-	 
-	 extern kover_global globals;
-	 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+#include "../config.h"
 
-#endif /* _KOVER_GLOBAL_H */
+#include <fcntl.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+
+#ifdef HAVE_LINUX_CDROM_H
+#include <linux/cdrom.h>
+#endif
+
+#ifdef HAVE_LINUX_UCDROM_H
+#include <linux/ucdrom.h>
+#endif
+
+
+class cdrom
+{
+ public:
+  cdrom(char *_path);
+  ~cdrom();
+  int open();
+  int eject();
+ private:
+  int cdrom_fd;
+  char *path;
+};
+
+#endif

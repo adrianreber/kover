@@ -1,24 +1,30 @@
-/***************************************************************************
-                          KoverTop.h  -  TopLevelWidget                              
-                             -------------------                                         
+/** -*- adrian-c -*-
+	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
+	 Copyright (C) 1999, 2000 by Denis Oliver Kropp
+	 Copyright (C) 2000, 2001 by Adrian Reber 
+	 
+	 This program is free software; you can redistribute it and/or modify
+	 it under the terms of the GNU General Public License as published by
+	 the Free Software Foundation; either version 2 of the License, or
+	 (at your option) any later version.
+	 
+	 This program is distributed in the hope that it will be useful,
+	 but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 GNU General Public License for more details.
+	
+	 You should have received a copy of the GNU General Public License
+	 along with this program; if not, write to the Free Software
+	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+	 
+	 File: KoverTop.h 
+	 
+	 Description: TopLevelWidget
+	 
+	 Changes:
 
-    version              :                                   
-    begin                : Mon Dez 14 19:01:57 CET 1998
-                                           
-    copyright            : (C) 1998 by Denis Oliver Kropp                         
-    email                : dok@fischlustig.de                                     
- ***************************************************************************/
+*/
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   * 
- *                                                                         *
- ***************************************************************************/
-
-// alter mach kaffe
 #ifndef KOVER_TOP_H
 #define KOVER_TOP_H
 
@@ -27,6 +33,7 @@
 #include "koverfile.h"
 #include "cddb_fill.h"
 #include "CDDB.h"
+#include "cdrom.h"
 
 #include "PreferencesDialog.h"
 
@@ -42,113 +49,89 @@
 #include <kstatusbar.h>
 #include <kstddirs.h>
 
-
-
 /** KoverTop is the TopLevelWidget. */
+
 class KoverTop : public KMainWindow
 {
-		  Q_OBJECT
+	 Q_OBJECT
 public:
-		  KoverTop(const char* name=NULL );
-		  ~KoverTop();
-		  void load_globals();
-		  void store_globals();
+	 KoverTop(cdrom *cdrom_device=NULL, const char* name=NULL );
+	 ~KoverTop();
+// 	 void load_globals();
+// 	 void store_globals();
+	 void set_cdrom(cdrom *);
+
+	 
 public slots:
 void contentsBoxChanged();
-		  void titleBoxChanged();
-		  //void handleMainToolBar(int id);
-		  //void handleCdToolBar(int id);
-		  void stopPreview();
-		  void numberChecked(bool checked);
-		  void numberChanged(int number);
-		  void dataChanged(bool image);
-		  void setStatusText( const char* _status_text );
-		  void actualSize();
-		  void updateDisplay( bool update_really = false);
+	 void titleBoxChanged();
+	 void stopPreview();
+	 void numberChecked(bool checked);
+	 void numberChanged(int number);
+	 void dataChanged(bool image);
+	 void setStatusText( const char* _status_text );
+	 void actualSize();
+	 void updateDisplay( bool update_really = false);
 
-private slots:  
+private slots:
+
 void fileNew();
-		  void fileOpen();
-		  void fileSave();
-		  void fileSaveAs();
-		  void filePrint();
-		  void cut();
-		  void copy();
-		  void paste();
-/* 	void toggleStatusBar(); */
-/* 	void toggleToolBar(); */
-		  void editToolbars();
-		  void cddbFill();
-		  void preferences();
-		  void imageEmbedding();
-		  void titleFont();
-		  void titleFontColor();
-		  void contentsFont();
-		  void contentsFontColor();
-		  void backgroundColor();
-		  void cddbDone();
+	 void fileOpen();
+	 void fileSave();
+	 void fileSaveAs();
+	 void filePrint();
+	 void cut();
+	 void copy();
+	 void paste();
+	 void editToolbars();
+	 void cddbFill();
+	 void preferences();
+	 void imageEmbedding();
+	 void titleFont();
+	 void titleFontColor();
+	 void contentsFont();
+	 void contentsFontColor();
+	 void backgroundColor();
+	 void cddbDone();
+	 void cdrom_eject();
 
 private:
-		  char hexToChar( char hexc );
-		  bool queryClose();
-		  void parseFilename( QString& filename );
-		  int howAboutSaving();
-		  char *check_cddb_dir();
+	 cdrom *cdrom_device;
+	 char hexToChar( char hexc );
+	 bool queryClose();
+	 void parseFilename( QString& filename );
+	 int how_about_saving();
+// 	 char *check_cddb_dir();
 
-#ifdef USE_THREADS	
-		  int semid;
-		  struct sembuf sops[1];
-		  QTimer *timer;
-#endif
+	 bool update_display;
+	 bool end_loop;
 
-		  //QApplication *parent;
-
-		  bool update_display;
-		  bool end_loop;
-
-		  QFrame *main_frame;
+	 QFrame *main_frame;
  
-		  QString dataIcon (QString filename);
+	 QString dataIcon (QString filename);
 	
-		  KoverFile	kover_file;
-		  CDDB_Fill*	cddb_fill;
+	 KoverFile	kover_file;
+	 CDDB_Fill*	cddb_fill;
 
-		  CDDB *cddb__fill;
+	 CDDB *cddb__fill;
   
-		  QString		filename;
-		  bool		altered_data;
+	 QString		filename;
+	 bool		altered_data;
 
-		  QLabel*		title_label;
-		  QMultiLineEdit*	title_edit;
+	 QLabel*		title_label;
+	 QMultiLineEdit*	title_edit;
 
-		  QLabel*		contents_label;
-		  QMultiLineEdit*	contents_edit;
+	 QLabel*		contents_label;
+	 QMultiLineEdit*	contents_edit;
   
-		  QCheckBox*	number_check;
-		  QSpinBox*	number_spin;
+	 QCheckBox*	number_check;
+	 QSpinBox*	number_spin;
 
-		  KToolBar*	main_toolbar;
-		  KToolBar*	cd_toolbar;
-		  KStatusBar*	status_bar;
+	 KToolBar*	main_toolbar;
+	 KToolBar*	cd_toolbar;
+	 KStatusBar*	status_bar;
 
-/* 	KMenuBar *menu_bar; */
-/* 	KPopupMenu *file_menu; */
-/* 	KPopupMenu *cd_menu; */
-/* 	KPopupMenu *settings_menu; */
-/* 	KPopupMenu *help_menu; */
-	
-/* 	KToggleAction *statusbarAction; */
-/* 	KToggleAction *toolbarAction; */
-
-
-		  CDView*		cdview;
-	
-
-/* 	bool toolbar_active; */
-/* 	bool statusbar_active; */
-
+	 CDView*		cdview;
 };
 
-
-
-#endif
+#endif /* KOVER_TOP_H */

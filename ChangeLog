@@ -1,3 +1,27 @@
+2001-06-14    <adrian@lisas.de>
+
+	* CDView.cpp: booklet content on left side of inlet
+	  for slim case CDs 
+	* PreferencesDialog.cpp: added the slim case option
+	* code cleanups
+	* config.cc: new class for configuration. This used 
+	  to be in KoverTop.cpp
+	* KoverTop.cpp: fixed bug that [modified] disappears
+	  if you hit the save button
+	* main.cpp: catching SIGTERM and SIGINT and saving
+	  configuration before exiting
+	* cdrom.cc: introducing the cdrom class 
+
+2001-05-10    <adrian@lisas.de>
+
+	* ChangeLog: Do I really like this changelog style?
+	  If I do like it, why am I not using it?
+
+
+2001-05-07    <adrian@lisas.de>
+
+	* configure.in: check for good CDs included
+	
 2001-01-22    <adrian@lisas.de>
 
 	* main.cpp: great new command line option

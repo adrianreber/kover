@@ -1,4 +1,4 @@
-/** -*- adrian-c -*-
+/** hey emacs! try -*- adrian-c -*- mode
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
 	 Copyright (C) 1999, 2000 by Denis Oliver Kropp
 	 Copyright (C) 2000, 2001 by Adrian Reber 
@@ -25,12 +25,11 @@
 
 	 05 Apr 2001: globals initialization methods
 
+	 10 Jun 2001: bugfix for [modified] bug. 
+
 */
 
-
-#include "kover.h"
 #include "KoverTop.h"
-#include "cddb_fill.h"
 #include "imagedlg.h"
 
 #define NORM_WIDTH	520
@@ -45,7 +44,7 @@
 
 
 
-KoverTop::KoverTop(const char* name) : KMainWindow(0,name)
+KoverTop::KoverTop(cdrom *cdrom_device, const char* name) : KMainWindow(0,name)
 {
 #ifdef USE_THREADS
 	 if(( semid = semget( SEMKEY, SEM_CNT, MODE | IPC_CREAT )) < 0 )
@@ -56,6 +55,8 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name)
 	 update_display = false;
 	 end_loop = false;
 #endif
+
+	 this->cdrom_device = cdrom_device;
 
 	 main_frame = new QFrame(this);
   
@@ -85,12 +86,13 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name)
 	 (void)new KAction(i18n("Contents Font..."),"fonts",0,this,SLOT(contentsFont()),actionCollection(),"contents_font");
 	 (void)new KAction(i18n("Contents Fontcolor..."),"colorize",0,this,SLOT(contentsFontColor()),actionCollection(),"contents_font_color");
 	 (void)new KAction(i18n("Background Color..."),"colors",0,this,SLOT(backgroundColor()),actionCollection(),"background_color");
+	 (void)new KAction(i18n("Eject CD"),"player_eject",0,this,SLOT(cdrom_eject()),actionCollection(),"eject_cdrom");
 
 	 createGUI();
 
 	 number_spin = new QSpinBox( 1, 999, 1, main_frame, "numberspin" );
 	 number_spin->setEnabled(false);
-	 number_spin->resize( 50, 25 );
+	 number_spin->resize( 50, 25 ); 
 	 number_spin->move( 170, 5 );
 	 connect( number_spin, SIGNAL(valueChanged(int)), SLOT(numberChanged(int)) );
 
@@ -142,6 +144,12 @@ KoverTop::~KoverTop()
 	 delete status_bar;
 	 delete cddb_fill;
 	 delete cdview;
+	 _DEBUG_ fprintf(stderr,"~KoverTop()\n");
+}
+
+void KoverTop::set_cdrom(cdrom *_cdrom)
+{
+	 cdrom_device = _cdrom;
 }
 
 void KoverTop::dataChanged(bool image)
@@ -279,28 +287,17 @@ void KoverTop::stopPreview()
 	 toolBar("mainToolBar")->show();
 } 
 
-bool KoverTop::queryClose()
-{
-	 if (altered_data)
-	 {
-		  if(howAboutSaving())
+bool KoverTop::queryClose() {
+	 if (altered_data) {
+		  if(how_about_saving())
 				return false;
 	 }
-#ifdef USE_THREADS
-	 cddb_fill->killThread();
-	 if( semctl( semid, 0, IPC_RMID) < 0 )
-    {
-        perror("ERROR");
-	 }
-#endif
 	 return true;
 }
 
-void KoverTop::fileNew()
-{
-	 if (altered_data)
-	 {
-		  if(howAboutSaving())
+void KoverTop::fileNew() {
+	 if (altered_data) {
+		  if(how_about_saving())
 				return;
 	 }
   
@@ -315,7 +312,6 @@ void KoverTop::fileNew()
 	 altered_data = false;
 	 filename = "untitled";
 	 setCaption(i18n("[New Document]"), false);
-	 cddb_fill->killThread();
 }
 
 void KoverTop::fileOpen()
@@ -324,7 +320,7 @@ void KoverTop::fileOpen()
   
 	 if (altered_data)
 	 {
-		  if (howAboutSaving())
+		  if (how_about_saving())
 				return;
 	 }
   
@@ -365,7 +361,7 @@ void KoverTop::fileOpen()
 	 }
 }
 
-int KoverTop::howAboutSaving()
+int KoverTop::how_about_saving()
 {
 	 switch (KMessageBox::warningYesNoCancel( this, "Data changed since last saving!\nDo you want to save the changes?"))
 	 {
@@ -394,6 +390,7 @@ void KoverTop::fileSave()
 	 {
 		  if (kover_file.saveFile( filename ))
 		  {
+				setCaption(i18n(filename), false);
 				setStatusText( "File saved" );
 				altered_data = false;
 		  } 
@@ -430,9 +427,7 @@ void KoverTop::fileSaveAs()
 void KoverTop::filePrint()
 {
 	 cdview->printKover();
-#ifdef ENABLE_DEBUG_OUTPUT
-	 fprintf(stderr,"Printing done\n");
-#endif
+	 _DEBUG_ fprintf(stderr,"Printing done\n");
 }
 
 void KoverTop::cut()
@@ -461,8 +456,6 @@ void KoverTop::paste()
 
 void KoverTop::actualSize()
 {
-	 if (!globals.trigger_actual_size)
-		  return;
 	 cdview->resize( PREV_WIDTH, PREV_HEIGHT );
 	 cdview->move( 0, 0 );
 	 main_frame->move(0,0);
@@ -476,40 +469,6 @@ void KoverTop::actualSize()
 	 main_frame->adjustSize();
 }
 
-// void KoverTop::toggleToolBar()
-// {
-//   if (toolbarAction->isChecked())
-// 	 {
-// 		toolBar("koverToolBar")->show();
-// 		toolBar("mainToolBar")->show();
-//   		main_frame->move(0,70);
-// 		setFixedSize(NORM_WIDTH, NORM_HEIGHT);
-// 	 }
-//   else
-// 	 {
-// 		toolBar("mainToolBar")->hide();
-// 		toolBar("koverToolBar")->hide();
-// 		main_frame->move(0,38);
-// 		setFixedSize(NORM_WIDTH, NORM_HEIGHT toolBar);
-// 	 }
-// }
-
-
-// void KoverTop::toggleStatusBar()
-// {
-//   if (statusbarAction->isChecked())
-// 	 {
-// 		statusBar()->show();
-// 		setFixedSize(NORM_WIDTH, NORM_HEIGHT);
-// 	 }
-//   else
-//     { 
-// 		statusBar()->hide();
-// 		setFixedSize(NORM_WIDTH, NORM_HEIGHT-20);
-// 	 }
-
-// }
-
 void KoverTop::editToolbars()
 {
 	 KEditToolbar dlg(actionCollection());
@@ -518,50 +477,21 @@ void KoverTop::editToolbars()
 		  createGUI();
 }
 
-void KoverTop::cddbFill()
-{
-
+void KoverTop::cddbFill() {
 	 setStatusText("Initiating CDDB lookup!");
-
-#ifdef USE_THREADS
-	 timer = new QTimer(this);
-	 connect(timer, SIGNAL(timeout()),this, SLOT(cddbDone()));
-#endif
-
-	 if (altered_data)
-	 {
-		  if(howAboutSaving())
+	 if (altered_data) {
+		  if(how_about_saving())
 				return;
 	 }
 
-	 if(cddb_fill->execute())
-	 {
-#ifdef USE_THREADS
-		  sops[0].sem_num = 0;
-		  sops[0].sem_flg = IPC_NOWAIT;
-		  sops[0].sem_op  = 1;
-		  semop(semid,sops,1);
-		  timer->start(20);
-
-		  while (!end_loop) 
-		  {
-				kapp->processEvents();
-		  }
-
-		  if (update_display)
-		  {
-#endif
-				cddb_fill->setTitleAndContents();
-				disconnect( contents_edit, SIGNAL(textChanged()), this, SLOT(contentsBoxChanged()) );
-				title_edit->setText( kover_file.title() );
-				contents_edit->setText( kover_file.contents() );
-				connect( contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()) );
-				altered_data = false;
-				cddb_fill->cdInfo();
-#ifdef USE_THREADS
-				cddb_fill->killThread(); // actualy just joining... to prevent memory leaks
-		  }
-#endif
+	 if(cddb_fill->execute()) {
+		  cddb_fill->setTitleAndContents();
+		  disconnect( contents_edit, SIGNAL(textChanged()), this, SLOT(contentsBoxChanged()) );
+		  title_edit->setText( kover_file.title() );
+		  contents_edit->setText( kover_file.contents() );
+		  connect( contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()) );
+		  altered_data = false;
+		  cddb_fill->cdInfo();
 	 }
 	 update_display = false;
 	 end_loop = false;
@@ -579,9 +509,7 @@ void KoverTop::cddbDone()
 	 parent->processEvents();
 	 if (semop(semid,sops,1) > 0);
 	 {
-#ifdef ENABLE_DEBUG_OUTPUT
-		  printf("cddb lookup done\n");
-#endif
+		  _DEBUG_ fprintf(stderr,"cddb lookup done\n");
 		  timer->stop();
 		  cddb_fill->setTitleAndContents();
 		  disconnect( contents_edit, SIGNAL(textChanged()), this, SLOT(contentsBoxChanged()) );
@@ -675,190 +603,8 @@ void KoverTop::backgroundColor()
 	 delete kc;
 }
 
-void KoverTop::load_globals()
-{
-	 struct stat stat_struct;
-	 KConfig *config = kapp->config();
-	 QString *string = new QString();
-	 config->setGroup("CDDB");
-		  
-	 if ((config->readEntry("cddb_server")).isEmpty())
-		  globals.cddb_server = strdup("freedb.freedb.org");		 
-	 else
-		  globals.cddb_server = strdup((config->readEntry("cddb_server")).latin1());
-		  
-	 if ((config->readEntry("cgi_path")).isEmpty())
-		  globals.cgi_path = strdup("~cddb/cddb.cgi");
-	 else
-		  globals.cgi_path = strdup((config->readEntry("cgi_path")).latin1());
-		  
-	 if ((config->readEntry("proxy_server")).isEmpty())
-		  globals.proxy_server = NULL;
-	 else
-		  globals.proxy_server = strdup((config->readEntry("proxy_server")).latin1());
-
-	 *string = config->readEntry("proxy_port");
-	 if (string->isEmpty())
-		  globals.proxy_port = 3128;
-	 else
-		  globals.proxy_port = string->toInt();
-
-#ifdef ENABLE_DEBUG_OUTPUT
-	 fprintf(stderr,"proxy port: %d\n",globals.proxy_port);
-#endif
-
-	 *string = config->readEntry("use_proxy");
-	 if (string->isNull())
-		  globals.use_proxy = 0;
-	 else
-		  globals.use_proxy = string->toInt();
-		  
-	 *string = config->readEntry("proxy_from_env");
-	 if (string->isNull())
-		  globals.proxy_from_env = 0;
-	 else
-		  globals.proxy_from_env = string->toInt();
-
-	 config->setGroup("CDROM");
-		  
-	 if ((config->readEntry("cdrom_device")).isEmpty())
-		  globals.cdrom_device = strdup("/dev/cdrom");
-	 else
-		  globals.cdrom_device = strdup((config->readEntry("cdrom_device")).latin1());
-		    
-	 *string = config->readEntry("eject_cdrom");
-	 if (string->isNull())
-		  globals.eject_cdrom = 0;
-	 else
-		  globals.eject_cdrom = string->toInt();
-		  
-	 config->setGroup("CDDB_files");
-	 *string = config->readEntry("read_local_cddb");
-	 if (string->isNull())
-		  globals.read_local_cddb = 0;
-	 else
-		  globals.read_local_cddb = string->toInt();
-	 *string = config->readEntry("write_local_cddb");
-	 if (string->isNull())
-		  globals.write_local_cddb = 0;
-	 else
-		  globals.write_local_cddb = string->toInt();
-	 if ((config->readEntry("cddb_path")).isEmpty())
-	 {
-		  globals.cddb_path = check_cddb_dir();
-	 }
-	 else
-	 {
-		  globals.cddb_path = strdup((config->readEntry("cddb_path")).latin1());
-		  /* checking for "/" at the end */
-		  if (globals.cddb_path[strlen(globals.cddb_path)-1]!='/')
-		  {
-				char *dummy = strdup(globals.cddb_path);
-				free(globals.cddb_path);
-				globals.cddb_path = (char *) malloc(strlen(dummy)+1);
-				strcpy(globals.cddb_path,dummy);
-				strcat(globals.cddb_path,"/");
-				free(dummy);
-		  }
-		  /* does the directory exist */
-		  if (stat(globals.cddb_path,&stat_struct)==-1)
-				/* no it doesn't... let's create one */
-				if(mkdir(globals.cddb_path,0777)==-1)
-				{
-					 /* failed */
-					 free(globals.cddb_path);
-					 globals.cddb_path = NULL;
-				}
-					
-	 }
-
-	 config->setGroup("misc");
-	 *string = config->readEntry("trigger_actual_size");
-	 if (string->isNull())
-		  globals.trigger_actual_size = 1;
-	 else
-		  globals.trigger_actual_size = string->toInt();
-		  
-	 *string = config->readEntry("display_track_duration");
-	 if (string->isNull())
-		  globals.display_track_duration = 1;
-	 else
-		  globals.display_track_duration = string->toInt();
-
-	 delete (string);
+void KoverTop::cdrom_eject() {
+	 if (cdrom_device)
+		  cdrom_device->eject();
 }
 
-void KoverTop::store_globals()
-{
-	 KConfig *config = kapp->config();
-	 QString *string = new QString();
-	 config->setGroup("CDDB");
-	 config->writeEntry("cddb_server",globals.cddb_server);
-	 config->writeEntry("cgi_path",globals.cgi_path);
-	 config->writeEntry("proxy_server",globals.proxy_server);
-	 string->sprintf("%d",globals.proxy_port);
-	 config->writeEntry("proxy_port",*string);
-	 string->sprintf("%d",globals.use_proxy);
-	 config->writeEntry("use_proxy",*string);
-	 string->sprintf("%d",globals.proxy_from_env);
-	 config->writeEntry("proxy_from_env",*string);
-		  
-	 config->setGroup("CDROM");
-	 string->sprintf("%d",globals.eject_cdrom);
-	 config->writeEntry("eject_cdrom",*string);
-	 config->writeEntry("cdrom_device",globals.cdrom_device);
-
-	 config->setGroup("CDDB_files");
-	 string->sprintf("%d",globals.read_local_cddb);
-	 config->writeEntry("read_local_cddb",*string);
-	 string->sprintf("%d",globals.write_local_cddb);
-	 config->writeEntry("write_local_cddb",*string);
-	 config->writeEntry("cddb_path",globals.cddb_path);
-		  
-	 config->setGroup("misc");
-	 string->sprintf("%d",globals.trigger_actual_size);
-	 config->writeEntry("trigger_actual_size",*string);
-		  
-	 string->sprintf("%d",globals.display_track_duration);
-	 config->writeEntry("display_track_duration",*string);
-
-	 delete (string);	
-}
-
-char *KoverTop::check_cddb_dir()
-{
-	 char *home_dir = NULL;
-	 char *cddb_file = NULL;
-	 struct stat stat_struct;
-	 home_dir = getenv("HOME");
-	 if (home_dir)
-	 {
-		  if (home_dir[strlen(home_dir)-1]!='/')
-		  {
-				cddb_file = (char *) malloc(strlen(home_dir)+7+8);
-				strcpy(cddb_file,home_dir);
-				strcat(cddb_file, "/.cddb/");
-		  }
-		  else
-		  {
-				cddb_file = (char *) malloc(strlen(home_dir)+6+8);
-				strcpy(cddb_file,home_dir);
-				strcat(cddb_file, ".cddb/");
-		  }
-
-		  /* does the directory exist */
-		  if (stat(cddb_file,&stat_struct)==-1)
-				/* no it doesn't... let's create one */
-				if(mkdir(cddb_file,0777)==-1)
-				{
-					 /* failed */
-					 free(cddb_file);
-					 return NULL;
-				}
-
-		  //free(cddb_file);
-		  return cddb_file;
-	 }
-		  
-	 return NULL;
-}

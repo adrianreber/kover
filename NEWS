@@ -1,3 +1,6 @@
+kover 0.6
+	* no news
+
 kover 0.5
 	* kde 2 and qt 2.2
 	* using local (~/.cddb) files if available

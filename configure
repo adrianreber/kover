@@ -52,11 +52,11 @@ ac_help="$ac_help
 ac_help="$ac_help
   --disable-path-check    don't try to find out, where to install"
 ac_help="$ac_help
-  --enable-debug          enable debug output. [default=no] "
-ac_help="$ac_help
   --enable-kernel-threads Enable the use of the LinuxThreads port on FreeBSD/i386 only."
 ac_help="$ac_help
   --disable-threading     disables threading even if libpthread found "
+ac_help="$ac_help
+  --enable-debug          enable debug output. [default=no] "
 
 # Initialize some variables set by options.
 # The variables have the same names as the options, with
@@ -860,7 +860,7 @@ fi
 
 PACKAGE=kover
 
-VERSION=0.5
+VERSION=0.6
 
 if test "`cd $srcdir && pwd`" != "`pwd`" && test -f $srcdir/config.status; then
   { echo "configure: error: source directory already configured; run "make distclean" there first" 1>&2; exit 1; }
@@ -6359,23 +6359,8 @@ test "$program_transform_name" = "" && program_transform_name="s,x,x,"
 
 
 
-# Check whether --enable-debug or --disable-debug was given.
-if test "${enable_debug+set}" = set; then
-  enableval="$enable_debug"
-  :
-fi
-
-
-if test "$enable_debug" = yes; then
-        cat >> confdefs.h <<\EOF
-#define ENABLE_DEBUG_OUTPUT 1
-EOF
-
-fi
-
-
 echo $ac_n "checking for pthread_create in -lpthread""... $ac_c" 1>&6
-echo "configure:6379: checking for pthread_create in -lpthread" >&5
+echo "configure:6364: checking for pthread_create in -lpthread" >&5
 ac_lib_var=`echo pthread'_'pthread_create | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -6383,7 +6368,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lpthread  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 6387 "configure"
+#line 6372 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
@@ -6397,7 +6382,7 @@ int main() {
 pthread_create()
 ; return 0; }
 EOF
-if { (eval echo configure:6401: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:6386: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -6438,17 +6423,17 @@ fi
 do
 ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6
-echo "configure:6442: checking for $ac_hdr" >&5
+echo "configure:6427: checking for $ac_hdr" >&5
 if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 6447 "configure"
+#line 6432 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:6452: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:6437: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -6480,7 +6465,7 @@ done
         kde_use_kernthreads=no
       else
                 echo $ac_n "checking for pthread_join in -llthread""... $ac_c" 1>&6
-echo "configure:6484: checking for pthread_join in -llthread" >&5
+echo "configure:6469: checking for pthread_join in -llthread" >&5
 ac_lib_var=`echo lthread'_'pthread_join | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -6488,7 +6473,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-llthread  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 6492 "configure"
+#line 6477 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
@@ -6502,7 +6487,7 @@ int main() {
 pthread_join()
 ; return 0; }
 EOF
-if { (eval echo configure:6506: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:6491: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -6533,7 +6518,7 @@ fi
         
 
 echo $ac_n "checking whether $CXX supports -pthread""... $ac_c" 1>&6
-echo "configure:6537: checking whether $CXX supports -pthread" >&5
+echo "configure:6522: checking whether $CXX supports -pthread" >&5
 kde_cache=`echo pthread | sed 'y%.=/+-%___p_%'`
 if eval "test \"`echo '$''{'kde_cv_prog_cxx_$kde_cache'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -6568,7 +6553,7 @@ fi
 		
 
 echo $ac_n "checking whether $CXX supports -mt""... $ac_c" 1>&6
-echo "configure:6572: checking whether $CXX supports -mt" >&5
+echo "configure:6557: checking whether $CXX supports -mt" >&5
 kde_cache=`echo mt | sed 'y%.=/+-%___p_%'`
 if eval "test \"`echo '$''{'kde_cv_prog_cxx_$kde_cache'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -6635,7 +6620,7 @@ EOF
 
 
 echo $ac_n "checking for libtiff tiff""... $ac_c" 1>&6
-echo "configure:6639: checking for libtiff tiff" >&5
+echo "configure:6624: checking for libtiff tiff" >&5
 
 if eval "test \"`echo '$''{'kde_cv_libtiff_tiff'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -6657,7 +6642,7 @@ kde_save_CXXFLAGS="$CXXFLAGS"
 CXXFLAGS="$CXXFLAGS $all_includes $USER_INCLUDES"
 
 cat > conftest.$ac_ext <<EOF
-#line 6661 "configure"
+#line 6646 "configure"
 #include "confdefs.h"
 
 #include<tiffio.h>
@@ -6666,7 +6651,7 @@ int main() {
 return (TIFFOpen( "", "r") == 0); 
 ; return 0; }
 EOF
-if { (eval echo configure:6670: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:6655: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   
     kde_cv_libtiff_tiff="-ltiff $LIBJPEG $LIBZ"
@@ -6693,7 +6678,7 @@ if test "$kde_cv_libtiff_tiff" = "no"; then
     LIBTIFF=""
     
 echo $ac_n "checking for libtiff tiff34""... $ac_c" 1>&6
-echo "configure:6697: checking for libtiff tiff34" >&5
+echo "configure:6682: checking for libtiff tiff34" >&5
 
 if eval "test \"`echo '$''{'kde_cv_libtiff_tiff34'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -6715,7 +6700,7 @@ kde_save_CXXFLAGS="$CXXFLAGS"
 CXXFLAGS="$CXXFLAGS $all_includes $USER_INCLUDES"
 
 cat > conftest.$ac_ext <<EOF
-#line 6719 "configure"
+#line 6704 "configure"
 #include "confdefs.h"
 
 #include<tiffio.h>
@@ -6724,7 +6709,7 @@ int main() {
 return (TIFFOpen( "", "r") == 0); 
 ; return 0; }
 EOF
-if { (eval echo configure:6728: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:6713: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   
     kde_cv_libtiff_tiff34="-ltiff34 $LIBJPEG $LIBZ"
@@ -6798,7 +6783,7 @@ ac_link='rm -rf SunWS_cache; ${CXX-g++} -o conftest${ac_exeext} $CXXFLAGS $CPPFL
      kde_save_LIBS="$LIBS"
      LIBS="$LIBS $all_libraries $LIBJPEG $LIBTIFF $LIBPNG $LIBQT -lm"
      echo $ac_n "checking for kimgioRegister in -lkimgio""... $ac_c" 1>&6
-echo "configure:6802: checking for kimgioRegister in -lkimgio" >&5
+echo "configure:6787: checking for kimgioRegister in -lkimgio" >&5
 ac_lib_var=`echo kimgio'_'kimgioRegister | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -6806,7 +6791,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lkimgio  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 6810 "configure"
+#line 6795 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
@@ -6820,7 +6805,7 @@ int main() {
 kimgioRegister()
 ; return 0; }
 EOF
-if { (eval echo configure:6824: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:6809: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -6865,17 +6850,18 @@ ac_link='rm -rf SunWS_cache; ${CXX-g++} -o conftest${ac_exeext} $CXXFLAGS $CPPFL
    
 
  
+
 ac_header_dirent=no
 for ac_hdr in dirent.h sys/ndir.h sys/dir.h ndir.h
 do
 ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $ac_hdr that defines DIR""... $ac_c" 1>&6
-echo "configure:6874: checking for $ac_hdr that defines DIR" >&5
+echo "configure:6860: checking for $ac_hdr that defines DIR" >&5
 if eval "test \"`echo '$''{'ac_cv_header_dirent_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 6879 "configure"
+#line 6865 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #include <$ac_hdr>
@@ -6883,7 +6869,7 @@ int main() {
 DIR *dirp = 0;
 ; return 0; }
 EOF
-if { (eval echo configure:6887: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:6873: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   eval "ac_cv_header_dirent_$ac_safe=yes"
 else
@@ -6908,7 +6894,7 @@ done
 # Two versions of opendir et al. are in -ldir and -lx on SCO Xenix.
 if test $ac_header_dirent = dirent.h; then
 echo $ac_n "checking for opendir in -ldir""... $ac_c" 1>&6
-echo "configure:6912: checking for opendir in -ldir" >&5
+echo "configure:6898: checking for opendir in -ldir" >&5
 ac_lib_var=`echo dir'_'opendir | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -6916,7 +6902,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-ldir  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 6920 "configure"
+#line 6906 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
@@ -6930,7 +6916,7 @@ int main() {
 opendir()
 ; return 0; }
 EOF
-if { (eval echo configure:6934: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:6920: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -6952,7 +6938,7 @@ fi
 
 else
 echo $ac_n "checking for opendir in -lx""... $ac_c" 1>&6
-echo "configure:6956: checking for opendir in -lx" >&5
+echo "configure:6942: checking for opendir in -lx" >&5
 ac_lib_var=`echo x'_'opendir | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -6960,7 +6946,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lx  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 6964 "configure"
+#line 6950 "configure"
 #include "confdefs.h"
 /* Override any gcc2 internal prototype to avoid an error.  */
 #ifdef __cplusplus
@@ -6974,7 +6960,7 @@ int main() {
 opendir()
 ; return 0; }
 EOF
-if { (eval echo configure:6978: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:6964: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_lib_$ac_lib_var=yes"
 else
@@ -6997,12 +6983,12 @@ fi
 fi
 
 echo $ac_n "checking for ANSI C header files""... $ac_c" 1>&6
-echo "configure:7001: checking for ANSI C header files" >&5
+echo "configure:6987: checking for ANSI C header files" >&5
 if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 7006 "configure"
+#line 6992 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -7010,7 +6996,7 @@ else
 #include <float.h>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:7014: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:7000: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -7027,7 +7013,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 7031 "configure"
+#line 7017 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -7045,7 +7031,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 7049 "configure"
+#line 7035 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -7066,7 +7052,7 @@ if test "$cross_compiling" = yes; then
   :
 else
   cat > conftest.$ac_ext <<EOF
-#line 7070 "configure"
+#line 7056 "configure"
 #include "confdefs.h"
 #ifdef __cplusplus
 extern "C" void exit(int) throw();
@@ -7080,7 +7066,7 @@ if (XOR (islower (i), ISLOWER (i)) || toupper (i) != TOUPPER (i)) exit(2);
 exit (0); }
 
 EOF
-if { (eval echo configure:7084: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
+if { (eval echo configure:7070: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
 then
   :
 else
@@ -7104,12 +7090,12 @@ EOF
 fi
 
 echo $ac_n "checking whether time.h and sys/time.h may both be included""... $ac_c" 1>&6
-echo "configure:7108: checking whether time.h and sys/time.h may both be included" >&5
+echo "configure:7094: checking whether time.h and sys/time.h may both be included" >&5
 if eval "test \"`echo '$''{'ac_cv_header_time'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 7113 "configure"
+#line 7099 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #include <sys/time.h>
@@ -7118,7 +7104,7 @@ int main() {
 struct tm *tp;
 ; return 0; }
 EOF
-if { (eval echo configure:7122: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:7108: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   ac_cv_header_time=yes
 else
@@ -7142,17 +7128,17 @@ for ac_hdr in fcntl.h sys/time.h unistd.h stdlib.h paths.h linux/cdrom.h linux/u
 do
 ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6
-echo "configure:7146: checking for $ac_hdr" >&5
+echo "configure:7132: checking for $ac_hdr" >&5
 if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 7151 "configure"
+#line 7137 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:7156: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:7142: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -7181,12 +7167,12 @@ done
 for ac_func in usleep
 do
 echo $ac_n "checking for $ac_func""... $ac_c" 1>&6
-echo "configure:7185: checking for $ac_func" >&5
+echo "configure:7171: checking for $ac_func" >&5
 if eval "test \"`echo '$''{'ac_cv_func_$ac_func'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 7190 "configure"
+#line 7176 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char $ac_func(); below.  */
@@ -7212,7 +7198,7 @@ $ac_func();
 
 ; return 0; }
 EOF
-if { (eval echo configure:7216: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:7202: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_func_$ac_func=yes"
 else
@@ -7258,7 +7244,7 @@ fi
 
 for i in $ac_topsubdirs; do
   echo $ac_n "checking if $i should be compiled""... $ac_c" 1>&6
-echo "configure:7262: checking if $i should be compiled" >&5
+echo "configure:7248: checking if $i should be compiled" >&5
   if test -d $srcdir/$i; then
     install_it="yes"
     for j in $DO_NOT_COMPILE; do
@@ -7276,6 +7262,27 @@ echo "configure:7262: checking if $i should be compiled" >&5
 done
 
 
+
+
+# Check whether --enable-debug or --disable-debug was given.
+if test "${enable_debug+set}" = set; then
+  enableval="$enable_debug"
+  :
+fi
+
+
+if test "$enable_debug" = yes; then
+        cat >> confdefs.h <<\EOF
+#define ENABLE_DEBUG_OUTPUT 1
+EOF
+
+        echo checking if debug output is enabled... yes
+else
+	echo checking if debug output is enabled... no
+fi
+
+
+echo checking for good CDs in your shelf... yes
 
 trap '' 1 2 15
 cat > confcache <<\EOF

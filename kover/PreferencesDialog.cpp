@@ -1,4 +1,4 @@
-/** -*- adrian-c -*-
+/** hey emacs! please try this -*- adrian-c -*-
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
 	 Copyright (C) 2000, 2001 by Adrian Reber
 	 
@@ -27,6 +27,7 @@
 	 26 Dec 2000: First day of existence...
 	 25 Jan 2001: Added entries for cddb, cdrom and cddb_file page
 	 27 Jan 2001: Added misc page
+	 12 Jun 2001: Added slim case thingy
 */
 
 #include "PreferencesDialog.h"
@@ -186,44 +187,32 @@ void PreferencesDialog::slotOk()
 	 accept();
 }
 
-void PreferencesDialog::apply_settings()
-{
+void PreferencesDialog::apply_settings() {
+	 
 	 save_cddb_files();
 	 save_misc();
 
-	 if (!((cddb_widgets.proxy_port)->text()).isEmpty())
-	 {
+	 if (!((cddb_widgets.proxy_port)->text()).isEmpty()) {
 		  globals.proxy_port = ((cddb_widgets.proxy_port)->text()).toInt();
 	 }
-		 
-	 if (!((cddb_widgets.cddb_server)->text()).isEmpty())
-	 {
-					 
-#ifdef ENABLE_DEBUG_OUTPUT					 
-		  fprintf(stderr,"old value :%s\nnew value: %s\n",globals.cddb_server,((cddb_widgets.cddb_server)->text()).latin1());
-#endif
+	 
+	 if (!((cddb_widgets.cddb_server)->text()).isEmpty()) {
+		  _DEBUG_ fprintf(stderr,"kover:old value :%s\nkover:new value: %s\n",globals.cddb_server,((cddb_widgets.cddb_server)->text()).latin1());
 		  free(globals.cddb_server);
 		  globals.cddb_server = strdup(((cddb_widgets.cddb_server)->text()).latin1());
 	 }
-	
-	 if (!((cddb_widgets.cgi_path)->text()).isEmpty())
-	 {
-					 
-#ifdef ENABLE_DEBUG_OUTPUT					 
-		  fprintf(stderr,"old value :%s\nnew value: %s\n",globals.cgi_path,((cddb_widgets.cgi_path)->text()).latin1());
-#endif
+	 
+	 if (!((cddb_widgets.cgi_path)->text()).isEmpty()) {
+		  _DEBUG_ fprintf(stderr,"kover:old value :%s\nkover:new value: %s\n",globals.cgi_path,((cddb_widgets.cgi_path)->text()).latin1());
 		  free(globals.cgi_path);
 		  globals.cgi_path = strdup(((cddb_widgets.cgi_path)->text()).latin1());
 	 }
 			
-	 if (!((cddb_widgets.proxy_server)->text()).isEmpty())
-	 {
+	 if (!((cddb_widgets.proxy_server)->text()).isEmpty()) {
 		  if (globals.proxy_server)
 				free(globals.proxy_server);
 		  globals.proxy_server = strdup(((cddb_widgets.proxy_server)->text()).latin1());
-	 }
-	 else
-	 {
+	 } else {
 		  if (globals.proxy_server)
 				free(globals.proxy_server);
 		  globals.proxy_server = NULL;
@@ -245,24 +234,20 @@ void PreferencesDialog::apply_settings()
 	 else
 		  globals.eject_cdrom = 0;
 		  
-	 if (!((cdrom_widgets.cdrom_device)->text()).isEmpty())
-	 {
+	 if (!((cdrom_widgets.cdrom_device)->text()).isEmpty()) {
 		  if (globals.cdrom_device)
 				free(globals.cdrom_device);
 		  globals.cdrom_device = strdup(((cdrom_widgets.cdrom_device)->text()).latin1());
-	 }
-	 else
-	 {
+	 } else {
 		  if (globals.cdrom_device)
 				free(globals.cdrom_device);
 		  globals.cdrom_device = NULL;
 	 }
-
 }
 
 void PreferencesDialog::slotDefault()
 {
-	 ((KoverTop *)parent)->load_globals();
+	 //((KoverTop *)parent)->load_globals();
 	 switch( activePageIndex() )
 	 {
 	 case page_cddb:
@@ -445,13 +430,17 @@ void PreferencesDialog::setup_misc_page()
 
 	 QString text;
 
-	 text = i18n("Mouse click on kover preview triggers actual size");
+	 text = i18n("Mouse click on kover preview triggers actual size.");
 	 misc_widgets.trigger_actual_size = new QCheckBox( text, group, "trigger_actual_size" );
-	 gbox->addMultiCellWidget( misc_widgets.trigger_actual_size, 0, 0,0,5 );
+	 gbox->addMultiCellWidget( misc_widgets.trigger_actual_size,0,0,0,5);
 
 	 text = i18n("Display track duration after a CDDB request.");
 	 misc_widgets.display_track_duration = new QCheckBox( text, group, "display_track_duration" );
-	 gbox->addMultiCellWidget( misc_widgets.display_track_duration, 1, 1,0,5 );
+	 gbox->addMultiCellWidget( misc_widgets.display_track_duration,1,1,0,5);
+
+	 text = i18n("Print inlet on left side of booklet.\n(slim case option)");
+	 misc_widgets.its_a_slim_case = new QCheckBox( text, group, "its_a_slim_case" );
+	 gbox->addMultiCellWidget( misc_widgets.its_a_slim_case,2,2,0,5);
 
 	 set_misc();
 }
@@ -467,6 +456,11 @@ void PreferencesDialog::set_misc()
 		  misc_widgets.display_track_duration->setChecked(true);
 	 else
 		  misc_widgets.display_track_duration->setChecked(false);
+
+	 if (globals.its_a_slim_case)
+		  misc_widgets.its_a_slim_case->setChecked(true);
+	 else
+		  misc_widgets.its_a_slim_case->setChecked(false);
 		  
 }
 
@@ -481,4 +475,9 @@ void PreferencesDialog::save_misc()
 		  globals.display_track_duration = 1;
 	 else
 		  globals.display_track_duration = 0;
+
+	 if ((misc_widgets.its_a_slim_case)->isChecked())
+		  globals.its_a_slim_case = 1;
+	 else
+		  globals.its_a_slim_case = 0;
 }

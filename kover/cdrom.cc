@@ -1,6 +1,6 @@
-/** hey emacs! eat this: -*- adrian-c -*-
+/** -*- adrian-c -*-
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-	 Copyright (C) 2000, 2001 by Adrian Reber
+	 Copyright (C) 2001 by Adrian Reber 
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -16,43 +16,40 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: kover_global.h
+	 File: cdrom.cc
 	 
-	 Description: Header for the global struct
+	 Description: class for all cdrom accesses
+	 
+	 Changes:
+
+	 24 Apr 2001: Initial release
+
 */
 
-#ifndef _KOVER_GLOBAL_H
-#define _KOVER_GLOBAL_H
+#include "cdrom.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-	 
-	 typedef struct {
-		  char *cddb_server;
-		  char *cgi_path;
-		  int use_proxy;
-		  int proxy_from_env;
-		  char *proxy_server;
-		  int proxy_port;
-		  
-		  char *cdrom_device;
-		  int eject_cdrom;
-		  
-		  int read_local_cddb;
-		  int write_local_cddb;
-		  char *cddb_path;
-		  
-		  int trigger_actual_size;
-		  int display_track_duration;
-		  int its_a_slim_case;
-		  
-	 } kover_global;
-	 
-	 extern kover_global globals;
-	 
-#ifdef __cplusplus
+cdrom::cdrom(char *_path)
+{
+  path = strdup(_path);
+  cdrom_fd = -42;
 }
-#endif /* __cplusplus */
 
-#endif /* _KOVER_GLOBAL_H */
+cdrom::~cdrom()
+{
+  free (path);
+}
+
+int cdrom::open()
+{
+  return 0;
+}
+
+int cdrom::eject()
+{
+  if ((cdrom_fd = ::open(path, O_RDONLY | O_NONBLOCK)) >= 0)
+	 ioctl(cdrom_fd,CDROMEJECT);
+  close(cdrom_fd);
+  cdrom_fd = -42;
+
+  return 0;
+}

@@ -1,24 +1,31 @@
-/***************************************************************************
-                          CDView.cpp - Implements CDView Widget
-                             -------------------                                         
-
-    version              :                                   
-    begin                : Mon Dez 14 19:01:57 CET 1998
-                                           
-    copyright            : (C) 1998 by Denis Oliver Kropp                         
-    email                : dok@fischlustig.de                                     
- ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   * 
- *                                                                         *
- ***************************************************************************/
-
-// alter mach kaffe
+/** emacs, I suggest you use: -*- adrian-c -*-
+	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
+	 Copyright (C) 1998, 1999, 2000 by Denis Oliver Kropp
+	 Copyright (C) 2000, 2001 by Adrian Reber 
+	 
+	 This program is free software; you can redistribute it and/or modify
+	 it under the terms of the GNU General Public License as published by
+	 the Free Software Foundation; either version 2 of the License, or
+	 (at your option) any later version.
+	 
+	 This program is distributed in the hope that it will be useful,
+	 but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 GNU General Public License for more details.
+	 
+	 You should have received a copy of the GNU General Public License
+	 along with this program; if not, write to the Free Software
+	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+	 
+	 File: CDView.cpp
+	 
+	 Description: Implements CDView Widget
+	 
+	 Changes: 
+	 
+	 14 Dec 1998: Initial release
+*/
+  
 #include "CDView.h"
 
 #include <qimage.h>
@@ -77,71 +84,41 @@ void CDView::paintEvent( QPaintEvent * )
 		}
 }
 
-
-
-
-
 void CDView::showPreview( bool preview )
 {
   previewMode = preview;
   update();
 }
 
-void CDView::printKover()
-{
-  if ( printer->setup(this) ) 
-    {
-		QPainter *paint = new QPainter( printer );
+void CDView::printKover() {
+	 
+	 if ( printer->setup(this) ) {
+		  QPainter *paint = new QPainter( printer );
+		  
+		  previewMode = true; // hack
+      
+		  if (printer->fromPage() == 1) {
+				drawBooklet(paint, 20, 15);
+		  }
 
-	
-
-		//paint1 = new QPainter(printer);
-      
-		previewMode = true; // hack
-      
-      if (printer->fromPage() == 1)
-		  {
-			 //pthread_create(&print_thread, NULL,printThreadPage1,(void *)this);
-			 drawBooklet(paint, 20, 15);
-			 printf("Printing booklet done\n");
- 		  }
-      
-      printer->newPage();
-      
-		if (printer->toPage() == 2)
- 		  {
-			 printf("Printing inlet\n");
- 			 drawInlet( paint, 20, 15 );
-			 printf("Printing inlet done\n");
- 		  }
-		printf("Printing done\n");
-		previewMode = false;
-		printer->newPage();
-		paint->end();
-		delete (paint);
-    }
-  printf("Printing done\n");
-  return;
+		  if (!globals.its_a_slim_case) {
+				printer->newPage();
+				
+				if (printer->toPage() == 2) {
+					 drawInlet( paint, 20, 15 );
+				}
+		  }
+		  
+		  previewMode = false;
+		  paint->end();
+		  delete (paint);
+	 }
+	 return;
 }
-
-void *printThreadPage1(void *parm)
-{
-  CDView *cd_view = (CDView *) parm;
-
-  QPainter paint( cd_view->printer );
-
-#ifdef ENABLE_DEBUG_OUTPUT
-  fprintf(stderr, "[printThreadPage1()] print thread up, PID: %i\n", getpid());
-#endif
-  
-  cd_view->drawBooklet(&paint, 20, 15);
-  
-  pthread_exit(NULL);
-}
-
 
 void CDView::drawBooklet( QPainter *p, int X, int Y )
 {
+	 
   const float scale = 0.4;
   p->fillRect( X, Y, FRONT_H*2, FRONT_V, kover_file->backColor() );
 	
@@ -222,15 +199,23 @@ void CDView::drawBooklet( QPainter *p, int X, int Y )
   p->drawLine( X, Y, X, Y+FRONT_V );
   p->drawLine( X+FRONT_H*2, Y, X+FRONT_H*2, Y+FRONT_V );
   
-  if (kover_file->backColor() == black)
-	 {
+  if (kover_file->backColor() == black) {
 		p->setPen( white );
-	 }
+  }
   p->drawLine( X+FRONT_H, Y, X+FRONT_H, Y+FRONT_V );
+  
+  if (globals.its_a_slim_case) {
+		p->setFont( kover_file->contentsFont() );
+		p->setPen( kover_file->contentsColor() );
+		p->drawText( X+10, Y+10, FRONT_H-20, FRONT_V-10, AlignLeft, kover_file->contents(), kover_file->contents().length() );
+  }
 }
 
 void CDView::drawInlet( QPainter *p, int X, int Y )
 {
+	 if (globals.its_a_slim_case)
+		  return;
+
   const float scale = 0.4;
   QString title = kover_file->title();
   title.replace( QRegExp("\n"), " - " );
@@ -319,12 +304,11 @@ void CDView::drawInlet( QPainter *p, int X, int Y )
 		p->setPen( kover_file->titleColor() );
 		p->setFont( QFont("helvetica", 12) );
 		p->drawText( 38, 0, BACK_V-38, BACK_HS, AlignLeft | AlignVCenter, title, title.length() );
-	 } else
-		{
+	 } else {
 		  p->setPen( kover_file->titleColor() );
 		  p->setFont( QFont("helvetica", 12) );
 		  p->drawText( 10, 0, BACK_V-10, BACK_HS, AlignLeft | AlignVCenter, title, title.length() );
-		}
+	 }
   
   p->translate( BACK_V, BACK_HS+BACK_HI );
   p->rotate( -180 );
@@ -355,12 +339,14 @@ void CDView::drawInlet( QPainter *p, int X, int Y )
   p->drawText( 5, 7, BACK_HI-5, BACK_V-7, AlignLeft, kover_file->contents(), kover_file->contents().length() );
 }
 
-void CDView::mousePressEvent( QMouseEvent* evt )
-{
-  if (previewMode)
-	 emit stopPreview();
-  else
-	 emit actualSize();
+void CDView::mousePressEvent( QMouseEvent* evt ) {
+	 if (previewMode)
+		  emit stopPreview();
+	 else {
+		  if (!globals.trigger_actual_size)
+				return;
+		  emit actualSize();
+	 }
 }
 
 void CDView::dataChanged(bool image)

@@ -76,10 +76,6 @@ protected:
 	
 	
 private:
-	friend void *printThreadPage1(void *parm);
-	friend void *printThreadPage2(void *parm);
-	pthread_t print_thread;
-
 	QPixmap		images[3];
 	KoverFile*	kover_file;
 	bool			previewMode;

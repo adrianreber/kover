@@ -1,4 +1,4 @@
-/** -*- adrian-c -*-
+/** Hey emacs! This is: -*- adrian-c -*-
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
 	 Copyright (C) 1999, 2000 by Denis Oliver Kropp
 	 Copyright (C) 2000, 2001 by Adrian Reber 
@@ -23,10 +23,10 @@
 	 
 	 Changes: 
 	 
-	 10 Jan 1999: Initial release
-	 
+	 14 Dec 1998: Initial release
+
 	 11 Jan 2001: cddb over http
-	 
+
 	 17 Jan 2001: threading support
 
 	 14 Feb 2001: threading support disabled :(
@@ -61,182 +61,58 @@ CDDB_Fill::CDDB_Fill( KoverFile* _kover_file ) : QObject()
 	 socket_1 = 0;
 	 sock_mode = 0;
 	 sk_1 = NULL;
-#ifdef USE_THREADS
-	 cddb_thread=0;
-	 pthread_mutex_init(&cddb_lock,NULL);
-	 if(( semid = semget( SEMKEY, SEM_CNT, MODE | IPC_CREAT )) < 0 )
-	 {
-		  perror("kover:%s:%d",__FILE__,__LINE__);
-	 }
-#endif
 }
 
-CDDB_Fill::~CDDB_Fill()
-{
-
-#ifdef USE_THREADS
-	 killThread();
-#endif
-
+CDDB_Fill::~CDDB_Fill() {
 }
 
-#ifdef USE_THREADS
 
-void *cddbThread(void *parm)
-{
-	 CDDB_Fill *cddb_fill = (CDDB_Fill *) parm;
-  
-	 pthread_mutex_lock(&cddb_fill->cddb_lock);
-  
-#ifdef ENABLE_DEBUG_OUTPUT
-	 fprintf(stderr, "[cddbThread()] CDDB thread up, PID: %i\nParent has PID %i\n", getpid(),getppid());
-#endif
-
+bool CDDB_Fill::execute() {
+	 
 	 char *message;
-	 if (!cddb_fill->openCD())
-	 {
-		  return NULL;
+	 if (!openCD()) {
+		  closeCD();
+		  return false;
 	 }
-	 if (!cddb_fill->readTOC())
-	 {
-		  cddb_fill->closeCD();
-		  return NULL;
+	 if (!readTOC()) {
+		  closeCD();
+		  return false;
 	 }
-  
-  
-	 if(!cddb_fill->getCDDBFromLocalFile())
-	 {
 
-
-		  if (!cddb_fill->cddb_connect(globals.cddb_server, CDDB_PORT))
-		  {
-				cddb_fill->cddb_query();
-				cddb_fill->cddb_disconnect();
-		  }
-		  else
-		  {
-				if (errno <sys_nerr)
-				{
-					 message = (char *)malloc(strlen(sys_errlist[errno])+strlen("Connecting to CDDB server failed: "));
-					 sprintf(message,"Connecting to CDDB server failed: %s",sys_errlist[errno]);
-					 emit cddb_fill->statusText(message);
-					 free (message);
-					 emit cddb_fill->updateDisplay();
-			 
+	 if(!getCDDBFromLocalFile()) {
+		  if (!cddb_connect()) {
+				if (!cddb_query()) {
+					 cddb_disconnect();
+					 return false;
 				}
-				cddb_fill->closeCD();
-				cddb_fill->cddb_disconnect();
-
-				pthread_mutex_unlock(&cddb_fill->cddb_lock);
-		
-				return NULL;
-		
-		  }
-	 }
-   
-	 cddb_fill->closeCD();
-	
-	 emit cddb_fill->updateDisplay(true);
-  
-	 cddb_fill->sops[0].sem_num = 0;
-	 cddb_fill->sops[0].sem_flg = IPC_NOWAIT;
-	 cddb_fill->sops[0].sem_op  = -1;
-	 semop(cddb_fill->semid,cddb_fill->sops,1);
-
-	 pthread_mutex_unlock(&cddb_fill->cddb_lock);
-   
-	 return NULL;
-}
-
-#endif
-
-void CDDB_Fill::killThread()
-{
-#ifdef USE_THREAD
-	 void *dummy;
-	 pthread_detach(cddb_thread);
-	 pthread_join(cddb_thread,&dummy);
-#endif
-}
-
-
-bool CDDB_Fill::execute()
-{
-#ifdef USE_THREADS
-	 if (pthread_mutex_trylock(&cddb_lock)!=EBUSY)
-	 {
-		  pthread_mutex_unlock(&cddb_lock);
-		  pthread_create(&cddb_thread, NULL, cddbThread, (void *)this);
-		  pthread_detach(cddb_thread);
-	 }
-	 else
-	 {
-		  printf("CDDB lookup thread seems busy...\n");
-		  return false;
-	 }
-
-	 return true;
-#else
-
-	 char *message;
-	 if (!openCD())
-	 {
-		  closeCD();
-		  return false;
-	 }
-	 if (!readTOC())
-	 {
-		  closeCD();
-		  return false;
-	 }
-
-	 if(!getCDDBFromLocalFile())
-	 {
-
-	
-		  if (!cddb_connect())
-		  {
-				cddb_query();
 				cddb_disconnect();
-		  }
-		  else
-		  {
-				if (errno <sys_nerr)
-				{
+		  } else {
+				if (errno <sys_nerr) {
 					 message = (char *)malloc(strlen(sys_errlist[errno])+strlen("Connecting to CDDB server failed: "));
 					 sprintf(message,"Connecting to CDDB server failed: %s",sys_errlist[errno]);
 					 emit statusText(message);
 					 //free (message);
-			 
 				}
 				closeCD();
 				cddb_disconnect();
 				return false;
-		
 		  }
 	 }
-    
 	 closeCD();
-	  
 	 return true;
-#endif
 }
 
-void CDDB_Fill::setTitleAndContents()
-{
+void CDDB_Fill::setTitleAndContents() {
 	 QString tracks, contents;
 	 kover_file->setTitle( cdinfo.artist + "\n" + cdinfo.cdname );
-	 for (int i=0; i<cdinfo.ntracks; i++)
-	 {
-		  if (globals.display_track_duration)
-		  {
+	 for (int i=0; i<cdinfo.ntracks; i++) {
+		  if (globals.display_track_duration) {
 				int m = 0;
 				int n = 0;
 				m = cdinfo.trk.at(i)->length/60;
 				n = cdinfo.trk.at(i)->length - m*60;
 				tracks.sprintf( "(%.2d:%.2d)-%.2d. ",m,n, i+1 );
-		  }
-		  else
+		  } else
 				tracks.sprintf( "%.2d. ",i+1 );
 		  
 		  tracks.append( cdinfo.trk.at(i)->songname );
@@ -247,35 +123,28 @@ void CDDB_Fill::setTitleAndContents()
 	 kover_file->setContents( contents );
 }
 
-void CDDB_Fill::cdInfo()
-{
+void CDDB_Fill::cdInfo() {
 	 QString str;
-	
+	 
 	 str.sprintf("CD contains %d tracks, total time is %d:%02d, the magic number is 0x%x", cdinfo.ntracks, cdinfo.length/60, cdinfo.length%60, (unsigned int)cdinfo.cddb_id);
 	 emit statusText(str);
 }
 
-int CDDB_Fill::openCD()
-{
+int CDDB_Fill::openCD() {
 	 int ds;
+	 
+	 _DEBUG_ fprintf(stderr,"CD opening\n");
 
-#ifdef ENABLE_DEBUG_OUTPUT
-	 fprintf(stderr,"CD opening\n");
-#endif
-
-	 if (cd_fd != -1)
-	 {
+	 if (cd_fd != -1) {
 		  emit statusText( "Internal error: Filedescriptor is not -1, already opened?" );
 		  return false;
 	 }
-	
+	 
 	 if (!globals.cdrom_device)
 		  globals.cdrom_device = strdup("/dev/cdrom");	 
-
-	 if ((cd_fd = open(globals.cdrom_device, O_RDONLY | O_NONBLOCK)) < 0)
-	 {
-		  switch (errno)
-		  {
+	 
+	 if ((cd_fd = open(globals.cdrom_device, O_RDONLY | O_NONBLOCK)) < 0) {
+		  switch (errno) {
 		  case EACCES:
 				emit statusText(QString("You don´t have permission to read from ") + QString(globals.cdrom_device) );
 				break;
@@ -289,13 +158,11 @@ int CDDB_Fill::openCD()
 				emit statusText( QString("Unknown error while opening ") + QString(globals.cdrom_device));
 		  }
 		  return false;
-	
 	 }
 
 	 ds = ioctl(cd_fd, CDROM_DISC_STATUS);
 
-	 switch (ds)
-	 {
+	 switch (ds) {
 	 case CDS_AUDIO:
 	 case CDS_MIXED:
 		  break;
@@ -306,16 +173,12 @@ int CDDB_Fill::openCD()
 		  emit statusText( QString("There´s no audio cd in ") + QString(globals.cdrom_device) + QString("! (ignoring)") );
 		  return false;
 	 }
-#ifdef ENABLE_DEBUG_OUTPUT	
-	 fprintf(stderr,"CD opened: %d\n",ds);
-#endif
+	 _DEBUG_ fprintf(stderr,"CD opened: %d\n",ds);
 	 return true;
 }
 
-void CDDB_Fill::closeCD()
-{
-	 if (cd_fd != -1)
-	 {
+void CDDB_Fill::closeCD() {
+	 if (cd_fd != -1) {
 		  close(cd_fd);
 		  cd_fd = -1;
 	 }
@@ -323,12 +186,10 @@ void CDDB_Fill::closeCD()
 
 bool CDDB_Fill::readTOC()
 {
-	 cdrom_tochdr	hdr;
-	 cdrom_tocentry	entry;
-	 int			i, pos;
-#ifdef ENABLE_DEBUG_OUTPUT	
-	 fprintf(stderr,"Reading TOC\n");
-#endif
+	 cdrom_tochdr hdr;
+	 cdrom_tocentry entry;
+	 int i, pos;
+	 _DEBUG_ fprintf(stderr,"Reading TOC\n");
 	 if (cd_fd < 0)
 	 {
 		  emit statusText( "Internal error: Filedescriptor is -1, not opened?" );
@@ -379,9 +240,7 @@ bool CDDB_Fill::readTOC()
 	 cdinfo.cddb_id = calcID();
 	
 	 emit statusText( "Table of contents successfully read" );
-#ifdef ENABLE_DEBUG_OUTPUT	
-	 fprintf(stderr,"Table of contents successfully read: %08x\n",(unsigned int)cdinfo.cddb_id);
-#endif
+	 _DEBUG_ fprintf(stderr,"Table of contents successfully read: %08x\n",(unsigned int)cdinfo.cddb_id);
 	 return true;
 }
 
@@ -526,38 +385,6 @@ char *CDDB_Fill::cddbHello()
 
 /**** START CDDB INTENSIVE ROUTINES **************************************/
 
-
-int CDDB_Fill::CDDBReadLine(int socket_1,char *inbuffer,int len)
-{
-	 int index;
-	 char inchar;
-	 char *pos;
-  
-	 pos=inbuffer;
-
-	 for(index = 0; index < len; index++) 
-	 {
-		  read(socket_1, &inchar, 1);
-		
-		  if(inchar == '\n') 
-		  {
-				inbuffer[index] = '\0';
-			 
-				printf("....[%s]\n",pos);
-				pos=inbuffer+index;
-			 
-				if(inbuffer[0] == '.')
-					 return 1;
-			 
-				return 0;
-		  }
-
-		  inbuffer[index] = inchar;
-	 }
-  
-	 return index;
-}
-
 /** getCDDBFromLocalFile checks if there is already a file containing the disc info we are looking for.
  *  Currently the .cddb directory is used to check for available cddb entries
  *
@@ -574,18 +401,13 @@ bool CDDB_Fill::getCDDBFromLocalFile()
   
 	 if (globals.cddb_path)
 	 {
-#ifdef ENABLE_DEBUG_OUTPUT       
-		  fprintf(stderr,"CDDBDIR=%s\n",globals.cddb_path);
-#endif
-					 
+		  _DEBUG_ fprintf(stderr,"CDDBDIR=%s\n",globals.cddb_path);
 		  cddb_file = (char *) malloc(strlen(globals.cddb_path)+9);
 		  strcpy(cddb_file,globals.cddb_path);
 					 
 		  snprintf(help_string,9,"%08x",(unsigned int)cdinfo.cddb_id);
 		  strncat(cddb_file,help_string,8);
-#ifdef ENABLE_DEBUG_OUTPUT
-		  fprintf(stderr,"file : %s\n",cddb_file);
-#endif
+		  _DEBUG_ fprintf(stderr,"file : %s\n",cddb_file);
 		  cddb_file_descriptor = fopen(cddb_file, "r");
 		
 		  free (cddb_file);
@@ -605,7 +427,7 @@ bool CDDB_Fill::getCDDBFromLocalFile()
 
 
 /* Sends query to server -- this is the first thing to be done */
-void CDDB_Fill::cddb_query()
+bool CDDB_Fill::cddb_query()
 {
 	 char *code_string = NULL;
 	 char *query_buffer = NULL;
@@ -636,18 +458,14 @@ void CDDB_Fill::cddb_query()
 	 //the query string
 	 len += snprintf(query_buffer,tot_len,"cddb+query+%08x+%s+%d",
 						  (unsigned int)cdinfo.cddb_id, offset_buffer, cdinfo.length);
-#ifdef ENABLE_DEBUG_OUTPUT
-	 fprintf(stderr,"the query string : %s\n", query_buffer);
-#endif
-
+	 _DEBUG_ fprintf(stderr,"the query string : %s\n", query_buffer);
 	 http_buffer = make_cddb_request(query_buffer);
 
 	 if (!http_buffer)
-		  return;
+		  return false;
 
-#ifdef ENABLE_DEBUG_OUTPUT
-	 fprintf(stderr,"Query is [%s]\n",http_buffer);
-#endif
+	 _DEBUG_ fprintf(stderr,"Query is [%s]\n",http_buffer);
+
 	 write(socket_1,http_buffer,strlen(http_buffer));
 
 	 /* free free free */
@@ -664,17 +482,15 @@ void CDDB_Fill::cddb_query()
 
 	 code_string = (char *)malloc(21);
 	 if (read(socket_1, code_string, 20) < 0)
-		  return;
+		  return false;
 
 	 code_string[20] = 0;
 
-#ifdef ENABLE_DEBUG_OUTPUT
-	 fprintf(stderr,"answer: %s\n",code_string);
-#endif
+	 _DEBUG_ fprintf(stderr,"answer: %s\n",code_string);
 
 	 code = atoi(code_string);
 	 if (!code)
-		  return;
+		  return false;
 	
 	 strcpy(cddb_msg,strchr(code_string,32)+1);
 	 free (code_string);
@@ -686,35 +502,33 @@ void CDDB_Fill::cddb_query()
 	 {
 	 case 200:  /* Success, get the category ID */
 		  //cddb_msg looks like : "newage 670db908....."
-#ifdef ENABLE_DEBUG_OUTPUT
-		  fprintf(stderr,"code 200... %s\n",cddb_msg);
-#endif
+		  _DEBUG_ fprintf(stderr,"code 200... %s\n",cddb_msg);
 		  ss = strchr(cddb_msg, 32); //searching for " "
 		  *ss = 0; // terminating the string cddb_msg after the first " "
 		  cdinfo.category = cddb_msg; //bla bla. cddb_msg now contains only the category
 		  break;
-	 case 210:
-		  emit statusText("Multiple entries... Pick one!");
-		  return;
+	 case 211:
+		  emit statusText("Found inexact matches, list follows (until terminating marker)");
+		  return false;
 	 case 202:
 		  emit statusText("No match found.");
-		  return;
+		  return false;
 	 case 403:
 		  emit statusText("Database entry is corrupt.");
-		  return;
+		  return false;
 	 case 409:
 		  emit statusText("No handshake.");
-		  return;
+		  return false;
 	 default:
 		  cddb_msg[strlen(cddb_msg)-1] = 0;
-#ifdef ENABLE_DEBUG_OUTPUT       
-		  fprintf(stderr,"(%02d): %s\n", code, cddb_msg );
-#endif
-		  fprintf(stderr,"kover:%s:%d: this should not happen",__FILE__,__LINE__);
-		  return;
+		  _DEBUG_ fprintf(stderr,"(%02d): %s\n", code, cddb_msg );
+		  fprintf(stderr,"kover:%s:%d: this should not happen\n",__FILE__,__LINE__);
+		  return false;
 	 }
   
 	 cddb_readcdinfo(sk_2,false,true);
+
+	 return true;
 }
  
 
@@ -747,9 +561,8 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file)
 				if (!cddb_request)
 					 return;
 
-#ifdef ENABLE_DEBUG_OUTPUT
-				fprintf(stderr,"Reading : %s\n",cddb_request);
-#endif
+				_DEBUG_ fprintf(stderr,"Reading : %s\n",cddb_request);
+
 				write(socket_2,cddb_request,strlen(cddb_request));
 
 				free(cddb_request);
@@ -759,9 +572,9 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file)
 				read(socket_2,&code_string,3);
 
 				code = atoi(code_string);
-#ifdef ENABLE_DEBUG_OUTPUT
-				fprintf(stderr,"Code: %d\n", code);
-#endif
+
+				_DEBUG_ fprintf(stderr,"Code: %d\n", code);
+
 				switch(code)
 				{
 				case 210:
@@ -794,9 +607,9 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file)
 	 {
 		  if (!fgets(s, 255, desc))
 				break;
-#ifdef ENABLE_DEBUG_OUTPUT
-		  fprintf(stderr,"answer: %s",s);
-#endif
+
+		  _DEBUG_ fprintf(stderr,"answer: %s",s);
+
 		  if (!local && save_as_file && globals.write_local_cddb)
 		  {
 				if (!file_opened)
@@ -808,9 +621,9 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file)
 													 
 						  snprintf(help_string,9,"%08x",(unsigned int)cdinfo.cddb_id);
 						  strncat(cddb_file,help_string,8);
-#ifdef ENABLE_DEBUG_OUTPUT
-						  fprintf(stderr,"using file: %s\n",cddb_file);
-#endif
+
+						  _DEBUG_ fprintf(stderr,"using file: %s\n",cddb_file);
+
 						  cddb_file_descriptor = fopen(cddb_file, "w");
 		
 						  free (cddb_file);
@@ -885,9 +698,7 @@ void CDDB_Fill::CDDBSkipHTTP(int socket)
 	 char inchar;
 	 int len;
 
-#ifdef ENABLE_DEBUG_OUTPUT
-	 fprintf(stderr,"CDDBSkipHTTP\n");
-#endif
+	 _DEBUG_ fprintf(stderr,"CDDB_Fill::CDDBSkipHTTP()\n");
 
 	 while (1)
 	 {
@@ -922,9 +733,7 @@ void CDDB_Fill::CDDBSkipHTTP(int socket)
 		  {
 				read(socket,&inchar,1);
 				len++;
-#ifdef ENABLE_DEBUG_OUTPUT
-				fprintf(stderr,"%c",inchar);
-#endif
+				_DEBUG_ fprintf(stderr,"%c",inchar);
 		  }
 		  while(inchar!='\n');
 	 }

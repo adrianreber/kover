@@ -28,12 +28,20 @@
 
 #include "kover.h"
 #include "KoverTop.h"
+#include "config.h"
 
 kover_global globals;
+
+KoverTop* kovertop=NULL;
+
+config_class *config=NULL;
+
+int _debug_ = 0;
 
 static const KCmdLineOptions options[] =
 {
 	 { "advise", I18N_NOOP("Help me now!"), 0 },
+	 { "debug", I18N_NOOP("Enable debug output."), 0 },
 	 { 0, 0, 0}
 };
 
@@ -46,31 +54,34 @@ void cleanup()
 	 free (globals.cddb_path);
 }
 
+void the_end()
+{
+	 config->store_globals();
+	 config->sync();
+	 //delete (kovertop);
+	 cleanup();
+	 fprintf(stderr,"In Double Vision where drunk.\n");
+}
+
 void sighandler(int i)
 {
 	 if (i==2)
 	 {
-#ifdef ENABLE_DEBUG_OUTPUT
-		  fprintf(stderr,"kover:SIGINT received...");
-#endif
+		  _DEBUG_ fprintf(stderr,"kover:SIGINT received...");
 	 }
 	 else
 	 {
-#ifdef ENABLE_DEBUG_OUTPUT
-		  fprintf(stderr,"kover:SIGTERM received...");
-#endif
+		  _DEBUG_ fprintf(stderr,"kover:SIGTERM received...");
 	 }
-#ifdef ENABLE_DEBUG_OUTPUT
-	 fprintf(stderr,"cleaning up...\n");
-#endif
+	 _DEBUG_ fprintf(stderr,"cleaning up...\n");
+	 the_end();
+	 exit (0);
 }
 
 int main(int argc, char* argv[]) 
 {
-	 int cdrom;
-
-	 //signal(SIGTERM,sighandler);
-	 //signal(SIGINT,sighandler);
+	 signal(SIGTERM,sighandler);
+	 signal(SIGINT,sighandler);
  
 	 fprintf(stderr, "%s Release %s - Copyright (C) 1999, 2000 by Denis Oliver Kropp\n",PACKAGE,VERSION);
 	 fprintf(stderr, "                    Copyright (C) 2000, 2001 by Adrian Reber\n");
@@ -84,6 +95,8 @@ int main(int argc, char* argv[])
 	 KCmdLineArgs::addCmdLineOptions(options);
 
 	 KApplication kover;  
+
+	 config = new config_class(&kover); 
   
 	 KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
   
@@ -92,26 +105,31 @@ int main(int argc, char* argv[])
 		  fprintf(stderr,"Don't Panic!\n");
 		  exit(42);
 	 }
+
+	 if (args->isSet("debug"))
+	 {
+		  _debug_ = 1;
+		  _DEBUG_ { fprintf(stderr,"kover:debug output enabled\n"); }
+		  else { fprintf(stderr,"kover:not with debug support compiled - no debug output\n"); }
+	 }
   
 	 args->clear();
 
+	 config->load_globals();
 		  
-	 KoverTop* kovertop = new KoverTop();
-  
-	 kovertop->load_globals();
+	 cdrom *cdrom_class = new cdrom(globals.cdrom_device);
 
+	 kovertop = new KoverTop(cdrom_class);
+  
 	 kovertop->show();  
 	 int i = kover.exec();
 		  
-	 kovertop->store_globals();
-	 cleanup();
-
 	 if (globals.eject_cdrom)
 	 {
-		  if ((cdrom = open(globals.cdrom_device, O_RDONLY | O_NONBLOCK)) >= 0)
-				ioctl(cdrom,CDROMEJECT);
+		  cdrom_class->eject();
 	 }
 
-	 fprintf(stderr,"In Double Vision where drunk.\n");
+	 the_end();
+
 	 return i;
 }
