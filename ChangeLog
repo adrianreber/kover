@@ -1,4 +1,18 @@
-$Id: ChangeLog,v 1.26 2002/09/12 11:14:20 adrian Exp $
+$Id: ChangeLog,v 1.27 2002/09/13 21:39:11 adrian Exp $
+
+2002-09-13 Adrian <adrian@lisas.de>
+        * seems like we are entering a time of heavy development activity???
+        * net.cc: introduced the readline method
+          this should remove the bug reported by Jan Keirse <jan.keirse@pandora.be>
+          kover:cddb_fill.cc:702: this should not happen
+          kover:cddb_fill.cc:810: this should not happen
+        * cddb_fill.cc: using now readline() method instead of trying
+          to read the http response by itself
+        * koverfile.cc: cddb id is now also saved to the .kover files
+        * koverfile.cc: first attempts to read .k3b files. 
+          It should be to hard as these files are also xml based.
+        * bumped version to 2.8.8
+        * no release yet
 
 2002-09-11 Adrian <adrian@lisas.de>
         * PreferencesDialog.cc: option to disable unnecessary 
@@ -14,7 +28,7 @@ $Id: ChangeLog,v 1.26 2002/09/12 11:14:20 adrian Exp $
         * finally the http_proxy environment variable is honored
           (net.cc, cddb.cc, PrefrencesDialog.cc)
         * due to changes to the configuration routines , there can be issues
-	  on first startup. kover will use its buildin values.
+          on first startup. kover will use its buildin values.
         * bumped version to 2.8.7
         * released as 2.8.7
 

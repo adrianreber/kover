@@ -26,7 +26,7 @@
 
 */
 
-/* $Id: cddb.cc,v 1.3 2002/09/11 20:14:28 adrian Exp $ */
+/* $Id: cddb.cc,v 1.4 2002/09/13 21:32:06 adrian Exp $ */
 
 #include "cddb.h"
 #include "kover.h"
@@ -109,18 +109,6 @@ int cddb::skip_http_header(int socket)
             _DEBUG_ fprintf(stderr, "%c", inchar);
         } while (inchar != '\n');
     } while (len > 2);
-
-    _DEBUG_ fprintf(stderr, "%s:globals.proxy_port_env: %d\n", PACKAGE,
-        globals.proxy_port_env);
-
-    if ((!globals.use_proxy || globals.proxy_port == 80)) {
-        if ((globals.proxy_from_env && globals.proxy_port_env == 80)
-            || !globals.proxy_from_env || !globals.use_proxy) {
-            do {
-                read(socket, &inchar, 1);
-            } while (inchar != '\n');
-        }
-    }
 
     return code;
 }

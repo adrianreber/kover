@@ -26,7 +26,7 @@
 	 
 */
 
-/* $Id: net.h,v 1.1 2002/04/28 09:33:51 adrian Exp $ */
+/* $Id: net.h,v 1.2 2002/09/13 21:32:06 adrian Exp $ */
 
 #ifndef NET_H
 #define NET_H
@@ -45,6 +45,7 @@ public:
 	 net();
 	 int connect();
 	 void disconnect();
+     char *readline(int socket);
 protected:
 	 int socket_1;    /* Descriptor for our first socket */
 	 int socket_2;    /* Descriptor for our second socket */

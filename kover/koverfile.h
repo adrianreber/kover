@@ -27,7 +27,7 @@
 	 
 */
 
-/* $Id: koverfile.h,v 1.11 2002/09/11 14:35:32 adrian Exp $ */
+/* $Id: koverfile.h,v 1.12 2002/09/13 21:32:06 adrian Exp $ */
 
 #ifndef KOVERFILE_H
 #define KOVERFILE_H
@@ -37,6 +37,7 @@
 #include <qfont.h>
 #include <qcolor.h>
 #include <ksimpleconfig.h>
+#include <qdom.h>
 
 class KURL;
 
@@ -84,6 +85,7 @@ public:
 	 void set_display_title(bool title);
      void set_spine_text(bool bla);
      void set_the_spine_text(const QString& text);
+     void set_cddb_id(const QString& text);
 	 
 	 QString	title() const;
 	 QString	contents() const;
@@ -100,6 +102,7 @@ public:
 	 bool display_title() const;
      bool spine_text() const;
      QString the_spine_text() const;
+     QString cddb_id() const;
 	
 	 bool openFile( const KURL& url );
 	 bool saveFile( const KURL& url );
@@ -126,12 +129,14 @@ private:
 	 bool cd_display_title;
      bool cd_spine_text;
      QString cd_the_spine_text;
+     QString cd_cddb_id;
 	 bool save_as_XML(const QString &filename);
 	 bool open_XML(const QString &filename);
 	 bool old_save_method(const QString &filename);
 	 void old_open_method(KSimpleConfig &file);
 	 bool checkForECD( QString& filename );
 	 bool openECD( QString& filename );
+     void open_k3b_audio_project(QDomDocument doc);
 };
 
 #endif /* KOVERFILE_H */

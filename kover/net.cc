@@ -27,7 +27,7 @@
 
 */
 
-/* $Id: net.cc,v 1.3 2002/09/11 20:14:28 adrian Exp $ */
+/* $Id: net.cc,v 1.4 2002/09/13 21:32:06 adrian Exp $ */
 
 #include "net.h"
 #include "kover.h"
@@ -84,7 +84,6 @@ int net::connect()
             //now globals has the environment proxy information
             globals.proxy_server = strdup(tmp + 7);
             globals.proxy_port = atoi(s + 1);
-            globals.proxy_port_env = globals.proxy_port;
         }
     }
 
@@ -153,4 +152,21 @@ void net::disconnect()
     close(socket_2);
     if (sk_2 != NULL)
         fclose(sk_2);
+}
+
+char *net::readline(int socket)
+{
+    char inchar, char2[255];
+    int i=0;
+    
+    while (1) {
+        read(socket, &inchar, 1);
+        if (inchar==10)
+            break;
+        char2[i++]=inchar;
+        if(i>=250)
+            break;
+    }
+    char2[i]=0;
+    return strdup(char2);
 }

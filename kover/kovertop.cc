@@ -34,7 +34,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.cc,v 1.12 2002/09/11 14:35:32 adrian Exp $ */
+/* $Id: kovertop.cc,v 1.13 2002/09/13 21:32:06 adrian Exp $ */
 
 #include "kovertop.moc"
 
@@ -426,6 +426,7 @@ void KoverTop::fileOpen(const KURL & url)
 
             setStatusText(i18n("File loaded"));
             altered_data = false;
+            recent->addURL(url);
         } else
             KMessageBox::error(this,
                 i18n("Error while opening/reading file!"));
