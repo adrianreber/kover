@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.24 2004/09/17 19:13:59 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.25 2004/12/19 11:04:07 adrian Exp $ */
 
 #include "cddb_fill.moc"
 
@@ -126,11 +126,11 @@ bool CDDB_Fill::read_cdtext()
 
 	cdtext *cd_text = new cdtext(globals.cdrom_device);
 	cd_text->read_cdtext();
-	cdinfo.artist = cd_text->get_disc_performer();
-	cdinfo.cdname = cd_text->get_disc_title();
+	cdinfo.artist = cd_text->get_disc_performer().c_str();
+	cdinfo.cdname = cd_text->get_disc_title().c_str();
 	cd_text->close();
 	for (int i=1; i <= cdinfo.ntracks; i++) {
-		cdinfo.trk.at(i-1)->songname = cd_text->get_name(i);	
+		cdinfo.trk.at(i-1)->songname = cd_text->get_name(i).c_str();	
 	}
 	delete cd_text;
 	return true;
