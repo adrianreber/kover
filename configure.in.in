@@ -9,7 +9,7 @@ AC_CONFIG_AUX_DIR(admin)
 AC_ISC_POSIX
 
 dnl Automake doc recommends to do this only here. (Janos)
-AM_INIT_AUTOMAKE(kover, 2.9.5) dnl searches for some needed programs
+AM_INIT_AUTOMAKE(kover, 2.9.6) dnl searches for some needed programs
 
 KDE_SET_PREFIX
 
@@ -31,10 +31,6 @@ dnl AM_GNU_GETTEXT
 AC_PATH_KDE
 
 dnl KDE_CHECK_THREADING
-
-dnl Image readers/writers
-KDE_CHECK_KIMGIO
- 
 
 dnl Checks for header files.
 AC_HEADER_DIRENT
@@ -65,7 +61,7 @@ AC_ARG_WITH(cddb-path,[  --with-cddb-path=path   Location of local CDDB files],
             cddb_path="$withval", cddb_path="undef")
 dnl AC_SUBST(cddb_path)
 if test "$cddb_path" != undef; then
-       AC_DEFINE(CDDB_PATH,"$cddb_path",[Location of local CDDB files])
+       AC_DEFINE_UNQUOTED(CDDB_PATH,"$cddb_path",[Location of local CDDB files])
        echo Using $cddb_path as cddb directory.
 fi
 

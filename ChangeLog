@@ -1,4 +1,14 @@
-$Id: ChangeLog,v 1.40 2004/04/29 06:57:09 adrian Exp $
+$Id: ChangeLog,v 1.41 2004/09/17 19:31:43 adrian Exp $
+
+2004-09-17 Adrian Reber <adrian@lisas.de>
+        * applied patch to fix printing problems
+          with protrait and landscape from
+          Uwe Brinkhoff <sindsiesicher@gmx.de>
+        * added support to read CD-TEXT
+        * added a new binary cd-text and manual page
+        * the usual small fixes here and there
+        * released as 2.9.6
+          "look-i-can-read" release
 
 2004-04-25 Adrian Reber <adrian@lisas.de>
         * copied new files from kapptemplate to admin
