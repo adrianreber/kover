@@ -53,6 +53,6 @@ DISTCLEANFILES = $(kover_METASOURCES)
 # the -x is for skipping messages already translated in kdelibs
 messages:
 	$(XGETTEXT) -C -ki18n -ktr \
-	-x ../../src/kde-i18n-de/messages/kdelibs.po \ 
+	-x ../../src/kde-i18n-de/messages/kdelibs.po \
 	$(kover_SOURCES) && mv messages.po ../po/kover.pot
 
