@@ -1,14 +1,15 @@
-$Id: ChangeLog,v 1.8 2001/10/28 23:00:14 adrian Exp $
+$Id: ChangeLog,v 1.9 2001/10/28 23:02:45 adrian Exp $
 
 2001-10-28  Adrian  <adrian@lisas.de>
 	* some files: patch from Håvard Dahle <havardda-i18n@orakel.ntnu.no>
-     included for inlet only option.
+	  included for inlet only option.
 	* PreferencesDialog.cpp: inlet only option to radio buttons
 	* KoverTop.cpp: new font selection dialog for booklet
 	  booklet title font
 	* koverfile.cpp CDView.cpp: changes to handle booklet title font
 	* no.po: norwegian translation by
 	  Håvard Dahle <havardda-i18n@orakel.ntnu.no>
+	* released as 0.8.1
 
 2001-10-12  Adrian  <adrian@lisas.de>
 	
