@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.23 2004/04/20 21:04:28 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.24 2004/09/17 19:13:59 adrian Exp $ */
 
 #include "cddb_fill.moc"
 
@@ -66,6 +66,7 @@
 #include "inexact_dialog.h"
 #include "proxy_auth.h"
 #include "categories.h"
+#include "cdtext.h"
 
 #ifdef __FreeBSD__
 #include <sys/cdio.h>
@@ -107,6 +108,32 @@ CDDB_Fill::CDDB_Fill(KoverFile * _kover_file):QObject()
 
 CDDB_Fill::~CDDB_Fill()
 {
+}
+
+bool CDDB_Fill::read_cdtext()
+{
+	cdinfo.trk.clear();
+	if (!openCD()) {
+		closeCD();
+		return false;
+	}
+	if (!readTOC()) {
+		closeCD();
+		return false;
+	}
+
+	closeCD();
+
+	cdtext *cd_text = new cdtext(globals.cdrom_device);
+	cd_text->read_cdtext();
+	cdinfo.artist = cd_text->get_disc_performer();
+	cdinfo.cdname = cd_text->get_disc_title();
+	cd_text->close();
+	for (int i=1; i <= cdinfo.ntracks; i++) {
+		cdinfo.trk.at(i-1)->songname = cd_text->get_name(i);	
+	}
+	delete cd_text;
+	return true;
 }
 
 bool CDDB_Fill::execute()

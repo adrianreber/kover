@@ -34,7 +34,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.cc,v 1.24 2004/04/20 20:58:07 adrian Exp $ */
+/* $Id: kovertop.cc,v 1.25 2004/09/17 19:13:59 adrian Exp $ */
 
 //moc file
 #include "kovertop.moc"
@@ -170,6 +170,8 @@ void KoverTop::make_menu()
         SLOT(cdrom_eject()), actionCollection(), "eject_cdrom");
     (void) new KAction(i18n("CDDB without CD"), "network", 0, this,
         SLOT(cddb_without_cd()), actionCollection(), "cddb_without_cd");
+    (void) new KAction(i18n("Read CD-TEXT"), "network", 0, this,
+        SLOT(read_cd_text()), actionCollection(), "read_cd_text");
 
     KStdAction::keyBindings( this, SLOT( slotConfigureKeys() ), actionCollection() );
 
@@ -798,4 +800,24 @@ void KoverTop::file_mode()
     delete tmp;
     contents_edit->setText(add.c_str());
 
+}
+void KoverTop::read_cd_text() 
+{
+    setStatusText(i18n("Trying to read CD-TEXT!"));
+    if (altered_data) {
+        if (how_about_saving())
+            return;
+    }
+
+    if (cddb_fill->read_cdtext()) {
+        cddb_fill->setTitleAndContents();
+        disconnect(contents_edit, SIGNAL(textChanged()), this,
+            SLOT(contentsBoxChanged()));
+        title_edit->setText(kover_file.title());
+        contents_edit->setText(kover_file.contents());
+        connect(contents_edit, SIGNAL(textChanged()),
+            SLOT(contentsBoxChanged()));
+        altered_data = false;
+        cddb_fill->cdInfo();
+    }
 }

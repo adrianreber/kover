@@ -27,7 +27,7 @@
 
 */
 
-/* $Id: cddb_fill.h,v 1.25 2003/02/07 16:44:40 adrian Exp $ */
+/* $Id: cddb_fill.h,v 1.26 2004/09/17 19:13:59 adrian Exp $ */
 
 #ifndef CDDB_FILL_H
 #define CDDB_FILL_H
@@ -79,13 +79,15 @@ class CD_Info {
 };
 
 class CDDB_Fill:public QObject, net, cddb {
-  Q_OBJECT public:
+  Q_OBJECT;
+public:
       CDDB_Fill(KoverFile * _kover_file);
      ~CDDB_Fill();
     bool execute();
     bool execute_without_cd(const char *, int);
     void cdInfo();
     void setTitleAndContents();
+    bool read_cdtext();
       signals:void statusText(const char *);
     void update_id(unsigned long);
 
