@@ -31,7 +31,7 @@
 	 
 */
 
-/* $Id: koverfile.cc,v 1.16 2002/10/09 07:06:52 adrian Exp $ */
+/* $Id: koverfile.cc,v 1.17 2003/01/21 23:25:49 adrian Exp $ */
 
 using namespace std;
 
@@ -84,7 +84,8 @@ void KoverFile::reset()
     emit dataChanged();
 }
 
-bool KoverFile::empty() {
+bool KoverFile::empty()
+{
     if (cd_title == "" && cd_contents == "" && cd_the_spine_text == "")
         return true;
     else
@@ -941,32 +942,34 @@ void KoverFile::open_k3b_data_project(QDomDocument doc)
 
     while (!n.isNull()) {
         QDomElement e = n.toElement();
-        
+
         if (e.tagName() == "header") {
             QDomNode m = n.firstChild();
 
             while (!m.isNull()) {
                 QDomElement ee = m.toElement();
-                if (ee.tagName() =="volume_id")
+
+                if (ee.tagName() == "volume_id")
                     cd_title = ee.text();
                 m = m.nextSibling();
             }
-        }       
+        }
         if (e.tagName() == "files") {
             QDomNode m = n.firstChild();
-            
+
             while (!m.isNull()) {
                 QDomElement ee = m.toElement();
                 QDomNamedNodeMap nm = ee.attributes();
-                if (ee.tagName() =="directory")
+
+                if (ee.tagName() == "directory")
                     cd_contents += (nm.namedItem("name")).nodeValue() + "\n";
-                if (ee.tagName() =="file")
+                if (ee.tagName() == "file")
                     cd_contents += (nm.namedItem("name")).nodeValue() + "\n";
-                
+
                 m = m.nextSibling();
             }
-        }       
+        }
         n = n.nextSibling();
-    }   
+    }
     cd_contents.truncate(cd_contents.length() - 1);
 }

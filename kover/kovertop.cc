@@ -34,7 +34,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.cc,v 1.18 2003/01/13 00:04:25 adrian Exp $ */
+/* $Id: kovertop.cc,v 1.19 2003/01/21 23:25:49 adrian Exp $ */
 
 #include "kovertop.moc"
 
@@ -218,7 +218,7 @@ void KoverTop::make_option_frame()
     gbox->addMultiCellWidget(display_title, 0, 0, 0, 1);
 
     spine_text =
-        new QCheckBox(i18n("Seperate Spine Text"), group_box, "spine_text");
+        new QCheckBox(i18n("Separate Spine Text"), group_box, "spine_text");
     gbox->addMultiCellWidget(spine_text, 1, 1, 0, 1);
     connect(spine_text, SIGNAL(clicked()), SLOT(spine_text_method()));
 

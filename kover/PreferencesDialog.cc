@@ -32,11 +32,11 @@
 	 13 Mar 2002: Standard font page
 */
 
-/* $Id: PreferencesDialog.cc,v 1.14 2002/10/09 07:06:52 adrian Exp $ */
+/* $Id: PreferencesDialog.cc,v 1.15 2003/01/21 23:25:49 adrian Exp $ */
 
 #ifndef lint
 static char vcid[] =
-    "$Id: PreferencesDialog.cc,v 1.14 2002/10/09 07:06:52 adrian Exp $";
+    "$Id: PreferencesDialog.cc,v 1.15 2003/01/21 23:25:49 adrian Exp $";
 #endif /* lint */
 
 #include "PreferencesDialog.moc"
@@ -651,7 +651,7 @@ void PreferencesDialog::setup_font_page()
     connect(font_widgets.change_title_font, SIGNAL(clicked()), this,
         SLOT(title_font_dialog()));
 
-    label = new QLabel(i18n("Inlet Title Font: "), group, "inlet_title_font");
+    label = new QLabel(i18n("Spine Text Font: "), group, "inlet_title_font");
     gbox->addWidget(label, 3, 0);
 
     font_widgets.change_inlet_title_font =
