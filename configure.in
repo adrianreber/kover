@@ -20,7 +20,7 @@ AM_INIT_AUTOMAKE(kover, 2.9.5) dnl searches for some needed programs
 KDE_SET_PREFIX
 
 dnl generate the config header
-AM_CONFIG_HEADER(config.h) dnl at the distribution this done
+AC_CONFIG_HEADER(config.h) dnl at the distribution this done
 
 dnl Checks for programs.
 AC_CHECK_COMPILERS
@@ -60,7 +60,7 @@ KDE_CREATE_SUBDIRSLIST
 AC_ARG_ENABLE(debug,    [  --enable-debug          enable debug output. [default=no] ])
 
 if test "$enable_debug" = yes; then
-        AC_DEFINE(ENABLE_DEBUG_OUTPUT)
+        AC_DEFINE(ENABLE_DEBUG_OUTPUT,[],[enable debug output])
         echo checking if debug output is enabled... yes
 else
 	echo checking if debug output is enabled... no
@@ -74,7 +74,7 @@ AC_ARG_WITH(cddb-path,[  --with-cddb-path=path   Location of local CDDB files],
             cddb_path="$withval", cddb_path="undef")
 dnl AC_SUBST(cddb_path)
 if test "$cddb_path" != undef; then
-       AC_DEFINE_UNQUOTED(CDDB_PATH,"$cddb_path")
+       AC_DEFINE(CDDB_PATH,"$cddb_path".[Location of local CDDB files])
        echo Using $cddb_path as cddb directory.
 fi
 
