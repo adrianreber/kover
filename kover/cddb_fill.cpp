@@ -32,6 +32,8 @@
 	 14 Feb 2001: threading support disabled :(
 
 	 20 Feb 2001: proxy support
+
+	 17 Apr 2001: track duration
 	
 */
 
@@ -227,9 +229,15 @@ void CDDB_Fill::setTitleAndContents()
 	 for (int i=0; i<cdinfo.ntracks; i++)
 	 {
 		  if (globals.display_track_duration)
-				tracks.sprintf( "(ca:%d)-%d. ",cdinfo.trk.at(i)->length/60, i+1 );
+		  {
+				int m = 0;
+				int n = 0;
+				m = cdinfo.trk.at(i)->length/60;
+				n = cdinfo.trk.at(i)->length - m*60;
+				tracks.sprintf( "(%.2d:%.2d)-%.2d. ",m,n, i+1 );
+		  }
 		  else
-				tracks.sprintf( "%d. ",i+1 );
+				tracks.sprintf( "%.2d. ",i+1 );
 		  
 		  tracks.append( cdinfo.trk.at(i)->songname );
 		  if (i!= cdinfo.ntracks-1)
