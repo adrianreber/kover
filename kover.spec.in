@@ -1,0 +1,43 @@
+Name: kover
+Summary: WYSIWYG CD cover printer with CDDB support
+Version: @VERSION@
+Release: 1
+Copyright: GPL2
+Group: Applications/Publishing
+Source: http://lisas.de/kover/kover-%{version}.tar.gz
+URL: http://lisas.de/kover/
+Buildroot: %{_tmppath}/%{name}-%{version}-root
+
+%description
+Kover is an easy to use WYSIWYG CD cover printer with CDDB support. 
+
+%prep
+%setup -q
+./configure --prefix=%{_prefix}
+
+%build
+make -j4
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%install
+%makeinstall
+
+%files
+%defattr(644,root,root,755)
+%doc AUTHORS README COPYING TODO INSTALL THANKS ChangeLog  
+%{_datadir}/apps/kover/koverui.rc
+%{_datadir}/applnk/Multimedia/kover.desktop
+%{_datadir}/icons/*/*/*/*
+%attr(755,root,root)%{_bindir}/kover 
+
+%changelog
+* Fri Jun 22 2001 Adrian Reber <adrian@lisas.de>
+ - Integrated spec file in autoconf
+
+* Fri May 11 2001 Adrian Reber <adrian@lisas.de>
+ - Updated to kover 0.6
+
+* Fri May 11 2001 Adrian Reber <adrian@lisas.de>
+ - Initial release of kover-0.5 rpm
