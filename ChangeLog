@@ -1,7 +1,8 @@
-$Id: ChangeLog,v 1.39 2004/04/29 06:34:01 adrian Exp $
+$Id: ChangeLog,v 1.40 2004/04/29 06:57:09 adrian Exp $
 
 2004-04-25 Adrian Reber <adrian@lisas.de>
         * copied new files from kapptemplate to admin
+        * many kapptemplate related changes
         * released as 2.9.5
           "now-with-release-names" release or
           "yes-i-am-still-alive" release
@@ -10,7 +11,7 @@ $Id: ChangeLog,v 1.39 2004/04/29 06:34:01 adrian Exp $
         * kover FreeBSD patches
 
 2004-04-20 Laurent Montel <lmontel@mandrakesoft.com>
-        * First patch to add config shortcut.
+        * Patch to add config shortcut.
         * Fixe a mem leak.
 
 2003-03-14 Adrian <adrian@lisas.de>
