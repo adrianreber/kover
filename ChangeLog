@@ -1,4 +1,4 @@
-$Id: ChangeLog,v 1.21 2002/07/23 23:07:07 adrian Exp $
+$Id: ChangeLog,v 1.22 2002/07/23 23:07:49 adrian Exp $
 
 2002-07-24 Adrian <adrian@lisas.de>
         * mainly bugfixes
@@ -21,7 +21,7 @@ $Id: ChangeLog,v 1.21 2002/07/23 23:07:07 adrian Exp $
         * bumped version to 2.8.6
         * released as 2.8.6
         * tomorrow I'm going on holiday; I'm going camping 
-          in Croatia. Yes! Finally!
+          in Croatia. Yes! Finally! Holiday! Woohoo!
         * I'm now using debian. No more redhat. And apt-get
           is really great. My APT has even Super Cow Powers :)
 
