@@ -29,7 +29,7 @@
 	 
 */
 
-/* $Id: koverfile.cc,v 1.10 2002/08/15 14:12:57 adrian Exp $ */
+/* $Id: koverfile.cc,v 1.11 2002/09/11 14:35:32 adrian Exp $ */
 
 using namespace std;
 
@@ -495,6 +495,11 @@ bool KoverFile::save_as_XML(const QString &filename) {
 	 kover.setAttribute("name",PACKAGE);
 	 kover.setAttribute("version",VERSION);
 	 doc.appendChild(kover);
+    
+    //comment
+    QDomComment comment = doc.createComment("This file was created by "
+    PACKAGE " " VERSION);
+    kover.appendChild(comment);
 
 	 //title
 	 QDomElement title = doc.createElement("title");
@@ -504,6 +509,7 @@ bool KoverFile::save_as_XML(const QString &filename) {
 	 title.setAttribute("weight",cd_title_font.weight());
 	 title.setAttribute("italic",cd_title_font.italic());
 	 title.setAttribute("display",cd_display_title);
+     title.setAttribute("font_settings",cd_title_font.toString());
 	 kover.appendChild(title);
 
 	 //replace carriage return with newline
@@ -541,6 +547,7 @@ bool KoverFile::save_as_XML(const QString &filename) {
 	 inlet.setAttribute("weight",cd_inlet_title_font.weight());
 	 inlet.setAttribute("italic",cd_inlet_title_font.italic());
      inlet.setAttribute("spine_text",cd_spine_text);
+     inlet.setAttribute("font_settings",cd_inlet_title_font.toString());
      the_text = doc.createCDATASection(cd_the_spine_text.utf8());
      inlet.appendChild(the_text);
 	 kover.appendChild(inlet);
@@ -552,6 +559,7 @@ bool KoverFile::save_as_XML(const QString &filename) {
 	 content.setAttribute("size",cd_contents_font.pointSize());
 	 content.setAttribute("weight",cd_contents_font.weight());
 	 content.setAttribute("italic",cd_contents_font.italic());
+     content.setAttribute("font_settings",cd_contents_font.toString());
 	 kover.appendChild(content);
 
 	 //content text
@@ -571,7 +579,7 @@ bool KoverFile::save_as_XML(const QString &filename) {
 		  return false;
 
 	 f.writeBlock((doc.toString()).latin1(),strlen((doc.toString()).latin1()));
-	 
+	 f.putch(10); //newline
 	 f.close();
 
 	 _DEBUG_ fprintf(stderr,"%s\n",(const char *)(doc.toString()).utf8());

@@ -20,3 +20,6 @@
 
 /* Define as 1 if you have gettext and don't want to use GNU gettext.  */
 #undef HAVE_GETTEXT
+
+#undef CDDB_PATH
+

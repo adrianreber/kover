@@ -23,10 +23,11 @@
 	 Changes:
 
 	 28 Apr 2002: Initial release
+     11 Sep 2002: Support to read proxy from http_proxy env
 
 */
 
-/* $Id: net.cc,v 1.1 2002/04/28 09:33:51 adrian Exp $ */
+/* $Id: net.cc,v 1.3 2002/09/11 20:14:28 adrian Exp $ */
 
 #include "net.h"
 #include "kover.h"
@@ -38,63 +39,118 @@
 
 #include <errno.h>
 
-net::net() {
-		  socket_1 = 0;
-		  socket_2 = 0;
-		  sock_mode = 0;
-		  sk_1 = NULL;
-		  sk_2 = NULL;
+net::net()
+{
+    socket_1 = 0;
+    socket_2 = 0;
+    sock_mode = 0;
+    sk_1 = NULL;
+    sk_2 = NULL;
 }
 
-int net::connect() {
-	 sockaddr_in sin;
-	 hostent *h;
-   
-	 if (globals.use_proxy) {
-		  if ((h = gethostbyname(globals.proxy_server)) == NULL)
-				return errno;
-	 } else {
-		  if ((h = gethostbyname(globals.cddb_server)) == NULL)
-				return errno;
-	 }
- 
-	 bcopy(h->h_addr,(char *) &sin.sin_addr, h->h_length);
-			
-	 sin.sin_family = h->h_addrtype;
+int net::connect()
+{
+    sockaddr_in sin;
+    hostent *h;
+    char *proxy_server = NULL;
+    int proxy_port = 0;
+    char *tmp = NULL;
+    char *s, *ss;
 
-	 if (globals.use_proxy)
-		  sin.sin_port   = htons(globals.proxy_port);
-	 else
-		  sin.sin_port   = htons(CDDB_PORT);
+    if (globals.proxy_from_env && globals.use_proxy) {
+        //saving the proxy configuration to temporary variables
+        if (globals.proxy_server) {
+            proxy_server = strdup(globals.proxy_server);
+            free(globals.proxy_server);
+            globals.proxy_server = NULL;
+        }
+        proxy_port = globals.proxy_port;
+        //reading from environment
+        tmp = strdup(getenv("http_proxy"));
+        if (!tmp)
+            return sys_nerr + 101;
+        if (strncmp(tmp, "http://", 7))
+            return sys_nerr + 102;
+        else {
+            //finding proxy server and port
+            s = strchr(tmp + 7, 58);
+            if (!s)
+                return sys_nerr + 102;
+            *s = 0;
+            ss = strchr(s + 1, 47);
+            if (!ss)
+                return sys_nerr + 102;
+            *ss = 0;
+            //now globals has the environment proxy information
+            globals.proxy_server = strdup(tmp + 7);
+            globals.proxy_port = atoi(s + 1);
+            globals.proxy_port_env = globals.proxy_port;
+        }
+    }
 
-	 if ((socket_1 = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-		  return errno;
+    if (globals.use_proxy) {
+        if ((h = gethostbyname(globals.proxy_server)) == NULL)
+            return errno;
+    } else {
+        if ((h = gethostbyname(globals.cddb_server)) == NULL)
+            return errno;
+    }
 
-	 if ((socket_2 = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-		  return errno;
-                 
-	 if (::connect(socket_1,(struct sockaddr*)&sin, sizeof(sin)) < 0)
-		  return errno;
+    bcopy(h->h_addr, (char *) &sin.sin_addr, h->h_length);
 
-	 if (::connect(socket_2,(struct sockaddr*)&sin, sizeof(sin)) < 0)
-		  return errno;
-     
-	 sk_1 = fdopen(socket_1, "r+");
-	 sk_2 = fdopen(socket_2, "r+");
-	 if (sk_1 == NULL || sk_2 == NULL) {
-		  close(socket_1);
-		  close(socket_2);
-		  return errno;
-	 }
+    sin.sin_family = h->h_addrtype;
 
-	 return 0;   
+    if (globals.use_proxy)
+        sin.sin_port = htons(globals.proxy_port);
+    else
+        sin.sin_port = htons(CDDB_PORT);
+
+    //copying the original values into globals structure
+    if (globals.proxy_from_env && globals.use_proxy) {
+        if (globals.proxy_server) {
+            free(globals.proxy_server);
+            globals.proxy_server = NULL;
+        }
+        if (proxy_server) {
+            globals.proxy_server = strdup(proxy_server);
+            free(proxy_server);
+            proxy_server = NULL;
+        }
+        if (tmp)
+            free(tmp);
+        tmp = NULL;
+        globals.proxy_port = proxy_port;
+    }
+
+    if ((socket_1 = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+        return errno;
+
+    if ((socket_2 = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+        return errno;
+
+    if (::connect(socket_1, (struct sockaddr *) &sin, sizeof(sin)) < 0)
+        return errno;
+
+    if (::connect(socket_2, (struct sockaddr *) &sin, sizeof(sin)) < 0)
+        return errno;
+
+    sk_1 = fdopen(socket_1, "r+");
+    sk_2 = fdopen(socket_2, "r+");
+    if (sk_1 == NULL || sk_2 == NULL) {
+        close(socket_1);
+        close(socket_2);
+        return errno;
+    }
+
+    return 0;
 }
 
-void net::disconnect() {
-	 close(socket_1);
-	 if (sk_1 != NULL)
-		  fclose(sk_1);
-	 close(socket_2);
-	 if (sk_2 != NULL)
-		  fclose(sk_2);
+void net::disconnect()
+{
+    close(socket_1);
+    if (sk_1 != NULL)
+        fclose(sk_1);
+    close(socket_2);
+    if (sk_2 != NULL)
+        fclose(sk_2);
 }

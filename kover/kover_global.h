@@ -21,7 +21,7 @@
 	 Description: Header for the global struct
 */
 
-/* $Id: kover_global.h,v 1.12 2002/08/07 17:48:42 adrian Exp $ */
+/* $Id: kover_global.h,v 1.13 2002/09/11 14:35:32 adrian Exp $ */
 
 #ifndef _KOVER_GLOBAL_H
 #define _KOVER_GLOBAL_H
@@ -38,6 +38,7 @@ extern "C" {
         int proxy_from_env;
         char *proxy_server;
         int proxy_port;
+        int proxy_port_env;
 
         char *cdrom_device;
         int eject_cdrom;

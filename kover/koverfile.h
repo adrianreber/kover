@@ -1,7 +1,7 @@
 /** -*- adrian-c -*-
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-	 Copyright (C) 1999, 2000 by Denis Oliver Kropp
-	 Copyright (C) 2000, 2001 by Adrian Reber
+	 Copyright (C) 1999-2000 by Denis Oliver Kropp
+	 Copyright (C) 2000-2002 by Adrian Reber
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 	 
 */
 
-/* $Id: koverfile.h,v 1.10 2002/08/14 14:22:22 adrian Exp $ */
+/* $Id: koverfile.h,v 1.11 2002/09/11 14:35:32 adrian Exp $ */
 
 #ifndef KOVERFILE_H
 #define KOVERFILE_H

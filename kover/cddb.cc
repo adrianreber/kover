@@ -26,128 +26,168 @@
 
 */
 
-/* $Id: cddb.cc,v 1.1 2002/04/28 21:56:12 adrian Exp $ */
+/* $Id: cddb.cc,v 1.3 2002/09/11 20:14:28 adrian Exp $ */
 
 #include "cddb.h"
 #include "kover.h"
 
 #include <unistd.h>
 
-char *cddb::cddb_hello() {
-	 char *hello_buffer = NULL;
-	 char *logname = NULL;
-	 char *hostname = NULL;
+char *cddb::cddb_hello()
+{
+    char *hello_buffer = NULL;
+    char *logname = NULL;
+    char *hostname = NULL;
 
-	 logname = getenv("LOGNAME");
-	 hostname = getenv("HOSTNAME");
-	 if (!logname)
-		  logname = strdup("Kover_User");
-	 if (!hostname)
-		  hostname = strdup("Kover_Host");
-	 
-	 hello_buffer = (char *) malloc(strlen(logname)+strlen(hostname)+strlen(VERSION)+strlen(PACKAGE)+12);
-	 
-	 if (!hello_buffer)
-		  return NULL;
-	 
-	 snprintf(hello_buffer,strlen(logname)+strlen(hostname)+strlen(VERSION)+strlen(PACKAGE)+12,"&hello=%s+%s+%s+%s",logname,hostname,PACKAGE,VERSION);
-	 
-	 return hello_buffer;
+    logname = getenv("LOGNAME");
+    hostname = getenv("HOSTNAME");
+    if (!logname)
+        logname = strdup("Kover_User");
+    if (!hostname)
+        hostname = strdup("Kover_Host");
+
+    hello_buffer =
+        (char *) malloc(strlen(logname) + strlen(hostname) +
+        strlen(VERSION) + strlen(PACKAGE) + 12);
+
+    if (!hello_buffer)
+        return NULL;
+
+    snprintf(hello_buffer,
+        strlen(logname) + strlen(hostname) + strlen(VERSION) +
+        strlen(PACKAGE) + 12, "&hello=%s+%s+%s+%s", logname, hostname,
+        PACKAGE, VERSION);
+
+    return hello_buffer;
 }
 
-int cddb::skip_http_header(int socket) {
-	 char inchar, char2[4];
-	 int len,code=-1;
+int cddb::skip_http_header(int socket)
+{
+    char inchar, char2[4];
+    int len, code = -1;
 
-	 _DEBUG_ fprintf(stderr,"%s:cddb::skip_http_header(int socket)\n",PACKAGE);
+    _DEBUG_ fprintf(stderr, "%s:cddb::skip_http_header(int socket)\n",
+        PACKAGE);
 
-	 /* The following is _really_ ugly... */
-	 /* don't look */
+    /* The following is _really_ ugly... */
+    /* don't look */
 
-	 while (1) {
-		  read(socket,&inchar,1);
-		  if(inchar=='H') {
-				read(socket,&inchar,1);
-				if(inchar=='T') {
-					 read(socket,&inchar,1);
-					 if(inchar=='T') {
-						  read(socket,&inchar,1);
-						  if(inchar=='P') {
-								read(socket,&inchar,1);
-								if(inchar=='/')
-									 break;									 
-						  }
-					 }
-					 
-				}
-		  }
-	 }
+    while (1) {
+        read(socket, &inchar, 1);
+        if (inchar == 'H') {
+            read(socket, &inchar, 1);
+            if (inchar == 'T') {
+                read(socket, &inchar, 1);
+                if (inchar == 'T') {
+                    read(socket, &inchar, 1);
+                    if (inchar == 'P') {
+                        read(socket, &inchar, 1);
+                        if (inchar == '/')
+                            break;
+                    }
+                }
 
-	 /* remove 1.1 */
-	 read(socket,&char2,4);
-	 
-	 read(socket,&char2,3);
+            }
+        }
+    }
 
-	 code = atoi(char2);
+    /* remove 1.1 */
+    read(socket, &char2, 4);
 
-	 _DEBUG_ fprintf(stderr,"%s:cddb::skip_http_header():http code:%d\n",PACKAGE,code);
+    read(socket, &char2, 3);
 
-	 do {
-		  len=0;
-		  do {
-				read(socket,&inchar,1);
-				len++;
-				_DEBUG_ fprintf(stderr,"%c",inchar);
-		  } while(inchar!='\n');
-	 } while(len>2);
- 
-	 if (!globals.use_proxy || globals.proxy_port==80) {	
-		  do {
-				read(socket,&inchar,1);
-		  } while(inchar!='\n');
-	 }
-	 
-	 return code;
+    code = atoi(char2);
+
+    _DEBUG_ fprintf(stderr, "%s:cddb::skip_http_header():http code:%d\n",
+        PACKAGE, code);
+
+    do {
+        len = 0;
+        do {
+            read(socket, &inchar, 1);
+            len++;
+            _DEBUG_ fprintf(stderr, "%c", inchar);
+        } while (inchar != '\n');
+    } while (len > 2);
+
+    _DEBUG_ fprintf(stderr, "%s:globals.proxy_port_env: %d\n", PACKAGE,
+        globals.proxy_port_env);
+
+    if ((!globals.use_proxy || globals.proxy_port == 80)) {
+        if ((globals.proxy_from_env && globals.proxy_port_env == 80)
+            || !globals.proxy_from_env || !globals.use_proxy) {
+            do {
+                read(socket, &inchar, 1);
+            } while (inchar != '\n');
+        }
+    }
+
+    return code;
 }
 
-char * cddb::make_cddb_request(char *query_me, bool use_auth) {
-	 char *hello_buffer = NULL;
-	 char *return_me = NULL;
-	 int length;
-	
-	 hello_buffer = cddb_hello();
+char *cddb::make_cddb_request(char *query_me, bool use_auth)
+{
+    char *hello_buffer = NULL;
+    char *return_me = NULL;
+    int length;
 
-	 if (!hello_buffer) {
-		  return strdup("ERRGREET");
-	 }
+    hello_buffer = cddb_hello();
 
-	 length = strlen(hello_buffer);
+    if (!hello_buffer) {
+        return strdup("ERRGREET");
+    }
 
-	 if (globals.use_proxy) {
-		  if (use_auth && globals.base64encoded) {
-				length += strlen("GET http://  /  ?cmd=    &proto=   HTTP/1.1    Host:       User-Agent:   /   Accept: text/plain  Proxy-authorization: Basic %s")+strlen(globals.cddb_server)
-					 +strlen(globals.cgi_path)+strlen(query_me)+strlen(KOVER_CDDB_LEVEL)+strlen(globals.cddb_server)+strlen(PACKAGE)+strlen(VERSION)+strlen(globals.base64encoded)+10; 
-		  } else {
-				length += strlen("GET http://  /  ?cmd=    &proto=   HTTP/1.1    Host:       User-Agent:   /   Accept: text/plain  ")+strlen(globals.cddb_server)
-					 +strlen(globals.cgi_path)+strlen(query_me)+strlen(KOVER_CDDB_LEVEL)+strlen(globals.cddb_server)+strlen(PACKAGE)+strlen(VERSION)+10; 
-		  }
-		  return_me = (char *)malloc(length);
-		  if (use_auth && globals.base64encoded ) {
-				snprintf(return_me,length,"GET http://%s/%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\nProxy-authorization: Basic %s\n\n",
-							globals.cddb_server,globals.cgi_path,query_me,hello_buffer,KOVER_CDDB_LEVEL,globals.cddb_server,PACKAGE,VERSION,globals.base64encoded);
-		  } else {
-				snprintf(return_me,length,"GET http://%s/%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\n\n",
-							globals.cddb_server,globals.cgi_path,query_me,hello_buffer,KOVER_CDDB_LEVEL,globals.cddb_server,PACKAGE,VERSION);
-		  }
-	 } else {
-		  length += strlen("GET /  ?cmd=    &proto=   HTTP/1.1    Host:       User-Agent:   /   Accept: text/plain  ")
-				+strlen(globals.cgi_path)+strlen(query_me)+strlen(KOVER_CDDB_LEVEL)+strlen(globals.cddb_server)+strlen(PACKAGE)+strlen(VERSION)+10;
-		  return_me = (char *)malloc(length);
-		  snprintf(return_me,length,"GET /%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\n\n",
-					  globals.cgi_path,query_me,hello_buffer,KOVER_CDDB_LEVEL,globals.cddb_server,PACKAGE,VERSION);
-	 }
-	
-	 free(hello_buffer);
+    length = strlen(hello_buffer);
 
-	 return return_me;
+    if (globals.use_proxy) {
+
+        if (use_auth && globals.base64encoded) {
+            length +=
+                strlen
+                ("GET http://  /  ?cmd=    &proto=   HTTP/1.1    Host:       User-Agent:   /   Accept: text/plain  Proxy-authorization: Basic %s")
+                + strlen(globals.cddb_server)
+                + strlen(globals.cgi_path) + strlen(query_me) +
+                strlen(KOVER_CDDB_LEVEL) + strlen(globals.cddb_server) +
+                strlen(PACKAGE) + strlen(VERSION) +
+                strlen(globals.base64encoded) + 10;
+        } else {
+            length +=
+                strlen
+                ("GET http://  /  ?cmd=    &proto=   HTTP/1.1    Host:       User-Agent:   /   Accept: text/plain  ")
+                + strlen(globals.cddb_server)
+                + strlen(globals.cgi_path) + strlen(query_me) +
+                strlen(KOVER_CDDB_LEVEL) + strlen(globals.cddb_server) +
+                strlen(PACKAGE) + strlen(VERSION) + 10;
+        }
+        return_me = (char *) malloc(length);
+        if (use_auth && globals.base64encoded) {
+            snprintf(return_me, length,
+                "GET http://%s/%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\nProxy-authorization: Basic %s\n\n",
+                globals.cddb_server, globals.cgi_path, query_me, hello_buffer,
+                KOVER_CDDB_LEVEL, globals.cddb_server, PACKAGE, VERSION,
+                globals.base64encoded);
+        } else {
+            snprintf(return_me, length,
+                "GET http://%s/%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\n\n",
+                globals.cddb_server, globals.cgi_path, query_me, hello_buffer,
+                KOVER_CDDB_LEVEL, globals.cddb_server, PACKAGE, VERSION);
+        }
+
+    } else {
+        length +=
+            strlen
+            ("GET /  ?cmd=    &proto=   HTTP/1.1    Host:       User-Agent:   /   Accept: text/plain  ")
+            + strlen(globals.cgi_path) + strlen(query_me) +
+            strlen(KOVER_CDDB_LEVEL) + strlen(globals.cddb_server) +
+            strlen(PACKAGE) + strlen(VERSION) + 10;
+        return_me = (char *) malloc(length);
+        snprintf(return_me, length,
+            "GET /%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\n\n",
+            globals.cgi_path, query_me, hello_buffer, KOVER_CDDB_LEVEL,
+            globals.cddb_server, PACKAGE, VERSION);
+    }
+
+    free(hello_buffer);
+
+    return return_me;
 }

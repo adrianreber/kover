@@ -1,6 +1,6 @@
 <!DOCTYPE kover>
 <kover version="2.8.6" name="kover" >
-<title size="26" weight="50" display="0" color="#000000" font="helvetica" italic="0" >
+<!--This file was created by kover 2.8.6--> <title font_settings="helvetica,26,-1,5,50,0,0,0,0,0" size="26" weight="50" display="0" color="#000000" font="helvetica" italic="0" >
 <text><![CDATA[öädfg]]></text>
   <text><![CDATA[sdfgläsödlfgl]]></text>
   <text><![CDATA[]]></text>
@@ -11,13 +11,13 @@
  <img target="0" mode="0" src="" />
  <img target="0" mode="0" src="" />
  <general bgcolor="#ffffff" number="0" />
- <inlet size="9" weight="50" spine_text="1" font="helvetica" italic="0" ><![CDATA[Adrian]]></inlet>
- <content size="11" weight="50" color="#000000" font="helvetica" italic="0" >
+ <inlet font_settings="helvetica,9,-1,5,50,0,0,0,0,0" size="9" weight="50" spine_text="1" font="helvetica" italic="0" ><![CDATA[Adrian]]></inlet>
+ <content font_settings="helvetica,11,-1,5,50,0,0,0,0,0" size="11" weight="50" color="#000000" font="helvetica" italic="0" >
 <text><![CDATA[dfgh]]></text>
   <text><![CDATA[]]></text>
   <text><![CDATA[dfgh]]></text>
   <text><![CDATA[]]></text>
-  <text><![CDATA[]]></text>
+  <text><![CDATA[äÄäöhh]]></text>
   <text><![CDATA[dfghdfgh]]></text>
   <text><![CDATA[]]></text>
   <text><![CDATA[]]></text>

@@ -21,7 +21,7 @@
 	Description: Header to PreferencesDialog.h
 */
 
-/* $Id: PreferencesDialog.h,v 1.19 2002/08/16 22:45:48 adrian Exp $ */
+/* $Id: PreferencesDialog.h,v 1.20 2002/09/11 14:35:32 adrian Exp $ */
 
 #ifndef PREFERENCES_DIALOG_H
 #define PREFERENCES_DIALOG_H
@@ -37,28 +37,28 @@ using namespace std;
 
 class PreferencesDialog:public KDialogBase {
   Q_OBJECT public:
-      PreferencesDialog(QWidget * parent, const QString & caption);
-     ~PreferencesDialog();
+      PreferencesDialog (QWidget * parent, const QString & caption);
+     ~PreferencesDialog ();
 
   private:
-    void setupCDDBPage();
-    void setupCDROMPage();
-    void setup_cddb_files_page();
-    void setup_misc_page();
-    void setup_font_page();
-    void setup_cover_page();
+    void setupCDDBPage ();
+    void setupCDROMPage ();
+    void setup_cddb_files_page ();
+    void setup_misc_page ();
+    void setup_font_page ();
+    void setup_cover_page ();
 
-    void apply_settings();
+    void apply_settings ();
 
-    void set_cddb();
-    void set_cdrom();
-    void set_cddb_files();
-    void set_misc();
-    void set_cover();
+    void set_cddb ();
+    void set_cdrom ();
+    void set_cddb_files ();
+    void set_misc ();
+    void set_cover ();
 
-    void save_cddb_files();
-    void save_misc();
-    void save_cover();
+    void save_cddb_files ();
+    void save_misc ();
+    void save_cover ();
 
     struct cddb_widgets {
         QLineEdit *cddb_server;
@@ -102,10 +102,10 @@ class PreferencesDialog:public KDialogBase {
     struct misc_widgets {
         QCheckBox *save_position;
         QCheckBox *disable_animation;
-     } misc_widgets;
+        QCheckBox *trigger_actual_size;
+    } misc_widgets;
 
     struct cover_widgets {
-        QCheckBox *trigger_actual_size;
         QCheckBox *display_track_duration;
         QRadioButton *its_a_slim_case;
         QRadioButton *inlet_only;
@@ -113,7 +113,7 @@ class PreferencesDialog:public KDialogBase {
         QRadioButton *one_page;
         QLabel *inlet;
         QLabel *booklet;
-     } cover_widgets;
+    } cover_widgets;
 
     struct font_widgets {
         QButton *change_content_font;
@@ -121,15 +121,15 @@ class PreferencesDialog:public KDialogBase {
         QButton *change_inlet_title_font;
     } font_widgets;
 
-    private slots:void use_proxy(bool status);
-    void use_proxy_env(bool status);
-    virtual void slotOk(void);
-    virtual void slotDefault();
-    void content_font_dialog();
-    void title_font_dialog();
-    void inlet_title_font_dialog();
-    void output_changed(int type);
-    void browsing();
+    private slots:void use_proxy (bool status);
+    void use_proxy_env (bool status);
+    virtual void slotOk (void);
+    virtual void slotDefault ();
+    void content_font_dialog ();
+    void title_font_dialog ();
+    void inlet_title_font_dialog ();
+    void output_changed (int type);
+    void browsing ();
 };
 
 #endif /* PREFERENCES_DIALOG_H */

@@ -34,7 +34,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.cc,v 1.11 2002/08/15 14:12:57 adrian Exp $ */
+/* $Id: kovertop.cc,v 1.12 2002/09/11 14:35:32 adrian Exp $ */
 
 #include "kovertop.moc"
 
@@ -647,6 +647,12 @@ void KoverTop::cddb_without_cd()
 {
     int display_track_duration = globals.display_track_duration;
 
+    setStatusText(i18n("Initiating CDDB lookup!"));
+    if (altered_data) {
+        if (how_about_saving())
+            return;
+    }
+    
     globals.display_track_duration = 0;
     without_cd *without = new without_cd();
 

@@ -25,7 +25,7 @@
 	 05 Apr 2001: initial thingy
 */
 
-/* $Id: config.cc,v 1.6 2002/08/07 17:48:42 adrian Exp $ */
+/* $Id: config.cc,v 1.7 2002/09/11 14:35:32 adrian Exp $ */
 
 #include "config.h"
 #include <kconfig.h>
@@ -138,24 +138,6 @@ void config_class::load_globals()
     else
         globals.trigger_actual_size = string->toInt();
 
-    *string = config->readEntry("display_track_duration");
-    if (string->isNull())
-        globals.display_track_duration = 1;
-    else
-        globals.display_track_duration = string->toInt();
-
-    *string = config->readEntry("its_a_slim_case");
-    if (string->isNull())
-        globals.its_a_slim_case = 0;
-    else
-        globals.its_a_slim_case = string->toInt();
-
-    *string = config->readEntry("one_page");
-    if (string->isNull())
-        globals.one_page = 0;
-    else
-        globals.one_page = string->toInt();
-
     *string = config->readEntry("xpos");
     if (string->isNull())
         globals.xpos = 0;
@@ -179,42 +161,61 @@ void config_class::load_globals()
         globals.disable_animation = 0;
     else
         globals.disable_animation = string->toInt();
+    
+    *string = config->readEntry("display_track_duration");
+    if (string->isNull())
+        globals.display_track_duration = 1;
+    else
+        globals.display_track_duration = string->toInt();
+
+    config->setGroup("cover");
+    *string = config->readEntry("its_a_slim_case");
+    if (string->isNull())
+        globals.its_a_slim_case = 0;
+    else
+        globals.its_a_slim_case = string->toInt();
+
+    *string = config->readEntry("one_page");
+    if (string->isNull())
+        globals.one_page = 0;
+    else
+        globals.one_page = string->toInt();
 
     config->setGroup("fonts");
-    if ((config->readEntry("content_font")).isEmpty())
+    if ((config->readEntry("content_font_settings")).isEmpty())
         globals.content_font = new QFont("helvetica", 16);
     else {
         QFont *bla = new QFont();
 
-        bla->setRawName(config->readEntry("content_font"));
+        bla->fromString(config->readEntry("content_font_settings"));
         globals.content_font = new QFont(*bla);
         delete(bla);
         _DEBUG_ fprintf(stderr, "kover:font loaded: %s\n",
             ((globals.content_font)->rawName()).latin1());
     }
 
-    if ((config->readEntry("title_font")).isEmpty())
+    if ((config->readEntry("title_font_settings")).isEmpty())
         globals.title_font = new QFont("helvetica", 32);
     else {
         QFont *bla = new QFont();
 
-        bla->setRawName(config->readEntry("title_font"));
+        bla->fromString(config->readEntry("title_font_settings"));
         globals.title_font = new QFont(*bla);
         delete(bla);
         _DEBUG_ fprintf(stderr, "kover:font loaded: %s\n",
             ((globals.title_font)->rawName()).latin1());
     }
 
-    if ((config->readEntry("inlet_title_font")).isEmpty())
+    if ((config->readEntry("inlet_title_font_settings")).isEmpty())
         globals.inlet_title_font = new QFont("helvetica", 32);
     else {
         QFont *bla = new QFont();
 
-        bla->setRawName(config->readEntry("inlet_title_font"));
+        bla->fromString(config->readEntry("inlet_title_font_settings"));
         globals.inlet_title_font = new QFont(*bla);
         delete(bla);
-        _DEBUG_ fprintf(stderr, "kover:font loaded: %s\n",
-            ((globals.inlet_title_font)->rawName()).latin1());
+        _DEBUG_ fprintf(stderr, "kover:font loaded: %s\n%s\n",
+            ((globals.inlet_title_font)->rawName()).latin1(),config->readEntry("inlet_title_font").latin1());
     }
 
     delete(string);
@@ -258,12 +259,6 @@ void config_class::store_globals()
     string->sprintf("%d", globals.display_track_duration);
     config->writeEntry("display_track_duration", *string);
 
-    string->sprintf("%d", globals.its_a_slim_case);
-    config->writeEntry("its_a_slim_case", *string);
-
-    string->sprintf("%d", globals.one_page);
-    config->writeEntry("one_page", *string);
-
     string->sprintf("%d", globals.xpos);
     config->writeEntry("xpos", *string);
 
@@ -276,13 +271,20 @@ void config_class::store_globals()
     string->sprintf("%d", globals.disable_animation);
     config->writeEntry("disable_animation", *string);
 
+    config->setGroup("cover"); 
+    string->sprintf("%d", globals.its_a_slim_case);
+    config->writeEntry("its_a_slim_case", *string);
+
+    string->sprintf("%d", globals.one_page);
+    config->writeEntry("one_page", *string);
+
     config->setGroup("fonts");
-    config->writeEntry("content_font",
-        ((globals.content_font)->rawName()).latin1());
-    config->writeEntry("title_font",
-        ((globals.title_font)->rawName()).latin1());
-    config->writeEntry("inlet_title_font",
-        ((globals.inlet_title_font)->rawName()).latin1());
+    config->writeEntry("content_font_settings",
+        ((globals.content_font)->toString()));
+    config->writeEntry("title_font_settings",
+        ((globals.title_font)->toString()));
+    config->writeEntry("inlet_title_font_settings",
+        ((globals.inlet_title_font)->toString()));
 
     delete(string);
     _DEBUG_ fprintf(stderr, "kover: leaving config_class::store_globals()\n");
@@ -293,7 +295,9 @@ char *config_class::check_cddb_dir()
     char *home_dir = NULL;
     char *cddb_file = NULL;
     struct stat stat_struct;
-
+#ifdef CDDB_PATH
+             return strdup(CDDB_PATH);
+#endif
     home_dir = getenv("HOME");
     if (home_dir) {
         if (home_dir[strlen(home_dir) - 1] != '/') {

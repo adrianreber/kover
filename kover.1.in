@@ -1,4 +1,4 @@
-.TH kover "1" "April 2002" "kover @VERSION@" "User Commands"
+.TH kover "1" "September 2002" "kover @VERSION@" "User Commands"
 .SH NAME
 kover \- CD Cover printer
 .SH SYNOPSIS
@@ -44,6 +44,13 @@ file
 File to load
 .SH SEE ALSO
 .BR cddb-id (1)
+.SH AVAILABILITY
+kover can be found at http://lisas.de/kover/.
+.SH REPORTING BUGS
+Report bugs to <adrian@lisas.de>.
 .SH AUTHOR
 This manual page was created newly by Rene Engelhard
 <mail@rene-engelhard.de> for the Debian GNU/Linux Distribution, because the original package does not have one.
+.PP
+The software is written by Adrian Reber <adrian@lisas.de>. The original kover was written by Denis Oliver Kropp <dok@fischlustig.de>.
+

@@ -1,4 +1,22 @@
-$Id: ChangeLog,v 1.22 2002/07/23 23:07:49 adrian Exp $
+$Id: ChangeLog,v 1.26 2002/09/12 11:14:20 adrian Exp $
+
+2002-09-11 Adrian <adrian@lisas.de>
+        * PreferencesDialog.cc: option to disable unnecessary 
+          animations
+        * PreferencesDialog.cc: divided one page (misc) into 
+          two pages (misc and cover)
+        * config.cc: global fonts are now saved in a different format
+          this should work better than using XLFD (X Logical Font Description)
+        * koverfile.cc: prepared to switch to a different font save
+          format if necessary in the future
+        * kovertop.cc: on the "More >>" page is a option to change
+          the spine text independently from the title
+        * finally the http_proxy environment variable is honored
+          (net.cc, cddb.cc, PrefrencesDialog.cc)
+        * due to changes to the configuration routines , there can be issues
+	  on first startup. kover will use its buildin values.
+        * bumped version to 2.8.7
+        * released as 2.8.7
 
 2002-07-24 Adrian <adrian@lisas.de>
         * mainly bugfixes

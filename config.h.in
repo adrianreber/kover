@@ -9,6 +9,8 @@
 /* Define for debug messages */
 #undef ENABLE_DEBUG_OUTPUT
 
+#undef CDDB_PATH
+
 /* The number of bytes in a char.  */
 #undef SIZEOF_CHAR
 

@@ -26,11 +26,12 @@
 	 
 */
 
-/* $Id: server.cc,v 1.4 2002/07/23 14:35:35 adrian Exp $ */
+/* $Id: server.cc,v 1.5 2002/09/11 20:19:51 adrian Exp $ */
 
 #include "server.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
 
 server::server(const char *cddb_answer) {
 	 string answer = cddb_answer;

@@ -27,7 +27,7 @@
 
 */
 
-/* $Id: cddb_fill.h,v 1.22 2002/05/05 22:01:54 adrian Exp $ */
+/* $Id: cddb_fill.h,v 1.23 2002/09/11 14:35:32 adrian Exp $ */
 
 #ifndef CDDB_FILL_H
 #define CDDB_FILL_H
@@ -120,7 +120,7 @@ protected:
 	 char *cddbHello();
 	
 	 bool cddb_query();
-	 void cddb_readcdinfo(FILE *desc, bool local, bool save_as_file, bool without=false);
+	 bool cddb_readcdinfo(FILE *desc, bool local, bool save_as_file, bool without=false);
 	
 public:
 	 void setTitleAndContents();

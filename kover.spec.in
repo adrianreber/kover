@@ -31,9 +31,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/applnk/Multimedia/kover.desktop
 %{_datadir}/icons/*/*/*/*
 %{_datadir}/locale/*/*/*
+%{_datadir}/apps/kover/pics/*
 %{_datadir}/mimelnk/application/x-kover.desktop
 %{_mandir}/man1/*
 %attr(755,root,root)%{_bindir}/kover 
+%attr(755,root,root)%{_bindir}/cddb-id
 
 %changelog
 * Sun Nov 18 2001 Adrian Reber <adrian@lisas.de>
