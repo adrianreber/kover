@@ -32,11 +32,11 @@
 	 13 Mar 2002: Standard font page
 */
 
-/* $Id: PreferencesDialog.cc,v 1.11 2002/08/14 08:10:12 adrian Exp $ */
+/* $Id: PreferencesDialog.cc,v 1.12 2002/08/16 22:45:48 adrian Exp $ */
 
 #ifndef lint
 static char vcid[] =
-    "$Id: PreferencesDialog.cc,v 1.11 2002/08/14 08:10:12 adrian Exp $";
+    "$Id: PreferencesDialog.cc,v 1.12 2002/08/16 22:45:48 adrian Exp $";
 #endif /* lint */
 
 #include "PreferencesDialog.moc"
@@ -67,9 +67,9 @@ PreferencesDialog::PreferencesDialog(QWidget * parent,
     setupCDDBPage();
     setupCDROMPage();
     setup_cddb_files_page();
-    setup_misc_page();
-    setup_font_page();
     setup_cover_page();
+    setup_font_page();
+    setup_misc_page();
 }
 
 PreferencesDialog::~PreferencesDialog()
@@ -130,6 +130,8 @@ void PreferencesDialog::setupCDDBPage(void)
     text = i18n("Use 'http_proxy' environment variable");
     cddb_widgets.proxy_from_env =
         new QCheckBox(text, group, "proxy_from_env");
+    connect(cddb_widgets.proxy_from_env,SIGNAL(toggled(bool)), this,
+        SLOT(use_proxy_env(bool)));
     gbox->addMultiCellWidget(cddb_widgets.proxy_from_env, 1, 1, 0, 5);
     label = new QLabel(i18n("Proxy server:"), group, "proxylabel");
     gbox->addWidget(label, 2, 0);
@@ -187,7 +189,7 @@ void PreferencesDialog::setupCDROMPage(void)
 void PreferencesDialog::use_proxy(bool status)
 {
     if (status) {
-        cddb_widgets.proxy_from_env->setEnabled(false);
+        cddb_widgets.proxy_from_env->setEnabled(true);
         cddb_widgets.proxy_server->setEnabled(true);
         cddb_widgets.proxy_port->setEnabled(true);
     } else {
@@ -195,6 +197,11 @@ void PreferencesDialog::use_proxy(bool status)
         cddb_widgets.proxy_server->setEnabled(false);
         cddb_widgets.proxy_port->setEnabled(false);
     }
+}
+
+void PreferencesDialog::use_proxy_env(bool status)
+{
+    printf("%d\n",status);
 }
 
 void PreferencesDialog::slotOk()
@@ -236,6 +243,7 @@ void PreferencesDialog::apply_settings()
 {
     save_cddb_files();
     save_misc();
+    save_cover();
 
     if (!((cddb_widgets.proxy_port)->text()).isEmpty()) {
         globals.proxy_port = ((cddb_widgets.proxy_port)->text()).toInt();
@@ -318,9 +326,9 @@ void PreferencesDialog::slotDefault()
     case page_font:
 
         break;
-    
-    case page_cover:
 
+    case page_cover:
+        set_cover();
         break;
 
     default:
@@ -471,19 +479,16 @@ void PreferencesDialog::save_cddb_files()
     }
 }
 
-void PreferencesDialog::setup_misc_page()
+void PreferencesDialog::setup_cover_page()
 {
-    QFrame *page = addPage(i18n("Miscellaneous"), i18n("Various properties"),
-        BarIcon("misc", KIcon::SizeMedium));
+    QFrame *page = addPage(i18n("Cover Options"), i18n("Cover Options"),
+        BarIcon("kover", KIcon::SizeMedium));
     QVBoxLayout *topLayout = new QVBoxLayout(page, 0, spacingHint());
 
-    //QButtonGroup *bgroup = new QButtonGroup(page);
-
-    //QGroupBox *group = new QGroupBox(i18n("&Stuff"),page );
-    QButtonGroup *group = new QButtonGroup(i18n("&Stuff"), page);
+    QButtonGroup *group = new QButtonGroup(i18n("Cover Options"), page);
 
     topLayout->addWidget(group);
-    //topLayout->addWidget(bgroup);
+
     QVBoxLayout *vlay = new QVBoxLayout(group, spacingHint());
 
     vlay->addSpacing(fontMetrics().lineSpacing());
@@ -494,138 +499,110 @@ void PreferencesDialog::setup_misc_page()
     QString text;
 
     text = i18n("Mouse click on kover preview triggers actual size.");
-    misc_widgets.trigger_actual_size =
+    cover_widgets.trigger_actual_size =
         new QCheckBox(text, group, "trigger_actual_size");
-    gbox->addMultiCellWidget(misc_widgets.trigger_actual_size, 0, 0, 0, 5);
+    gbox->addMultiCellWidget(cover_widgets.trigger_actual_size, 0, 0, 0, 5);
 
     text = i18n("Display track duration after a CDDB request.");
-    misc_widgets.display_track_duration =
+    cover_widgets.display_track_duration =
         new QCheckBox(text, group, "display_track_duration");
-    gbox->addMultiCellWidget(misc_widgets.display_track_duration, 1, 1, 0, 5);
-
-    text = i18n("Save window position.");
-    misc_widgets.save_position = new QCheckBox(text, group, "save_position");
-    gbox->addMultiCellWidget(misc_widgets.save_position, 2, 2, 0, 5);
-
-    text = i18n("Disable unnecessary animation.");
-    misc_widgets.disable_animation =
-        new QCheckBox(text, group, "disable_animation");
-    gbox->addMultiCellWidget(misc_widgets.disable_animation, 3, 3, 0, 5);
+    gbox->addMultiCellWidget(cover_widgets.display_track_duration, 1, 1, 0,
+        5);
 
     text = i18n("Print inlet and booklet.");
-    misc_widgets.its_normal = new QRadioButton(text, group, "its_normal");
-    gbox->addMultiCellWidget(misc_widgets.its_normal, 4, 4, 0, 3);
+    cover_widgets.its_normal = new QRadioButton(text, group, "its_normal");
+    gbox->addMultiCellWidget(cover_widgets.its_normal, 2, 2, 0, 3);
 
     text = i18n("Print inlet on left side of booklet.\n(slim case option)");
-    misc_widgets.its_a_slim_case =
+    cover_widgets.its_a_slim_case =
         new QRadioButton(text, group, "its_a_slim_case");
-    gbox->addMultiCellWidget(misc_widgets.its_a_slim_case, 5, 5, 0, 3);
+    gbox->addMultiCellWidget(cover_widgets.its_a_slim_case, 3, 3, 0, 3);
 
     text = i18n("Don't print booklet.\n(inlet only option)");
-    misc_widgets.inlet_only = new QRadioButton(text, group, "inlet_only");
-    gbox->addMultiCellWidget(misc_widgets.inlet_only, 6, 6, 0, 3);
+    cover_widgets.inlet_only = new QRadioButton(text, group, "inlet_only");
+    gbox->addMultiCellWidget(cover_widgets.inlet_only, 4, 4, 0, 3);
 
     text = i18n("Print all on one page");
-    misc_widgets.one_page = new QRadioButton(text, group, "one_page");
-    gbox->addMultiCellWidget(misc_widgets.one_page, 7, 7, 0, 3);
+    cover_widgets.one_page = new QRadioButton(text, group, "one_page");
+    gbox->addMultiCellWidget(cover_widgets.one_page, 5, 5, 0, 3);
     connect(group, SIGNAL(clicked(int)), SLOT(output_changed(int)));
 
-    misc_widgets.inlet = new QLabel(group);
+    cover_widgets.inlet = new QLabel(group);
     KIconLoader pixmap = KIconLoader();
 
-    misc_widgets.inlet->setPixmap(pixmap.loadIcon("back_content",
+    cover_widgets.inlet->setPixmap(pixmap.loadIcon("back_content",
             KIcon::NoGroup));
-    gbox->addMultiCellWidget(misc_widgets.inlet, 8, 8, 1, 2);
+    gbox->addMultiCellWidget(cover_widgets.inlet, 6, 6, 1, 2);
 
-    misc_widgets.booklet = new QLabel(group);
-    misc_widgets.booklet->setPixmap(pixmap.loadIcon("front_title_only",
+    cover_widgets.booklet = new QLabel(group);
+    cover_widgets.booklet->setPixmap(pixmap.loadIcon("front_title_only",
             KIcon::NoGroup));
-    gbox->addMultiCellWidget(misc_widgets.booklet, 8, 8, 3, 4);
+    gbox->addMultiCellWidget(cover_widgets.booklet, 6, 6, 3, 4);
 
-    set_misc();
+    set_cover();
 }
 
-void PreferencesDialog::set_misc()
+void PreferencesDialog::set_cover()
 {
     if (globals.trigger_actual_size)
-        misc_widgets.trigger_actual_size->setChecked(true);
+        cover_widgets.trigger_actual_size->setChecked(true);
     else
-        misc_widgets.trigger_actual_size->setChecked(false);
+        cover_widgets.trigger_actual_size->setChecked(false);
 
     if (globals.display_track_duration)
-        misc_widgets.display_track_duration->setChecked(true);
+        cover_widgets.display_track_duration->setChecked(true);
     else
-        misc_widgets.display_track_duration->setChecked(false);
-
-    if (globals.save_position)
-        misc_widgets.save_position->setChecked(true);
-    else
-        misc_widgets.save_position->setChecked(false);
-
-    if (globals.disable_animation)
-        misc_widgets.disable_animation->setChecked(true);
-    else
-        misc_widgets.disable_animation->setChecked(false);
+        cover_widgets.display_track_duration->setChecked(false);
 
     /* no comment */
 
     if (globals.its_a_slim_case) {
-        misc_widgets.its_a_slim_case->setChecked(true);
+        cover_widgets.its_a_slim_case->setChecked(true);
         output_changed(3);
     } else
-        misc_widgets.its_a_slim_case->setChecked(false);
+        cover_widgets.its_a_slim_case->setChecked(false);
 
     if (globals.inlet_only) {
-        misc_widgets.inlet_only->setChecked(true);
+        cover_widgets.inlet_only->setChecked(true);
         output_changed(4);
     } else
-        misc_widgets.inlet_only->setChecked(false);
+        cover_widgets.inlet_only->setChecked(false);
 
     if (!globals.inlet_only && !globals.its_a_slim_case && !globals.one_page) {
-        misc_widgets.its_normal->setChecked(true);
+        cover_widgets.its_normal->setChecked(true);
         output_changed(2);
     }
 
     if (globals.one_page) {
-        misc_widgets.one_page->setChecked(true);
+        cover_widgets.one_page->setChecked(true);
         output_changed(5);
     } else
-        misc_widgets.one_page->setChecked(false);
+        cover_widgets.one_page->setChecked(false);
 }
 
-void PreferencesDialog::save_misc()
+void PreferencesDialog::save_cover()
 {
-    if ((misc_widgets.trigger_actual_size)->isChecked())
+    if ((cover_widgets.trigger_actual_size)->isChecked())
         globals.trigger_actual_size = 1;
     else
         globals.trigger_actual_size = 0;
 
-    if ((misc_widgets.display_track_duration)->isChecked())
+    if ((cover_widgets.display_track_duration)->isChecked())
         globals.display_track_duration = 1;
     else
         globals.display_track_duration = 0;
 
-    if ((misc_widgets.save_position)->isChecked())
-        globals.save_position = 1;
-    else
-        globals.save_position = 0;
-
-    if ((misc_widgets.disable_animation)->isChecked())
-        globals.disable_animation = 1;
-    else
-        globals.disable_animation = 0;
-
-    if ((misc_widgets.its_a_slim_case)->isChecked())
+    if ((cover_widgets.its_a_slim_case)->isChecked())
         globals.its_a_slim_case = 1;
     else
         globals.its_a_slim_case = 0;
 
-    if ((misc_widgets.inlet_only)->isChecked())
+    if ((cover_widgets.inlet_only)->isChecked())
         globals.inlet_only = 1;
     else
         globals.inlet_only = 0;
 
-    if ((misc_widgets.one_page)->isChecked())
+    if ((cover_widgets.one_page)->isChecked())
         globals.one_page = 1;
     else
         globals.one_page = 0;
@@ -706,26 +683,26 @@ void PreferencesDialog::output_changed(int type)
 {
     KIconLoader pixmap = KIconLoader();
 
-    if (type == 4) {
-        misc_widgets.inlet->setPixmap(pixmap.loadIcon("back_content",
+    if (type == 2) {
+        cover_widgets.inlet->setPixmap(pixmap.loadIcon("back_content",
                 KIcon::NoGroup));
-        misc_widgets.booklet->setPixmap(pixmap.loadIcon("front_title_only",
+        cover_widgets.booklet->setPixmap(pixmap.loadIcon("front_title_only",
                 KIcon::NoGroup));
     }
-    if (type == 5) {
-        misc_widgets.inlet->setPixmap(NULL);
-        misc_widgets.booklet->setPixmap(pixmap.
+    if (type == 3) {
+        cover_widgets.inlet->setPixmap(NULL);
+        cover_widgets.booklet->setPixmap(pixmap.
             loadIcon("front_title-right_content-left", KIcon::NoGroup));
     }
-    if (type == 6) {
-        misc_widgets.inlet->setPixmap(pixmap.loadIcon("back_title_content",
+    if (type == 4) {
+        cover_widgets.inlet->setPixmap(pixmap.loadIcon("back_title_content",
                 KIcon::NoGroup));
-        misc_widgets.booklet->setPixmap(NULL);
+        cover_widgets.booklet->setPixmap(NULL);
     }
-    if (type == 7) {
-        misc_widgets.inlet->setPixmap(pixmap.loadIcon("back_content",
+    if (type == 5) {
+        cover_widgets.inlet->setPixmap(pixmap.loadIcon("back_content",
                 KIcon::NoGroup));
-        misc_widgets.booklet->setPixmap(pixmap.loadIcon("one_page",
+        cover_widgets.booklet->setPixmap(pixmap.loadIcon("one_page",
                 KIcon::NoGroup));
     }
 }
@@ -744,13 +721,13 @@ void PreferencesDialog::browsing()
     delete(dialog);
 }
 
-void PreferencesDialog::setup_cover_page(void)
+void PreferencesDialog::setup_misc_page(void)
 {
-    QFrame *page = addPage(i18n("Cover Options"), i18n("Cover Options"),
-        BarIcon("kover", KIcon::SizeMedium));
+    QFrame *page = addPage(i18n("Miscellaneous"), i18n("Various properties"),
+        BarIcon("misc", KIcon::SizeMedium));
     QVBoxLayout *topLayout = new QVBoxLayout(page, 0, spacingHint());
 
-    QGroupBox *group = new QGroupBox(i18n("&Cover Options"), page);
+    QGroupBox *group = new QGroupBox(i18n("&Stuff"), page);
 
     topLayout->addWidget(group);
     QVBoxLayout *vlay = new QVBoxLayout(group, spacingHint());
@@ -762,31 +739,42 @@ void PreferencesDialog::setup_cover_page(void)
 
     QString text;
 
-    text = i18n("Read CDDB data from file if available");
- /*   cddb_files_widgets.read_local_cddb =
-        new QCheckBox(text, group, "read_cddb");
-    gbox->addMultiCellWidget(cddb_files_widgets.read_local_cddb, 0, 0, 0, 5);
+    text = i18n("Save window position.");
+    misc_widgets.save_position = new QCheckBox(text, group, "save_position");
+    gbox->addWidget(misc_widgets.save_position, 0, 0);
 
-    text = i18n("Write CDDB data to file");
-    cddb_files_widgets.write_local_cddb =
-        new QCheckBox(text, group, "write_cddb");
-    gbox->addMultiCellWidget(cddb_files_widgets.write_local_cddb, 1, 1, 0, 5);
-*/
-    QLabel *label = new QLabel(i18n("CDDB path:"), group, "pathlabel");
+    text = i18n("Disable unnecessary animation.");
+    misc_widgets.disable_animation =
+        new QCheckBox(text, group, "disable_animation");
+    gbox->addWidget(misc_widgets.disable_animation, 1, 0);
 
-    gbox->addWidget(label, 2, 0);
-/*    cddb_files_widgets.cddb_path = new QLineEdit(group, "path");
-    cddb_files_widgets.cddb_path->setMinimumWidth(fontMetrics().maxWidth() *
-        10);
-    gbox->addMultiCellWidget(cddb_files_widgets.cddb_path, 2, 2, 1, 5);
-*/
-    set_cover();
+    set_misc();
 
     topLayout->addStretch(10);
 }
 
-void PreferencesDialog::save_cover(){
+void PreferencesDialog::save_misc()
+{
+    if ((misc_widgets.save_position)->isChecked())
+        globals.save_position = 1;
+    else
+        globals.save_position = 0;
+
+    if ((misc_widgets.disable_animation)->isChecked())
+        globals.disable_animation = 1;
+    else
+        globals.disable_animation = 0;
 }
 
-void PreferencesDialog::set_cover(){
+void PreferencesDialog::set_misc()
+{
+    if (globals.save_position)
+        misc_widgets.save_position->setChecked(true);
+    else
+        misc_widgets.save_position->setChecked(false);
+
+    if (globals.disable_animation)
+        misc_widgets.disable_animation->setChecked(true);
+    else
+        misc_widgets.disable_animation->setChecked(false);
 }

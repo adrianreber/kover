@@ -21,7 +21,7 @@
 	Description: Header to PreferencesDialog.h
 */
 
-/* $Id: PreferencesDialog.h,v 1.18 2002/08/14 08:10:12 adrian Exp $ */
+/* $Id: PreferencesDialog.h,v 1.19 2002/08/16 22:45:48 adrian Exp $ */
 
 #ifndef PREFERENCES_DIALOG_H
 #define PREFERENCES_DIALOG_H
@@ -75,9 +75,9 @@ class PreferencesDialog:public KDialogBase {
         page_cddb = 0,
         page_cdrom,
         page_cddb_files,
-        page_misc,
-        page_font,
         page_cover,
+        page_font,
+        page_misc,
         page_max
     };
 
@@ -100,6 +100,11 @@ class PreferencesDialog:public KDialogBase {
     } cddb_files_widgets;
 
     struct misc_widgets {
+        QCheckBox *save_position;
+        QCheckBox *disable_animation;
+     } misc_widgets;
+
+    struct cover_widgets {
         QCheckBox *trigger_actual_size;
         QCheckBox *display_track_duration;
         QRadioButton *its_a_slim_case;
@@ -108,9 +113,7 @@ class PreferencesDialog:public KDialogBase {
         QRadioButton *one_page;
         QLabel *inlet;
         QLabel *booklet;
-        QCheckBox *save_position;
-        QCheckBox *disable_animation;
-    } misc_widgets;
+     } cover_widgets;
 
     struct font_widgets {
         QButton *change_content_font;
@@ -119,6 +122,7 @@ class PreferencesDialog:public KDialogBase {
     } font_widgets;
 
     private slots:void use_proxy(bool status);
+    void use_proxy_env(bool status);
     virtual void slotOk(void);
     virtual void slotDefault();
     void content_font_dialog();

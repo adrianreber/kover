@@ -1,21 +1,24 @@
 <!DOCTYPE kover>
-<kover version="2.8.5" name="kover" >
- <title size="26" weight="50" display="0" color="#000000" font="Comic Sans Ms [Microsoft]" italic="0" >
-  <text><![CDATA[fxchsdfhÄägdfhgdfh]]></text>
- </title>
+<kover version="2.8.6" name="kover" >
+<title size="26" weight="50" display="0" color="#000000" font="helvetica" italic="0" >
+<text><![CDATA[öädfg]]></text>
+  <text><![CDATA[sdfgläsödlfgl]]></text>
+  <text><![CDATA[]]></text>
+  <text><![CDATA[södflgäölsdfg]]></text>
+  <text><![CDATA[]]></text>
+  <text><![CDATA[sdägflöäöläsädgf]]></text> </title>
  <img target="0" mode="0" src="" />
  <img target="0" mode="0" src="" />
  <img target="0" mode="0" src="" />
  <general bgcolor="#ffffff" number="0" />
- <inlet size="9" weight="50" font="helvetica" italic="0" />
- <content size="14" weight="50" color="#000000" font="Comic Sans Ms [Microsoft]" italic="0" >
-  <text><![CDATA[dfgsdfg]]></text>
-  <text><![CDATA[sdfgsdgf]]></text>
-  <text><![CDATA[sdfgsdgf]]></text>
-  <text><![CDATA[sdfgsdfg]]></text>
-  <text><![CDATA[äöü]]></text>
+ <inlet size="9" weight="50" spine_text="1" font="helvetica" italic="0" ><![CDATA[Adrian]]></inlet>
+ <content size="11" weight="50" color="#000000" font="helvetica" italic="0" >
+<text><![CDATA[dfgh]]></text>
+  <text><![CDATA[]]></text>
+  <text><![CDATA[dfgh]]></text>
   <text><![CDATA[]]></text>
   <text><![CDATA[]]></text>
-  <text><![CDATA[ÄÄ]]></text>
- </content>
-</kover>
+  <text><![CDATA[dfghdfgh]]></text>
+  <text><![CDATA[]]></text>
+  <text><![CDATA[]]></text>
+  <text><![CDATA[dfghdfghdfh]]></text> </content></kover>
