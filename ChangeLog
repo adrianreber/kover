@@ -1,4 +1,4 @@
-$Id: ChangeLog,v 1.28 2002/09/17 22:02:57 adrian Exp $
+$Id: ChangeLog,v 1.29 2002/09/18 06:41:34 adrian Exp $
 
 2002-09-17 Adrian <adrian@lisas.de>
         * koverfile.cc: now reading .k3b files of type
@@ -33,7 +33,7 @@ $Id: ChangeLog,v 1.28 2002/09/17 22:02:57 adrian Exp $
         * finally the http_proxy environment variable is honored
           (net.cc, cddb.cc, PrefrencesDialog.cc)
         * due to changes to the configuration routines , there can be issues
-          on first startup. kover will use its buildin values.
+          on first startup. kover will use its builtin values.
         * bumped version to 2.8.7
         * released as 2.8.7
 
