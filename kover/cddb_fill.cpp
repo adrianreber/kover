@@ -42,6 +42,8 @@
 #include <string>
 
 #include "cddb_211_item.h"
+#include "inexact_dialog.h"
+
 
 track_info::track_info( int _track, int _min, int _sec, int _frame )
 {
@@ -436,8 +438,9 @@ bool CDDB_Fill::cddb_query()
 	 char *ss;
 	 int i;
 	 int tot_len,len;
+	 
 	 	 	 
-	 emit statusText( "Querying database..." );
+	 emit statusText("Querying database...");
    
 	 /* Figure out a good buffer size -- 7 chars per track, plus 256 for the rest
 		 of the query */
@@ -497,7 +500,9 @@ bool CDDB_Fill::cddb_query()
 
 	 //end cddb code stuff
 	 
-	 list <cddb_211_item *> list1;
+	 list <cddb_211_item *> inexact_list;
+	 inexact_dialog * inexact;
+	 int aber;
 	 
 	 //what category
 	 switch(code) {
@@ -522,9 +527,12 @@ bool CDDB_Fill::cddb_query()
 				if (s[0]!=48) {
 					 ref_211 = new cddb_211_item(s);
 					 _DEBUG_ fprintf(stderr,"%s:%s",PACKAGE,s);
-					 list1.push_back(ref_211);
+					 inexact_list.push_back(ref_211);
 				}
 		  }
+		  inexact = new inexact_dialog(inexact_list);
+		  aber = inexact->exec();
+		  _DEBUG_ fprintf(stderr,"kover:inexact_dialog returns: %d\n",aber);
 		  return false;
 	 case 202:
 		  emit statusText("No match found.");

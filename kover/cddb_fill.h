@@ -32,9 +32,7 @@
 #define CDDB_FILL_H
 
 #include "kover.h"
-
 #include "koverfile.h"
-
 
 #define CDDB_PORT		80
  
@@ -130,6 +128,7 @@ private:
 	int sock_mode;	/* Server read/write status */
 	FILE *sk_1;		/* Stream descriptor for our first socket */
 	FILE *sk_2;		/* Stream descriptor for our second socket */
+
 };
 
 #endif

@@ -11,42 +11,44 @@
 	 but WITHOUT ANY WARRANTY; without even the implied warranty of
 	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	 GNU General Public License for more details.
-	
+	 
 	 You should have received a copy of the GNU General Public License
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: cddb_211_item.cc
+	 File: inexact_dialog.h 
 	 
-	 Description: wrapper class for the 211 match
+	 Description: inexact (inexact match) dialog
 	 
 	 Changes:
-
-	 8 Jul 2001: Initial release
-
+	 
+	 15 Jul 2001: Initial release
+	 
 */
 
-/* $Id: cddb_211_item.cc,v 1.4 2001/07/15 22:21:53 adrian Exp $ */
+/* $Id: inexact_dialog.h,v 1.1 2001/07/15 22:21:53 adrian Exp $ */
 
+#ifndef INEXACT_DIALOG_H
+#define INEXACT_DIALOG_H
+
+#include "../config.h"
+#include <qdialog.h>
 #include "cddb_211_item.h"
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
+#include <list>
+#include <qlistbox.h>
 
-cddb_211_item::cddb_211_item() {
-	 cddb_data = NULL;
-}
+class inexact_dialog : public QDialog {
+	 Q_OBJECT
+public:
+	 inexact_dialog(list <cddb_211_item *> inexact_list);
+	 ~inexact_dialog();
+private:
+	 QListBox *box;
+private slots:
+void accept();
+public slots:
+void double_clicked(QListBoxItem *);
+	 
+};
 
-cddb_211_item::cddb_211_item(char *input) {
-	 cddb_data = strdup(input);
-	 fprintf(stderr,"New string: %s\n",cddb_data);
-}
-
-cddb_211_item::~cddb_211_item() {
-	 if (cddb_data)
-		  free (cddb_data);
-}
-
-char *cddb_211_item::get() {
-	 return strdup(cddb_data);
-}
+#endif /* INEXACT_DIALOG_H */

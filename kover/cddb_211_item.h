@@ -26,7 +26,7 @@
 	 
 */
 
-/* $Id: cddb_211_item.h,v 1.2 2001/07/10 22:48:03 adrian Exp $ */
+/* $Id: cddb_211_item.h,v 1.3 2001/07/15 22:21:53 adrian Exp $ */
 
 #ifndef CDDB_211_ITEM_H
 #define CDDB_211_ITEM_H
@@ -38,6 +38,7 @@ public:
 	 cddb_211_item();	 
 	 cddb_211_item(char *);
 	 ~cddb_211_item();
+	 char *get();
 private:
 	 char *cddb_data;
 };
