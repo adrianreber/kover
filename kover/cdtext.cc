@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Id: cdtext.cc,v 1.2 2004/09/17 20:00:59 adrian Exp $
+ * $Id: cdtext.cc,v 1.3 2004/09/17 20:05:15 adrian Exp $
  *
  * $Author: adrian $
  */
@@ -64,24 +64,24 @@ cdtext::cdtext(char *path):cdrom(path)
 
 void cdtext::dump()
 {
-	cout << "disc_title " << disc_title << endl;
-	cout << "disc_performer " << disc_performer << endl;
-	cout << "disc_discid " << disc_discid << endl;
-	cout << "disc_upc " << disc_upc << endl;
+	cout << "disc_title=" << disc_title << endl;
+	cout << "disc_performer=" << disc_performer << endl;
+	cout << "disc_discid=" << disc_discid << endl;
+	cout << "disc_upc=" << disc_upc << endl;
 	map < int, string >::iterator cur;
 
 	for (cur = track_name.begin(); cur != track_name.end(); cur++) {
 		if ((*cur).second == "")
 			continue;
 		cout << "track number " << (*cur).
-		    first << " has title " << (*cur).second << endl;
+		    first << " has title=" << (*cur).second << endl;
 	}
 	for (cur = track_performer.begin(); cur != track_performer.end();
 	    cur++) {
 		if ((*cur).second == "")
 			continue;
 		cout << "track number " << (*cur).
-		    first << " has performer " << (*cur).second << endl;
+		    first << " has performer=" << (*cur).second << endl;
 	}
 }
 
@@ -209,18 +209,18 @@ int cdtext::parse_cdtext(unsigned char *buffer)
 int cdtext::save_cdtext(char code, char track_no, char *data)
 {
 	if (track_no == 0) {
-		if (code == 0xFFFFFF80)
+		if (code == (char) 0xFFFFFF80)
 			add_disc_title(data);
-		if (code == 0xFFFFFF81)
+		if (code == (char) 0xFFFFFF81)
 			add_disc_performer(data);
-		if (code == 0xFFFFFF86) 
+		if (code == (char) 0xFFFFFF86) 
 			add_disc_discid(data);
-		if (code == 0xFFFFFF8E)
+		if (code == (char) 0xFFFFFF8E)
 			add_disc_upc(data);
 	} else {
-		if (code == 0xFFFFFF80)
+		if (code == (char) 0xFFFFFF80)
 			set_track_title(track_no, data);
-		if (code == 0xFFFFFF81)
+		if (code == (char) 0xFFFFFF81)
 			set_track_performer(track_no, data);
 	}
 	return 1;
@@ -236,7 +236,7 @@ string cdtext::get_name(int track){
 	return track_name[track];
 }
 string cdtext::get_performer(int track){
-	return disc_performer;
+	return track_performer[track];
 }
 string cdtext::get_disc_title(){
 	return disc_title;
