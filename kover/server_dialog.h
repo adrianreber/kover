@@ -26,7 +26,7 @@
 	 
 */
 
-/* $Id: server_dialog.h,v 1.1 2002/05/05 22:02:44 adrian Exp $ */
+/* $Id: server_dialog.h,v 1.2 2002/09/15 21:20:27 adrian Exp $ */
 
 #ifndef SERVER_DIALOG_H
 #define SERVER_DIALOG_H
@@ -44,22 +44,20 @@ using namespace std;
  * The server_dialog class
  * A dialog used to select one of the freedb servers.
  */
-class server_dialog : public QDialog {
-	 Q_OBJECT
-public:
-	 server_dialog();
-	 ~server_dialog();
-	 int exec();
-	 string get(int index);
-private:
-	 QListBox *box;
-	 list <server *> server_list;
-	 sites *site_ref;
-private slots:
-void accept();
-public slots:
-void double_clicked(QListBoxItem *);
-	 
+class server_dialog:public QDialog {
+  Q_OBJECT public:
+    server_dialog();
+    ~server_dialog();
+    int exec();
+    string get(int index);
+  private:
+      QListBox * box;
+      list < server * >server_list;
+    sites *site_ref;
+    private slots:void accept();
+    void quit();
+    public slots: void double_clicked(QListBoxItem *);
+
 };
 
 #endif /* SERVER_DIALOG_H */

@@ -30,7 +30,7 @@
 
 */
 
-/* $Id: inexact_dialog.cc,v 1.8 2002/05/05 22:01:54 adrian Exp $ */
+/* $Id: inexact_dialog.cc,v 1.9 2002/09/15 21:20:27 adrian Exp $ */
 
 #include "inexact_dialog.moc"
 
@@ -48,67 +48,85 @@
  * @param inexact_list is a STL list containing the 211 (inexact match) items
  */
 
-inexact_dialog::inexact_dialog(list <cddb_211_item *> inexact_list) : QDialog(0,0,TRUE,0) {
-	 local_list = inexact_list;
-	 QVBoxLayout *top_layout = new QVBoxLayout(this);
-	 top_layout->setMargin(7);
-	 top_layout->addSpacing(10);
-	 QLabel *label = new QLabel(tr("Choose wisely!"),this);
-	 top_layout->addWidget(label);
-	 top_layout->addSpacing(10);
-	 box = new QListBox(this);
-	 list <cddb_211_item *> :: iterator item;
-	 
-	 for (item = inexact_list.begin(); item != inexact_list.end(); item++) {
-		  box->insertItem(((*item)->get()));
-	 }
-	 box->setMinimumWidth(box->maxItemWidth()+30);
-	 
-	 connect(box, SIGNAL(doubleClicked(QListBoxItem *)), SLOT (double_clicked(QListBoxItem *)));
+inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list):QDialog(0, 0, TRUE,
+    0)
+{
+    local_list = inexact_list;
+    QVBoxLayout *top_layout = new QVBoxLayout(this);
 
-	 top_layout->addWidget(box);
-	 top_layout->addSpacing(20);
+    top_layout->setMargin(7);
+    top_layout->addSpacing(10);
+    QLabel *label = new QLabel(tr("Choose wisely!"), this);
 
-	 QBoxLayout *button_layout = new QBoxLayout(top_layout, QBoxLayout::RightToLeft, -10);
-	 
-	 QPushButton *ok = new QPushButton(tr("Ok"),this ,"ok");
-	 ok->setDefault(TRUE);
-	 
-	 ok->setMaximumWidth(70);
+    top_layout->addWidget(label);
+    top_layout->addSpacing(10);
+    box = new QListBox(this);
+    list < cddb_211_item * >::iterator item;
 
-    connect( ok, SIGNAL(clicked()), SLOT(accept()) );
-	 button_layout->addWidget(ok,0,AlignRight);
-	 button_layout->addSpacing(5);
+    for (item = inexact_list.begin(); item != inexact_list.end(); item++) {
+        box->insertItem(((*item)->get()));
+    }
+    box->setMinimumWidth(box->maxItemWidth() + 30);
 
-	 QPushButton *quit = new QPushButton(tr("Quit"), this, "quit" );
-	 
-    connect( quit, SIGNAL(clicked()), SLOT(accept()) );
-	 quit->setMaximumWidth(70);
-	 button_layout->addWidget(quit,0,AlignRight);
-	 button_layout->addStretch(20);
-	 adjustSize();
+    connect(box, SIGNAL(doubleClicked(QListBoxItem *)),
+        SLOT(double_clicked(QListBoxItem *)));
+
+    top_layout->addWidget(box);
+    top_layout->addSpacing(20);
+
+    QBoxLayout *button_layout =
+        new QBoxLayout(top_layout, QBoxLayout::RightToLeft, -10);
+
+    QPushButton *ok = new QPushButton(tr("Ok"), this, "ok");
+
+    ok->setDefault(TRUE);
+
+    ok->setMaximumWidth(70);
+
+    connect(ok, SIGNAL(clicked()), SLOT(accept()));
+    button_layout->addWidget(ok, 0, AlignRight);
+    button_layout->addSpacing(5);
+
+    QPushButton *quit = new QPushButton(tr("Quit"), this, "quit");
+
+    connect(quit, SIGNAL(clicked()), SLOT(quit()));
+    quit->setMaximumWidth(70);
+    button_layout->addWidget(quit, 0, AlignRight);
+    button_layout->addStretch(20);
+    adjustSize();
 }
 
 /**
  * The highly sophisticated destructor is doing nothing.
  */
-inexact_dialog::~inexact_dialog() {
+inexact_dialog::~inexact_dialog()
+{
 }
 
 /**
  * The accept() slot. Setting the return value.
  * reimplemented from QDialog
  */
-void inexact_dialog::accept() {
-	 QDialog::done(box->currentItem());
+void inexact_dialog::accept()
+{
+    QDialog::done(box->currentItem());
+}
+
+/**
+ * The done() slot. Setting the return value.
+ */
+void inexact_dialog::quit()
+{
+    QDialog::done(-1);
 }
 
 /**
  * The double_clicked() slot. Setting the return value.
  * reimplemented from QDialog
  */
-void inexact_dialog::double_clicked(QListBoxItem *item) {
-	 QDialog::done(item->listBox()->currentItem());
+void inexact_dialog::double_clicked(QListBoxItem * item)
+{
+    QDialog::done(item->listBox()->currentItem());
 }
 
 /**
@@ -118,12 +136,13 @@ void inexact_dialog::double_clicked(QListBoxItem *item) {
  * @see accept()
  * @return an int representation of the selected item
  */
-int inexact_dialog::exec() {
-	 if (local_list.size()==1) {
-		  return 0;
-	 }	else {
-		  return QDialog::exec();
-	 }	  
+int inexact_dialog::exec()
+{
+    if (local_list.size() == 1) {
+        return 0;
+    } else {
+        return QDialog::exec();
+    }
 }
 
 /**
@@ -132,13 +151,15 @@ int inexact_dialog::exec() {
  * @see exec()
  * @return the string containing the cddb id and category. Can be freed with free(3).
  */
-char* inexact_dialog::get(int index) {
-	 int i=0;
-	 list <cddb_211_item *> :: iterator item;
-	 
-	 for (item = local_list.begin(); item != local_list.end(); item++) {
-		  if (i++==index)
-				return strdup((*item)->get());
-	 } 
-	 return NULL;
+char *inexact_dialog::get(int index)
+{
+    int i = 0;
+
+    list < cddb_211_item * >::iterator item;
+
+    for (item = local_list.begin(); item != local_list.end(); item++) {
+        if (i++ == index)
+            return strdup((*item)->get());
+    }
+    return NULL;
 }

@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.13 2002/09/13 21:32:06 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.14 2002/09/15 21:20:27 adrian Exp $ */
 
 #include "cddb_fill.moc"
 
@@ -601,7 +601,7 @@ bool CDDB_Fill::cddb_query()
             return false;
 
         _DEBUG_ fprintf(stderr, "answer: %d %s \n", code, code_string);
-
+        if (strchr(code_string, 32))
         strcpy(cddb_msg, strchr(code_string, 32) + 1);
         free(code_string);
         switch (code) {
@@ -634,8 +634,10 @@ bool CDDB_Fill::cddb_query()
                 if (!aber++)
                     continue;
                 if (s[0] != 48) {
+                    ss = strchr(s,13); // searching \r
+                    *ss = 0;
                     ref_211 = new cddb_211_item(s);
-                    _DEBUG_ fprintf(stderr, "%s:read:%s", PACKAGE, s);
+                    _DEBUG_ fprintf(stderr, "%s:read:%s\n", PACKAGE, s);
 
                     //pushing everything in a list
                     inexact_list.push_back(ref_211);

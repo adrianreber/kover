@@ -26,7 +26,7 @@
 	 
 */
 
-/* $Id: inexact_dialog.h,v 1.4 2002/01/13 00:33:21 adrian Exp $ */
+/* $Id: inexact_dialog.h,v 1.5 2002/09/15 21:20:27 adrian Exp $ */
 
 #ifndef INEXACT_DIALOG_H
 #define INEXACT_DIALOG_H
@@ -43,21 +43,19 @@ using namespace std;
  * The inexact_dialog class
  * A dialog used to choose one of the 211 matches.
  */
-class inexact_dialog : public QDialog {
-	 Q_OBJECT
-public:
-	 inexact_dialog(list <cddb_211_item *> inexact_list);
-	 ~inexact_dialog();
-	 int exec();
-	 char* get(int index);
-private:
-	 QListBox *box;
-	 list <cddb_211_item *> local_list;
-private slots:
-void accept();
-public slots:
-void double_clicked(QListBoxItem *);
-	 
+class inexact_dialog:public QDialog {
+  Q_OBJECT public:
+      inexact_dialog(list < cddb_211_item * >inexact_list);
+     ~inexact_dialog();
+    int exec();
+    char *get(int index);
+  private:
+      QListBox * box;
+      list < cddb_211_item * >local_list;
+    private slots:void accept();
+    void quit();
+    public slots:void double_clicked(QListBoxItem *);
+
 };
 
 #endif /* INEXACT_DIALOG_H */
