@@ -26,6 +26,9 @@
 */
 
 #include "config.h"
+#include <kconfig.h>
+#include <sys/stat.h>
+#include <stdio.h>
 
 config_class::config_class(KApplication *kover) {
 	 this->kover = kover;

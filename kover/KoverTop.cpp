@@ -34,9 +34,25 @@
 	 11 Nov 2001: CDDB without CD
 */
 
+#include "KoverTop.moc"
+
 #include "KoverTop.h"
 #include "imagedlg.h"
 #include "without_cd.h"
+
+#include <klocale.h>
+#include <kmainwindow.h>
+#include <kapp.h>
+#include <kstdaction.h>
+#include <kaction.h>
+#include <kmenubar.h>
+#include <kmessagebox.h>
+#include <kfiledialog.h>
+#include <kfontdialog.h>
+#include <kcolordialog.h>
+#include <ktempfile.h>
+#include <kio/netaccess.h>
+#include <krecentdocument.h>
 
 #define NORM_WIDTH 520
 #define NORM_HEIGHT 440
@@ -53,7 +69,6 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 	 
 	 setCaption(i18n("[New Document]"), false);
 	 setFixedSize( NORM_WIDTH, NORM_HEIGHT );
-	 filename = "untitled";
 
 	 status_bar = statusBar();
 	 status_bar->insertItem( "Kover "VERSION" - http://lisas.de/kover/", 1 );
@@ -67,6 +82,7 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 	 KStdAction::cut(this, SLOT(cut()), actionCollection());
 	 KStdAction::copy(this, SLOT(copy()), actionCollection());
 	 KStdAction::paste(this, SLOT(paste()), actionCollection());
+	 recent = KStdAction::openRecent(this, SLOT(file_open(const KURL&)), actionCollection());
 	 (void)new KAction(i18n("&Actual size"),"viewmag",0,this, SLOT(actualSize()),actionCollection(), "actual_size");
 	 (void)new KAction(i18n("&CDDB lookup"),"network",0,this, SLOT(cddbFill()),actionCollection(), "cddb");
 	 KStdAction::preferences(this,SLOT(preferences()),actionCollection());
@@ -130,10 +146,11 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 	 altered_data = false;
 	 main_frame->move(0,70);
 	 main_frame->adjustSize();
-	 
+	 recent->loadEntries((KApplication::kApplication())->config());
 }
 
 KoverTop::~KoverTop() {
+	 recent->saveEntries((KApplication::kApplication())->config());
 	 delete status_bar;
 	 delete cddb_fill;
 	 delete cdview;
@@ -145,10 +162,10 @@ void KoverTop::dataChanged(bool image) {
 	 bla = true;
 		  
 	 setStatusText(i18n("Data changed"));
-	 if (filename == "untitled")
+	 if (m_url.isEmpty() )
 		  setCaption(i18n("[New Document]"), true);
 	 else
-		  setCaption(i18n(filename), true);
+		  setCaption(i18n(m_url.url()), true);
 	 
 	 altered_data = true;
 }
@@ -222,25 +239,41 @@ void KoverTop::fileNew() {
 	 kover_file.reset();
 	 setStatusText("Chop!");
 	 altered_data = false;
-	 filename = "untitled";
+	 m_url = KURL();
 	 setCaption(i18n("[New Document]"), false);
 	 update_id();
 }
 
 void KoverTop::fileOpen() {
-	 QString newfilename;
-  
 	 if (altered_data) {
 		  if (how_about_saving())
 				return;
 	 }
-	 
-	 newfilename = KFileDialog::getOpenFileName();
-	 if (newfilename.length()) {
-		  if (kover_file.openFile( newfilename )) {
-				filename = newfilename;
+
+	 KURL url = KFileDialog::getOpenURL( QString::null, "*.kover" );
+	 if( !url.isEmpty() ) {
+		  fileOpen( url );
+	 }
+}
+
+void KoverTop::file_open(const KURL& url) {
+	 fileOpen(url);
+}
+
+void KoverTop::fileOpen( const KURL& url ) {
+	 if (!url.isEmpty()) {
+		  QString filename;
+		  QString tempFile;
+		  if( !url.isLocalFile() ) {
+				KIO::NetAccess::download( url, tempFile );
+				filename = tempFile;
+		  }
+		  else filename = url.path();
+		
+		  if (kover_file.openFile( filename )) {
+				m_url = url;
 				
-				setCaption(i18n(filename), false);
+				setCaption(i18n(m_url.url()), false);
 				
 				disconnect( contents_edit, SIGNAL(textChanged()), this, SLOT(contentsBoxChanged()) );
 				title_edit->setText( kover_file.title() );
@@ -260,6 +293,9 @@ void KoverTop::fileOpen() {
 				altered_data = false;
 		  } else 
 				KMessageBox::error( this, i18n("Error while opening/reading file!"));
+		
+		  if( !url.isLocalFile() )
+				KIO::NetAccess::removeTempFile( tempFile );
 		  
 	 }
 }
@@ -280,29 +316,43 @@ int KoverTop::how_about_saving() {
 }
 
 void KoverTop::fileSave() {
-	 if (filename == "untitled")
+	 if (m_url.isEmpty())
 		  fileSaveAs();
 	 else	{
+		  QString filename;					 
+		  KTempFile tempFile;
+			
+		  tempFile.setAutoDelete( true );
+			
+		  if( m_url.isLocalFile() )
+				filename = m_url.path();
+		  else
+				filename = tempFile.name();
+					 
 		  if (kover_file.saveFile( filename )) {
-				setCaption(i18n(filename), false);
+				setCaption(i18n(m_url.url()), false);
 				setStatusText(i18n("File saved"));
 				altered_data = false;
+				recent->addURL(m_url.url());
 		  } else
 				KMessageBox::error( this, i18n("Error while opening/reading file!"));
+
+		  if( !m_url.isLocalFile() )
+				KIO::NetAccess::upload( filename, m_url );							
 	 }
 }
 
 void KoverTop::fileSaveAs() {
-	 QString newfilename;
-	 
-	 newfilename = KFileDialog::getSaveFileName();
-	 if (newfilename.length()) {
-		  if (kover_file.saveFile( newfilename ))	{
-				filename = newfilename;
+	 KURL url = KFileDialog::getSaveURL( QString::null, "*.kover" );
+	 if (!url.isEmpty()) {
+		  QString file = url.path();					 
+		  if (kover_file.saveFile( file ))	{
+				m_url = url;							
 
-				setCaption(i18n(filename), false);
+				setCaption(i18n(url.url()), false);
 				setStatusText(i18n("File saved"));
 				altered_data = false;
+				recent->addURL(m_url.url());
 		  } else
 				KMessageBox::error( this, i18n("Error while opening/reading file!"));
 	 }
@@ -433,14 +483,30 @@ void KoverTop::backgroundColor() {
 }
 
 void KoverTop::cdrom_eject() {
-	  cdrom *cdrom_class = new cdrom(globals.cdrom_device);
-	  cdrom_class->eject();
-	  delete cdrom_class;
+	 cdrom *cdrom_class = new cdrom(globals.cdrom_device);
+	 cdrom_class->eject();
+	 delete cdrom_class;
 }
 
 void KoverTop::cddb_without_cd() {
+	 int display_track_duration = globals.display_track_duration;
+	 globals.display_track_duration = 0;
 	 without_cd * without = new without_cd();
 	 without->exec();
+	 int category = without->get_category();
+	 char * id = without->get_id();
+	 if(cddb_fill->execute_without_cd(id, category)) {
+		  cddb_fill->setTitleAndContents();
+		  disconnect( contents_edit, SIGNAL(textChanged()), this, SLOT(contentsBoxChanged()) );
+		  title_edit->setText( kover_file.title() );
+		  contents_edit->setText( kover_file.contents() );
+		  connect( contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()) );
+		  altered_data = false;
+		  cddb_fill->cdInfo();
+	 }
+	 delete(without);
+	 free(id);
+	 globals.display_track_duration = display_track_duration;
 }
 
-#include "KoverTop.moc"
+

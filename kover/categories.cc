@@ -26,12 +26,12 @@
 
 */
 
-/* $Id: categories.cc,v 1.1 2001/11/11 00:34:48 adrian Exp $ */
+/* $Id: categories.cc,v 1.5 2001/11/18 23:59:33 adrian Exp $ */
 
 #include "categories.h"
 
 categories::categories() {
-	 category.push_back("All");
+	 //category.push_back("All");
 	 category.push_back("Classical");
 	 category.push_back("Country");
 	 category.push_back("Data");
@@ -52,12 +52,14 @@ int categories::how_many() {
 	 return (int)category.size();
 }
 
-char * categories::get_category(int id) {
+string categories::get_category(int id) {
+	 if (id < 0 || id >= how_many())
+		  return string();
 	 list <string> :: iterator cat;
 	 int i = 0;
 	 for (cat = category.begin(); cat != category.end(); cat++) {
 		  if (i++ == id)
-				return strdup((cat)->c_str());
+				return *cat;
     }
-	 return NULL;
+	 return string();
 }

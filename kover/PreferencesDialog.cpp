@@ -31,11 +31,21 @@
 	 16 Oct 2001: Added 'inlet only' thingy
 */
 
-/* $Id: PreferencesDialog.cpp,v 1.16 2001/11/11 00:34:48 adrian Exp $ */
+/* $Id: PreferencesDialog.cpp,v 1.18 2001/11/18 23:59:33 adrian Exp $ */
 
 #include "PreferencesDialog.h"
-#include "KoverTop.h"
 #include <qbuttongroup.h>
+#include <klocale.h>
+#include <kiconloader.h>
+#include <qlayout.h>
+#include <kmessagebox.h>
+#include <qlabel.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <stdio.h>
+
 
 PreferencesDialog::PreferencesDialog(QWidget *parent, const QString &caption):KDialogBase(KJanusWidget::IconList,caption,Ok|Cancel,Ok,parent) {
 	 this->parent = parent;

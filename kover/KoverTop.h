@@ -28,6 +28,8 @@
 	 11 Nov 2001: CDDB without CD
 */
 
+/* $Id: KoverTop.h,v 1.19 2001/11/18 23:59:33 adrian Exp $ */
+
 #ifndef KOVER_TOP_H
 #define KOVER_TOP_H
 
@@ -35,7 +37,6 @@
 #include "CDView.h"
 #include "koverfile.h"
 #include "cddb_fill.h"
-#include "CDDB.h"
 #include "cdrom.h"
 
 #include "PreferencesDialog.h"
@@ -51,15 +52,16 @@
 #include <ktoolbar.h>
 #include <kstatusbar.h>
 #include <kstddirs.h>
+#include <kaction.h>
 
 /** KoverTop is the TopLevelWidget. */
 
-class KoverTop : public KMainWindow
-{
+class KoverTop : public KMainWindow {
 	 Q_OBJECT
 public:
 	 KoverTop(const char* name=NULL);
 	 ~KoverTop();
+	 void fileOpen( const KURL& );
 	 
 public slots:
 void contentsBoxChanged();
@@ -76,6 +78,7 @@ private slots:
 
 void fileNew();
 	 void fileOpen();
+	 void file_open(const KURL&);
 	 void fileSave();
 	 void fileSaveAs();
 	 void filePrint();
@@ -99,12 +102,15 @@ private:
 	 bool queryClose();
 	 int how_about_saving();
 
+	
+	 KRecentFilesAction * recent;
+	 
 	 QFrame *main_frame;
  
 	 KoverFile kover_file;
 	 CDDB_Fill*	cddb_fill;
 
-	 QString	filename;
+	 KURL    m_url;
 	 bool	altered_data;
 
 	 QLabel*	title_label;

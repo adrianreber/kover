@@ -1,3 +1,5 @@
+$Id: THANKS,v 1.3 2001/11/18 23:59:33 adrian Exp $
+
 kover THANKS:
 
 Using code and ideas from:
@@ -13,3 +15,17 @@ Jean-Pierre VERRUE <jean-pierre.verrue@laposte.net>
 Håvard Dahle <havardda-i18n@orakel.ntnu.no>
 - norwegian translation
 - inlet only option
+
+Michael <konqueror@gmx.de>
+- moc files now as include in the C++ file:
+
+Header files declaring a QObject descendant have to be run through moc to
+produce a .moc file.  This .moc file has to be compiled, for which two
+possibilities exists: compile it separately, or #include it in the C++ file
+implementing that above mentioned class.  The latter is more efficient in term
+of compilation speed.
+
+- some typos fixed. --enable-final should work now
+- included a mime-type application/x-kover
+- now using the KURL object to open and save files.
+  it is now possible to save an dopen files via ftp...

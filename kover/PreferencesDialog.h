@@ -21,13 +21,16 @@
 	Description: Header to PreferencesDialog.cpp
 */
 
-/* $Id: PreferencesDialog.h,v 1.10 2001/10/28 23:00:14 adrian Exp $ */
+/* $Id: PreferencesDialog.h,v 1.11 2001/11/11 22:58:38 adrian Exp $ */
 
 #ifndef PREFERENCES_DIALOG_H
 #define PREFERENCES_DIALOG_H
 
 #include "kover.h"
 #include <qradiobutton.h>
+#include <kdialogbase.h>
+#include <qlineedit.h>
+#include <qcheckbox.h>
 
 class PreferencesDialog : public KDialogBase {
 	 Q_OBJECT

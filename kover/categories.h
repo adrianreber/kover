@@ -26,7 +26,7 @@
 	 
 */
 
-/* $Id: categories.h,v 1.1 2001/11/11 00:34:48 adrian Exp $ */
+/* $Id: categories.h,v 1.2 2001/11/11 01:02:41 adrian Exp $ */
 
 #ifndef CATEGORIES_H
 #define CATEGORIES_H
@@ -41,7 +41,7 @@ public:
 	 categories();
 	 ~categories();
 	 int how_many();
-	 char * get_category(int id);
+	 string get_category(int id);
 private:
 	 list <string> category;
 

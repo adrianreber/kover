@@ -26,9 +26,14 @@
 
 */
 
-/* $Id: without_cd.cc,v 1.1 2001/11/11 00:34:48 adrian Exp $ */
+/* $Id: without_cd.cc,v 1.3 2001/11/11 22:58:38 adrian Exp $ */
+
+#include "without_cd.moc"
 
 #include "without_cd.h"
+#include "categories.h"
+
+#include "kover.h"
 
 #include <qpushbutton.h>
 #include <qstring.h>
@@ -44,23 +49,32 @@ without_cd::without_cd() : QDialog(0,0,TRUE,0) {
 	 QVBoxLayout *top_layout = new QVBoxLayout(this);
 	 top_layout->setMargin(7);
 	 top_layout->addSpacing(10);
-	 greeting = tr("Enter username and password for proxy at ");
+	 greeting = tr("Select a category:");
 	 QLabel *label = new QLabel(greeting,this);
+	 category = new QComboBox(this,"categories");
+	 categories *cat = new categories();
+	 for (int i=0;i<=cat->how_many();i++) {
+		  string insert = cat->get_category(i);
+		  if (!insert.empty())
+				category->insertItem(QString(insert.c_str()));
+	 }
 	 top_layout->addWidget(label);
 	 top_layout->addSpacing(5);
+	 top_layout->addWidget(category);
+	 top_layout->addSpacing(10);
 
 	 cddb_id = new QLineEdit(this);
 	 cddb_id->setFocus();
 
 	 //top_layout->addWidget(box);
-	 top_layout->addWidget(new QLabel(tr("CDDB Id:"),this));
+	 top_layout->addWidget(new QLabel(tr("Enter CDDB Id:"),this));
 	 top_layout->addSpacing(5);
 	 top_layout->addWidget(cddb_id);
 	 top_layout->addSpacing(10);
 	
 	 QBoxLayout *button_layout = new QBoxLayout(top_layout, QBoxLayout::RightToLeft, -10);
 	
-	 QPushButton *ok = new QPushButton(tr("Ok"),this ,"ok");
+	 QPushButton *ok = new QPushButton(tr("Search"),this ,"ok");
 	 ok->setDefault(TRUE);
 	 
 	 ok->setMaximumWidth(70);
@@ -83,6 +97,11 @@ without_cd::~without_cd() {
 }
 
 void without_cd::accept() {
+	 QString tmp;
+	 tmp = cddb_id->text();
+	 _DEBUG_ fprintf(stderr,"%s:id: %s\n",PACKAGE,tmp.latin1());
+	 tmp = category->currentText();
+	 _DEBUG_ fprintf(stderr,"%s:category: %d %s\n",PACKAGE,category->currentItem(),tmp.latin1());
 	 QDialog::done(0);
 }
 
@@ -90,4 +109,14 @@ void without_cd::quit() {
 	 QDialog::done(-1);
 }
 
-#include "without_cd.moc"
+void without_cd::handle_input() {
+	 
+}
+
+int without_cd::get_category() {
+	 return category->currentItem();
+}
+
+char * without_cd::get_id() {
+	 return strdup((cddb_id->text()).latin1());
+}

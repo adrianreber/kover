@@ -26,7 +26,7 @@
 	 
 */
 
-/* $Id: without_cd.h,v 1.1 2001/11/11 00:34:48 adrian Exp $ */
+/* $Id: without_cd.h,v 1.3 2001/11/11 22:58:38 adrian Exp $ */
 
 #ifndef WITHOUT_CD_H
 #define WITHOUT_CD_H
@@ -41,9 +41,13 @@ class without_cd : public QDialog {
 public:
 	 without_cd();
 	 ~without_cd();
+	 int get_category();
+	 char * get_id();
 		 
 private:
 	 QLineEdit *cddb_id;
+	 QComboBox *category;
+	 void handle_input();
 
 private slots:
 void accept();

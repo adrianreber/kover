@@ -40,16 +40,45 @@
 	 30 Sep 2001: proxy authentification support
 
 	 30 Oct 2001: Better error handling
+	 
+	 13 Nov 2001: CDDB without CD
 	
 */
+
+/* $Id: cddb_fill.cpp,v 1.44 2001/11/18 23:59:33 adrian Exp $ */
+
+#include "cddb_fill.moc"
 
 #include "cddb_fill.h"
 
 #include <string>
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+
 #include "cddb_211_item.h"
 #include "inexact_dialog.h"
 #include "proxy_auth.h"
+#include "categories.h"
+
+extern "C" {
+
+#ifdef HAVE_LINUX_CDROM_H
+#include <linux/cdrom.h>
+#endif
+
+#ifdef HAVE_LINUX_UCDROM_H
+#include <linux/ucdrom.h>
+#endif
+
+}
+
 
 
 track_info::track_info(int _track, int _min, int _sec, int _frame){
@@ -113,6 +142,46 @@ bool CDDB_Fill::execute() {
 	 return true;
 }
 
+bool CDDB_Fill::execute_without_cd(const char * id, int cat) {
+	 char *message;
+	 categories * category = new categories();
+	 cdinfo.cddb_id = strtoul(id,NULL,16);
+	 cdinfo.category = (QString((category->get_category(cat)).c_str())).lower();
+	 code=200;
+	 cdinfo.artist = "Artist";
+	 cdinfo.cdname = "Title";
+	 cdinfo.length = 0;
+	 cdinfo.ntracks = 0;
+	 cdinfo.trk.clear();
+
+	 if(!getCDDBFromLocalFile()) {
+		  if (!cddb_connect()) {
+	
+				cddb_readcdinfo(sk_2,false,true,true);
+				cddb_disconnect();
+							
+		  } else {
+				if (errno <sys_nerr) {
+					 message = (char *)malloc(strlen(sys_errlist[errno])+strlen("Connecting to CDDB server failed: "));
+					 sprintf(message,"Connecting to CDDB server failed: %s",sys_errlist[errno]);
+					 emit statusText(message);
+					 //free (message);
+				}
+				cddb_disconnect();
+				if (category) {
+					 delete(category);
+					 category = NULL;
+				}
+				return false;
+		  }
+	 }
+	 if (category) {
+		  delete(category);
+		  category = NULL;
+	 }
+	 return true;
+}
+
 void CDDB_Fill::setTitleAndContents() {
 	 QString tracks, contents;
 	 kover_file->setTitle( cdinfo.artist + "\n" + cdinfo.cdname );
@@ -168,7 +237,7 @@ int CDDB_Fill::openCD() {
 				break;
 		  case EBUSY:
 				emit statusText(QString(globals.cdrom_device) 
-									  + QString(tr(" is busy!")));
+									 + QString(tr(" is busy!")));
 				break;
 		  default:
 				emit statusText(QString(tr("Unknown error while opening ")) 
@@ -473,7 +542,7 @@ bool CDDB_Fill::cddb_query() {
 	 free(http_buffer);
 	 free(offset_buffer);
 
-	 // now using code for the http answer
+	 // now using code of the http answer
 	 // to determine if we need a user name and pw
 	 code = 0;
 
@@ -481,56 +550,17 @@ bool CDDB_Fill::cddb_query() {
 
 	 _DEBUG_ fprintf(stderr,"kover:CDDB_Fill::cddb_query():http code:%d\n",code);
 
-	 proxy_auth * proxy_auth_dialog = NULL;
+	 //proxy_auth * proxy_auth_dialog = NULL;
 
 	 //globals.base64encoded = NULL;
 	 
-	 int aber=0;
+	 //int aber=0;
 
 	 switch(code) {
 	 case 407:
-		  //loop until the correct password is entered
-		  while(1) {
-		  if(!globals.base64encoded) {
-				_DEBUG_ fprintf(stderr,"kover:now requesting authorization.\n");
-				emit statusText (tr("Initializing authorization"));
-				proxy_auth_dialog = new proxy_auth(globals.proxy_server,globals.proxy_port);
-				// invoking passwd dialog...
-				aber=proxy_auth_dialog->exec();
-				_DEBUG_ fprintf(stderr,"kover:proxy_auth returns: %d\n",aber);
-				if (aber) {
-					 emit statusText(tr("Operation aborted."));
-					 //canceled
-					 return false;
-				}
-				globals.base64encoded = proxy_auth_dialog->get_authentification();
-				delete proxy_auth_dialog;
-				proxy_auth_dialog = NULL;
-		  }
-		  cddb_disconnect();
-		  cddb_connect();
-		  http_buffer = NULL;
-		  http_buffer = make_cddb_request(query_buffer,true);
-		  
-		  if (!http_buffer)
+		  if (!do_authentification(query_buffer,socket_1))
 				return false;
-		  _DEBUG_ fprintf(stderr,"Query is [%s]\n",http_buffer);
-
-		  write(socket_1,http_buffer,strlen(http_buffer));
-		  free(http_buffer);
-		  code=CDDBSkipHTTP(socket_1);
-		  if(code!=407) 
-				break;
-		  else {
-				if(globals.base64encoded)
-					 free(globals.base64encoded);
-				globals.base64encoded = NULL;
-		  }
-		  // somebody help me please
-		  // just kidding
-		  // here should be a check if the returned http code
-		  // wants us to proceed. partial rewrite would be appreciated...
-		  }
+		  break;
 	 case 200:
 		  _DEBUG_ fprintf(stderr,"kover:sweeeeet!\n");
 		  // proceeding with standard operation
@@ -567,7 +597,7 @@ bool CDDB_Fill::cddb_query() {
 	 // finally some STL
 	 list <cddb_211_item *> inexact_list;
 	 inexact_dialog * inexact;
-	 aber=0;
+	 int aber=0;
 	 
 	 //what category
 	 switch(code) {
@@ -672,7 +702,7 @@ bool CDDB_Fill::cddb_query() {
 }
  
 
-void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file) {
+void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file, bool without) {
 	 char *cddb_file = NULL;
 	 FILE *cddb_file_descriptor = NULL;
 	 char *query_buffer = NULL;
@@ -681,20 +711,28 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file) {
 	 bool file_opened = false;
 	 char s[256],*ss;
 	 int t;
+	 int track = 0;
 	 char code_string[4];
+
 
 	 if (!local) {
 		  if (code == 200 || code == 211)  { 
 				// cddb_query was a success, request info
+			
 				emit statusText(tr("Downloading CD info..."));
-       
+					 
+					
+
 				t = strlen("cddb+read+%s+%08x")+strlen(cdinfo.category)+sizeof(cdinfo.cddb_id)+10;
 
 				query_buffer = (char *)malloc(t);
 
 				snprintf(query_buffer,t,"cddb+read+%s+%08x",(const char*)cdinfo.category, (unsigned int) cdinfo.cddb_id);
 		 
-				cddb_request = make_cddb_request(query_buffer);
+				if(!globals.base64encoded)
+					 cddb_request = make_cddb_request(query_buffer);
+				else
+					 cddb_request = make_cddb_request(query_buffer,true);
 
 				if (!cddb_request)
 					 return;
@@ -717,24 +755,9 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file) {
 					 break;
 				case 407:
 					 _DEBUG_ fprintf(stderr,"kover:once more we need some authorization.\n");
-					 cddb_disconnect();
-					 cddb_connect();
-					 
-					 desc = sk_2;
-
-					 cddb_request = NULL;
-					 cddb_request = make_cddb_request(query_buffer,true);
-
-					 if (!cddb_request)
+					 if (!do_authentification(query_buffer,socket_2))
 						  return;
-
-					 _DEBUG_ fprintf(stderr,"Reading : %s\n",cddb_request);
-
-					 write(socket_2,cddb_request,strlen(cddb_request));
-
-					 free(cddb_request);
-					 code = CDDBSkipHTTP(socket_2);
-				  
+					 desc = sk_2;
 					 _DEBUG_ fprintf(stderr,"kover:CDDB_Fill::cddb_readcdinfo():http code:%d\n",code);
 					 break;
 				default:
@@ -750,12 +773,15 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file) {
 
 				_DEBUG_ fprintf(stderr,"Code: %d\n", code);
 
+					 
+				
 				switch(code) {
 				case 210:
 					 emit statusText(tr("OK, CDDB database entry follows."));
 					 break;
 				case 401: 
 					 emit statusText(tr("Specified CDDB entry not found."));
+					 // maybe here without + search in all categories...
 					 return;
 				case 402:
 					 emit statusText(tr("Server error."));
@@ -771,12 +797,17 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file) {
 					 fprintf(stderr,"kover:%s:%d: this should not happen\n",__FILE__,__LINE__);
 					 return;
 				}
+				
+	 
 		  } else {
 				fprintf(stderr,"kover:%s:%d: this should not happen\n",__FILE__,__LINE__);
 				return;
 		  }
+
 	 }
   
+
+
 	 s[0] = 0;
 	
 	 while (strncmp(s,".", 1)!=0) {
@@ -831,6 +862,11 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file) {
 				cdinfo.artist = s+7;
 				cdinfo.cdname = ss+2;
 		  }
+
+		  if (((ss=strstr(s, "Disc length:")) != NULL) && without) {
+				cdinfo.length = atoi(ss+13);
+				_DEBUG_ fprintf(stderr,"%s:length:%d\n",PACKAGE,cdinfo.length);
+		  }
           
 		  if ((ss=strstr(s, "TTITLE")) == NULL)
 				continue;
@@ -847,7 +883,11 @@ void CDDB_Fill::cddb_readcdinfo(FILE *desc,bool local, bool save_as_file) {
 				ss += 4;    
        
 		  parse_trails(ss);
-     
+		  
+		  if (without) {
+				cdinfo.trk.append( new track_info(++track,0,0,0) );
+				cdinfo.ntracks++;
+		  }
 		  if (cdinfo.trk.at(t)->songname.length())
 				cdinfo.trk.at(t)->songname += ss;
 		  else
@@ -938,7 +978,7 @@ char * CDDB_Fill::make_cddb_request(char *query_me, bool use_auth) {
 		  }
 		  return_me = (char *)malloc(length);
 		  if (use_auth && globals.base64encoded ) {
-					snprintf(return_me,length,"GET http://%s/%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\nProxy-authorization: Basic %s\n\n",
+				snprintf(return_me,length,"GET http://%s/%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\nProxy-authorization: Basic %s\n\n",
 							globals.cddb_server,globals.cgi_path,query_me,hello_buffer,KOVER_CDDB_LEVEL,globals.cddb_server,PACKAGE,VERSION,globals.base64encoded);
 		  } else {
 				snprintf(return_me,length,"GET http://%s/%s?cmd=%s%s&proto=%s HTTP/1.1\r\nHost: %s\r\nUser-Agent: %s/%s\r\nAccept: text/plain\n\n",
@@ -957,4 +997,49 @@ char * CDDB_Fill::make_cddb_request(char *query_me, bool use_auth) {
 	 return return_me;
 }
 
-#include "cddb_fill.moc"
+bool CDDB_Fill::do_authentification(char *query_buffer, int socket) {
+	 proxy_auth * proxy_auth_dialog = NULL;
+	 int aber=0;
+	 int code = 0;
+	 char * http_buffer = NULL;
+	 //loop until the correct password is entered
+	 while(1) {
+		  if(!globals.base64encoded) {
+				_DEBUG_ fprintf(stderr,"kover:now requesting authorization.\n");
+				emit statusText (tr("Initializing authorization"));
+				proxy_auth_dialog = new proxy_auth(globals.proxy_server,globals.proxy_port);
+				// invoking passwd dialog...
+				aber=proxy_auth_dialog->exec();
+				_DEBUG_ fprintf(stderr,"kover:proxy_auth returns: %d\n",aber);
+				if (aber) {
+					 emit statusText(tr("Operation aborted."));
+					 //canceled
+					 return false;
+				}
+				globals.base64encoded = proxy_auth_dialog->get_authentification();
+				delete proxy_auth_dialog;
+				proxy_auth_dialog = NULL;
+		  }
+		  cddb_disconnect();
+		  cddb_connect();
+		  http_buffer = NULL;
+		  http_buffer = make_cddb_request(query_buffer,true);
+				
+		  if (!http_buffer)
+				return false;
+		  _DEBUG_ fprintf(stderr,"Query is [%s]\n",http_buffer);
+				
+		  write(socket,http_buffer,strlen(http_buffer));
+		  free(http_buffer);
+		  code=CDDBSkipHTTP(socket);
+		  if(code!=407) 
+				break;
+		  else {
+				if(globals.base64encoded)
+					 free(globals.base64encoded);
+				globals.base64encoded = NULL;
+		  }
+	 }
+	 return true;
+}
+

@@ -32,80 +32,12 @@
 #define _DEBUG_ if(0)
 #endif
 
-#include <ktoolbarbutton.h>
-#include <kaboutapplication.h>
-#include <kaboutdata.h>
-#include <kmenubar.h>
-#include <kaction.h>
-#include <kstdaction.h>
-#include <klocale.h>
-#include <kcmdlineargs.h>
-#include <kmainwindow.h>
-#include <kedittoolbar.h>
-#include <kdialogbase.h>
-#include <kiconloader.h>
-#include <kmessagebox.h>
-#include <ktmainwindow.h>
-#include <kfiledialog.h>
-#include <kfontdialog.h>
-#include <kcolordialog.h>
-
-#include <qframe.h>
-#include <qlayout.h>
-#include <qlineedit.h>
-#include <qtimer.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qmultilinedit.h>
-#include <qregexp.h>
-#include <qcheckbox.h>
-#include <qgroupbox.h>
-#include <qobject.h>
-#include <qstring.h>
-#include <qlist.h>
-
-#include <stdio.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <netdb.h>
-#include <signal.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/sem.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/ioctl.h>
-
 #include <string>
 #include <list>
 
 #include "kover_global.h"
 
-extern "C" {
-
-#ifdef HAVE_LINUX_CDROM_H
-#include <linux/cdrom.h>
-#endif
-
-#ifdef HAVE_LINUX_UCDROM_H
-#include <linux/ucdrom.h>
-#endif
-
-}
-
 using std::string;
-
-#define MAIN_TOOLBAR 1
-#define CD_TOOLBAR 2
-#define SEM_CNT 2
-#define SEMKEY  5
-
-#define MODE    0600
 
 extern int _debug_;
 

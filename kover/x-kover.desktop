@@ -1,0 +1,6 @@
+[Desktop Entry]
+Comment=Kover
+Icon=kover
+MimeType=application/x-kover
+Patterns=*.kover;
+Type=MimeType

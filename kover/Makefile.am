@@ -1,20 +1,19 @@
-####### kdevelop will overwrite this part!!! (begin)##########
 bin_PROGRAMS = kover cddb-id 
 
 kover_SOURCES = imagedlgdata.cpp imagedlg.cpp cddb_fill.cpp koverfile.cpp \
 		KoverTop.cpp CDView.cpp main.cpp \
-		PreferencesDialog.cpp CDDB.cpp cdrom.cc config.cc \
+		PreferencesDialog.cpp cdrom.cc config.cc \
 		cddb_211_item.cc inexact_dialog.cc proxy_auth.cc \
 		without_cd.cc categories.cc
 
-kover_LDADD   = $(LIB_KSYCOCA) $(LIB_KFILE) $(LIBSOCKET)
+kover_LDADD   = $(LIB_KSYCOCA) $(LIB_KFILE) $(LIBSOCKET) -lkdeprint
 
 # the library search path. 
 kover_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 cddb_id_SOURCES = cdrom.cc cddb-id.cc cdrom_cddb.cc
 
-SUBDIRS = .
+SUBDIRS = . pics
 
 rcdir = $(kde_datadir)/kover
 rc_DATA = koverui.rc
@@ -22,19 +21,19 @@ rc_DATA = koverui.rc
 appsdir = $(kde_appsdir)/Multimedia
 apps_DATA = kover.desktop
 
+mimedir = $(kde_mimedir)/application
+mime_DATA = x-kover.desktop
+
 KDE_ICON = AUTO
 
 EXTRA_DIST = kover.desktop koverui.rc lo16-app-kover.png lo32-app-kover.png hi32-app-kover.png hi48-app-kover.png
 
-noinst_HEADERS = CDDB.h KoverTop.h cddb_fill.h kover.h \
+noinst_HEADERS = KoverTop.h cddb_fill.h kover.h \
 		 CDView.h PreferencesDialog.h imagedlg.h koverfile.h \
 		 kover_global.h cdrom.h config.h cdrom_cddb.h \
 		 cddb_211_item.h inexact_dialog.h proxy_auth.h
 
-# set the include path for X, qt and KDE
 INCLUDES= $(all_includes)
-# claim, which subdirectories you want to install
-# you can add here more. This one gets installed 
 
 # let automoc handle all of the meta source files (moc)
 METASOURCES = AUTO 
@@ -48,9 +47,4 @@ messages:
 	$(XGETTEXT) -C -ki18n -ktr \
 	-x ../../src/kde-i18n-de/messages/kdelibs.po \ 
 	$(kover_SOURCES) && mv messages.po ../po/kover.pot
-
-
-
-
-
 

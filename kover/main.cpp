@@ -28,11 +28,16 @@
 	 20 Jun 2001: Lot of undocumented changes
 */
 
-/* $Id: main.cpp,v 1.23 2001/11/11 00:34:48 adrian Exp $ */
+/* $Id: main.cpp,v 1.25 2001/11/18 23:59:33 adrian Exp $ */
 
 #include "kover.h"
 #include "KoverTop.h"
 #include "config.h"
+
+#include <klocale.h>
+#include <kaboutdata.h>
+#include <kcmdlineargs.h>
+#include <signal.h>
 
 kover_global globals;
 
@@ -45,6 +50,7 @@ int _debug_ = 0;
 static const KCmdLineOptions options[] = {
 	 { "advise", I18N_NOOP("Help me now!"), 0 },
 	 { "debug", I18N_NOOP("Enable debug output."), 0 },
+	 { "+file", I18N_NOOP("File to load"), 0 },
 	 { 0, 0, 0}
 };
 
@@ -72,7 +78,7 @@ void sighandler(int i) {
 	 if (i==2) 
 		  _DEBUG_ fprintf(stderr,"kover:SIGINT received...");
 	 else
-	 		  _DEBUG_ fprintf(stderr,"kover:SIGTERM received...");
+		  _DEBUG_ fprintf(stderr,"kover:SIGTERM received...");
 	 _DEBUG_ fprintf(stderr,"cleaning up...\n");
 	 the_end();
 	 exit (0);
@@ -112,17 +118,20 @@ int main(int argc, char* argv[]) {
   
 	 _DEBUG_ fprintf(stderr,"This is %s %s compiled with %s\n",PACKAGE,VERSION,__VERSION__);
 	 
-
-	 args->clear();
-
 	 config->load_globals();
 		  
 	 kovertop = new KoverTop();
-  
+	 
+	 if( args->count() > 0 ) {
+		  kovertop->fileOpen( args->url(0) );
+	 }
+	 
+	 args->clear();
+
 	 kovertop->show();  
 	 int i = kover.exec();
 		  
 	 the_end();
-
+	 
 	 return i;
 }

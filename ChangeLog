@@ -1,4 +1,20 @@
-$Id: ChangeLog,v 1.10 2001/10/30 13:01:20 adrian Exp $
+$Id: ChangeLog,v 1.11 2001/11/18 23:59:33 adrian Exp $
+
+2001-11-18  Adrian  <adrian@lisas.de>
+	* KoverTop.cpp cddb_fill.cpp: included option to make
+	  cddb query without the CD
+	* without_cd.cc: the without CD cddb query dialog.
+	* KoverTop.cpp: OpenRecent menu available
+	* categories.cc: a container for the cddb categories
+	* CDView.cpp: switched from QPrinter to KPrinter
+	  maybe this helps some people who weren't able to print
+
+2001-11-17  Michael  <konqueror@gmx.de>
+	* KoverTop.cpp: network transparency. now it its possible
+	  to open and save file via ftp
+	* x-kover.desktop: application/x-kover mimetype
+	* main.cpp: open file via command line
+	* cdrom_cddb.h: fixed typo. --enable-final should work now
 
 2001-10-28  Adrian  <adrian@lisas.de>
 	* some files: patch from Håvard Dahle <havardda-i18n@orakel.ntnu.no>
