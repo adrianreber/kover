@@ -34,7 +34,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.cc,v 1.23 2003/03/23 22:24:38 adrian Exp $ */
+/* $Id: kovertop.cc,v 1.24 2004/04/20 20:58:07 adrian Exp $ */
 
 //moc file
 #include "kovertop.moc"
@@ -65,6 +65,7 @@
 #include <qlayout.h>
 #include <qpoint.h>
 #include <qgroupbox.h>
+#include <kkeydialog.h>
 
 #define NORM_WIDTH 520
 #define NORM_HEIGHT 460
@@ -170,7 +171,14 @@ void KoverTop::make_menu()
     (void) new KAction(i18n("CDDB without CD"), "network", 0, this,
         SLOT(cddb_without_cd()), actionCollection(), "cddb_without_cd");
 
+    KStdAction::keyBindings( this, SLOT( slotConfigureKeys() ), actionCollection() );
+
     createGUI();
+}
+
+void KoverTop::slotConfigureKeys()
+{
+  KKeyDialog::configure( actionCollection(), this );
 }
 
 void KoverTop::make_main_frame()
@@ -681,7 +689,11 @@ void KoverTop::cddb_without_cd()
     globals.display_track_duration = 0;
     without_cd *without = new without_cd();
 
-    without->exec();
+	    if (without->exec()==-1) {
+		       delete(without);
+		       return;
+		    }
+
     int category = without->get_category();
     char *id = without->get_id();
 

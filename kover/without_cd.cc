@@ -26,7 +26,7 @@
 
 */
 
-/* $Id: without_cd.cc,v 1.5 2003/02/07 16:44:40 adrian Exp $ */
+/* $Id: without_cd.cc,v 1.6 2004/04/20 20:58:07 adrian Exp $ */
 
 #include "without_cd.moc"
 #include "without_cd.h"
@@ -62,6 +62,7 @@ without_cd::without_cd():QDialog(0, 0, TRUE, 0)
         if (!insert.empty())
             category->insertItem(QString(insert.c_str()));
     }
+    delete cat;
     top_layout->addWidget(label);
     top_layout->addSpacing(5);
     top_layout->addWidget(category);

@@ -28,7 +28,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.h,v 1.9 2003/03/23 22:24:38 adrian Exp $ */
+/* $Id: kovertop.h,v 1.10 2004/04/20 20:58:07 adrian Exp $ */
 
 #ifndef KOVER_TOP_H
 #define KOVER_TOP_H
@@ -101,6 +101,7 @@ class KoverTop:public KMainWindow {
     void spine_text_method();
     void spine_text_changed_method(const QString & s);
     void file_mode();
+    void slotConfigureKeys();
 
   private:
 
