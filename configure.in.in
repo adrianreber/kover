@@ -1,16 +1,10 @@
+#MIN_CONFIG(3.1)
 # Original Author was Kalle@kde.org
 # I lifted it in some mater. (Stephan Kulow)
 # I used much code from Janos Farkas
 
-dnl Process this file with autoconf to produce a configure script.
-
-AC_INIT(kover/main.cc) dnl a source file from your sub dir
-
 dnl This is so we can use kde-common
 AC_CONFIG_AUX_DIR(admin)
-
-AC_CANONICAL_SYSTEM 
-AC_ARG_PROGRAM
 
 AC_ISC_POSIX
 
@@ -18,9 +12,6 @@ dnl Automake doc recommends to do this only here. (Janos)
 AM_INIT_AUTOMAKE(kover, 2.9.5) dnl searches for some needed programs
 
 KDE_SET_PREFIX
-
-dnl generate the config header
-dnl AM_CONFIG_HEADER(config.h) dnl at the distribution this done
 
 dnl Checks for programs.
 AC_CHECK_COMPILERS
@@ -81,3 +72,4 @@ fi
 
 echo checking for good CDs in your shelf... yes
 
+AC_OUTPUT( kover.1 cddb-id.1 kover.spec )

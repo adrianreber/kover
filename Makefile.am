@@ -1,4 +1,6 @@
 
+SUBDIRS= kover po
+
 include admin/deps.am
 
 MAINTAINERCLEANFILES = configure.in kover.spec.in
@@ -9,4 +11,3 @@ man_MANS = kover.1 cddb-id.1
 
 AUTOMAKE_OPTIONS = foreign
 
-SUBDIRS=$(TOPSUBDIRS)
