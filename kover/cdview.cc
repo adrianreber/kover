@@ -28,7 +28,7 @@
 	 29 Oct 2001: Change size of the inlet title font
 */
 
-/* $Id: cdview.cc,v 1.12 2004/09/17 19:03:52 adrian Exp $ */
+/* $Id: cdview.cc,v 1.13 2004/09/17 19:57:12 adrian Exp $ */
 
 #include "cdview.moc"
 #include "koverfile.h"
@@ -120,7 +120,7 @@ void CDView::printKover()
     if (printer->setup(this)) {
         QPainter *paint = new QPainter(printer);
 
-	paint->save();
+	//paint->save();
 	
         previewMode = true;     // hack
 
