@@ -27,13 +27,16 @@
 
 */
 
-/* $Id: cddb_fill.h,v 1.19 2002/04/24 15:51:21 adrian Exp $ */
+/* $Id: cddb_fill.h,v 1.20 2002/04/28 09:33:51 adrian Exp $ */
 
 #ifndef CDDB_FILL_H
 #define CDDB_FILL_H
 
 #include "kover.h"
 #include "koverfile.h"
+
+#include "net.h"
+
 #include <stdio.h>
 #include <errno.h>
 #include <qlist.h>
@@ -82,7 +85,7 @@ public:
 	 unsigned long cddb_id;	
 };
 
-class CDDB_Fill : public QObject {
+class CDDB_Fill : public QObject, net {
 	 Q_OBJECT
 public: 
 	 CDDB_Fill( KoverFile* _kover_file );
@@ -132,12 +135,6 @@ private:
 	 char * make_cddb_request(char *query_me, bool use_auth=false);
 	 char cddb_msg[255];	/* Return message of server info */
 	 int code;		/* Return value for sending data to the server */
-	 int socket_1;		/* Descriptor for our first socket */
-	 int socket_2;		/* Descriptor for our second socket */
-	 int sock_mode;	/* Server read/write status */
-	 FILE *sk_1;		/* Stream descriptor for our first socket */
-	 FILE *sk_2;		/* Stream descriptor for our second socket */
-
 };
 
 #endif /* CDDB_FILL_H */

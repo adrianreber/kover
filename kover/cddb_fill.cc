@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.6 2002/04/24 15:51:21 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.7 2002/04/28 09:33:51 adrian Exp $ */
 
 #include "cddb_fill.moc"
 
@@ -97,11 +97,6 @@ CDDB_Fill::CDDB_Fill(KoverFile* _kover_file) : QObject() {
 	 kover_file = _kover_file;
 	 cd_fd = -1;
 	 code = 0;
-	 socket_1 = 0;
-	 socket_2 = 0;
-	 sock_mode = 0;
-	 sk_1 = NULL;
-	 sk_2 = NULL;
 }
 
 CDDB_Fill::~CDDB_Fill() {
@@ -209,6 +204,7 @@ void CDDB_Fill::cdInfo() {
 	 QString str;
 	 
 	 str.sprintf("CD contains %d tracks, total time is %d:%02d, the magic number is 0x%lx", cdinfo.ntracks, cdinfo.length/60, cdinfo.length%60, cdinfo.cddb_id);
+	 _DEBUG_ fprintf(stderr,"%s:%s\n",PACKAGE,str.latin1());
 	 emit statusText(str);
 	 emit update_id(cdinfo.cddb_id);
 	 
@@ -367,71 +363,19 @@ void CDDB_Fill::parse_trails(char *ss) {
 
 // opening to connections to the database server for a secret reason
 
-int CDDB_Fill::cddb_connect()
-{
-	 sockaddr_in sin;
-	 hostent *h;
-   
+int CDDB_Fill::cddb_connect() {
 	 if (globals.use_proxy)
 		  emit statusText(QString(tr("Connecting to "))
 								+ QString(globals.proxy_server) + "..." );
 	 else
 		  emit statusText(QString(tr("Connecting to ")) 
 								+ QString(globals.cddb_server) + "..." );
-
-	 if (globals.use_proxy)
-	 {
-		  if ((h = gethostbyname(globals.proxy_server)) == NULL)
-				return errno;
-	 }
-	 else
-	 {
-		  if ((h = gethostbyname(globals.cddb_server)) == NULL)
-				return errno;
-	 }
- 
-	 bcopy(h->h_addr,(char *) &sin.sin_addr, h->h_length);
-			
-	 sin.sin_family = h->h_addrtype;
-
-	 if (globals.use_proxy)
-		  sin.sin_port   = htons(globals.proxy_port);
-	 else
-		  sin.sin_port   = htons(CDDB_PORT);
-
-	 emit statusText(tr("Connecting to CDDB server..."));
-                            
-	 if ((socket_1 = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-		  return errno;
-
-	 if ((socket_2 = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-		  return errno;
-                 
-	 if (::connect(socket_1,(struct sockaddr*)&sin, sizeof(sin)) < 0)
-		  return errno;
-
-	 if (::connect(socket_2,(struct sockaddr*)&sin, sizeof(sin)) < 0)
-		  return errno;
-     
-	 sk_1 = fdopen(socket_1, "r+");
-	 sk_2 = fdopen(socket_2, "r+");
-	 if (sk_1 == NULL || sk_2 == NULL)
-	 {
-		  close(socket_1);
-		  close(socket_2);
-		  return errno;
-	 }
-
-	 return 0;   
+	 	 
+	 return net::connect();
 }
 
 void CDDB_Fill::cddb_disconnect() {
-	 close(socket_1);
-	 if (sk_1 != NULL)
-		  fclose(sk_1);
-	 close(socket_2);
-	 if (sk_2 != NULL)
-		  fclose(sk_2);
+	 net::disconnect();
 }
 
 /**** END GENERAL NETWORK CODE *******************************************/
