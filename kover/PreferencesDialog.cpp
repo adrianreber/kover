@@ -30,7 +30,7 @@
 	 12 Jun 2001: Added slim case thingy
 */
 
-/* $Id: PreferencesDialog.cpp,v 1.13 2001/07/20 17:26:56 adrian Exp $ */
+/* $Id: PreferencesDialog.cpp,v 1.14 2001/10/01 22:35:12 adrian Exp $ */
 
 #include "PreferencesDialog.h"
 #include "KoverTop.h"
@@ -309,11 +309,11 @@ void PreferencesDialog::set_cddb_files() {
 }
 
 void PreferencesDialog::setup_cddb_files_page(void) {
-	 QFrame *page = addPage( i18n("CDBB files"), i18n("Local CDDB files"),
+	 QFrame *page = addPage( i18n("CDDB files"), i18n("Local CDDB files"),
 									 BarIcon("folder_blue", KIcon::SizeMedium ) );
 	 QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );
 
-	 QGroupBox *group = new QGroupBox(i18n("&CDROM"),page );
+	 QGroupBox *group = new QGroupBox(i18n("&Local CDDB files"),page );
 	 topLayout->addWidget( group );
 	 QVBoxLayout *vlay = new QVBoxLayout( group, spacingHint() );
 	 vlay->addSpacing( fontMetrics().lineSpacing() );

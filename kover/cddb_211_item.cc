@@ -26,7 +26,7 @@
 
 */
 
-/* $Id: cddb_211_item.cc,v 1.4 2001/07/15 22:21:53 adrian Exp $ */
+/* $Id: cddb_211_item.cc,v 1.5 2001/09/17 23:03:49 adrian Exp $ */
 
 #include "cddb_211_item.h"
 #include <stdlib.h>
@@ -39,7 +39,7 @@ cddb_211_item::cddb_211_item() {
 
 cddb_211_item::cddb_211_item(char *input) {
 	 cddb_data = strdup(input);
-	 fprintf(stderr,"New string: %s\n",cddb_data);
+	 //_DEBUG_ fprintf(stderr,"New string: %s\n",cddb_data);
 }
 
 cddb_211_item::~cddb_211_item() {

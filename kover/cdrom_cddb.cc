@@ -26,7 +26,7 @@
 
 */
 
-/* $Id: cdrom_cddb.cc,v 1.1 2001/07/09 09:15:27 adrian Exp $ */
+/* $Id: cdrom_cddb.cc,v 1.2 2001/09/17 23:03:49 adrian Exp $ */
 
 #include "cdrom_cddb.h"
 #include <stdio.h>
@@ -83,11 +83,12 @@ void cdrom_cddb::calc_cddb_id() {
 	 } while (i--);
 
 	 cddb_id = (pos % 0xff) << 24 | length << 8 | ntracks;
+
+	 //_DEBUG_ fprintf(stderr,"%s:table of contents successfully read: %08lx\n",PACKAGE,cddb_id);
 }
 
 
-int cdrom_cddb::cddb_sum(int n)
-{
+int cdrom_cddb::cddb_sum(int n) {
 	 int ret = 0;
 
 	 while (n) {

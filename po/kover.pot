@@ -6,22 +6,194 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-02-20 08:59+0000\n"
+"POT-Creation-Date: 2001-10-05 19:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
-"Content-Transfer-Encoding: ENCODING\n"
+"Content-Transfer-Encoding: 8bit\n"
 
-#: main.cpp:87
-msgid "lalala\n"
+#: KoverTop.cpp:52 KoverTop.cpp:144 KoverTop.cpp:221
+msgid "[New Document]"
 msgstr ""
 
-#: Kovertop.cpp:140
-msgid "lalala\n"
-msgstr ""
-
-#: Kovertop.cpp:80
+#: KoverTop.cpp:68
 msgid "&Actual size"
+msgstr ""
+
+#: KoverTop.cpp:69
+msgid "&CDDB lookup"
+msgstr ""
+
+#: KoverTop.cpp:71
+msgid "&Image Embedding..."
+msgstr ""
+
+#: KoverTop.cpp:72
+msgid "Title Font..."
+msgstr ""
+
+#: KoverTop.cpp:73
+msgid "Title Fontcolor..."
+msgstr ""
+
+#: KoverTop.cpp:74
+msgid "Contents Font..."
+msgstr ""
+
+#: KoverTop.cpp:75
+msgid "Contents Fontcolor..."
+msgstr ""
+
+#: KoverTop.cpp:76
+msgid "Background Color..."
+msgstr ""
+
+#: KoverTop.cpp:77
+msgid "Eject CD"
+msgstr ""
+
+#: KoverTop.cpp:87
+msgid "CD Number"
+msgstr ""
+
+#: KoverTop.cpp:142
+msgid "Data changed"
+msgstr ""
+
+#: KoverTop.cpp:254
+msgid "File loaded"
+msgstr ""
+
+#: KoverTop.cpp:257 KoverTop.cpp:286 KoverTop.cpp:302
+msgid "Error while opening/reading file!"
+msgstr ""
+
+#: KoverTop.cpp:263
+msgid ""
+"Data changed since last saving!\n"
+"Do you want to save the changes?"
+msgstr ""
+
+#: KoverTop.cpp:283 KoverTop.cpp:299
+msgid "File saved"
+msgstr ""
+
+#: KoverTop.cpp:347
+msgid "Initiating CDDB lookup!"
+msgstr ""
+
+#: KoverTop.cpp:365
+msgid "config me"
+msgstr ""
+
+#: PreferencesDialog.cpp:48
+msgid "CDDB"
+msgstr ""
+
+#: PreferencesDialog.cpp:48
+msgid "CDDB options"
+msgstr ""
+
+#: PreferencesDialog.cpp:52
+msgid "&CDDB server"
+msgstr ""
+
+#: PreferencesDialog.cpp:62
+msgid "CDDB server:"
+msgstr ""
+
+#: PreferencesDialog.cpp:69
+msgid "CGI path:"
+msgstr ""
+
+#: PreferencesDialog.cpp:76
+msgid "&Proxy configuration"
+msgstr ""
+
+#: PreferencesDialog.cpp:83
+msgid "Use proxy for CDDB lookups"
+msgstr ""
+
+#: PreferencesDialog.cpp:87
+msgid "Use 'http_proxy' environment variable"
+msgstr ""
+
+#: PreferencesDialog.cpp:90
+msgid "Proxy server:"
+msgstr ""
+
+#: PreferencesDialog.cpp:96
+msgid "Proxy server port:"
+msgstr ""
+
+#: PreferencesDialog.cpp:109
+msgid "CDROM"
+msgstr ""
+
+#: PreferencesDialog.cpp:109
+msgid "CDROM options"
+msgstr ""
+
+#: PreferencesDialog.cpp:113
+msgid "&CDROM"
+msgstr ""
+
+#: PreferencesDialog.cpp:122
+msgid "CDROM device:"
+msgstr ""
+
+#: PreferencesDialog.cpp:128
+msgid "Eject CD on exit"
+msgstr ""
+
+#: PreferencesDialog.cpp:312
+msgid "CDDB files"
+msgstr ""
+
+#: PreferencesDialog.cpp:312
+msgid "Local CDDB files"
+msgstr ""
+
+#: PreferencesDialog.cpp:316
+msgid "&Local CDDB files"
+msgstr ""
+
+#: PreferencesDialog.cpp:325
+msgid "Read CDDB data from file if available"
+msgstr ""
+
+#: PreferencesDialog.cpp:329
+msgid "Write CDDB data to file"
+msgstr ""
+
+#: PreferencesDialog.cpp:334
+msgid "CDDB path:"
+msgstr ""
+
+#: PreferencesDialog.cpp:390
+msgid "Various properties"
+msgstr ""
+
+#: PreferencesDialog.cpp:394
+msgid "&Stuff"
+msgstr ""
+
+#: PreferencesDialog.cpp:403
+msgid "Mouse click on kover preview triggers actual size."
+msgstr ""
+
+#: PreferencesDialog.cpp:407
+msgid "Display track duration after a CDDB request."
+msgstr ""
+
+#: PreferencesDialog.cpp:411
+msgid ""
+"Print inlet on left side of booklet.\n"
+"(slim case option)"
+msgstr ""
+
+#: proxy_auth.cc:49
+msgid "Enter username and password for proxy at "
 msgstr ""

@@ -119,8 +119,8 @@ public:
 private:
 
 	bool getCDDBFromLocalFile();
-	void CDDBSkipHTTP(int socket);
-	char * make_cddb_request(char *query_me);
+	int CDDBSkipHTTP(int socket);
+	char * make_cddb_request(char *query_me, bool use_auth=false);
 	char cddb_msg[255];	/* Return message of server info */
 	int code;		/* Return value for sending data to the server */
 	int socket_1;		/* Descriptor for our first socket */
@@ -131,4 +131,4 @@ private:
 
 };
 
-#endif
+#endif /* CDDB_FILL_H */

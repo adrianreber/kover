@@ -139,6 +139,7 @@ void config_class::load_globals() {
 		  globals.its_a_slim_case = string->toInt();
 
 	 delete (string);
+	 globals.base64encoded = NULL;
 }
 
 void config_class::store_globals() {

@@ -21,12 +21,12 @@
 #include "imagedlg.h"
 #include <kfiledialog.h>
 
-ImageDlg::ImageDlg(QWidget *parent, KoverFile* _kover_file) : QDialog(parent,"image_dlg",true)
-{
+ImageDlg::ImageDlg(QWidget *parent, KoverFile* _kover_file) 
+  : QDialog(parent,"image_dlg",true) {
 		  kover_file = _kover_file;
 
 		  initDialog();
-		  setCaption("Image Embedding");
+		  setCaption(tr("Image Embedding"));
 	
 		  connect( OKButton, SIGNAL(clicked()), SLOT(OK()) );
 		  connect( CancelButton, SIGNAL(clicked()), SLOT(Cancel()) );
@@ -48,13 +48,11 @@ ImageDlg::ImageDlg(QWidget *parent, KoverFile* _kover_file) : QDialog(parent,"im
 		  TargetCombo_3->setCurrentItem( kover_file->imageTarget(2) );
 }
 
-ImageDlg::~ImageDlg()
-{
+ImageDlg::~ImageDlg() {
 }
 
 
-void ImageDlg::OK()
-{
+void ImageDlg::OK() {
 		  kover_file->setImageFile( 0, FileEdit_1->text() );
 		  kover_file->setImageFile( 1, FileEdit_2->text() );
 		  kover_file->setImageFile( 2, FileEdit_3->text() );

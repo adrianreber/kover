@@ -82,14 +82,14 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 	 number_spin->setEnabled(false);
 	 number_spin->resize( 50, 25 ); 
 	 number_spin->move( 170, 5 );
-	 connect( number_spin, SIGNAL(valueChanged(int)), SLOT(numberChanged(int)) );
+	 connect( number_spin, SIGNAL(valueChanged(int)), SLOT(numberChanged(int)));
 
-	 number_check = new QCheckBox( "CD Number", main_frame, "number_check" );
+	 number_check = new QCheckBox(i18n("CD Number"), main_frame, "number_check");
 	 number_check->resize( 100, 25 );
 	 number_check->move( 50, 5 );
 	 connect( number_check, SIGNAL(toggled(bool)), SLOT(numberChecked(bool)) );
 
-	 title_label = new QLabel( "Title", main_frame, "title_label" );
+	 title_label = new QLabel(i18n("Title"), main_frame,"title_label");
 	 title_label->move( 5, 25 );
 
 	 title_edit = new QMultiLineEdit( main_frame, "title_edit" );
@@ -97,7 +97,7 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 	 title_edit->move( 5, 50 );
 	 connect( title_edit, SIGNAL(textChanged()), SLOT(titleBoxChanged()) );
   
-	 contents_label = new QLabel( "Contents", main_frame, "contents_label" );
+	 contents_label = new QLabel(i18n("Contents"), main_frame, "contents_label");
 	 contents_label->move( 5, 105 );
 
 	 contents_edit = new QMultiLineEdit( main_frame, "contents_edit" );
@@ -125,6 +125,7 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 	 altered_data = false;
 	 main_frame->move(0,70);
 	 main_frame->adjustSize();
+	 
 }
 
 KoverTop::~KoverTop() {
@@ -138,7 +139,7 @@ void KoverTop::dataChanged(bool image) {
 	 bool bla = image;
 	 bla = true;
 		  
-	 setStatusText( "Data changed" );
+	 setStatusText(i18n("Data changed"));
 	 if (filename == "untitled")
 		  setCaption(i18n("[New Document]"), true);
 	 else
@@ -214,7 +215,7 @@ void KoverTop::fileNew() {
 	 number_check->setChecked( false );
 	 title_edit->setFocus();
 	 kover_file.reset();
-	 setStatusText( "Chop!" );
+	 setStatusText("Chop!");
 	 altered_data = false;
 	 filename = "untitled";
 	 setCaption(i18n("[New Document]"), false);
@@ -250,16 +251,16 @@ void KoverTop::fileOpen() {
 					 number_check->setChecked( false );
 				}
               
-				setStatusText( "File loaded" );
+				setStatusText(i18n("File loaded"));
 				altered_data = false;
 		  } else 
-				KMessageBox::error( this, "Error while opening/reading file!");
+				KMessageBox::error( this, i18n("Error while opening/reading file!"));
 		  
 	 }
 }
 
 int KoverTop::how_about_saving() {
-	 switch (KMessageBox::warningYesNoCancel( this, "Data changed since last saving!\nDo you want to save the changes?")) {
+	 switch (KMessageBox::warningYesNoCancel( this, i18n("Data changed since last saving!\nDo you want to save the changes?"))) {
 	 case 3: //YES
 		  fileSave();
 		  if (altered_data)
@@ -279,10 +280,10 @@ void KoverTop::fileSave() {
 	 else	{
 		  if (kover_file.saveFile( filename )) {
 				setCaption(i18n(filename), false);
-				setStatusText( "File saved" );
+				setStatusText(i18n("File saved"));
 				altered_data = false;
 		  } else
-				KMessageBox::error( this, "Error while opening/reading file!");
+				KMessageBox::error( this, i18n("Error while opening/reading file!"));
 	 }
 }
 
@@ -295,10 +296,10 @@ void KoverTop::fileSaveAs() {
 				filename = newfilename;
 
 				setCaption(i18n(filename), false);
-				setStatusText( "File saved" );
+				setStatusText(i18n("File saved"));
 				altered_data = false;
 		  } else
-				KMessageBox::error( this, "Error while opening/reading file!");
+				KMessageBox::error( this, i18n("Error while opening/reading file!"));
 	 }
 }
 
@@ -343,7 +344,7 @@ void KoverTop::actualSize() {
 }
 
 void KoverTop::cddbFill() {
-	 setStatusText("Initiating CDDB lookup!");
+	 setStatusText(i18n("Initiating CDDB lookup!"));
 	 if (altered_data) {
 		  if(how_about_saving())
 				return;
@@ -361,7 +362,7 @@ void KoverTop::cddbFill() {
 }
 
 void KoverTop::preferences() {
-	 PreferencesDialog *dialog = new PreferencesDialog(this, "config me");
+	 PreferencesDialog *dialog = new PreferencesDialog(this,i18n("config me"));
 	 dialog->exec();
 	 delete dialog;
 }

@@ -90,6 +90,7 @@ void fileNew();
 	 void cdrom_eject();
 
 private:
+	 QCheckBox *slim_case;
 	 bool queryClose();
 	 int how_about_saving();
 

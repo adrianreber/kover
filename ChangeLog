@@ -1,4 +1,14 @@
-2001-06-14    <adrian@lisas.de>
+2001-10-01  Adrian  <adrian@lisas.de>
+
+	* cddb_fill.cpp: proxy authentification implemented
+	* proxy_auth.cc: the new proxy authentification dialog
+	  password is base64 encoded; this is "Basic Proxy-authorization"
+	  base64 encoding stuff is from unknown. I found two files on the
+	  web (base64encode.c and base64decode.c) but no copyright or author
+	  information. However not much is left from the original source.
+	* PreferencesDialog.cpp: typo
+
+2001-06-14  Adrian  <adrian@lisas.de>
 
 	* CDView.cpp: booklet content on left side of inlet
 	  for slim case CDs 
@@ -12,7 +22,7 @@
 	  configuration before exiting
 	* cdrom.cc: introducing the cdrom class 
 
-2001-05-10    <adrian@lisas.de>
+2001-05-10  Adrian   <adrian@lisas.de>
 
 	* ChangeLog: Do I really like this changelog style?
 	  If I do like it, why am I not using it?
@@ -22,7 +32,7 @@
 
 	* configure.in: check for good CDs included
 	
-2001-01-22    <adrian@lisas.de>
+2001-01-22  Adrian   <adrian@lisas.de>
 
 	* main.cpp: great new command line option
 	* cddb_fill.cpp: have a look at the cddb code from grip...
@@ -30,7 +40,7 @@
 	  the threading (currently disabled) is mainly from terminatorX
 	* PreferencesDialog.cpp: cdrom and cddb page added
 
-2001-01-11    <adrian@lisas.de>
+2001-01-11  Adrian  <adrian@lisas.de>
 
 	* ported to KDE 2.0 an qt 2.2
 	* KoverTop.cpp: rewritten

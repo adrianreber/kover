@@ -11,62 +11,47 @@
 	 but WITHOUT ANY WARRANTY; without even the implied warranty of
 	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	 GNU General Public License for more details.
-	
+	 
 	 You should have received a copy of the GNU General Public License
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: cdrom.cc
+	 File: proxy_auth.h 
 	 
-	 Description: class for all cdrom accesses
+	 Description: proxy authentification dialog
 	 
 	 Changes:
-
-	 24 Apr 2001: Initial release
-
+	 
+	 30 Sep 2001: Initial release
+	 
 */
 
-#include "cdrom.h"
+/* $Id: proxy_auth.h,v 1.2 2001/09/30 18:21:55 adrian Exp $ */
 
-cdrom::cdrom(char *_path) {
-	 path = strdup(_path);
-	 cdrom_fd = -42;
-	 cdrom_open = false;
-}
+#ifndef PROXY_AUTH_H
+#define PROXY_AUTH_H
 
-cdrom::~cdrom() {
-	 close();
-	 free (path);
-}
+#include "../config.h"
+#include <qdialog.h>
+#include <qlineedit.h>
 
-int cdrom::open() {
-	 if ((cdrom_fd = ::open(path, O_RDONLY | O_NONBLOCK)) >= 0) {
-		  cdrom_open = true;
-		  return 0;
-	 }
-	 else 
-		  return -1;
-}
+class proxy_auth : public QDialog {
+	 Q_OBJECT
+public:
+	 proxy_auth(char *host, int port);
+	 ~proxy_auth();
+	 char * get_authentification();
+	 
+private:
+	 QLineEdit *user;
+	 QLineEdit *pw;
+	 void handle_input();
+	 char *base64encoded;
 
-int cdrom::close() {
-	 if(::close(cdrom_fd) >=0) {
-		  cdrom_fd = -42;
-		  cdrom_open = false;
-		  return 0;
-	 }
-	 else
-		  return -1;
-}
+private slots:
+void accept();
+	 void quit();
+	 
+};
 
-int cdrom::eject() {
-	 if (!cdrom_open) { 
-		  if (open() < 0)
-				return -1;
-	 }
-	 if (cdrom_fd > 0)
-		  ioctl(cdrom_fd,CDROMEJECT);
-	 else
-		  return -1;
-	 close();
-	 return 0;
-}
+#endif /* PROXY_AUTH_H */

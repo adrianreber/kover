@@ -9,126 +9,125 @@
 **********************************************************************/
 #include "imagedlg.h"
 
-void  ImageDlg::initDialog(){
+void  ImageDlg::initDialog() {
 	this->resize(500,440);
 	ImageGroup_1 = new QGroupBox(this,"ImageGroup_1");
 	ImageGroup_1->setGeometry(10,10,480,120);
-	ImageGroup_1->setTitle("First Image");
+	ImageGroup_1->setTitle(tr("First Image"));
 
 	FileEdit_1 = new QLineEdit(this,"FileEdit_1");
 	FileEdit_1->setGeometry(80,40,280,30);
 
 	FileLabel_1 = new QLabel(this,"FileLabel_1");
 	FileLabel_1->setGeometry(30,40,30,30);
-	FileLabel_1->setText("File");
+	FileLabel_1->setText(tr("File"));
 
 	BrowseButton_1 = new QPushButton(this,"BrowseButton_1");
 	BrowseButton_1->setGeometry(370,40,100,30);
-	BrowseButton_1->setText("Browse");
+	BrowseButton_1->setText(tr("Browse"));
 
 	TargetCombo_1 = new QComboBox(this,"NoName");
 	TargetCombo_1->setGeometry(80,80,150,30);
-	TargetCombo_1->insertItem("Front, left side");
-	TargetCombo_1->insertItem("Front, right side");
-	TargetCombo_1->insertItem("Front, both sides");
-	TargetCombo_1->insertItem("Back, without sides");
-	TargetCombo_1->insertItem("Back, with sides");
+	TargetCombo_1->insertItem(tr("Front, left side"));
+	TargetCombo_1->insertItem(tr("Front, right side"));
+	TargetCombo_1->insertItem(tr("Front, both sides"));
+	TargetCombo_1->insertItem(tr("Back, without sides"));
+	TargetCombo_1->insertItem(tr("Back, with sides"));
 
 	AppearanceCombo_1 = new QComboBox(this,"NoName");
 	AppearanceCombo_1->setGeometry(320,80,150,30);
-	AppearanceCombo_1->insertItem("Centered");
-	AppearanceCombo_1->insertItem("Tiled");
-	AppearanceCombo_1->insertItem("Stretched");
+	AppearanceCombo_1->insertItem(tr("Centered"));
+	AppearanceCombo_1->insertItem(tr("Tiled"));
+	AppearanceCombo_1->insertItem(tr("Stretched"));
 
 	QLabel_2 = new QLabel(this,"NoName");
 	QLabel_2->setGeometry(30,80,40,30);
-	QLabel_2->setText("Target");
+	QLabel_2->setText(tr("Target"));
 
 	QLabel_3 = new QLabel(this,"NoName");
 	QLabel_3->setGeometry(240,80,70,30);
-	QLabel_3->setText("Appearance");
+	QLabel_3->setText(tr("Appearance"));
 
 	QGroupBox_2 = new QGroupBox(this,"NoName");
 	QGroupBox_2->setGeometry(10,140,480,120);
-	QGroupBox_2->setTitle("Second Image");
+	QGroupBox_2->setTitle(tr("Second Image"));
 
 	QLabel_4 = new QLabel(this,"NoName");
 	QLabel_4->setGeometry(30,170,40,30);
-	QLabel_4->setText("File");
+	QLabel_4->setText(tr("File"));
 
 	FileEdit_2 = new QLineEdit(this,"NoName");
 	FileEdit_2->setGeometry(80,170,280,30);
 
 	BrowseButton_2 = new QPushButton(this,"NoName");
 	BrowseButton_2->setGeometry(370,170,100,30);
-	BrowseButton_2->setText("Browse");
+	BrowseButton_2->setText(tr("Browse"));
 
 	QLabel_5 = new QLabel(this,"NoName");
 	QLabel_5->setGeometry(30,210,40,30);
-	QLabel_5->setText("Target");
+	QLabel_5->setText(tr("Target"));
 
 	TargetCombo_2 = new QComboBox(this,"NoName");
 	TargetCombo_2->setGeometry(80,210,150,30);
-	TargetCombo_2->insertItem("Front, left side");
-	TargetCombo_2->insertItem("Front, right side");
-	TargetCombo_2->insertItem("Front, both sides");
-	TargetCombo_2->insertItem("Back, without sides");
-	TargetCombo_2->insertItem("Back, with sides");
+	TargetCombo_2->insertItem(tr("Front, left side"));
+	TargetCombo_2->insertItem(tr("Front, right side"));
+	TargetCombo_2->insertItem(tr("Front, both sides"));
+	TargetCombo_2->insertItem(tr("Back, without sides"));
+	TargetCombo_2->insertItem(tr("Back, with sides"));
 
 	AppearanceCombo_2 = new QComboBox(this,"NoName");
 	AppearanceCombo_2->setGeometry(320,210,150,30);
-	AppearanceCombo_2->insertItem("Centered");
-	AppearanceCombo_2->insertItem("Tiled");
-	AppearanceCombo_2->insertItem("Stretched");
+	AppearanceCombo_2->insertItem(tr("Centered"));
+	AppearanceCombo_2->insertItem(tr("Tiled"));
+	AppearanceCombo_2->insertItem(tr("Stretched"));
 
 	QLabel_6 = new QLabel(this,"NoName");
 	QLabel_6->setGeometry(240,210,70,30);
-	QLabel_6->setText("Appearance");
+	QLabel_6->setText(tr("Appearance"));
 
 	QGroupBox_3 = new QGroupBox(this,"NoName");
 	QGroupBox_3->setGeometry(10,270,480,120);
-	QGroupBox_3->setTitle("Third Image");
+	QGroupBox_3->setTitle(tr("Third Image"));
 
 	QLabel_7 = new QLabel(this,"NoName");
 	QLabel_7->setGeometry(30,300,40,30);
-	QLabel_7->setText("File");
+	QLabel_7->setText(tr("File"));
 
 	FileEdit_3 = new QLineEdit(this,"NoName");
 	FileEdit_3->setGeometry(80,300,280,30);
 
 	BrowseButton_3 = new QPushButton(this,"NoName");
 	BrowseButton_3->setGeometry(370,300,100,30);
-	BrowseButton_3->setText("Browse");
+	BrowseButton_3->setText(tr("Browse"));
 
 	QLabel_8 = new QLabel(this,"NoName");
 	QLabel_8->setGeometry(30,340,40,30);
-	QLabel_8->setText("Target");
+	QLabel_8->setText(tr("Target"));
 
 	TargetCombo_3 = new QComboBox(this,"NoName");
 	TargetCombo_3->setGeometry(80,340,150,30);
-	TargetCombo_3->insertItem("Front, left side");
-	TargetCombo_3->insertItem("Front, right side");
-	TargetCombo_3->insertItem("Front, both sides");
-	TargetCombo_3->insertItem("Back, without sides");
-	TargetCombo_3->insertItem("Back, with sides");
+	TargetCombo_3->insertItem(tr("Front, left side"));
+	TargetCombo_3->insertItem(tr("Front, right side"));
+	TargetCombo_3->insertItem(tr("Front, both sides"));
+	TargetCombo_3->insertItem(tr("Back, without sides"));
+	TargetCombo_3->insertItem(tr("Back, with sides"));
 
 	AppearanceCombo_3 = new QComboBox(this,"NoName");
 	AppearanceCombo_3->setGeometry(320,340,150,30);
-	AppearanceCombo_3->insertItem("Centered");
-	AppearanceCombo_3->insertItem("Tiled");
-	AppearanceCombo_3->insertItem("Stretched");
+	AppearanceCombo_3->insertItem(tr("Centered"));
+	AppearanceCombo_3->insertItem(tr("Tiled"));
+	AppearanceCombo_3->insertItem(tr("Stretched"));
 
 	QLabel_9 = new QLabel(this,"NoName");
 	QLabel_9->setGeometry(240,340,70,30);
-	QLabel_9->setText("Appearance");
+	QLabel_9->setText(tr("Appearance"));
 
 	OKButton = new QPushButton(this,"NoName");
 	OKButton->setGeometry(140,400,100,30);
-	OKButton->setText("OK");
+	OKButton->setText(tr("OK"));
 	OKButton->setDefault(true);
 
 	CancelButton = new QPushButton(this,"NoName");
 	CancelButton->setGeometry(260,400,100,30);
-	CancelButton->setText("Cancel");
-
+	CancelButton->setText(tr("Cancel"));
 }

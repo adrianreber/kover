@@ -74,7 +74,7 @@ void CDView::paintEvent( QPaintEvent * )
 		paint.setWorldMatrix( QWMatrix() );
 		paint.setFont( QFont("helvetica",14) );
 		paint.setPen( black );
-		paint.drawText( 20, 400, "Click to close" );
+		paint.drawText( 20, 400, tr("Click to close"));
 	 } else
 		{
 		  paint.scale( 0.4f, 0.4f );
