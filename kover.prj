@@ -87,7 +87,8 @@ module.include.files=\
 	kover/cddb.h\
 	kover/server.h\
 	kover/server_dialog.h\
-	config.h
+	config.h\
+	kover/filemode.h
 
 module.source.name=.
 module.source.type=
@@ -121,7 +122,8 @@ module.source.files=\
 	kover/cddb.cc\
 	kover/server.cc\
 	kover/server_dialog.cc\
-	kover/imagedlg.cc
+	kover/imagedlg.cc\
+	kover/filemode.cc
 
 module.pixmap.name=.
 module.pixmap.type=
@@ -240,7 +242,7 @@ module.help.files=
 
 module.doc.name=.
 module.doc.type=
-module.doc.expanded=1
+module.doc.expanded=0
 module.doc.files=\
 	ChangeLog\
 	AUTHORS\
