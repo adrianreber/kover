@@ -1,6 +1,6 @@
 bin_PROGRAMS = kover cddb-id 
 
-kover_SOURCES = imagedlgdata.cpp imagedlg.cpp cddb_fill.cpp koverfile.cpp \
+kover_SOURCES = imagedlgdata.cpp imagedlg.cpp cddb_fill.cc koverfile.cpp \
 		KoverTop.cpp CDView.cpp main.cpp \
 		PreferencesDialog.cpp cdrom.cc config.cc \
 		cddb_211_item.cc inexact_dialog.cc proxy_auth.cc \
