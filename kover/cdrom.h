@@ -54,8 +54,9 @@ public:
 	 int open();
 	 int close();
 	 int eject();
-private:
+protected:
 	 int cdrom_fd;
+private:
 	 char *path;
 	 bool cdrom_open;
 };

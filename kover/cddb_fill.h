@@ -92,7 +92,7 @@ public:
 	
 signals:
 	void statusText( const char* );
-	void updateDisplay(bool update_really = false);
+	 void update_id(unsigned long);
 
 protected:
 	int			openCD();

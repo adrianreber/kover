@@ -10,7 +10,7 @@ kover_LDADD   = $(LIB_KSYCOCA) $(LIB_KFILE) $(LIBSOCKET)
 # the library search path. 
 kover_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
-cddb_id_SOURCES = cdrom.cc cddb-id.c cdrom_cddb.cc
+cddb_id_SOURCES = cdrom.cc cddb-id.cc cdrom_cddb.cc
 
 SUBDIRS =  
 

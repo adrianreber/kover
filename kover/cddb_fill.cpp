@@ -127,8 +127,10 @@ void CDDB_Fill::setTitleAndContents() {
 void CDDB_Fill::cdInfo() {
 	 QString str;
 	 
-	 str.sprintf("CD contains %d tracks, total time is %d:%02d, the magic number is 0x%x", cdinfo.ntracks, cdinfo.length/60, cdinfo.length%60, (unsigned int)cdinfo.cddb_id);
+	 str.sprintf("CD contains %d tracks, total time is %d:%02d, the magic number is 0x%lx", cdinfo.ntracks, cdinfo.length/60, cdinfo.length%60, cdinfo.cddb_id);
 	 emit statusText(str);
+	 emit update_id(cdinfo.cddb_id);
+	 
 }
 
 int CDDB_Fill::openCD() {
@@ -185,22 +187,19 @@ void CDDB_Fill::closeCD() {
 	 }
 }
 
-bool CDDB_Fill::readTOC()
-{
+bool CDDB_Fill::readTOC() {
 	 cdrom_tochdr hdr;
 	 cdrom_tocentry entry;
 	 int i, pos;
 	 _DEBUG_ fprintf(stderr,"Reading TOC\n");
-	 if (cd_fd < 0)
-	 {
+	 if (cd_fd < 0) {
 		  emit statusText( "Internal error: Filedescriptor is -1, not opened?" );
 		  return false;
 	 }
 
 	 emit statusText( "Reading table of contents..." );
 	
-	 if (ioctl(cd_fd, CDROMREADTOCHDR, &hdr))
-	 {
+	 if (ioctl(cd_fd, CDROMREADTOCHDR, &hdr)) {
 		  emit statusText( "Error while reading table of contents!" );
 		  return false;
 	 }
@@ -212,15 +211,13 @@ bool CDDB_Fill::readTOC()
 
 	 cdinfo.trk.clear();
 	
-	 for (i = 0; i <= cdinfo.ntracks; i++)
-	 {
+	 for (i = 0; i <= cdinfo.ntracks; i++) {
 		  if (i == cdinfo.ntracks)
 				entry.cdte_track = CDROM_LEADOUT;
 		  else
 				entry.cdte_track = i + 1;
 		  entry.cdte_format = CDROM_MSF;
-		  if (ioctl(cd_fd, CDROMREADTOCENTRY, &entry))
-		  {
+		  if (ioctl(cd_fd, CDROMREADTOCENTRY, &entry)) {
 				emit statusText( "Error while reading TOC entry!" );
 				return false;
 		  }
@@ -230,8 +227,7 @@ bool CDDB_Fill::readTOC()
 
 	 pos = cdinfo.trk.first()->length;
 
-	 for (i = 0; i < cdinfo.ntracks; i++)
-	 {
+	 for (i = 0; i < cdinfo.ntracks; i++) {
 		  cdinfo.trk.at(i)->length = cdinfo.trk.at(i+1)->length - pos;
 		  pos = cdinfo.trk.at(i+1)->length;
 	 }
@@ -241,7 +237,7 @@ bool CDDB_Fill::readTOC()
 	 cdinfo.cddb_id = calcID();
 	
 	 emit statusText( "Table of contents successfully read" );
-	 _DEBUG_ fprintf(stderr,"Table of contents successfully read: %08x\n",(unsigned int)cdinfo.cddb_id);
+	 _DEBUG_ fprintf(stderr,"Table of contents successfully read: %08lx\n",cdinfo.cddb_id);
 	 return true;
 }
 

@@ -55,9 +55,14 @@ void cleanup() {
 }
 
 void the_end() {
+	 if (globals.eject_cdrom) {
+		  cdrom *cdrom_class = new cdrom(globals.cdrom_device);
+		  cdrom_class->eject();
+		  delete cdrom_class;
+	 }	 
 	 config->store_globals();
 	 config->sync();
-	 	 cleanup();
+	 cleanup();
 	 fprintf(stderr,"In Double Vision where drunk.\n");
 }
 
@@ -107,16 +112,11 @@ int main(int argc, char* argv[]) {
 
 	 config->load_globals();
 		  
-	 cdrom *cdrom_class = new cdrom(globals.cdrom_device);
-
-	 kovertop = new KoverTop(cdrom_class);
+	 kovertop = new KoverTop();
   
 	 kovertop->show();  
 	 int i = kover.exec();
 		  
-	 if (globals.eject_cdrom)
-			  cdrom_class->eject();
-	
 	 the_end();
 
 	 return i;
