@@ -1,162 +1,187 @@
-$Id: ChangeLog,v 1.20 2002/05/21 22:41:55 adrian Exp $
+$Id: ChangeLog,v 1.21 2002/07/23 23:07:07 adrian Exp $
 
-2002-05-21 Adrian <adrian@lisas.>
-   * pl.po: polish translation updated by:
-     Micha Rudolf <mrudolf@mercury.ci.uw.edu.pl>
-	* admin: new kde3 admin directory
-	  this should fix the issue with having only the libqt-mt
-	  libs.
-	* kover.1 cddb-id.1: finally manpages. thanks to:
-	  Rene Engelhard <mail@rene-engelhard.de>
-	* kover.spec.in: updated to include the manpages
-	* main.cc: connection to DCOP server now part of the code
+2002-07-24 Adrian <adrian@lisas.de>
+        * mainly bugfixes
+        * renamed no.po to nb.po (Øyvind Sæther)
+        * koverfile.cc: now using utf8() to save the files;
+          this sould fix the problem with utf8 characters...
+          (Øyvind Sæther)
+        * koverfile.cc: loading of old style .kover files
+          now without errors (Claudio Ferrari)
+        * koverfile.cc: empty lines now also saved (Claudio Ferrari)
+        * koverfile.cc: removed last newline after file loading
+        * server_dialog.cc: new dialog to choose from the available
+          cddb servers
+        * server.cc: entity for the servers
+        * PreferencesDialog.cc: button to select one of the 
+          available cddb server
+        * whenever you read cddb in this ChangeLog, then freedb is
+          meant
+        * now using anjuta for coding
+        * bumped version to 2.8.6
+        * released as 2.8.6
+        * tomorrow I'm going on holiday; I'm going camping 
+          in Croatia. Yes! Finally!
+        * I'm now using debian. No more redhat. And apt-get
+          is really great. My APT has even Super Cow Powers :)
+
+2002-05-21 Adrian <adrian@lisas.de>
+        * pl.po: polish translation updated by:
+          Micha Rudolf <mrudolf@mercury.ci.uw.edu.pl>
+        * admin: new kde3 admin directory
+          this should fix the issue with having only the libqt-mt
+          libs.
+        * kover.1 cddb-id.1: finally manpages. thanks to:
+          Rene Engelhard <mail@rene-engelhard.de>
+        * kover.spec.in: updated to include the manpages
+        * main.cc: connection to DCOP server now part of the code
 
 2002-04-29 Adrian <adrian@lisas.de>
-	* PreferencesDialog.cc: added small preview pictures
-	  for the different cover layouts
-	* PreferencesDialog.cc: added page for global font
-	  properties
-	* PreferencesDialog.cc: added button to select one
-	  of the freedb mirror sites 
-	* net.cc: general network code
-	* cddb.cc: general cddb code
-	* sites.cc: this retrieves all available cddb sites
-	  as advertised by the freedb servers using the
-	  cddb command: "sites"
-	* proxy_auth.cc: removed \n from the password
-	  before base64 encoding
-	* cddb_fill.cc: removed some of the global cddb and network
-	  methods. they are now in cddb.cc and net.cc
-	* cddb_fill.cc: also small bugfixes
-	* kovertop.cc: added a unnecessary animation to display
-	  a second page with current cover related options
-	* I love my ChangeLog
+        * PreferencesDialog.cc: added small preview pictures
+          for the different cover layouts
+        * PreferencesDialog.cc: added page for global font
+          properties
+        * PreferencesDialog.cc: added button to select one
+          of the freedb mirror sites 
+        * net.cc: general network code
+        * cddb.cc: general cddb code
+        * sites.cc: this retrieves all available cddb sites
+          as advertised by the freedb servers using the
+          cddb command: "sites"
+        * proxy_auth.cc: removed \n from the password
+          before base64 encoding
+        * cddb_fill.cc: removed some of the global cddb and network
+          methods. they are now in cddb.cc and net.cc
+        * cddb_fill.cc: also small bugfixes
+        * kovertop.cc: added a unnecessary animation to display
+          a second page with current cover related options
+        * I love my ChangeLog
 
 2002-04-22 Adrian <adrian@lisas.de>
-	* released as 2.8.3
-	  the big jump in the version number is a hint
-	  that this version is to be used with kde3
-	* this is just a development version
-	  lots of things are started but not finished
-	  don't expect everything to work yet
-	  this is for the people waiting to use kover with kde3
-	* merged the qt3_version cvs branch back into the
-	  the HEAD branch. branches are evil!
+        * released as 2.8.3
+          the big jump in the version number is a hint
+          that this version is to be used with kde3
+        * this is just a development version
+          lots of things are started but not finished
+          don't expect everything to work yet
+          this is for the people waiting to use kover with kde3
+        * merged the qt3_version cvs branch back into the
+          the HEAD branch. branches are evil!
 
 2002-04-07 Adrian <adrian@lisas.de>
-	* kover_file.cc: changed .kover file format to use XML.
-	* renamed some files from .cpp to .cc, so --enable-final
-	  can optimize better. More renaming will follow
-	* created the qt3_version branch in the cvs
-	* it.po: italian translation by
-	  Marco Ciampa <ciampix@libero.it>
-	* pl.po: polish translation by:
-	  Micha Rudolf <mrudolf@mercury.ci.uw.edu.pl>
+        * kover_file.cc: changed .kover file format to use XML.
+        * renamed some files from .cpp to .cc, so --enable-final
+          can optimize better. More renaming will follow
+        * created the qt3_version branch in the cvs
+        * it.po: italian translation by
+          Marco Ciampa <ciampix@libero.it>
+        * pl.po: polish translation by:
+          Micha Rudolf <mrudolf@mercury.ci.uw.edu.pl>
 
 2002-03-07 Alexander <alex@lisas.de>
-	* gcc3 and kde3 fixes
+        * gcc3 and kde3 fixes
 
 2001-11-19  Michael  <konqueror@gmx.de>
-	* bufixes for the network transparency stuff
-	* Released as 0.8.3
+        * bufixes for the network transparency stuff
+        * Released as 0.8.3
 
 2001-11-18  Adrian  <adrian@lisas.de>
-	* KoverTop.cpp cddb_fill.cpp: included option to make
-	  cddb query without the CD
-	* without_cd.cc: the without CD cddb query dialog.
-	* KoverTop.cpp: OpenRecent menu available
-	* categories.cc: a container for the cddb categories
-	* CDView.cpp: switched from QPrinter to KPrinter
-	  maybe this helps some people who weren't able to print
-	* Released as 0.8.2
+        * KoverTop.cpp cddb_fill.cpp: included option to make
+          cddb query without the CD
+        * without_cd.cc: the without CD cddb query dialog.
+        * KoverTop.cpp: OpenRecent menu available
+        * categories.cc: a container for the cddb categories
+        * CDView.cpp: switched from QPrinter to KPrinter
+          maybe this helps some people who weren't able to print
+        * Released as 0.8.2
 
 2001-11-17  Michael  <konqueror@gmx.de>
-	* KoverTop.cpp: network transparency. now it is possible
-	  to open and save file via ftp
-	* x-kover.desktop: application/x-kover mimetype
-	* main.cpp: open file via command line
-	* cdrom_cddb.h: fixed typo. --enable-final should work now
+        * KoverTop.cpp: network transparency. now it is possible
+          to open and save file via ftp
+        * x-kover.desktop: application/x-kover mimetype
+        * main.cpp: open file via command line
+        * cdrom_cddb.h: fixed typo. --enable-final should work now
 
 2001-10-28  Adrian  <adrian@lisas.de>
-	* some files: patch from Håvard Dahle <havardda-i18n@orakel.ntnu.no>
-	  included for inlet only option.
-	* PreferencesDialog.cpp: inlet only option to radio buttons
-	* KoverTop.cpp: new font selection dialog for inlet
-	  inlet title font
-	* koverfile.cpp CDView.cpp: changes to handle inlet title font
-	* no.po: norwegian translation by
-	  Håvard Dahle <havardda-i18n@orakel.ntnu.no>
-	* released as 0.8.1
+        * some files: patch from Håvard Dahle <havardda-i18n@orakel.ntnu.no>
+          included for inlet only option.
+        * PreferencesDialog.cpp: inlet only option to radio buttons
+        * KoverTop.cpp: new font selection dialog for inlet
+          inlet title font
+        * koverfile.cpp CDView.cpp: changes to handle inlet title font
+        * no.po: norwegian translation by
+          Håvard Dahle <havardda-i18n@orakel.ntnu.no>
+        * released as 0.8.1
 
 2001-10-12  Adrian  <adrian@lisas.de>
-	
-	* all files: prepared for translation
-	* fr.po: french translation by
-	  Jean-Pierre VERRUE <jean-pierre.verrue@laposte.net>
-	* de.po: german translation all by myself
-	* more code cleanups
-	* cddb-id.cc: new file. using the new cdrom_cddb class
-	  to calculate the cddb-id and prints it to stdout.
-	  cddb id calculation will be removed from cddb_fill.cpp
-	* cddb_211_item.cc: storage for the inexact matches
-	* inexact_dialog.cc: dialog to display the the inexact matches
-	* kover.spec.in: used to create a rpm specfile via configure
-	  rpm -ta kover-x.x.tar.gz gives you a nice rpm
-	* CDView.cpp:48+341: removed compiler warnings
+        
+        * all files: prepared for translation
+        * fr.po: french translation by
+          Jean-Pierre VERRUE <jean-pierre.verrue@laposte.net>
+        * de.po: german translation all by myself
+        * more code cleanups
+        * cddb-id.cc: new file. using the new cdrom_cddb class
+          to calculate the cddb-id and prints it to stdout.
+          cddb id calculation will be removed from cddb_fill.cpp
+        * cddb_211_item.cc: storage for the inexact matches
+        * inexact_dialog.cc: dialog to display the the inexact matches
+        * kover.spec.in: used to create a rpm specfile via configure
+          rpm -ta kover-x.x.tar.gz gives you a nice rpm
+        * CDView.cpp:48+341: removed compiler warnings
 
 2001-10-01  Adrian  <adrian@lisas.de>
 
-	* cddb_fill.cpp: proxy authentification implemented
-	* proxy_auth.cc: the new proxy authentification dialog
-	  password is base64 encoded; this is "Basic Proxy-authorization"
-	  base64 encoding stuff is from unknown. I found two files on the
-	  web (base64encode.c and base64decode.c) but no copyright or author
-	  information. However not much is left from the original source.
-	* PreferencesDialog.cpp: typo
+        * cddb_fill.cpp: proxy authentification implemented
+        * proxy_auth.cc: the new proxy authentification dialog
+          password is base64 encoded; this is "Basic Proxy-authorization"
+          base64 encoding stuff is from unknown. I found two files on the
+          web (base64encode.c and base64decode.c) but no copyright or author
+          information. However not much is left from the original source.
+        * PreferencesDialog.cpp: typo
 
 2001-06-14  Adrian  <adrian@lisas.de>
 
-	* CDView.cpp: booklet content on left side of inlet
-	  for slim case CDs 
-	* PreferencesDialog.cpp: added the slim case option
-	* code cleanups
-	* config.cc: new class for configuration. This used 
-	  to be in KoverTop.cpp
-	* KoverTop.cpp: fixed bug that [modified] disappears
-	  if you hit the save button
-	* main.cpp: catching SIGTERM and SIGINT and saving
-	  configuration before exiting
-	* cdrom.cc: introducing the cdrom class 
+        * CDView.cpp: booklet content on left side of inlet
+          for slim case CDs 
+        * PreferencesDialog.cpp: added the slim case option
+        * code cleanups
+        * config.cc: new class for configuration. This used 
+          to be in KoverTop.cpp
+        * KoverTop.cpp: fixed bug that [modified] disappears
+          if you hit the save button
+        * main.cpp: catching SIGTERM and SIGINT and saving
+          configuration before exiting
+        * cdrom.cc: introducing the cdrom class 
 
 2001-05-10  Adrian   <adrian@lisas.de>
 
-	* ChangeLog: Do I really like this changelog style?
-	  If I do like it, why am I not using it?
+        * ChangeLog: Do I really like this changelog style?
+          If I do like it, why am I not using it?
 
 
 2001-05-07    <adrian@lisas.de>
 
-	* configure.in: check for good CDs included
-	
+        * configure.in: check for good CDs included
+        
 2001-01-22  Adrian   <adrian@lisas.de>
 
-	* main.cpp: great new command line option
-	* cddb_fill.cpp: have a look at the cddb code from grip...
-	  you will find similarities :)
-	  the threading (currently disabled) is mainly from terminatorX
-	* PreferencesDialog.cpp: cdrom and cddb page added
+        * main.cpp: great new command line option
+        * cddb_fill.cpp: have a look at the cddb code from grip...
+          you will find similarities :)
+          the threading (currently disabled) is mainly from terminatorX
+        * PreferencesDialog.cpp: cdrom and cddb page added
 
 2001-01-11  Adrian  <adrian@lisas.de>
 
-	* ported to KDE 2.0 an qt 2.2
-	* KoverTop.cpp: rewritten
-	  - using KDE 2 style menus and XML file (koverui.rc)
-	* cddb_fill.cpp: rewritten (partly)
-	  changed cddb lookup to use port 80 instead of 888 (or whatever)
-	* cddb_fill.cpp: first looking for local cddb data before connecting
-	  to a cddb server
-	* PreferencesDialog.cpp: new file creating a Preferences Dialog
-	* changed ChangeLog to GNU style
+        * ported to KDE 2.0 an qt 2.2
+        * KoverTop.cpp: rewritten
+          - using KDE 2 style menus and XML file (koverui.rc)
+        * cddb_fill.cpp: rewritten (partly)
+          changed cddb lookup to use port 80 instead of 888 (or whatever)
+        * cddb_fill.cpp: first looking for local cddb data before connecting
+          to a cddb server
+        * PreferencesDialog.cpp: new file creating a Preferences Dialog
+        * changed ChangeLog to GNU style
 
 Kover ChangeLog
 ================

@@ -102,3 +102,10 @@
 /* Define if you have libtiff */
 #undef HAVE_LIBTIFF
 
+
+#ifndef HAVE_BOOL
+#define HAVE_BOOL
+typedef int bool;
+const bool false = 0;
+const bool true = 1;
+#endif

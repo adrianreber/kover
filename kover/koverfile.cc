@@ -29,7 +29,7 @@
 	 
 */
 
-/* $Id: koverfile.cc,v 1.7 2002/07/21 21:59:54 adrian Exp $ */
+/* $Id: koverfile.cc,v 1.8 2002/07/23 23:07:07 adrian Exp $ */
 
 using namespace std;
 
@@ -493,7 +493,7 @@ bool KoverFile::save_as_XML(const QString &filename) {
 	 for (QStringList::Iterator it = list.begin(); it != list.end(); ++it) {
 		  text = doc.createElement("text");
 		  title.appendChild(text);
-		  the_text = doc.createCDATASection((*it).latin1());
+		  the_text = doc.createCDATASection((*it).utf8());
 		  text.appendChild(the_text);
 	 }
 
@@ -529,12 +529,12 @@ bool KoverFile::save_as_XML(const QString &filename) {
 	 kover.appendChild(content);
 
 	 //content text
-	 list = QStringList::split("\n",cd_contents);
+	 list = QStringList::split("\n",cd_contents,TRUE);
 
 	 for (QStringList::Iterator it = list.begin(); it != list.end(); ++it) {
 		  text = doc.createElement("text");
 		  content.appendChild(text);
-		  the_text = doc.createCDATASection((*it).latin1());
+		  the_text = doc.createCDATASection((*it).utf8());
 		  text.appendChild(the_text);
 	 }
 
@@ -545,12 +545,10 @@ bool KoverFile::save_as_XML(const QString &filename) {
 		  return false;
 
 	 f.writeBlock((doc.toString()).latin1(),strlen((doc.toString()).latin1()));
-
-	 fprintf(stderr,"\t%s\n",strdup((doc.toString()).utf8()));
 	 
 	 f.close();
 
-	 _DEBUG_ fprintf(stderr,"%s\n",(doc.toString()).latin1());
+	 _DEBUG_ fprintf(stderr,"%s\n",(const char *)(doc.toString()).utf8());
 
 	 return true;
 }
@@ -644,7 +642,9 @@ bool KoverFile::open_XML(const QString& filename) {
 		  n = n.nextSibling();
 	 }
 
-
+     cd_title.truncate(cd_title.length()-1);
+     cd_contents.truncate(cd_contents.length()-1);
+     
 	 return true;
 }
 

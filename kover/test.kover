@@ -1,9 +1,21 @@
-<!DOCTYPE kover ><kover version="0.8.3" name="kover" >
- <title size="32" weight="50" color="#000000" font="times" italic="0" />
+<!DOCTYPE kover>
+<kover version="2.8.5" name="kover" >
+ <title size="26" weight="50" display="0" color="#000000" font="Comic Sans Ms [Microsoft]" italic="0" >
+  <text><![CDATA[fxchsdfhÄägdfhgdfh]]></text>
+ </title>
  <img target="0" mode="0" src="" />
  <img target="0" mode="0" src="" />
  <img target="0" mode="0" src="" />
  <general bgcolor="#ffffff" number="0" />
- <inlet size="12" weight="50" font="helvetica" italic="0" />
- <content size="16" weight="50" color="#000000" font="helvetica" italic="0" />
+ <inlet size="9" weight="50" font="helvetica" italic="0" />
+ <content size="14" weight="50" color="#000000" font="Comic Sans Ms [Microsoft]" italic="0" >
+  <text><![CDATA[dfgsdfg]]></text>
+  <text><![CDATA[sdfgsdgf]]></text>
+  <text><![CDATA[sdfgsdgf]]></text>
+  <text><![CDATA[sdfgsdfg]]></text>
+  <text><![CDATA[äöü]]></text>
+  <text><![CDATA[]]></text>
+  <text><![CDATA[]]></text>
+  <text><![CDATA[ÄÄ]]></text>
+ </content>
 </kover>
