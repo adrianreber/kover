@@ -27,7 +27,7 @@
 	 
 */
 
-/* $Id: koverfile.h,v 1.9 2002/02/07 21:46:18 adrian Exp $ */
+/* $Id: koverfile.h,v 1.10 2002/08/14 14:22:22 adrian Exp $ */
 
 #ifndef KOVERFILE_H
 #define KOVERFILE_H
@@ -82,6 +82,8 @@ public:
 	 void setImageTarget( const int _nr, const int _image_target );
 
 	 void set_display_title(bool title);
+     void set_spine_text(bool bla);
+     void set_the_spine_text(const QString& text);
 	 
 	 QString	title() const;
 	 QString	contents() const;
@@ -96,6 +98,8 @@ public:
 	 int		imageMode(const int _nr) const;
 	 int		imageTarget(const int _nr) const;
 	 bool display_title() const;
+     bool spine_text() const;
+     QString the_spine_text() const;
 	
 	 bool openFile( const KURL& url );
 	 bool saveFile( const KURL& url );
@@ -120,6 +124,8 @@ private:
 	 int		cd_image_mode[3];
 	 int		cd_image_target[3];
 	 bool cd_display_title;
+     bool cd_spine_text;
+     QString cd_the_spine_text;
 	 bool save_as_XML(const QString &filename);
 	 bool open_XML(const QString &filename);
 	 bool old_save_method(const QString &filename);

@@ -28,7 +28,7 @@
 	 29 Oct 2001: Change size of the inlet title font
 */
   
-/* $Id: cdview.cc,v 1.5 2002/04/23 14:15:04 adrian Exp $ */
+/* $Id: cdview.cc,v 1.6 2002/08/14 14:22:21 adrian Exp $ */
 
 #include "cdview.moc"
 
@@ -274,7 +274,13 @@ void CDView::drawInlet(QPainter *p, int X, int Y) {
 		  return;
 	 
 	 const float scale = 0.4;
-	 QString title = kover_file->title();
+     QString title;
+     
+     if (kover_file->spine_text()) 
+         title = kover_file->the_spine_text();
+     else
+         title = kover_file->title();
+ 
 	 title.replace( QRegExp("\n"), " - " );
 	 
 	 p->fillRect( X, Y, BACK_HI+BACK_HS*2, BACK_V, kover_file->backColor() );

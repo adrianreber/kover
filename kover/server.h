@@ -26,7 +26,7 @@
 	 
 */
 
-/* $Id: server.h,v 1.3 2002/05/05 22:01:54 adrian Exp $ */
+/* $Id: server.h,v 1.4 2002/08/14 08:10:12 adrian Exp $ */
 
 #ifndef SERVER_H
 #define SERVER_H
@@ -38,25 +38,25 @@ using namespace std;
 
 class server {
 
-public:
-	 server(const char *cddb_answer);
-	 ~server();
-	 string get_site();
-	 string get_proto();
-	 int get_port();
-	 string get_path();
-	 string get_latitude();
-	 string get_longitude();
-	 string get_description();
-	 void dump();
-private:
-	 string site;
-	 string proto;
-	 int port;
-	 string path;
-	 string latitude;
-	 string longitude;
-	 string description;
+  public:
+    server(const char *cddb_answer);
+     ~server();
+    string get_site();
+    string get_proto();
+    int get_port();
+    string get_path();
+    string get_latitude();
+    string get_longitude();
+    string get_description();
+    void dump();
+  private:
+      string site;
+    string proto;
+    int port;
+    string path;
+    string latitude;
+    string longitude;
+    string description;
 
 };
 

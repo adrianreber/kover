@@ -29,7 +29,7 @@
 	 
 */
 
-/* $Id: koverfile.cc,v 1.8 2002/07/23 23:07:07 adrian Exp $ */
+/* $Id: koverfile.cc,v 1.9 2002/08/14 14:22:22 adrian Exp $ */
 
 using namespace std;
 
@@ -73,6 +73,8 @@ void KoverFile::reset() {
 	 cd_image_mode[2] = IMG_CENTER;
 	 cd_image_target[2] = IMG_FRONT_LEFT;
 	 cd_display_title=false;
+     cd_spine_text=false;
+     cd_the_spine_text="";
 
 	 emit dataChanged();
 }
@@ -250,12 +252,33 @@ int KoverFile::imageTarget(const int _nr) const
 	 return cd_image_target[_nr];
 }
 
+void KoverFile::set_spine_text(bool bla) {
+	 cd_spine_text = bla;
+    emit dataChanged();
+}
+
+
+bool KoverFile::spine_text() const {
+	 return cd_spine_text;
+}
+
+QString KoverFile::the_spine_text() const
+{
+	 return cd_the_spine_text;
+}
+
+void KoverFile::set_the_spine_text(const QString& text) {
+	 if (cd_the_spine_text != text) {
+		  cd_the_spine_text = text;
+		  emit dataChanged();
+	 }
+}
+
 bool KoverFile::checkForECD(QString& filename) {
 	 QFile ecd_file(filename);
 	
 	 if (!ecd_file.open(IO_ReadOnly))
 		  return false;
-	 
 	
 	 // Some kind off hacky, I just test for three of eight ID bytes: "DCE", whole id: "DCEi20RP"
 	 if ( (ecd_file.getch() == 68) && (ecd_file.getch() == 67) && (ecd_file.getch() == 69) ) {

@@ -28,7 +28,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.h,v 1.4 2002/04/20 22:29:13 adrian Exp $ */
+/* $Id: kovertop.h,v 1.5 2002/08/14 14:22:22 adrian Exp $ */
 
 #ifndef KOVER_TOP_H
 #define KOVER_TOP_H
@@ -102,7 +102,9 @@ void fileNew();
 	 void cddb_without_cd();
 	 void more_or_less();
 	 void display_title_signal();
-	 
+     void spine_text_method();
+	 void spine_text_changed_method(const QString& s);
+     
 private:
 	 
 	 bool queryClose();
@@ -115,6 +117,8 @@ private:
 	 
 	 QFrame *option_frame;
 	 QCheckBox *display_title; 
+     QLineEdit *the_spine_text;
+     QCheckBox *spine_text;
 	
 	 KRecentFilesAction * recent;
 	 QCheckBox *slim_case;
@@ -141,7 +145,7 @@ private:
 	 KStatusBar* status_bar;
 
 	 QLabel *cddb_id;
-	 CDView*	cdview;
+	 CDView* cdview;
 
 	 QBoxLayout *button_layout;
 	 QFrame *more_frame;
