@@ -16,7 +16,7 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: PreferencesDialog.cpp
+	 File: PreferencesDialog.cc
 	 
 	 Description: Contains the implementation of the preferences dialog.
 	 
@@ -31,7 +31,9 @@
 	 16 Oct 2001: Added 'inlet only' thingy
 */
 
-/* $Id: PreferencesDialog.cpp,v 1.18 2001/11/18 23:59:33 adrian Exp $ */
+/* $Id: PreferencesDialog.cc,v 1.1 2001/12/04 15:31:22 adrian Exp $ */
+
+#include "PreferencesDialog.moc"
 
 #include "PreferencesDialog.h"
 #include <qbuttongroup.h>
@@ -435,6 +437,10 @@ void PreferencesDialog::setup_misc_page() {
 	 misc_widgets.inlet_only = new QRadioButton( text, group, "inlet_only" );
 	 gbox->addMultiCellWidget( misc_widgets.inlet_only,4,4,0,5);
 
+	 text = i18n("Print all on one page");
+	 misc_widgets.one_page = new QRadioButton( text, group, "one_page" );
+	 gbox->addMultiCellWidget( misc_widgets.one_page,5,5,0,5);
+
 	 set_misc();
 }
 
@@ -461,6 +467,11 @@ void PreferencesDialog::set_misc() {
 	 
 	 if (!globals.inlet_only || !globals.its_a_slim_case)
 		  misc_widgets.its_normal->setChecked(true);
+	 
+	  if (globals.one_page)
+		  misc_widgets.one_page->setChecked(true);
+	 else
+		  misc_widgets.one_page->setChecked(false);
 }
 
 void PreferencesDialog::save_misc() {
@@ -483,5 +494,9 @@ void PreferencesDialog::save_misc() {
 		  globals.inlet_only = 1;
 	 else
 		  globals.inlet_only = 0;
+
+	 if ((misc_widgets.one_page)->isChecked())
+		  globals.one_page = 1;
+	 else
+		  globals.one_page = 0;
 }
-#include "PreferencesDialog.moc"

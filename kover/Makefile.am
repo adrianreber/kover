@@ -2,7 +2,7 @@ bin_PROGRAMS = kover cddb-id
 
 kover_SOURCES = imagedlgdata.cpp imagedlg.cpp cddb_fill.cc koverfile.cpp \
 		KoverTop.cpp CDView.cpp main.cpp \
-		PreferencesDialog.cpp cdrom.cc config.cc \
+		PreferencesDialog.cc cdrom.cc config.cc \
 		cddb_211_item.cc inexact_dialog.cc proxy_auth.cc \
 		without_cd.cc categories.cc direntry.cc
 
