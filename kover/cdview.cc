@@ -28,7 +28,7 @@
 	 29 Oct 2001: Change size of the inlet title font
 */
 
-/* $Id: cdview.cc,v 1.10 2003/06/14 23:46:31 adrian Exp $ */
+/* $Id: cdview.cc,v 1.11 2004/04/22 16:03:25 adrian Exp $ */
 
 #include "cdview.moc"
 #include "koverfile.h"
@@ -368,8 +368,17 @@ void CDView::drawInlet(QPainter * p, int X, int Y)
 
     p->setPen(black);
 
+    //help
     p->drawLine(X -20 , Y, X -15, Y);
     p->drawLine(X -10 , Y, X -5, Y);
+    p->drawLine(X + BACK_HI + BACK_HS * 2 +20 , Y, X + BACK_HI + BACK_HS * 2 +15, Y);
+    p->drawLine(X + BACK_HI + BACK_HS * 2 +10 , Y, X + BACK_HI + BACK_HS * 2 +5, Y);
+
+    p->drawLine(X -20 , Y+ BACK_V, X -15, Y+ BACK_V);
+    p->drawLine(X -10 , Y+ BACK_V, X -5, Y+ BACK_V);
+    p->drawLine(X + BACK_HI + BACK_HS * 2 +20 , Y+ BACK_V, X + BACK_HI + BACK_HS * 2 +15, Y+ BACK_V);
+    p->drawLine(X + BACK_HI + BACK_HS * 2 +10 , Y+ BACK_V, X + BACK_HI + BACK_HS * 2 +5, Y+ BACK_V);
+
     p->drawLine(X, Y, X + BACK_HI + BACK_HS * 2, Y);
     p->drawLine(X, Y + BACK_V, X + BACK_HI + BACK_HS * 2, Y + BACK_V);
     p->drawLine(X, Y, X, Y + BACK_V);
