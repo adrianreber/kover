@@ -16,34 +16,35 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: cdrom_cddb.h 
+	 File: categories.h 
 	 
-	 Description: cdrom cddb class header
-	 
+	 Description: entity for the categories
+
 	 Changes:
 	 
-	 2 Jul 2001: Initial release
+	 11 Nov 2001: Initial release
 	 
 */
 
-/* $Id: cdrom_cddb.h,v 1.2 2001/11/11 00:34:48 adrian Exp $ */
+/* $Id: categories.h,v 1.1 2001/11/11 00:34:48 adrian Exp $ */
 
-#ifndef CDROM_CDDB_H
-#define CDROM_CDDB_H
+#ifndef CATEGORIES_H
+#define CATEGORIES_H
 
 #include "../config.h"
-#include "cdrom.h"
+#include <list>
+#include <string>
 
+class categories {
 
-class cdrom_cddb : public cdrom {
 public:
-	 cdrom_cddb(char *path = "/dev/cdrom");
-	 ~cdrom_cddb();
-	 unsigned long get_cddb_id();
+	 categories();
+	 ~categories();
+	 int how_many();
+	 char * get_category(int id);
 private:
-	 void calc_cddb_id();
-	 unsigned long cddb_id;	
-	 int cddb_sum(int n);
+	 list <string> category;
+
 };
 
-#endif /* CDROM_CDDB_H */
+#endif /* CATEGORIES_H */

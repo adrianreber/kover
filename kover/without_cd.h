@@ -16,34 +16,39 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: cdrom_cddb.h 
+	 File: without_cd.h 
 	 
-	 Description: cdrom cddb class header
-	 
+	 Description: dialog to execute a cddb query without a cd
+
 	 Changes:
 	 
-	 2 Jul 2001: Initial release
+	 11 Nov 2001: Initial release
 	 
 */
 
-/* $Id: cdrom_cddb.h,v 1.2 2001/11/11 00:34:48 adrian Exp $ */
+/* $Id: without_cd.h,v 1.1 2001/11/11 00:34:48 adrian Exp $ */
 
-#ifndef CDROM_CDDB_H
-#define CDROM_CDDB_H
+#ifndef WITHOUT_CD_H
+#define WITHOUT_CD_H
 
 #include "../config.h"
-#include "cdrom.h"
+#include <qdialog.h>
+#include <qlineedit.h>
+#include <qcombobox.h>
 
-
-class cdrom_cddb : public cdrom {
+class without_cd : public QDialog {
+	 Q_OBJECT
 public:
-	 cdrom_cddb(char *path = "/dev/cdrom");
-	 ~cdrom_cddb();
-	 unsigned long get_cddb_id();
+	 without_cd();
+	 ~without_cd();
+		 
 private:
-	 void calc_cddb_id();
-	 unsigned long cddb_id;	
-	 int cddb_sum(int n);
+	 QLineEdit *cddb_id;
+
+private slots:
+void accept();
+	 void quit();
+	 
 };
 
-#endif /* CDROM_CDDB_H */
+#endif /* WITHOUT_CD_H */

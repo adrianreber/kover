@@ -957,3 +957,4 @@ char * CDDB_Fill::make_cddb_request(char *query_me, bool use_auth) {
 	 return return_me;
 }
 
+#include "cddb_fill.moc"

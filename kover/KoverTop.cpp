@@ -31,10 +31,12 @@
 
 	 29 Oct 2001: inlet title font stuff
 
+	 11 Nov 2001: CDDB without CD
 */
 
 #include "KoverTop.h"
 #include "imagedlg.h"
+#include "without_cd.h"
 
 #define NORM_WIDTH 520
 #define NORM_HEIGHT 440
@@ -76,7 +78,9 @@ KoverTop::KoverTop(const char* name) : KMainWindow(0,name) {
 	 (void)new KAction(i18n("Background Color..."),"colors",0,this,SLOT(backgroundColor()),actionCollection(),"background_color");
 	 (void)new KAction(i18n("Inlet Title Font..."),"fonts",0,this,SLOT(inlet_title_font()),actionCollection(),"inlet_title_font");
 	 (void)new KAction(i18n("Eject CD"),"player_eject",0,this,SLOT(cdrom_eject()),actionCollection(),"eject_cdrom");
-
+ 	 (void)new KAction(i18n("CDDB without CD"),"network",0,this, SLOT(cddb_without_cd()),actionCollection(), "cddb_without_cd");
+	 
+	 
 	 createGUI();
 
 	 number_spin = new QSpinBox( 1, 999, 1, main_frame, "numberspin" );
@@ -434,3 +438,9 @@ void KoverTop::cdrom_eject() {
 	  delete cdrom_class;
 }
 
+void KoverTop::cddb_without_cd() {
+	 without_cd * without = new without_cd();
+	 without->exec();
+}
+
+#include "KoverTop.moc"

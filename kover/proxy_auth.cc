@@ -26,7 +26,7 @@
 
 */
 
-/* $Id: proxy_auth.cc,v 1.3 2001/10/05 22:55:27 adrian Exp $ */
+/* $Id: proxy_auth.cc,v 1.4 2001/11/11 00:34:48 adrian Exp $ */
 
 #include "proxy_auth.h"
 
@@ -220,3 +220,4 @@ char *proxy_auth::get_authentification() {
 		  return strdup(base64encoded);
 	 return NULL;
 }
+#include "proxy_auth.moc"

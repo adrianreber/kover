@@ -28,7 +28,7 @@
 	 20 Jun 2001: Lot of undocumented changes
 */
 
-/* $Id: main.cpp,v 1.22 2001/10/28 23:00:14 adrian Exp $ */
+/* $Id: main.cpp,v 1.23 2001/11/11 00:34:48 adrian Exp $ */
 
 #include "kover.h"
 #include "KoverTop.h"
@@ -110,6 +110,9 @@ int main(int argc, char* argv[]) {
 		  else { fprintf(stderr,"kover:not with debug support compiled - no debug output\n"); }
 	 }
   
+	 _DEBUG_ fprintf(stderr,"This is %s %s compiled with %s\n",PACKAGE,VERSION,__VERSION__);
+	 
+
 	 args->clear();
 
 	 config->load_globals();

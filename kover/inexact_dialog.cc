@@ -30,7 +30,7 @@
 
 */
 
-/* $Id: inexact_dialog.cc,v 1.6 2001/10/30 13:01:21 adrian Exp $ */
+/* $Id: inexact_dialog.cc,v 1.7 2001/11/11 00:34:48 adrian Exp $ */
 
 #include "inexact_dialog.h"
 #include <qpushbutton.h>
@@ -140,3 +140,4 @@ char* inexact_dialog::get(int index) {
 	 } 
 	 return NULL;
 }
+#include "inexact_dialog.moc"

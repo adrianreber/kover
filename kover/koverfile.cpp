@@ -27,7 +27,7 @@
 	 
 */
 
-/* $Id: koverfile.cpp,v 1.4 2001/10/30 13:01:21 adrian Exp $ */
+/* $Id: koverfile.cpp,v 1.5 2001/11/11 00:34:48 adrian Exp $ */
 
 #include "kover.h"
 #include "koverfile.h"
@@ -459,3 +459,4 @@ bool KoverFile::saveFile( QString& filename )
 
 	 return true;
 }
+#include "koverfile.moc"

@@ -31,7 +31,7 @@
 	 16 Oct 2001: Added 'inlet only' thingy
 */
 
-/* $Id: PreferencesDialog.cpp,v 1.15 2001/10/28 23:00:14 adrian Exp $ */
+/* $Id: PreferencesDialog.cpp,v 1.16 2001/11/11 00:34:48 adrian Exp $ */
 
 #include "PreferencesDialog.h"
 #include "KoverTop.h"
@@ -474,3 +474,4 @@ void PreferencesDialog::save_misc() {
 	 else
 		  globals.inlet_only = 0;
 }
+#include "PreferencesDialog.moc"

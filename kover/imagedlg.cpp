@@ -101,3 +101,4 @@ void ImageDlg::Browse3()
 }
 
 
+#include "imagedlg.moc"

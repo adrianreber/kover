@@ -386,3 +386,4 @@ void CDView::dataChanged(bool image) {
 
 
 
+#include "CDView.moc"

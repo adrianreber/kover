@@ -24,6 +24,8 @@
 	 Changes:
 	 
 	 29 Oct 2001: inlet title font stuff
+
+	 11 Nov 2001: CDDB without CD
 */
 
 #ifndef KOVER_TOP_H
@@ -90,7 +92,8 @@ void fileNew();
 	 void backgroundColor();
 	 void cdrom_eject();
 	 void inlet_title_font();
-
+	 void cddb_without_cd();
+	 
 private:
 	 QCheckBox *slim_case;
 	 bool queryClose();
