@@ -29,7 +29,7 @@
 	 
 */
 
-/* $Id: koverfile.cc,v 1.6 2002/04/20 22:29:13 adrian Exp $ */
+/* $Id: koverfile.cc,v 1.7 2002/07/21 21:59:54 adrian Exp $ */
 
 using namespace std;
 
@@ -379,6 +379,7 @@ bool KoverFile::openFile(const KURL& url) {
 				KIO::NetAccess::removeTempFile(tempFile);
 		  return false;
 	 }
+	 
 	 if (doc.setContent(&f)) {
 		  f.close();
 		  _DEBUG_ fprintf(stderr,"%s:must be one of the new XML files\n",PACKAGE);
@@ -405,7 +406,7 @@ bool KoverFile::openFile(const KURL& url) {
 					 return false;
 				}
 		  } else { 
-				_DEBUG_ fprintf(stderr,"%s:unknown file format. giving up.\n",PACKAGE);
+				_DEBUG_ fprintf(stderr,"%s:unknown1 file format. giving up.\n",PACKAGE);
 				if(!url.isLocalFile())
 					 KIO::NetAccess::removeTempFile(tempFile);
 				return false;
@@ -487,7 +488,7 @@ bool KoverFile::save_as_XML(const QString &filename) {
 	 cd_contents.replace(QRegExp("\r"), "\n");
 
 	 //title text
-	 list = QStringList::split("\n",cd_title);
+	 list = QStringList::split("\n",cd_title,TRUE);
 
 	 for (QStringList::Iterator it = list.begin(); it != list.end(); ++it) {
 		  text = doc.createElement("text");
@@ -545,6 +546,8 @@ bool KoverFile::save_as_XML(const QString &filename) {
 
 	 f.writeBlock((doc.toString()).latin1(),strlen((doc.toString()).latin1()));
 
+	 fprintf(stderr,"\t%s\n",strdup((doc.toString()).utf8()));
+	 
 	 f.close();
 
 	 _DEBUG_ fprintf(stderr,"%s\n",(doc.toString()).latin1());
@@ -689,8 +692,8 @@ bool KoverFile::old_save_method(const QString &filename) {
 	
 	 file.sync();
 	
-	 cd_contents.replace( QRegExp(">|<"), "\n" );
-	 cd_title.replace( QRegExp(">|<"), "\n" );
+	 cd_contents.replace( QRegExp(">\\|<"), "\n" );
+	 cd_title.replace( QRegExp(">\\|<"), "\n" );
 
 	 return true;
 }
@@ -728,7 +731,7 @@ void KoverFile::old_open_method(KSimpleConfig &file) {
 	 file.setGroup( "General" );
 	 cd_number	= file.readNumEntry( "Number", 0 );
 	 cd_back_color	= file.readColorEntry( "BackgroundColor", new QColor(255,255,255) );
-  
-	 cd_contents.replace( QRegExp(">|<"), "\n" );
-	 cd_title.replace( QRegExp(">|<"), "\n" );
+
+	 cd_contents.replace( QRegExp(">\\|<"), "\n" );
+	 cd_title.replace( QRegExp(">\\|<"), "\n" );
 }

@@ -25,7 +25,7 @@
 	 05 May 2002: Initial release
 */
 
-/* $Id: server_dialog.cc,v 1.1 2002/05/05 22:02:44 adrian Exp $ */
+/* $Id: server_dialog.cc,v 1.2 2002/07/21 21:59:54 adrian Exp $ */
 
 #include "server_dialog.moc"
 
@@ -57,11 +57,17 @@ server_dialog::server_dialog() : QDialog(0,0,TRUE,0) {
 	 top_layout->addWidget(label);
 	 top_layout->addSpacing(10);
 	 box = new QListBox(this);
+     box->setColumnMode(2);
 	 list <server *> :: iterator item;
 	 
+     int i = 0;
 	 for (item = server_list.begin(); item != server_list.end(); item++) {
-		  if (((*item)->get_proto()).compare("http"))
-				box->insertItem(((*item)->get_site()).c_str());
+		  if (((*item)->get_proto()).compare("http")) {
+				
+              box->insertItem(((*item)->get_description()).c_str(),i);
+              box->insertItem(((*item)->get_site()).c_str(),i++);
+          }
+         
 	 }
 	 box->setMinimumWidth(box->maxItemWidth()+30);
 	 

@@ -1,0 +1,17 @@
+.TH cddb-id "1" "April 2002" "kover @VERSION@" "User Commands"
+.SH NAME
+cddb-id \- get ID of CD in the CDDB database 
+.SH SYNOPSIS
+.B cddb-id
+.SH DESCRIPTION
+cddb-id is a additional program for kover, with reads the table of
+contents of the compact disk in \fb/dev/cdrom\fR and returns the ID
+in which it found this compact disk in the CDDB database.
+.SS "Arguments:"
+.TP
+There is no argument, always the compact disk is searched in \fB/dev/cdrom\fR
+.SH SEE ALSO
+.BR kover (1)
+.SH AUTHOR
+This manual page was created newly by Rene Engelhard
+<mail@rene-engelhard.de> for the Debian GNU/Linux Distribution, because the original package does not have one.
