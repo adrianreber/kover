@@ -165,7 +165,7 @@ void PreferencesDialog::slotOk()
 				i++;
 				return;
 		  case 1:
-				KMessageBox::sorry(this,"Sorry, I deleted your hard disk.");
+				KMessageBox::sorry(this,"Please reboot now.");
 				i++;
 				return;
 		  case 2:
@@ -449,6 +449,10 @@ void PreferencesDialog::setup_misc_page()
 	 misc_widgets.trigger_actual_size = new QCheckBox( text, group, "trigger_actual_size" );
 	 gbox->addMultiCellWidget( misc_widgets.trigger_actual_size, 0, 0,0,5 );
 
+	 text = i18n("Display track duration after a CDDB request.");
+	 misc_widgets.display_track_duration = new QCheckBox( text, group, "display_track_duration" );
+	 gbox->addMultiCellWidget( misc_widgets.display_track_duration, 1, 1,0,5 );
+
 	 set_misc();
 }
 
@@ -458,6 +462,11 @@ void PreferencesDialog::set_misc()
 		  misc_widgets.trigger_actual_size->setChecked(true);
 	 else
 		  misc_widgets.trigger_actual_size->setChecked(false);
+
+	 if (globals.display_track_duration)
+		  misc_widgets.display_track_duration->setChecked(true);
+	 else
+		  misc_widgets.display_track_duration->setChecked(false);
 		  
 }
 
@@ -467,4 +476,9 @@ void PreferencesDialog::save_misc()
 		  globals.trigger_actual_size = 1;
 	 else
 		  globals.trigger_actual_size = 0;
+
+	 if ((misc_widgets.display_track_duration)->isChecked())
+		  globals.display_track_duration = 1;
+	 else
+		  globals.display_track_duration = 0;
 }

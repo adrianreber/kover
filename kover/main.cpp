@@ -46,11 +46,31 @@ void cleanup()
 	 free (globals.cddb_path);
 }
 
-
+void sighandler(int i)
+{
+	 if (i==2)
+	 {
+#ifdef ENABLE_DEBUG_OUTPUT
+		  fprintf(stderr,"kover:SIGINT received...");
+#endif
+	 }
+	 else
+	 {
+#ifdef ENABLE_DEBUG_OUTPUT
+		  fprintf(stderr,"kover:SIGTERM received...");
+#endif
+	 }
+#ifdef ENABLE_DEBUG_OUTPUT
+	 fprintf(stderr,"cleaning up...\n");
+#endif
+}
 
 int main(int argc, char* argv[]) 
 {
 	 int cdrom;
+
+	 signal(SIGTERM,sighandler);
+	 signal(SIGINT,sighandler);
  
 	 fprintf(stderr, "%s Release %s - Copyright (C) 1999, 2000 by Denis Oliver Kropp\n",PACKAGE,VERSION);
 	 fprintf(stderr, "                    Copyright (C) 2000, 2001 by Adrian Reber\n");

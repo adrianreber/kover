@@ -1,7 +1,6 @@
-/**
-	-*- adrian-c -*-
-	kover -
-
+/** -*- adrian-c -*-
+	kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
+	Copyright (C) 2000, 2001 by Adrian Reber
 	
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -87,7 +86,8 @@ private:
 
 		  struct misc_widgets
 		  {
-					 QCheckBox * trigger_actual_size;
+			 QCheckBox * trigger_actual_size;
+			 QCheckBox * display_track_duration;
 		  } misc_widgets;
 		  
 private slots:
