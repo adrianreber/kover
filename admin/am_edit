@@ -1528,7 +1528,7 @@ sub tag_DIST () {
         
         my $lookup = "DISTFILES *=(.*)";
         if ($MakefileData =~ /\n$lookup\n/o) {
-            substituteLine($lookup, "KDE_DIST=$KDE_DIST\n\nDISTFILES=$1 \$(KDE_DIST)\n");
+    #        substituteLine($lookup, "KDE_DIST=$KDE_DIST\n\nDISTFILES=$1 \$(KDE_DIST)\n");
         }
     }
 }
@@ -1926,7 +1926,7 @@ sub updateMakefile ()
     open (FILEOUT, "> $makefile")
                         || die "Could not create $makefile: $!\n";
 
-    print FILEOUT "\# $progId - " . '$Revision: 1.2 $ '  . "\n";
+    print FILEOUT "\# $progId - " . '$Revision: 1.3 $ '  . "\n";
     $MakefileData =~ s/\034/\\\n\t/g;    # Restore continuation lines
     print FILEOUT $MakefileData;
     close FILEOUT;
