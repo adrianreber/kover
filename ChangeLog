@@ -1,4 +1,4 @@
-$Id: ChangeLog,v 1.11 2001/11/18 23:59:33 adrian Exp $
+$Id: ChangeLog,v 1.12 2001/11/19 09:55:40 adrian Exp $
 
 2001-11-18  Adrian  <adrian@lisas.de>
 	* KoverTop.cpp cddb_fill.cpp: included option to make
@@ -10,7 +10,7 @@ $Id: ChangeLog,v 1.11 2001/11/18 23:59:33 adrian Exp $
 	  maybe this helps some people who weren't able to print
 
 2001-11-17  Michael  <konqueror@gmx.de>
-	* KoverTop.cpp: network transparency. now it its possible
+	* KoverTop.cpp: network transparency. now it is possible
 	  to open and save file via ftp
 	* x-kover.desktop: application/x-kover mimetype
 	* main.cpp: open file via command line
