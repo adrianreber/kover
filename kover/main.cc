@@ -30,7 +30,7 @@
 	 21 May 2002: Manual Connection to DCOP server
 */
 
-/* $Id: main.cc,v 1.12 2004/09/17 19:16:49 adrian Exp $ */
+/* $Id: main.cc,v 1.13 2004/09/17 19:23:51 adrian Exp $ */
 
 #include "kover.h"
 #include "kovertop.h"
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     fprintf(stderr,
         "%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n",
         PACKAGE);
-    fprintf(stderr,"kover \"look-i-can-read\" release or\n");
+    fprintf(stderr,"kover \"look-i-can-read\" release\n");
 
     KAboutData aboutData(PACKAGE, I18N_NOOP(PACKAGE), VERSION,
         "Kover is an easy to use WYSIWYG CD cover printer with CDDB support.",
