@@ -248,7 +248,7 @@ void KoverTop::fileOpen() {
 				return;
 	 }
 
-	 KURL url = KFileDialog::getOpenURL( ":", i18n( "*.kover|Kover files\n*|All files" ) );
+	 KURL url = KFileDialog::getOpenURL( ":koverfile", i18n( "*.kover|Kover files\n*|All files" ) );
 	 if( !url.isEmpty() ) {
 		  fileOpen( url );
 	 }
@@ -319,7 +319,7 @@ void KoverTop::fileSave()
 
 void KoverTop::fileSaveAs()
 {
-    KURL url = KFileDialog::getSaveURL( ";", i18n( "*.kover|Kover files\n*|All files" ) );
+    KURL url = KFileDialog::getSaveURL( ":koverfile", i18n( "*.kover|Kover files\n*|All files" ) );
 
 	 if (!url.isEmpty()) {
 				if( url.fileName().find( '.' ) == -1 )

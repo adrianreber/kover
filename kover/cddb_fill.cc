@@ -17,7 +17,7 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: cddb_fill.cpp 
+	 File: cddb_fill.cc
 	 
 	 Description: the cddb code
 	 
@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.1 2001/11/28 16:18:59 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.2 2001/12/01 23:17:42 adrian Exp $ */
 
 #include "cddb_fill.moc"
 

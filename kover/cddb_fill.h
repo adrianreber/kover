@@ -1,34 +1,33 @@
 /** -*- adrian-c -*-
-	 
-kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-Copyright (C) 1999, 2000 by Denis Oliver Kropp
-Copyright (C) 2000, 2001 by Adrian Reber 
+	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
+	 Copyright (C) 1999, 2000 by Denis Oliver Kropp
+	 Copyright (C) 2000, 2001 by Adrian Reber 
 	
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+	 This program is free software; you can redistribute it and/or modify
+	 it under the terms of the GNU General Public License as published by
+	 the Free Software Foundation; either version 2 of the License, or
+	 (at your option) any later version.
 	
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+	 This program is distributed in the hope that it will be useful,
+	 but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 GNU General Public License for more details.
 	
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+	 You should have received a copy of the GNU General Public License
+	 along with this program; if not, write to the Free Software
+	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	
-File: cddb_fill.h 
+	 File: cddb_fill.h 
 
-Description: the cddb header
+	 Description: the cddb header
 
-Changes: 
+	 Changes: 
 
-10 Jan 1999: Initial release
+	 10 Jan 1999: Initial release
 
 */
 
-/* $Id: cddb_fill.h,v 1.17 2001/11/18 23:59:33 adrian Exp $ */
+/* $Id: cddb_fill.h,v 1.18 2001/12/01 23:17:42 adrian Exp $ */
 
 #ifndef CDDB_FILL_H
 #define CDDB_FILL_H
@@ -47,18 +46,18 @@ Changes:
  *@author Denis Oliver Kropp
  */
 	 
-	 class track_info
-	 {
-	 public:
-		  track_info( int _track, int _min, int _sec, int _frame );
+class track_info
+{
+public:
+	 track_info( int _track, int _min, int _sec, int _frame );
 
-		  QString	songname;	/* Name of song, dynamically allocated */
-		  int	min; //starting minute of the track
-		  int	sec; //starting second of the track
-		  int	length;		/* Length of track in seconds or Kbytes */
-		  int	start;		/* Starting position */
-		  int	track;		/* Physical track number */
-	 };
+	 QString	songname;	/* Name of song, dynamically allocated */
+	 int	min; //starting minute of the track
+	 int	sec; //starting second of the track
+	 int	length;		/* Length of track in seconds or Kbytes */
+	 int	start;		/* Starting position */
+	 int	track;		/* Physical track number */
+};
 
 class CD_Info
 {
@@ -83,8 +82,7 @@ public:
 	 unsigned long cddb_id;	
 };
 
-class CDDB_Fill : public QObject
-{
+class CDDB_Fill : public QObject {
 	 Q_OBJECT
 public: 
 	 CDDB_Fill( KoverFile* _kover_file );
@@ -99,7 +97,7 @@ public:
 	 signals:
 	 void statusText( const char* );
 	 void update_id(unsigned long);
-
+	 
 protected:
 	 int			openCD();
 	 void			closeCD();
