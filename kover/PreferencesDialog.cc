@@ -32,7 +32,7 @@
 	 13 Mar 2002: Standard font page
 */
 
-/* $Id: PreferencesDialog.cc,v 1.5 2002/04/24 15:51:21 adrian Exp $ */
+/* $Id: PreferencesDialog.cc,v 1.6 2002/04/28 21:55:24 adrian Exp $ */
 
 #include "PreferencesDialog.moc"
 
@@ -51,6 +51,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
+
+#include "sites.h"
 
 PreferencesDialog::PreferencesDialog(QWidget *parent, const QString &caption):KDialogBase(KJanusWidget::IconList,caption,Ok|Cancel,Ok,parent) {
 	 this->parent = parent;
@@ -608,4 +610,6 @@ void PreferencesDialog::output_changed(int type) {
 
 void PreferencesDialog::browsing() {
 	emit get_sites();
+	sites *test = new sites();
+   test->how_many();	
 }

@@ -26,7 +26,7 @@
 	 
 */
 
-/* $Id: sites.h,v 1.1 2002/04/24 15:27:44 adrian Exp $ */
+/* $Id: sites.h,v 1.2 2002/04/28 21:55:24 adrian Exp $ */
 
 #ifndef SITES_H
 #define SITES_H
@@ -34,10 +34,12 @@
 #include "../config.h"
 #include <list>
 #include <string>
+#include "net.h"
+#include "cddb.h"
 
 using namespace std;
 
-class sites {
+class sites : public net, cddb {
 
 public:
 	 sites();

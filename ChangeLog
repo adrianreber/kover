@@ -1,4 +1,4 @@
-$Id: ChangeLog,v 1.16 2002/04/24 15:52:57 adrian Exp $
+$Id: ChangeLog,v 1.17 2002/04/28 21:55:23 adrian Exp $
 
 2002-04-22 Adrian <adrian@lisas.de>
 	* released as 2.8.3
@@ -13,8 +13,8 @@ $Id: ChangeLog,v 1.16 2002/04/24 15:52:57 adrian Exp $
 
 2002-04-07 Adrian <adrian@lisas.de>
 	* kover_file.cc: changed .kover file format to use XML.
-   * renamed some files from .cpp to .cc, so --enable-final
-     can optimize better. More renaming will follow
+	* renamed some files from .cpp to .cc, so --enable-final
+	  can optimize better. More renaming will follow
 	* created the qt3_version branch in the cvs
 	* it.po: italian translation by
 	  Marco Ciampa <ciampix@libero.it>

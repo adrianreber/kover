@@ -27,7 +27,7 @@
 
 */
 
-/* $Id: cddb_fill.h,v 1.20 2002/04/28 09:33:51 adrian Exp $ */
+/* $Id: cddb_fill.h,v 1.21 2002/04/28 21:55:24 adrian Exp $ */
 
 #ifndef CDDB_FILL_H
 #define CDDB_FILL_H
@@ -36,6 +36,7 @@
 #include "koverfile.h"
 
 #include "net.h"
+#include "cddb.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -85,7 +86,7 @@ public:
 	 unsigned long cddb_id;	
 };
 
-class CDDB_Fill : public QObject, net {
+class CDDB_Fill : public QObject, net, cddb {
 	 Q_OBJECT
 public: 
 	 CDDB_Fill( KoverFile* _kover_file );

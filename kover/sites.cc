@@ -26,7 +26,7 @@
 
 */
 
-/* $Id: sites.cc,v 1.1 2002/04/24 15:27:44 adrian Exp $ */
+/* $Id: sites.cc,v 1.2 2002/04/28 21:55:24 adrian Exp $ */
 
 #include "sites.h"
 
@@ -42,14 +42,22 @@ sites::sites() {
 	 site.push_back("Reggae");
 	 site.push_back("Rock");
 	 site.push_back("Soundtrack");
+	 connect();
 }
 
 sites::~sites() {
-
+	disconnect();
 }
 
 int sites::how_many() {
-	 return (int)site.size();
+	 //return (int)site.size();
+	 char * bla = "sites";
+	 char *test = NULL;
+	 test = make_cddb_request(bla,false);
+
+	 printf("%s\n",test);
+	 
+	 return 0;
 }
 
 string sites::get_site(int id) {

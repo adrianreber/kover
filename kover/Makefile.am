@@ -8,7 +8,7 @@ kover_SOURCES = imagedlgdata.cpp imagedlg.cpp cddb_fill.cc koverfile.cc \
 		PreferencesDialog.cc cdrom.cc config.cc \
 		cddb_211_item.cc inexact_dialog.cc proxy_auth.cc \
 		without_cd.cc categories.cc direntry.cc sites.cc \
-		net.cc
+		net.cc cddb.cc
 
 #kover_LDADD   = $(LIB_KSYCOCA) $(LIB_KFILE) $(LIBSOCKET) -lkdeprint
 kover_LDADD   = $(LIBSOCKET) -lkdeprint
@@ -37,7 +37,8 @@ noinst_HEADERS = kovertop.h cddb_fill.h kover.h \
 		 cdview.h PreferencesDialog.h imagedlg.h koverfile.h \
 		 kover_global.h cdrom.h config.h cdrom_cddb.h \
 		 cddb_211_item.h inexact_dialog.h proxy_auth.h \
-		 categories.h without_cd.h direntry.h sites.h net.h
+		 categories.h without_cd.h direntry.h sites.h net.h \
+		 cddb.h
 
 INCLUDES= $(all_includes)
 
