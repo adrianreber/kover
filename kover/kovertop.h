@@ -28,7 +28,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.h,v 1.5 2002/08/14 14:22:22 adrian Exp $ */
+/* $Id: kovertop.h,v 1.6 2002/09/16 22:45:53 adrian Exp $ */
 
 #ifndef KOVER_TOP_H
 #define KOVER_TOP_H
@@ -114,6 +114,7 @@ private:
 	 void make_main_frame();
 	 void make_more_frame();
 	 void make_option_frame();
+     void update_id(QString id);
 	 
 	 QFrame *option_frame;
 	 QCheckBox *display_title; 

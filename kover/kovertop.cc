@@ -34,7 +34,7 @@
 	 11 Nov 2001: CDDB without CD
 */
 
-/* $Id: kovertop.cc,v 1.13 2002/09/13 21:32:06 adrian Exp $ */
+/* $Id: kovertop.cc,v 1.14 2002/09/16 22:45:53 adrian Exp $ */
 
 #include "kovertop.moc"
 
@@ -296,6 +296,14 @@ void KoverTop::update_id(unsigned long id)
     cddb_id->adjustSize();
 }
 
+void KoverTop::update_id(QString id) {
+    QString string = "CDDB id:";
+    if (!id.isEmpty())
+        string = "CDDB id: " + id;
+    cddb_id->setText(string);
+    cddb_id->adjustSize();
+}
+
 void KoverTop::titleBoxChanged()
 {
     kover_file.setTitle(title_edit->text());
@@ -402,7 +410,9 @@ void KoverTop::fileOpen(const KURL & url)
             contents_edit->setText(kover_file.contents());
             connect(contents_edit, SIGNAL(textChanged()),
                 SLOT(contentsBoxChanged()));
-
+            
+            update_id(kover_file.cddb_id());
+            
             display_title->setChecked(kover_file.display_title());
 
             if (!kover_file.spine_text()) {
