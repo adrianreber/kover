@@ -1,0 +1,165 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# FIRST TRANSLATOR <jean-pierre.verrue@laposte.net>, 2001.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2001-10-02 16:48+0200\n"
+"PO-Revision-Date: 2001-10-04 22:34+GMT\n"
+"Last-Translator: \n"
+"Language-Team:  <de@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 0.8\n"
+
+#: KoverTop.cpp:52 KoverTop.cpp:144 KoverTop.cpp:221
+msgid "[New Document]"
+msgstr "[Nouveau document]"
+
+#: KoverTop.cpp:68
+msgid "&Actual size"
+msgstr "Taille &Actuelle"
+
+#: KoverTop.cpp:69
+msgid "&CDDB lookup"
+msgstr "requête &CDDB"
+
+#: KoverTop.cpp:71
+msgid "&Image Embedding..."
+msgstr "&Incorporer image..."
+
+#: KoverTop.cpp:72
+msgid "Title Font..."
+msgstr "Police pour le titre..."
+
+#: KoverTop.cpp:73
+msgid "Title Fontcolor..."
+msgstr "Couleur du titre..."
+
+#: KoverTop.cpp:74
+msgid "Contents Font..."
+msgstr "Police pour le contenu..."
+
+#: KoverTop.cpp:75
+msgid "Contents Fontcolor..."
+msgstr "Couleur du contenu..."
+
+#: KoverTop.cpp:76
+msgid "Background Color..."
+msgstr "Couleur d'arrière plan..."
+
+#: KoverTop.cpp:77
+msgid "Eject CD"
+msgstr "Ejecter CD"
+
+#: PreferencesDialog.cpp:48
+msgid "CDDB"
+msgstr "CDDB"
+
+#: PreferencesDialog.cpp:48
+msgid "CDDB options"
+msgstr "Options CDDB"
+
+#: PreferencesDialog.cpp:52
+msgid "&CDDB server"
+msgstr "Serveur &CDDB"
+
+#: PreferencesDialog.cpp:62
+msgid "CDDB server:"
+msgstr "Serveur CDDB :"
+
+#: PreferencesDialog.cpp:69
+msgid "CGI path:"
+msgstr "Chemin CGI :"
+
+#: PreferencesDialog.cpp:76
+msgid "&Proxy configuration"
+msgstr "Configuration &Proxy"
+
+#: PreferencesDialog.cpp:83
+msgid "Use proxy for CDDB lookups"
+msgstr "Utiliser un Proxy pour les requêtes CDDB"
+
+#: PreferencesDialog.cpp:87
+msgid "Use 'http_proxy' environment variable"
+msgstr "Utiliser la variable d'environnement 'http_proxy'"
+
+#: PreferencesDialog.cpp:90
+msgid "Proxy server:"
+msgstr "Serveur proxy :"
+
+#: PreferencesDialog.cpp:96
+msgid "Proxy server port:"
+msgstr "Port du serveur proxy :"
+
+#: PreferencesDialog.cpp:109
+msgid "CDROM"
+msgstr "CDROM"
+
+#: PreferencesDialog.cpp:109
+msgid "CDROM options"
+msgstr "options CDROM"
+
+#: PreferencesDialog.cpp:113
+msgid "&CDROM"
+msgstr "&CDROM"
+
+#: PreferencesDialog.cpp:122
+msgid "CDROM device:"
+msgstr "Périphérique CDROM :"
+
+#: PreferencesDialog.cpp:128
+msgid "Eject CD on exit"
+msgstr "Ejecter le CD en quittant"
+
+#: PreferencesDialog.cpp:312
+msgid "CDDB files"
+msgstr "Fichiers CDDB"
+
+#: PreferencesDialog.cpp:312
+msgid "Local CDDB files"
+msgstr "Fichiers CDDB locaux"
+
+#: PreferencesDialog.cpp:316
+msgid "&Local CDDB files"
+msgstr "&Fichiers CDDB locaux"
+
+#: PreferencesDialog.cpp:325
+msgid "Read CDDB data from file if available"
+msgstr "Lire les données CDDB à partir d'un fichier si disponible"
+
+#: PreferencesDialog.cpp:329
+msgid "Write CDDB data to file"
+msgstr "Écrire les données CDDB dans un fichier"
+
+#: PreferencesDialog.cpp:334
+msgid "CDDB path:"
+msgstr "Chemin CDDB :"
+
+#: PreferencesDialog.cpp:390
+msgid "Various properties"
+msgstr "Fonctions diverses"
+
+#: PreferencesDialog.cpp:394
+msgid "&Stuff"
+msgstr "&Divers"
+
+#: PreferencesDialog.cpp:403
+msgid "Mouse click on kover preview triggers actual size."
+msgstr "Cliquer sur l'aperçu Affiche en taille réelle."
+
+#: PreferencesDialog.cpp:407
+msgid "Display track duration after a CDDB request."
+msgstr "Affiche la durée de la piste après une requête CDDB"
+
+#: PreferencesDialog.cpp:411
+msgid ""
+"Print inlet on left side of booklet.\n"
+"(slim case option)"
+msgstr ""
+"Imprimer le conteu au dos de la plaquette\n"
+"(Option pour boites minces)"
+
