@@ -1,4 +1,4 @@
-$Id: ChangeLog,v 1.15 2002/04/21 22:47:21 adrian Exp $
+$Id: ChangeLog,v 1.16 2002/04/24 15:52:57 adrian Exp $
 
 2002-04-22 Adrian <adrian@lisas.de>
 	* released as 2.8.3
@@ -8,6 +8,8 @@ $Id: ChangeLog,v 1.15 2002/04/21 22:47:21 adrian Exp $
 	  lots of things are started but not finished
 	  don't expect everything to work yet
 	  this is for the people waiting to use kover with kde3
+	* merged the qt3_version cvs branch back into the
+	  the HEAD branch. branches are evil!
 
 2002-04-07 Adrian <adrian@lisas.de>
 	* kover_file.cc: changed .kover file format to use XML.

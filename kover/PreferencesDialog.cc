@@ -32,7 +32,7 @@
 	 13 Mar 2002: Standard font page
 */
 
-/* $Id: PreferencesDialog.cc,v 1.3 2002/04/20 22:29:13 adrian Exp $ */
+/* $Id: PreferencesDialog.cc,v 1.5 2002/04/24 15:51:21 adrian Exp $ */
 
 #include "PreferencesDialog.moc"
 
@@ -74,7 +74,7 @@ void PreferencesDialog::setupCDDBPage( void ) {
 	 QVBoxLayout *vlay = new QVBoxLayout( group, spacingHint() );
 	 vlay->addSpacing( fontMetrics().lineSpacing() );
 
-	 QGridLayout *gbox = new QGridLayout( 5, 2 );
+	 QGridLayout *gbox = new QGridLayout( 5, 3 );
 	 vlay->addLayout( gbox );
 
 	 QString text;
@@ -84,8 +84,12 @@ void PreferencesDialog::setupCDDBPage( void ) {
 
 	 cddb_widgets.cddb_server = new QLineEdit( group, "server" );
 	 cddb_widgets.cddb_server->setMinimumWidth( fontMetrics().maxWidth()*10 );
-	
 	 gbox->addWidget( cddb_widgets.cddb_server, 0, 1 );
+
+	 QPushButton * browse = new QPushButton(i18n("Browse"), group, "browse");
+	 connect(browse,SIGNAL(clicked()), SLOT(browsing()));
+	 gbox->addWidget(browse,0,2);
+	
 	 label = new QLabel(i18n("CGI path:"), group, "cgilabel" );
 	 gbox->addWidget( label, 1, 0 );
 	 cddb_widgets.cgi_path = new QLineEdit( group, "cgi" );
@@ -600,4 +604,8 @@ void PreferencesDialog::output_changed(int type) {
 		  misc_widgets.booklet->setPixmap(pixmap.loadIcon("one_page",KIcon::NoGroup));
 	 }
 	 
+}
+
+void PreferencesDialog::browsing() {
+	emit get_sites();
 }

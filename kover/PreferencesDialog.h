@@ -21,7 +21,7 @@
 	Description: Header to PreferencesDialog.h
 */
 
-/* $Id: PreferencesDialog.h,v 1.13 2002/04/20 22:29:13 adrian Exp $ */
+/* $Id: PreferencesDialog.h,v 1.15 2002/04/24 15:51:21 adrian Exp $ */
 
 #ifndef PREFERENCES_DIALOG_H
 #define PREFERENCES_DIALOG_H
@@ -32,6 +32,8 @@
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include "koverfile.h"
+
+using namespace std;
 
 class PreferencesDialog : public KDialogBase {
 	 Q_OBJECT
@@ -121,6 +123,9 @@ void use_proxy(bool status);
 	 void inlet_title_font_dialog();
 	 //void output_changed(PreferencesDialog::output type);
 	 void output_changed(int type);
+	 void browsing();
+signals:
+	 void get_sites();
 };
 
 #endif /* PREFERENCES_DIALOG_H */

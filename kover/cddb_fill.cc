@@ -45,7 +45,7 @@
 	
 */
 
-/* $Id: cddb_fill.cc,v 1.5 2002/04/23 14:15:04 adrian Exp $ */
+/* $Id: cddb_fill.cc,v 1.6 2002/04/24 15:51:21 adrian Exp $ */
 
 #include "cddb_fill.moc"
 
@@ -1043,3 +1043,6 @@ bool CDDB_Fill::do_authentification(char *query_buffer, int socket) {
 	 return true;
 }
 
+void CDDB_Fill::get_sites() {
+	printf("Signal received...\n");
+}
