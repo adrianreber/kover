@@ -26,10 +26,15 @@
 
 */
 
-/* $Id: cdrom_cddb.cc,v 1.3 2003/02/07 16:44:40 adrian Exp $ */
+/* $Id: cdrom_cddb.cc,v 1.4 2004/04/20 21:04:28 adrian Exp $ */
 
 #include "cdrom_cddb.h"
 #include <stdio.h>
+
+#ifdef __FreeBSD__
+#include <sys/cdio.h>
+#define CDROM_LEADOUT 0xAA
+#endif
 
 cdrom_cddb::cdrom_cddb(char *path):cdrom(path)
 {
@@ -49,8 +54,13 @@ unsigned long cdrom_cddb::get_cddb_id()
 
 void cdrom_cddb::calc_cddb_id()
 {
+#ifdef __FreeBSD__
+    ioc_toc_header hdr;
+    ioc_read_toc_single_entry entry;
+#else
     cdrom_tochdr hdr;
     cdrom_tocentry entry;
+#endif
     int i = 0;
     int pos = 0;
     int length = 0;
@@ -62,13 +72,28 @@ void cdrom_cddb::calc_cddb_id()
         exit(0);
     }
 
+#ifdef __FreeBSD__
+    if (ioctl(cdrom_fd, CDIOREADTOCHEADER, &hdr) == -1) {
+#else
     if (ioctl(cdrom_fd, CDROMREADTOCHDR, &hdr)) {
+#endif
         fprintf(stderr,
             "%s:error while reading table of contents. exiting now!\n",
             PACKAGE);
         exit(0);
     }
 
+#ifdef __FreeBSD__
+    i = ntracks = hdr.ending_track;
+
+    do {
+        if (i == ntracks)
+            entry.track = CDROM_LEADOUT;
+        else
+            entry.track = i + 1;
+        entry.address_format = CD_MSF_FORMAT;
+        if (ioctl(cdrom_fd, CDIOREADTOCENTRY, &entry)) {
+#else
     i = ntracks = hdr.cdth_trk1;
 
     do {
@@ -78,12 +103,25 @@ void cdrom_cddb::calc_cddb_id()
             entry.cdte_track = i + 1;
         entry.cdte_format = CDROM_MSF;
         if (ioctl(cdrom_fd, CDROMREADTOCENTRY, &entry)) {
+#endif
             fprintf(stderr,
                 "%s:error while reading toc entry. exiting now!\n", PACKAGE);
             exit(0);
         }
         if (i != ntracks)
             pos +=
+#ifdef __FreeBSD__
+                cddb_sum((entry.entry.addr.msf.minute * 60) +
+                entry.entry.addr.msf.second);
+        if (i == 0)
+            length =
+                length - ((entry.entry.addr.msf.minute * 60) +
+                entry.entry.addr.msf.second);
+        if (i == ntracks)
+            length =
+                (entry.entry.addr.msf.minute * 60) +
+                entry.entry.addr.msf.second;
+#else
                 cddb_sum((entry.cdte_addr.msf.minute * 60) +
                 entry.cdte_addr.msf.second);
         if (i == 0)
@@ -94,6 +132,7 @@ void cdrom_cddb::calc_cddb_id()
             length =
                 (entry.cdte_addr.msf.minute * 60) +
                 entry.cdte_addr.msf.second;
+#endif
 
     } while (i--);
 

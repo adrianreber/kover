@@ -27,12 +27,15 @@
 
 */
 
-/* $Id: net.cc,v 1.6 2003/02/07 16:44:40 adrian Exp $ */
+/* $Id: net.cc,v 1.7 2004/04/20 21:04:28 adrian Exp $ */
 
 #include "net.h"
 #include "kover.h"
 
 #include <netdb.h>
+#ifdef __FreeBSD__
+#include <sys/param.h>
+#endif
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>

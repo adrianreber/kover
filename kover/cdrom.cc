@@ -64,7 +64,14 @@ int cdrom::eject() {
 				return -1;
 	 }
 	 if (cdrom_fd > 0)
+#ifdef __FreeBSD__
+         {
+                  ioctl(cdrom_fd,CDIOCALLOW);
+                  ioctl(cdrom_fd,CDIOCEJECT);
+         }
+#else
 		  ioctl(cdrom_fd,CDROMEJECT);
+#endif
 	 else
 		  return -1;
 	 close();

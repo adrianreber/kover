@@ -41,6 +41,10 @@ extern "C" {
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#ifdef __FreeBSD__
+#include <sys/cdio.h>
+#endif
+
 #ifdef HAVE_LINUX_CDROM_H
 #include <linux/cdrom.h>
 #endif
