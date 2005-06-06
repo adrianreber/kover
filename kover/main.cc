@@ -17,11 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: main.cc,v 1.14 2005/06/03 18:42:55 adrian Exp $ */
+ * $Id: main.cc,v 1.15 2005/06/06 08:23:25 adrian Exp $ */
 
 #include "kover.h"
 #include "kovertop.h"
 #include "config.h"
+
+#include <cdio/cdio.h>
 
 #include <klocale.h>
 #include <kaboutdata.h>
@@ -36,6 +38,24 @@ KoverTop *kovertop = NULL;
 config_class *config = NULL;
 
 int _debug_ = 0;
+
+void eject_cdrom()
+{
+	CdIo_t *cdio;
+	char *device = NULL;
+	if (!globals.cdrom_device) {
+		device = cdio_get_default_device(NULL);
+		if (!device) {
+			fprintf(stderr, "%s: Unable to get default CD device.", PACKAGE);
+			return;
+		}
+	} else
+		device = strdup(globals.cdrom_device);
+	cdio = cdio_open(device, DRIVER_UNKNOWN);
+	cdio_eject_media(&cdio);
+	cdio_destroy(cdio);
+	return;
+}
 
 static const KCmdLineOptions options[] = {
 	{"advise", I18N_NOOP("Help me now!"), 0},
@@ -56,10 +76,7 @@ void cleanup()
 void the_end()
 {
 	if (globals.eject_cdrom) {
-		cdrom *cdrom_class = new cdrom(globals.cdrom_device);
-
-		cdrom_class->eject();
-		delete cdrom_class;
+		eject_cdrom();
 	}
 	if (globals.save_position) {
 		globals.xpos = kovertop->x();
