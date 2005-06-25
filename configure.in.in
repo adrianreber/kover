@@ -4,12 +4,12 @@
 # I used much code from Janos Farkas
 
 dnl This is so we can use kde-common
-AC_CONFIG_AUX_DIR(admin)
+dnl AC_CONFIG_AUX_DIR(admin)
 
 AC_ISC_POSIX
 
 dnl Automake doc recommends to do this only here. (Janos)
-AM_INIT_AUTOMAKE(kover, 2.9.6) dnl searches for some needed programs
+AM_INIT_AUTOMAKE(kover, 3) dnl searches for some needed programs
 
 KDE_SET_PREFIX
 
@@ -40,7 +40,8 @@ AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h stdlib.h paths.h linux/cdrom.h linu
 AC_CHECK_FUNCS(usleep)
 dnl KDE_FIND_PATH(iptables, IPTABLES, $PATH, AC_MSG_ERROR([No iptables found.]))
 
-
+PKG_CHECK_MODULES(CDIO,libcdio >= 0.70)
+PKG_CHECK_MODULES(CDDB,libcddb >= 1.0.2)
 
 KDE_CREATE_SUBDIRSLIST
 
