@@ -1,6 +1,5 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 1999-2000 by Denis Oliver Kropp
  * Copyright (C) 2000-2005 by Adrian Reber 
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -17,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: filemode.cc,v 1.2 2005/06/25 19:34:37 adrian Exp $ */
+ * $Id: filemode.cc,v 1.3 2005/06/25 19:38:13 adrian Exp $ */
 
 #include "filemode.moc"
 #include "filemode.h"
