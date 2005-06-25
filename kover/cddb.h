@@ -26,10 +26,10 @@
 	 
 */
 
-/* $Id: cddb.h,v 1.1 2002/04/28 21:56:12 adrian Exp $ */
+/* $Id: cddb.h,v 1.2 2005/06/25 19:43:24 adrian Exp $ */
 
-#ifndef CDDB_H
-#define CDDB_H
+#ifndef _CDDB_H
+#define _CDDB_H
 
 #include "../config.h"
 
@@ -47,4 +47,4 @@ public:
 		  char * make_cddb_request(char *query_me, bool use_auth);
 };
 
-#endif /* NET_H */
+#endif /* _CDDB_H */

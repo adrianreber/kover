@@ -39,7 +39,6 @@ class config_class {
     void load_globals();
     void sync();
   private:
-    void check_categories(char * check);
     char *check_cddb_dir();
     KApplication *kover;
 

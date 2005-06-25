@@ -26,7 +26,7 @@
 
 */
 
-/* $Id: cddb_211_item.cc,v 1.6 2003/02/07 16:44:40 adrian Exp $ */
+/* $Id: cddb_211_item.cc,v 1.7 2005/06/25 19:43:24 adrian Exp $ */
 
 #include "cddb_211_item.h"
 #include <stdlib.h>
@@ -41,6 +41,10 @@ cddb_211_item::cddb_211_item(char *input) {
 	 cddb_data = strdup(input);
 }
 
+cddb_211_item::cddb_211_item(string input) {
+	 cddb_data = strdup(input.c_str());
+}
+
 cddb_211_item::~cddb_211_item() {
 	 if (cddb_data)
 		  free (cddb_data);
@@ -49,3 +53,29 @@ cddb_211_item::~cddb_211_item() {
 char *cddb_211_item::get() {
 	 return strdup(cddb_data);
 }
+
+ void cddb_211_item::set_title(string input) {
+	title = input;
+}
+        void cddb_211_item::set_artist(string input){
+	artist = input;
+}
+        void cddb_211_item::set_category(string input){
+category = input;
+}
+        void cddb_211_item::set_id(unsigned long input){
+id = input;
+}
+        string cddb_211_item::get_title(){
+return title;
+}
+        string cddb_211_item::get_artist(){
+return artist;
+}
+        string cddb_211_item::get_category(){
+return category;
+}
+        unsigned long cddb_211_item::get_id(){
+return id;
+}
+

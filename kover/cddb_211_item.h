@@ -26,21 +26,37 @@
 	 
 */
 
-/* $Id: cddb_211_item.h,v 1.3 2001/07/15 22:21:53 adrian Exp $ */
+/* $Id: cddb_211_item.h,v 1.4 2005/06/25 19:43:24 adrian Exp $ */
 
 #ifndef CDDB_211_ITEM_H
 #define CDDB_211_ITEM_H
 
+#include <string>
 #include "../config.h"
+
+using namespace std;
 
 class cddb_211_item {
 public:
 	 cddb_211_item();	 
 	 cddb_211_item(char *);
+	 cddb_211_item(string);
 	 ~cddb_211_item();
 	 char *get();
+	void set_title(string);
+	void set_artist(string);
+	void set_category(string);
+	void set_id(unsigned long);
+	string get_title();
+	string get_artist();
+	string get_category();
+	unsigned long get_id();
 private:
 	 char *cddb_data;
+	string title;
+	string artist;
+	string category;
+	unsigned long id;
 };
 
 #endif /* CDDB_211_ITEM_H */

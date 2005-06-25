@@ -26,20 +26,21 @@
 	 
 */
 
-/* $Id: sites.h,v 1.6 2002/05/05 22:01:54 adrian Exp $ */
+/* $Id: sites.h,v 1.7 2005/06/25 19:43:24 adrian Exp $ */
 
 #ifndef SITES_H
 #define SITES_H
 
 #include "../config.h"
 #include "kover.h"
-#include "net.h"
-#include "cddb.h"
+//#include "net.h"
+//#include "cddb.h"
 #include "server.h"
 
 using namespace std;
 
-class sites : public net, cddb {
+//class sites : public net, cddb {
+class sites{
 
 public:
 	 sites();

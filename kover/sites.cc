@@ -26,7 +26,7 @@
 
 */
 
-/* $Id: sites.cc,v 1.6 2003/02/07 16:44:40 adrian Exp $ */
+/* $Id: sites.cc,v 1.7 2005/06/25 19:43:24 adrian Exp $ */
 
 #include "sites.h"
 
@@ -34,16 +34,17 @@
 
 sites::sites()
 {
-    connect();
+    //connect();
 }
 
 sites::~sites()
 {
-    disconnect();
+    //disconnect();
 }
 
 bool sites::gen_server_list(list < server * >&server_list)
 {
+	/*
     char cmd[] = "sites";
     char *request = NULL;
     char *code_string = NULL;
@@ -87,6 +88,6 @@ bool sites::gen_server_list(list < server * >&server_list)
         server_list.push_back(new server(s));
         _DEBUG_ fprintf(stderr, "answer: %s", s);
     }
-
+*/
     return true;
 }

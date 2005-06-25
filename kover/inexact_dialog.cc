@@ -30,7 +30,7 @@
 
 */
 
-/* $Id: inexact_dialog.cc,v 1.10 2003/02/07 16:44:40 adrian Exp $ */
+/* $Id: inexact_dialog.cc,v 1.11 2005/06/25 19:43:24 adrian Exp $ */
 
 #include "inexact_dialog.moc"
 #include "inexact_dialog.h"
@@ -64,7 +64,17 @@ inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list):QDialog(0, 
     list < cddb_211_item * >::iterator item;
 
     for (item = inexact_list.begin(); item != inexact_list.end(); item++) {
-        box->insertItem(((*item)->get()));
+	char disc_id[16];
+	snprintf(disc_id,8,"%08lX",(*item)->get_id());
+	string tmp = string(disc_id);
+	tmp += ": ";
+        tmp += string((*item)->get_artist());
+        tmp += " / ";
+        tmp += string((*item)->get_title());
+        tmp += " (";
+        tmp += string((*item)->get_category());
+        tmp += ")";
+        box->insertItem(tmp.c_str());
     }
     box->setMinimumWidth(box->maxItemWidth() + 30);
 
@@ -160,6 +170,18 @@ char *inexact_dialog::get(int index)
     for (item = local_list.begin(); item != local_list.end(); item++) {
         if (i++ == index)
             return strdup((*item)->get());
+    }
+    return NULL;
+}
+cddb_211_item *inexact_dialog::get_object(int index)
+{
+    int i = 0;
+
+    list < cddb_211_item * >::iterator item;
+
+    for (item = local_list.begin(); item != local_list.end(); item++) {
+        if (i++ == index)
+            return (*item);
     }
     return NULL;
 }

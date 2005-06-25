@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Id: cdtext.cc,v 1.4 2004/09/20 14:56:03 adrian Exp $
+ * $Id: cdtext.cc,v 1.5 2005/06/25 19:43:24 adrian Exp $
  *
  * $Author: adrian $
  */
@@ -24,37 +24,37 @@
 #include "cdtext.h"
 #include <iostream>
 
-void cdtext::set_track_title(int tracknumber, string title)
+void cd_text::set_track_title(int tracknumber, string title)
 {
 	track_name[tracknumber] = title;
 }
 
-void cdtext::set_track_performer(int tracknumber, string performer)
+void cd_text::set_track_performer(int tracknumber, string performer)
 {
 	track_performer[tracknumber] = performer;
 }
 
-void cdtext::add_disc_title(string title)
+void cd_text::add_disc_title(string title)
 {
 	disc_title = title;
 }
 
-void cdtext::add_disc_performer(string performer)
+void cd_text::add_disc_performer(string performer)
 {
 	disc_performer = performer;
 }
 
-void cdtext::add_disc_discid(string discid)
+void cd_text::add_disc_discid(string discid)
 {
 	disc_discid = discid;
 }
 
-void cdtext::add_disc_upc(string upc)
+void cd_text::add_disc_upc(string upc)
 {
 	disc_upc = upc;
 }
 
-cdtext::cdtext(char *path):cdrom(path)
+cd_text::cd_text(char *path):cdrom(path)
 {
 	disc_title = "";
 	disc_performer = "";
@@ -62,7 +62,7 @@ cdtext::cdtext(char *path):cdrom(path)
 	disc_upc = "";
 }
 
-void cdtext::dump()
+void cd_text::dump()
 {
 	cout << "disc_title=" << disc_title << endl;
 	cout << "disc_performer=" << disc_performer << endl;
@@ -86,7 +86,7 @@ void cdtext::dump()
 }
 
 //from k3b
-int cdtext::read_cdtext()
+int cd_text::read_cdtext()
 {
 	struct cdrom_generic_command m_cmd;
 
@@ -137,7 +137,7 @@ int cdtext::read_cdtext()
 
 #define SIZE 61
 //from k3b and xsadp (which has it from cdda2wav)
-int cdtext::parse_cdtext(unsigned char *buffer)
+int cd_text::parse_cdtext(unsigned char *buffer)
 {
 	short pos_buffer2;
 	char block_no, old_block_no, dbcc, track, code, c;
@@ -212,7 +212,7 @@ int cdtext::parse_cdtext(unsigned char *buffer)
 }
 
 //inspired by k3b
-int cdtext::save_cdtext(char code, char track_no, char *data)
+int cd_text::save_cdtext(char code, char track_no, char *data)
 {
 	if (track_no == 0) {
 		if (code == (char) 0xFFFFFF80)
@@ -233,27 +233,27 @@ int cdtext::save_cdtext(char code, char track_no, char *data)
 }
 
 //from k3b
-unsigned short cdtext::from2Byte(unsigned char *d)
+unsigned short cd_text::from2Byte(unsigned char *d)
 {
 	        return (d[0] << 8 & 0xFF00 | d[1] & 0xFF);
 }
 
-string cdtext::get_name(int track){
+string cd_text::get_name(int track){
 	return track_name[track];
 }
-string cdtext::get_performer(int track){
+string cd_text::get_performer(int track){
 	return track_performer[track];
 }
-string cdtext::get_disc_title(){
+string cd_text::get_disc_title(){
 	return disc_title;
 }
-string cdtext::get_disc_performer(){
+string cd_text::get_disc_performer(){
 	return disc_performer;
 }
-string cdtext::get_disc_discid(){
+string cd_text::get_disc_discid(){
 	return disc_discid;
 }
-string cdtext::get_disc_upc(){
+string cd_text::get_disc_upc(){
 	return disc_upc;
 }
 

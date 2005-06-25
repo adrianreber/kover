@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Id: cdtext.h,v 1.2 2004/09/20 14:56:03 adrian Exp $
+ * $Id: cdtext.h,v 1.3 2005/06/25 19:43:24 adrian Exp $
  *
  * $Author: adrian $
  */
@@ -30,7 +30,7 @@
 
 using namespace std;
 
-class cdtext:public cdrom {
+class cd_text:public cdrom {
 
       public:
 	void dump();
@@ -40,7 +40,7 @@ class cdtext:public cdrom {
 	void add_disc_performer(string performer);
 	void add_disc_discid(string discid);
 	void add_disc_upc(string upc);
-	 cdtext(char *path);
+	 cd_text(char *path);
 	int read_cdtext();
 	string get_name(int track);
 	string get_performer(int track);
