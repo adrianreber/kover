@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
- * $Id: main.cc,v 1.15 2005/06/06 08:23:25 adrian Exp $ */
+ * $Id: main.cc,v 1.16 2005/06/25 19:12:16 adrian Exp $ */
 
 #include "kover.h"
 #include "kovertop.h"
@@ -106,13 +106,11 @@ int main(int argc, char *argv[])
 	signal(SIGTERM, sighandler);
 	signal(SIGINT, sighandler);
 
-	fprintf(stderr,
-		"%s Release %s - Copyright (C) 1998-2000 by Denis Oliver Kropp\n",
-		PACKAGE, VERSION);
-	fprintf(stderr, "                  Copyright (C) 2000-2005 by Adrian Reber\n");
+	fprintf(stderr, "kover 3 (dodongo-dislike-smoke)\n");
+	fprintf(stderr, "    Copyright (C) 1998-2000 by Denis Oliver Kropp\n");
+	fprintf(stderr, "    Copyright (C) 2000-2005 by Adrian Reber\n");
 	fprintf(stderr,
 		"%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n", PACKAGE);
-	fprintf(stderr, "kover \"dodongo-dislike-smoke\" release\n");
 
 	KAboutData aboutData(PACKAGE, I18N_NOOP(PACKAGE), VERSION,
 			     "Kover is an easy to use WYSIWYG CD cover printer with CDDB support.",
