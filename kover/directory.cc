@@ -134,7 +134,6 @@ void directory::make_childs()
 {
     childs.clear();
     list <string> :: iterator dir;
-    int i = 0;
     for (dir = directories.begin(); dir != directories.end(); dir++) {
         childs.push_back(new directory(current_dir + *dir));
     }
