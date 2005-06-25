@@ -1,25 +1,23 @@
 
 #KDE_CXXFLAGS = -ansi
 
-bin_PROGRAMS = kover cddb-id cd-text
+bin_PROGRAMS = kover
 
 kover_SOURCES = imagedlg.cc cddb_fill.cc koverfile.cc \
 		kovertop.cc cdview.cc main.cc \
-		PreferencesDialog.cc cdrom.cc config.cc \
+		PreferencesDialog.cc config.cc \
 		cddb_211_item.cc inexact_dialog.cc proxy_auth.cc \
 		without_cd.cc categories.cc direntry.cc sites.cc \
-		net.cc cddb.cc server.cc server_dialog.cc filemode.cc \
-		directory.cc cdtext.cc
+		server.cc server_dialog.cc filemode.cc \
+		directory.cc 
 
 #kover_LDADD   = $(LIB_KSYCOCA) $(LIB_KFILE) $(LIBSOCKET) -lkdeprint
 kover_LDADD   = $(LIBSOCKET) -lkdeprint ./kostore/libkostore.la
 
 # the library search path. 
-kover_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+kover_LDFLAGS = $(all_libraries) $(KDE_RPATH) @CDIO_LIBS@ @CDDB_LIBS@
 
-cddb_id_SOURCES = cdrom.cc cddb-id.cc cdrom_cddb.cc
-
-cd_text_SOURCES = cdtext.cc cd-text.cc cdrom.cc
+kover_CFLAGS = @CDIO_CFLAGS@ @CDDB_CFLAGS@
 
 SUBDIRS = kostore pics .
 
