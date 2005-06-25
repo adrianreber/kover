@@ -21,7 +21,7 @@
 	Description: Header to PreferencesDialog.h
 */
 
-/* $Id: PreferencesDialog.h,v 1.21 2002/10/09 07:06:52 adrian Exp $ */
+/* $Id: PreferencesDialog.h,v 1.22 2005/06/25 19:17:21 adrian Exp $ */
 
 #ifndef PREFERENCES_DIALOG_H
 #define PREFERENCES_DIALOG_H
@@ -31,6 +31,7 @@
 #include <kdialogbase.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include "koverfile.h"
 
 using namespace std;
@@ -68,6 +69,7 @@ class PreferencesDialog:public KDialogBase {
         QCheckBox *proxy_from_env;
         QLineEdit *proxy_server;
         QLineEdit *proxy_port;
+	QComboBox *cddb_protocol;
     } cddb_widgets;
 
     QWidget *parent;
@@ -95,8 +97,7 @@ class PreferencesDialog:public KDialogBase {
     } cdrom_widgets;
 
     struct cddb_files_widgets {
-        QCheckBox *read_local_cddb;
-        QCheckBox *write_local_cddb;
+        QCheckBox *use_cache;
         QLineEdit *cddb_path;
     } cddb_files_widgets;
 
@@ -133,6 +134,7 @@ class PreferencesDialog:public KDialogBase {
     void inlet_title_font_dialog ();
     void output_changed (int type);
     void browsing ();
+    void protocol_changed(int);
 };
 
 #endif /* PREFERENCES_DIALOG_H */
