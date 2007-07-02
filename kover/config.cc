@@ -294,7 +294,7 @@ char *config_class::check_cddb_dir()
 	cddb_path = strdup(CDDB_PATH);
 #else
 	cddb_conn_t *conn = cddb_new();
-	cddb_path = cddb_cache_get_dir(conn);
+	cddb_path = (char *)cddb_cache_get_dir(conn);
 	cddb_path = strdup(cddb_path);
 	cddb_destroy(conn);
 #endif
