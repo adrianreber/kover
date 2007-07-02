@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <vector>
+#include "server.h"
 
 using namespace std;
 
@@ -56,11 +57,13 @@ public:
 class cddb_fill {
 public:
 	cddb_fill(KoverFile *, no_qobject *bla);
+	cddb_fill() {};
 	bool execute();
 	bool execute_without_cd(const char *, int);
 	void cdInfo();
 	void setTitleAndContents();
 	bool read_cdtext();
+	bool sites(list < server * >&);
 
 private:
 	KoverFile * kover_file;

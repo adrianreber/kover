@@ -1,22 +1,21 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 2000-2005 by Adrian Reber 
- * 
+ * Copyright (C) 2000-2007 by Adrian Reber
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * 
- * $Id: PreferencesDialog.cc,v 1.18 2005/06/25 19:17:21 adrian Exp $ */
+ */
 
 #include "PreferencesDialog.moc"
 #include "PreferencesDialog.h"
@@ -37,10 +36,7 @@
 
 PreferencesDialog::PreferencesDialog(QWidget * parent,
 				     const QString & caption,
-				     bool
-				     changed):KDialogBase(KJanusWidget::
-							  IconList,
-							  caption, Ok | Cancel, Ok, parent)
+				     bool changed):KDialogBase(KJanusWidget::IconList, caption, Ok | Cancel, Ok, parent)
 {
 	this->parent = parent;
 	setupCDDBPage();
@@ -88,10 +84,10 @@ void PreferencesDialog::setupCDDBPage(void)
 	cddb_widgets.cddb_server->setMinimumWidth(fontMetrics().maxWidth() * 10);
 	gbox->addWidget(cddb_widgets.cddb_server, 0, 2);
 
-	//QPushButton *browse = new QPushButton(i18n("Browse"), group, "browse");
+	QPushButton *browse = new QPushButton(i18n("Browse"), group, "browse");
 
-	//connect(browse, SIGNAL(clicked()), SLOT(browsing()));
-	//gbox->addWidget(browse, 0, 3);
+	connect(browse, SIGNAL(clicked()), SLOT(browsing()));
+	gbox->addWidget(browse, 0, 3);
 
 	label = new QLabel(i18n("CGI path:"), group, "cgilabel");
 	gbox->addWidget(label, 1, 0);
@@ -112,8 +108,7 @@ void PreferencesDialog::setupCDDBPage(void)
 	gbox->addMultiCellWidget(cddb_widgets.use_proxy, 0, 0, 0, 5);
 	text = i18n("Use 'http_proxy' environment variable");
 	cddb_widgets.proxy_from_env = new QCheckBox(text, group, "proxy_from_env");
-	connect(cddb_widgets.proxy_from_env, SIGNAL(toggled(bool)), this,
-		SLOT(use_proxy_env(bool)));
+	connect(cddb_widgets.proxy_from_env, SIGNAL(toggled(bool)), this, SLOT(use_proxy_env(bool)));
 	gbox->addMultiCellWidget(cddb_widgets.proxy_from_env, 1, 1, 0, 5);
 	label = new QLabel(i18n("Proxy server:"), group, "proxylabel");
 	gbox->addWidget(label, 2, 0);
@@ -199,8 +194,7 @@ void PreferencesDialog::slotOk()
 	    && !(cddb_widgets.proxy_from_env)->isChecked()) {
 		switch (i) {
 		case 0:
-			KMessageBox::information(this,
-						 "Come for the third, Laertes. You do but dally.");
+			KMessageBox::information(this, "Come for the third, Laertes. You do but dally.");
 			i++;
 			return;
 		case 1:
@@ -553,40 +547,34 @@ void PreferencesDialog::setup_font_page()
 
 	gbox->addWidget(label, 1, 0);
 
-	font_widgets.change_content_font =
-	    new QPushButton(i18n("Change"), group, "change_content_font");
+	font_widgets.change_content_font = new QPushButton(i18n("Change"), group, "change_content_font");
 	gbox->addWidget(font_widgets.change_content_font, 1, 1);
 	connect(font_widgets.change_content_font, SIGNAL(clicked()), SLOT(content_font_dialog()));
 
 	label = new QLabel(i18n("Title Font: "), group, "title_font");
 	gbox->addWidget(label, 2, 0);
 
-	font_widgets.change_title_font =
-	    new QPushButton(i18n("Change"), group, "change_title_font");
+	font_widgets.change_title_font = new QPushButton(i18n("Change"), group, "change_title_font");
 	gbox->addWidget(font_widgets.change_title_font, 2, 1);
 	connect(font_widgets.change_title_font, SIGNAL(clicked()), this, SLOT(title_font_dialog()));
 
 	label = new QLabel(i18n("Spine Text Font: "), group, "inlet_title_font");
 	gbox->addWidget(label, 3, 0);
 
-	font_widgets.change_inlet_title_font =
-	    new QPushButton(i18n("Change"), group, "change_inlet_title_font");
+	font_widgets.change_inlet_title_font = new QPushButton(i18n("Change"), group, "change_inlet_title_font");
 	gbox->addWidget(font_widgets.change_inlet_title_font, 3, 1);
-	connect(font_widgets.change_inlet_title_font, SIGNAL(clicked()),
-		this, SLOT(inlet_title_font_dialog()));
+	connect(font_widgets.change_inlet_title_font, SIGNAL(clicked()), this, SLOT(inlet_title_font_dialog()));
 
 	topLayout->addStretch();
 }
 
 void PreferencesDialog::content_font_dialog()
 {
-	_DEBUG_ fprintf(stderr, "%s:font name before: %s\n", PACKAGE,
-			((globals.content_font)->rawName()).latin1());
+	_DEBUG_ fprintf(stderr, "%s:font name before: %s\n", PACKAGE, ((globals.content_font)->rawName()).latin1());
 	KFontDialog *kf = new KFontDialog(this, "kf", true);
 
 	kf->getFont(*globals.content_font);
-	_DEBUG_ fprintf(stderr, "%s:font name after: %s\n", PACKAGE,
-			((globals.content_font)->rawName()).latin1());
+	_DEBUG_ fprintf(stderr, "%s:font name after: %s\n", PACKAGE, ((globals.content_font)->rawName()).latin1());
 	if (changed)
 		show_font_warning();
 }
@@ -615,19 +603,14 @@ void PreferencesDialog::output_changed(int type)
 
 	if (type == 1) {
 		cover_widgets.inlet->setPixmap(pixmap.loadIcon("back_content", KIcon::NoGroup));
-		cover_widgets.booklet->setPixmap(pixmap.
-						 loadIcon("front_title_only", KIcon::NoGroup));
+		cover_widgets.booklet->setPixmap(pixmap.loadIcon("front_title_only", KIcon::NoGroup));
 	}
 	if (type == 2) {
 		cover_widgets.inlet->setPixmap(NULL);
-		cover_widgets.booklet->setPixmap(pixmap.
-						 loadIcon
-						 ("front_title-right_content-left",
-						  KIcon::NoGroup));
+		cover_widgets.booklet->setPixmap(pixmap.loadIcon("front_title-right_content-left", KIcon::NoGroup));
 	}
 	if (type == 3) {
-		cover_widgets.inlet->setPixmap(pixmap.
-					       loadIcon("back_title_content", KIcon::NoGroup));
+		cover_widgets.inlet->setPixmap(pixmap.loadIcon("back_title_content", KIcon::NoGroup));
 		cover_widgets.booklet->setPixmap(NULL);
 	}
 	if (type == 4) {
@@ -643,8 +626,7 @@ void PreferencesDialog::browsing()
 
 	dialog = new server_dialog();
 	aber = dialog->exec();
-	_DEBUG_ fprintf(stderr, "kover:server_dialog returns: %d %s\n",
-			aber, (dialog->get(aber)).c_str());
+	_DEBUG_ fprintf(stderr, "kover:server_dialog returns: %d %s\n", aber, (dialog->get(aber)).c_str());
 
 	cddb_widgets.cddb_server->setText((dialog->get(aber)).c_str());
 	delete(dialog);
@@ -730,7 +712,6 @@ void PreferencesDialog::show_font_warning()
 
 void PreferencesDialog::protocol_changed(int prot)
 {
-	printf("it changed to: %d\n", prot);
 	globals.use_cddbp = prot;
 	if (prot) {
 		cddb_widgets.cgi_path->setEnabled(false);
