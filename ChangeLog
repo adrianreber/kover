@@ -1,4 +1,7 @@
-$Id: ChangeLog,v 1.41 2004/09/17 19:31:43 adrian Exp $
+2007-07-03 Adrian Reber <adrian@lisas.de>
+        * dumped all the self written cd and cddb code
+          and switched to libcdio and libcddb
+        * released as 3
 
 2004-09-17 Adrian Reber <adrian@lisas.de>
         * applied patch to fix printing problems
@@ -349,5 +352,3 @@ Kover ChangeLog
   +print
   +preview
   +font settings
-
-
