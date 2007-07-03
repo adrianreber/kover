@@ -3,7 +3,7 @@ SUBDIRS= kover po
 
 include admin/deps.am
 
-MAINTAINERCLEANFILES = configure.in kover.spec.in
+MAINTAINERCLEANFILES = configure.in
 
 EXTRA_DIST = admin ABOUT-NLS kover.spec AUTHORS COPYING ChangeLog INSTALL README TODO
 
