@@ -27,8 +27,8 @@ rc_DATA = koverui.rc
 appsdir = $(kde_appsdir)/Multimedia
 apps_DATA = kover.desktop
 
-mimedir = $(kde_mimedir)/application
-mime_DATA = x-kover.desktop
+mimedir = $(datadir)/mime/packages
+mime_DATA = kover.xml
 
 KDE_ICON = AUTO
 
