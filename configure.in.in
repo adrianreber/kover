@@ -69,4 +69,4 @@ fi
 
 echo checking for good CDs in your shelf... yes
 
-AC_OUTPUT( kover.1 kover.spec )
+AC_OUTPUT( kover.1 )
