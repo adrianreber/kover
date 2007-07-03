@@ -2,6 +2,8 @@
         * dumped all the self written cd and cddb code
           and switched to libcdio and libcddb
         * released as 3
+        * droped kover.spec from tarball
+          a better version is maintained in fedora
 
 2004-09-17 Adrian Reber <adrian@lisas.de>
         * applied patch to fix printing problems
