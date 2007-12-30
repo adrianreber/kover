@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=kover
+Exec=kover %i -caption "%c"
+Icon=kover
+Type=Application
+DocPath=kover/index.html
+GenericName=A KDE4 Application
+Terminal=0
+
