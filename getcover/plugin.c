@@ -8,6 +8,7 @@
 #include <config.h>
 #include <glib.h>
 #include <curl/curl.h>
+#include <getopt.h>
 #define AMAZONKEY "14TC04B24356BPHXW1R2"
 
 static void init();
@@ -48,38 +49,38 @@ typedef struct amazon_song_info {
 
 
 
-typedef struct _gmpc_easy_download_struct{
+typedef struct _gmpc_easy_download_struct {
 	char *data;
 	int size;
 	int max_size;
-}gmpc_easy_download_struct;
+} gmpc_easy_download_struct;
 
-int gmpc_easy_download(const char *url,gmpc_easy_download_struct *dld);
-void gmpc_easy_download_clean(gmpc_easy_download_struct *dld);
-#define CURL_TIMEOUT 10 
+int gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld);
+void gmpc_easy_download_clean(gmpc_easy_download_struct * dld);
+#define CURL_TIMEOUT 10
 
-static size_t write_data(void *buffer, size_t size, size_t nmemb, gmpc_easy_download_struct *dld)
+static size_t
+write_data(void *buffer, size_t size, size_t nmemb, gmpc_easy_download_struct * dld)
 {
-	if(!size || !nmemb)
+	if (!size || !nmemb)
 		return 0;
-	if(dld->data == NULL)
-	{
+	if (dld->data == NULL) {
 		dld->size = 0;
 	}
-	dld->data = g_realloc(dld->data,(gulong)(size*nmemb+dld->size)+1);
+	dld->data = g_realloc(dld->data, (gulong) (size * nmemb + dld->size) + 1);
 
-	memset(&(dld->data)[dld->size], '\0', (size*nmemb)+1);
-	memcpy(&(dld->data)[dld->size], buffer, size*nmemb);
+	memset(&(dld->data)[dld->size], '\0', (size * nmemb) + 1);
+	memcpy(&(dld->data)[dld->size], buffer, size * nmemb);
 
-	dld->size += size*nmemb;
-	if(dld->size >= dld->max_size && dld->max_size > 0)
-	{
+	dld->size += size * nmemb;
+	if (dld->size >= dld->max_size && dld->max_size > 0) {
 		return 0;
 	}
-	return size*nmemb;
+	return size * nmemb;
 }
 
-int gmpc_easy_download(const char *url,gmpc_easy_download_struct *dld)
+int
+gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld)
 {
 	int timeout = 0;
 	int running = 0;
@@ -89,19 +90,24 @@ int gmpc_easy_download(const char *url,gmpc_easy_download_struct *dld)
 	CURLM *curlm = NULL;
 	CURLMsg *msg = NULL;
 	double total_size = 0;
-	/*int res;*/
-	if(!dld) return 0;
-	if(url == NULL) return 0;
-	if(url[0] == '\0') return 0;
+	/*int res; */
+	if (!dld)
+		return 0;
+	if (url == NULL)
+		return 0;
+	if (url[0] == '\0')
+		return 0;
 	/**
 	 * Make sure it's clean
 	 */
 	gmpc_easy_download_clean(dld);
 	/* initialize curl */
 	curl = curl_easy_init();
-	if(!curl) return 0;
+	if (!curl)
+		return 0;
 	curlm = curl_multi_init();
-	if(!curlm) return 0;
+	if (!curlm)
+		return 0;
 
 	/* set uri */
 	curl_easy_setopt(curl, CURLOPT_URL, url);
@@ -114,59 +120,51 @@ int gmpc_easy_download(const char *url,gmpc_easy_download_struct *dld)
 	timeout = CURL_TIMEOUT;
 	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
 	/* set redirect */
-	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION ,1);
-	curl_easy_setopt(curl, CURLOPT_AUTOREFERER ,1);
+	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+	curl_easy_setopt(curl, CURLOPT_AUTOREFERER, 1);
 	/* set NO SIGNAL */
 	curl_easy_setopt(curl, CURLOPT_NOSIGNAL, TRUE);
 
 	//if(cfg_get_single_value_as_int_with_default(config, "Network Settings", "Use Proxy", FALSE))
-	if(FALSE)
-	{
+	if (FALSE) {
 		//char *value = cfg_get_single_value_as_string(config, "Network Settings", "Proxy Address");
 		char *value = g_strdup("localhost");
 		//gint port =  cfg_get_single_value_as_int_with_default(config, "Network Settings", "Proxy Port",8080);
-		gint port =  8080;
-		if(value)
-		{
+		gint port = 8080;
+		if (value) {
 			gchar *ppath = g_strdup_printf("http://%s:%i", value, port);
 			debug_printf(DEBUG_INFO, "Setting proxy: %s:%i\n", value, port);
 			/* hack to make stuff work */
 			curl_easy_setopt(curl, CURLOPT_PROXY, ppath);
-			/*			curl_easy_setopt(curl, CURLOPT_PROXY, value);
-			curl_easy_setopt(curl, CURLOPT_PROXYPORT, port);
-			*/
+			/*                      curl_easy_setopt(curl, CURLOPT_PROXY, value);
+			   curl_easy_setopt(curl, CURLOPT_PROXYPORT, port);
+			 */
 			q_free(ppath);
 			//cfg_free_string(value);
-		}
-		else{
-			debug_printf(DEBUG_ERROR ,"Proxy enabled, but no proxy defined");
+		} else {
+			debug_printf(DEBUG_ERROR, "Proxy enabled, but no proxy defined");
 		}
 	}
-	
+
 	curl_multi_add_handle(curlm, curl);
-	do{
+	do {
 		curl_multi_perform(curlm, &running);
 		g_usleep(100000);
-		while ((msg = curl_multi_info_read(curlm, &msgs_left))) {	
-			if (msg->msg == CURLMSG_DONE)
-			{
-				if( (!msg->data.result|| msg->data.result == 23)) {
+		while ((msg = curl_multi_info_read(curlm, &msgs_left))) {
+			if (msg->msg == CURLMSG_DONE) {
+				if ((!msg->data.result || msg->data.result == 23)) {
 					success = TRUE;
-				}
-				else
-				{
-          /* don't print the can't resolve.. */
-          if(msg->data.result != 108)
-          {
-            debug_printf(DEBUG_ERROR,"Error: %i '%s' url: %s",
-                msg->data.result,
-                curl_easy_strerror(msg->data.result),
-                url);
-          }
+				} else {
+					/* don't print the can't resolve.. */
+					if (msg->data.result != 108) {
+						debug_printf(DEBUG_ERROR, "Error: %i '%s' url: %s",
+							     msg->data.result,
+							     curl_easy_strerror(msg->data.result), url);
+					}
 				}
 			}
 		}
-	}while(running);
+	} while (running);
 	/**
 	 * remove handler
 	 */
@@ -174,16 +172,20 @@ int gmpc_easy_download(const char *url,gmpc_easy_download_struct *dld)
 	/* cleanup */
 	curl_easy_cleanup(curl);
 	curl_multi_cleanup(curlm);
-	debug_printf(DEBUG_INFO,"Downloaded: %i\n", dld->size);
-	if(success) return 1;
-	if(dld->data) q_free(dld->data);
+	debug_printf(DEBUG_INFO, "Downloaded: %i\n", dld->size);
+	if (success)
+		return 1;
+	if (dld->data)
+		q_free(dld->data);
 	dld->data = NULL;
 	return 0;
 }
 
-void gmpc_easy_download_clean(gmpc_easy_download_struct *dld)
+void
+gmpc_easy_download_clean(gmpc_easy_download_struct * dld)
 {
-	if(dld->data)q_free(dld->data);
+	if (dld->data)
+		q_free(dld->data);
 	dld->data = NULL;
 	dld->size = 0;
 }
@@ -520,9 +522,52 @@ shrink_string(gchar * string, int start, int end)
 	return end;
 }
 
-int
-main()
+static void usage(int) __attribute__ ((noreturn));
+
+static void
+usage(int rc)
 {
-	printf("blubber\n");
+	exit(rc);
+}
+
+int
+main(int argc, char *argv[])
+{
+	gchar *url = NULL;
+	int next_option;
+	char album[256];
+	char artist[256];
+	const char *short_options = "ha:l:";
+
+	struct option long_options[] = {
+		{"help", no_argument, NULL, 'h'},
+		{"artist", required_argument, NULL, 'a'},
+		{"album", required_argument, NULL, 'l'},
+		{0, 0, 0, 0}
+	};
+
+	fprintf(stderr, "getcover 1, Copyright (C) 2008 by Adrian Reber <adrian@lisas.de>\n");
+	fprintf(stderr, "getcover comes with ABSOLUTELY NO WARRANTY - for details read the license.\n");
+	debug_set_level(3);
+
+	while (1) {
+		next_option = getopt_long(argc, argv, short_options, long_options, NULL);
+		if (next_option == -1)
+			break;
+		switch (next_option) {
+		case 'a':
+			strncpy(artist, optarg, 256);
+			break;
+		case 'l':
+			strncpy(album, optarg, 256);
+			break;
+		case 'h':
+			usage(0);
+		default:
+			usage(-1);
+		}
+	}
+
 	init();
+	__fetch_metadata_amazon("Title", artist, album, META_ALBUM_ART, &url);
 }
