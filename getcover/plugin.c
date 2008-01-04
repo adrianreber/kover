@@ -527,6 +527,14 @@ static void usage(int) __attribute__ ((noreturn));
 static void
 usage(int rc)
 {
+	fprintf(stderr, "Usage: getcover [options]\n\n");
+	fprintf(stderr, "getcover is command-line tool to download covers\n\n");
+	fprintf(stderr, "Options:\n");
+	fprintf(stderr, "  -h, --help      print out this information\n");
+	fprintf(stderr, "  -a, --artist    specify the artist whose cover should be retrieved\n");
+	fprintf(stderr, "                  (required)\n");
+	fprintf(stderr, "  -l, --album     specify the album\n");
+	fprintf(stderr, "                  (required)\n");
 	exit(rc);
 }
 
