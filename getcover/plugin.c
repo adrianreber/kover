@@ -1,31 +1,71 @@
 #include <stdio.h>
 #include <string.h>
-#include <gtk/gtk.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libmpd/debug_printf.h>
-#include <gmpc/plugin.h>
 #include <config.h>
 #include <glib.h>
+#include <glib/gstdio.h>
 #include <curl/curl.h>
 #include <getopt.h>
 #define AMAZONKEY "14TC04B24356BPHXW1R2"
 
-static void init();
+typedef enum {
+	META_DATA_AVAILABLE,
+	META_DATA_UNAVAILABLE,
+	META_DATA_FETCHING
+} MetaDataResult;
+typedef enum {
+	META_ALBUM_ART 			= 1,		/* Album Cover art 	*/
+	META_ARTIST_ART 		= 2,		/* Artist  image 	*/
+	META_ALBUM_TXT 			= 4,		/* Album story 		*/
+	META_ARTIST_TXT 		= 8, 		/* Artist biography 	*/
+	META_SONG_TXT			= 16,		/* Lyrics 		*/
+	META_ARTIST_SIMILAR 	= 32,		/* Similar artists */
+	META_QUERY_DATA_TYPES  	= 127, 		/* Bitmask for getting the metadata types only */
+	META_QUERY_NO_CACHE 	= 128		/* Do the query withouth checking the cache first */
+}MetaDataType;
+
+typedef struct _mpd_Song {
+	/* filename of song */
+	char * file;
+	/* artist, maybe NULL if there is no tag */
+	char * artist;
+	/* title, maybe NULL if there is no tag */
+	char * title;
+	/* album, maybe NULL if there is no tag */
+	char * album;
+	/* track, maybe NULL if there is no tag */
+	char * track;
+	/* name, maybe NULL if there is no tag; it's the name of the current
+	 * song, f.e. the icyName of the stream */
+	char * name;
+	/* date */
+	char *date;
+
+	/* added by qball */
+	/* Genre */
+	char *genre;
+	/* Composer */
+	char *composer;
+	/* Performer */
+	char *performer;
+	/* Disc */
+	char *disc;
+	/* Comment */
+	char *comment;
+
+	/* length of song in seconds, check that it is not MPD_SONG_NO_TIME  */
+	int time;
+	/* if plchanges/playlistinfo/playlistid used, is the position of the
+	 * song in the playlist */
+	int pos;
+	/* song id for a song in the playlist */
+	int id;
+} mpd_Song;
+
 static char *host =
     "http://ecs.amazonaws.%s/onca/xml?Service=AWSECommerceService&Operation=ItemSearch&SearchIndex=Music&ResponseGroup=Images,EditorialReview&SubscriptionId=%s&Artist=%s&%s=%s";
-static char *search_types[] = { "Title", "Keywords" };
-static void amazon_cover_art_pref_construct(GtkWidget * container);
-static void amazon_cover_art_pref_destroy(GtkWidget * container);
-static int fetch_cover_art(mpd_Song * song, int type, char **url);
-static int fetch_cover_priority();
-
-static int shrink_string(gchar * string, int start, int end);
-
-static int fetch_metadata(mpd_Song * song, MetaDataType type, char **path);
-
-static void amazon_set_enabled(int enabled);
-static int amazon_get_enabled();
 
 #define q_free(a) g_free(a);a=NULL;
 
@@ -48,6 +88,8 @@ typedef struct amazon_song_info {
 } amazon_song_info;
 
 
+static void usage(int) __attribute__ ((noreturn));
+
 
 typedef struct _gmpc_easy_download_struct {
 	char *data;
@@ -55,8 +97,6 @@ typedef struct _gmpc_easy_download_struct {
 	int max_size;
 } gmpc_easy_download_struct;
 
-int gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld);
-void gmpc_easy_download_clean(gmpc_easy_download_struct * dld);
 #define CURL_TIMEOUT 10
 
 static size_t
@@ -79,7 +119,16 @@ write_data(void *buffer, size_t size, size_t nmemb, gmpc_easy_download_struct * 
 	return size * nmemb;
 }
 
-int
+static void
+gmpc_easy_download_clean(gmpc_easy_download_struct * dld)
+{
+	if (dld->data)
+		q_free(dld->data);
+	dld->data = NULL;
+	dld->size = 0;
+}
+
+static int
 gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld)
 {
 	int timeout = 0;
@@ -89,7 +138,6 @@ gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld)
 	CURL *curl = NULL;
 	CURLM *curlm = NULL;
 	CURLMsg *msg = NULL;
-	double total_size = 0;
 	/*int res; */
 	if (!dld)
 		return 0;
@@ -181,17 +229,20 @@ gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld)
 	return 0;
 }
 
-void
-gmpc_easy_download_clean(gmpc_easy_download_struct * dld)
+
+
+static int
+shrink_string(gchar * string, int start, int end)
 {
-	if (dld->data)
-		q_free(dld->data);
-	dld->data = NULL;
-	dld->size = 0;
+	int i;
+
+	for (i = start; i < end; i++)
+		string[i] = string[i + 1];
+
+	end--;
+
+	return end;
 }
-
-
-
 
 /* Convert string to the wonderful % notation for url*/
 static char *
@@ -294,30 +345,6 @@ init()
 	g_free(file);
 }
 
-static int
-fetch_metadata(mpd_Song * song, MetaDataType type, char **path)
-{
-	int j = 2;
-	gchar *url = NULL;
-	gchar *filename;
-
-	if (song->artist == NULL || song->album == NULL) {
-		return META_DATA_UNAVAILABLE;
-	}
-	if (type != META_ALBUM_ART && type != META_ALBUM_TXT) {
-		return META_DATA_UNAVAILABLE;
-	}
-	/* Always fetch it. */
-	fetch_cover_art(song, type, &url);
-	if (url) {
-		*path = url;
-		return META_DATA_AVAILABLE;
-	}
-
-	g_free(url);
-	return META_DATA_UNAVAILABLE;
-}
-
 static amazon_song_info *
 amazon_song_info_new()
 {
@@ -369,27 +396,27 @@ __cover_art_xml_get_image(char *data, int size)
 			if (cur) {
 				xmlNodePtr child = NULL;
 				asi = amazon_song_info_new();
-				if (child = get_first_node_by_name(cur, "LargeImage")) {
+				if ((child = get_first_node_by_name(cur, "LargeImage"))) {
 					xmlChar *temp =
 					    xmlNodeGetContent(get_first_node_by_name(child, "URL"));
 					/* copy it, so we can free it, and don't need xmlFree */
 					asi->image_big = g_strdup((char *) temp);
 					xmlFree(temp);
 				}
-				if (child = get_first_node_by_name(cur, "MediumImage")) {
+				if ((child = get_first_node_by_name(cur, "MediumImage"))) {
 					xmlChar *temp =
 					    xmlNodeGetContent(get_first_node_by_name(child, "URL"));
 					asi->image_medium = g_strdup((char *) temp);
 					xmlFree(temp);
 				}
-				if (child = get_first_node_by_name(cur, "SmallImage")) {
+				if ((child = get_first_node_by_name(cur, "SmallImage"))) {
 					xmlChar *temp =
 					    xmlNodeGetContent(get_first_node_by_name(child, "URL"));
 					asi->image_small = g_strdup((char *) temp);
 					xmlFree(temp);
 				}
 
-				if (child = get_first_node_by_name(cur, "EditorialReviews")) {
+				if ((child = get_first_node_by_name(cur, "EditorialReviews"))) {
 					child = get_first_node_by_name(child, "EditorialReview");
 					if (child) {
 						xmlChar *temp = xmlNodeGetContent(get_first_node_by_name(child, "Content"));	/* ugy, lazy */
@@ -417,9 +444,14 @@ __fetch_metadata_amazon(char *stype, char *nartist, char *nalbum, int type, char
 	//int endpoint = cfg_get_single_value_as_int_with_default(config, "cover-amazon", "location", 0);
 	int endpoint = 0;
 	char *endp = endpoints[endpoint][0];
+	gchar *artist;
+	gchar *album;
 
 	debug_printf(DEBUG_INFO, "search-type: %s\n", stype);
-	snprintf(furl, 1024, host, endp, AMAZONKEY, nartist, stype, nalbum);
+	artist = __cover_art_process_string(nartist);
+	album = __cover_art_process_string(nalbum);
+	snprintf(furl, 1024, host, endp, AMAZONKEY, artist, stype, album);
+	debug_printf(DEBUG_INFO, "furl: %s\n", furl);
 	if (gmpc_easy_download(furl, &data)) {
 		amazon_song_info *asi = __cover_art_xml_get_image(data.data, data.size);
 		gmpc_easy_download_clean(&data);
@@ -439,7 +471,6 @@ __fetch_metadata_amazon(char *stype, char *nartist, char *nalbum, int type, char
 					}
 				}
 				if (data.size) {
-					int i = 0;
 					FILE *fp = NULL;
 					gchar *imgpath = NULL;
 					gchar *filename = g_strdup_printf("%s-%s.jpg", nartist, nalbum);
@@ -492,37 +523,10 @@ __fetch_metadata_amazon(char *stype, char *nartist, char *nalbum, int type, char
 		}
 	}
 
-	return found;
-}
-static int
-fetch_cover_art(mpd_Song * song, int type, char **url)
-{
-	int retval = 0, i = 0;
-	gchar *artist = __cover_art_process_string(song->artist);
-	gchar *album = __cover_art_process_string(song->album);
-
-	while (!retval && i < 2)
-		retval = __fetch_metadata_amazon(search_types[i++], artist, album, type, url);
-
 	g_free(artist);
 	g_free(album);
-	return retval;
+	return found;
 }
-
-static int
-shrink_string(gchar * string, int start, int end)
-{
-	int i;
-
-	for (i = start; i < end; i++)
-		string[i] = string[i + 1];
-
-	end--;
-
-	return end;
-}
-
-static void usage(int) __attribute__ ((noreturn));
 
 static void
 usage(int rc)
@@ -578,4 +582,5 @@ main(int argc, char *argv[])
 
 	init();
 	__fetch_metadata_amazon("Title", artist, album, META_ALBUM_ART, &url);
+	return 0;
 }
