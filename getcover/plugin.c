@@ -58,7 +58,8 @@ typedef enum {
 } MetaDataType;
 
 static char *host =
-    "http://ecs.amazonaws.%s/onca/xml?Service=AWSECommerceService&Operation=ItemSearch&SearchIndex=Music&ResponseGroup=Images,EditorialReview&SubscriptionId=%s&Artist=%s&%s=%s";
+    "http://ecs.amazonaws.%s/onca/xml?Service=" "AWSECommerceService&Operation=ItemSearch&SearchIndex="
+    "Music&ResponseGroup=Images,EditorialReview&" "SubscriptionId=%s&Artist=%s&%s=%s";
 
 typedef struct amazon_song_info {
 	char *image_big;
@@ -67,16 +68,16 @@ typedef struct amazon_song_info {
 	char *album_info;
 } amazon_song_info;
 
-typedef struct _gmpc_easy_download_struct {
+typedef struct download {
 	char *data;
 	int size;
 	int max_size;
-} gmpc_easy_download_struct;
+} download;
 
 static void usage(int) __attribute__ ((noreturn));
 
 static size_t
-write_data(void *buffer, size_t size, size_t nmemb, gmpc_easy_download_struct * dld)
+write_data(void *buffer, size_t size, size_t nmemb, download * dld)
 {
 	if (!size || !nmemb)
 		return 0;
@@ -96,7 +97,7 @@ write_data(void *buffer, size_t size, size_t nmemb, gmpc_easy_download_struct * 
 }
 
 static void
-gmpc_easy_download_clean(gmpc_easy_download_struct * dld)
+download_clean(download * dld)
 {
 	if (dld->data)
 		g_free(dld->data);
@@ -105,7 +106,7 @@ gmpc_easy_download_clean(gmpc_easy_download_struct * dld)
 }
 
 static int
-gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld)
+easy_download(const char *url, download * dld)
 {
 	int timeout = 0;
 	int running = 0;
@@ -124,7 +125,7 @@ gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld)
 	/**
 	 * Make sure it's clean
 	 */
-	gmpc_easy_download_clean(dld);
+	download_clean(dld);
 	/* initialize curl */
 	curl = curl_easy_init();
 	if (!curl)
@@ -411,7 +412,7 @@ cover_art_xml_get_image(char *data, int size)
 static int
 fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, char **url)
 {
-	gmpc_easy_download_struct data = { NULL, 0, -1 };
+	download data = { NULL, 0, -1 };
 	int found = 0;
 	char furl[1024];
 	//int endpoint = cfg_get_single_value_as_int_with_default(config, "cover-amazon", "location", 0);
@@ -425,21 +426,21 @@ fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, 
 	album = cover_art_process_string(nalbum);
 	snprintf(furl, 1024, host, endp, AMAZONKEY, artist, stype, album);
 	printf("furl: %s\n", furl);
-	if (gmpc_easy_download(furl, &data)) {
+	if (easy_download(furl, &data)) {
 		amazon_song_info *asi = cover_art_xml_get_image(data.data, data.size);
-		gmpc_easy_download_clean(&data);
+		download_clean(&data);
 		if (asi) {
 			if (type & META_ALBUM_ART) {
 				printf("Trying to fetch album art");
-				gmpc_easy_download(asi->image_big, &data);
+				easy_download(asi->image_big, &data);
 				if (data.size <= 900) {
-					gmpc_easy_download_clean(&data);
-					gmpc_easy_download(asi->image_medium, &data);
+					download_clean(&data);
+					easy_download(asi->image_medium, &data);
 					if (data.size <= 900) {
-						gmpc_easy_download_clean(&data);
-						gmpc_easy_download(asi->image_small, &data);
+						download_clean(&data);
+						easy_download(asi->image_small, &data);
 						if (data.size <= 900)
-							gmpc_easy_download_clean(&data);
+							download_clean(&data);
 					}
 				}
 				if (data.size) {
@@ -457,7 +458,7 @@ fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, 
 					}
 					g_free(imgpath);
 				}
-				gmpc_easy_download_clean(&data);
+				download_clean(&data);
 
 
 			} else if (type & META_ALBUM_TXT) {
