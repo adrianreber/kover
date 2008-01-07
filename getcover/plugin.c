@@ -17,13 +17,7 @@ typedef enum {
 } MetaDataResult;
 typedef enum {
 	META_ALBUM_ART = 1,	/* Album Cover art      */
-	META_ARTIST_ART = 2,	/* Artist  image        */
-	META_ALBUM_TXT = 4,	/* Album story          */
-	META_ARTIST_TXT = 8,	/* Artist biography     */
-	META_SONG_TXT = 16,	/* Lyrics               */
-	META_ARTIST_SIMILAR = 32,	/* Similar artists */
-	META_QUERY_DATA_TYPES = 127,	/* Bitmask for getting the metadata types only */
-	META_QUERY_NO_CACHE = 128	/* Do the query withouth checking the cache first */
+	META_ALBUM_TXT = 4	/* Album story          */
 } MetaDataType;
 
 typedef struct _mpd_Song {
@@ -435,7 +429,7 @@ __cover_art_xml_get_image(char *data, int size)
 
 
 static int
-__fetch_metadata_amazon(char *stype, char *nartist, char *nalbum, int type, char **url)
+__fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, char **url)
 {
 
 	gmpc_easy_download_struct data = { NULL, 0, -1 };
@@ -539,6 +533,8 @@ usage(int rc)
 	fprintf(stderr, "                  (required)\n");
 	fprintf(stderr, "  -l, --album     specify the album\n");
 	fprintf(stderr, "                  (required)\n");
+	fprintf(stderr, "  -t, --title     search type: Title (default)\n");
+	fprintf(stderr, "  -k, --keyword   search type: Keyword\n");
 	exit(rc);
 }
 
@@ -549,18 +545,24 @@ main(int argc, char *argv[])
 	int next_option;
 	char album[256];
 	char artist[256];
-	const char *short_options = "ha:l:";
+	const char *short_options = "htka:l:";
+	const char *searchtype[] = { "Title", "Keyword" };
+	int type = 0;
 
 	struct option long_options[] = {
 		{"help", no_argument, NULL, 'h'},
 		{"artist", required_argument, NULL, 'a'},
 		{"album", required_argument, NULL, 'l'},
+		{"title", required_argument, NULL, 't'},
+		{"keyword", required_argument, NULL, 'k'},
 		{0, 0, 0, 0}
 	};
 
 	fprintf(stderr, "getcover 1, Copyright (C) 2008 by Adrian Reber <adrian@lisas.de>\n");
 	fprintf(stderr, "getcover comes with ABSOLUTELY NO WARRANTY - for details read the license.\n");
 	debug_set_level(3);
+
+	printf("%s\n", searchtype[1]);
 
 	while (1) {
 		next_option = getopt_long(argc, argv, short_options, long_options, NULL);
@@ -573,6 +575,12 @@ main(int argc, char *argv[])
 		case 'l':
 			strncpy(album, optarg, 256);
 			break;
+		case 't':
+			type = 0;
+			break;
+		case 'k':
+			type = 1;
+			break;
 		case 'h':
 			usage(0);
 		default:
@@ -581,6 +589,7 @@ main(int argc, char *argv[])
 	}
 
 	init();
-	__fetch_metadata_amazon("Title", artist, album, META_ALBUM_ART, &url);
+	__fetch_metadata_amazon(searchtype[type], artist, album, META_ALBUM_ART, &url);
+	printf("url %s\n", url);
 	return 0;
 }
