@@ -13,8 +13,6 @@
 #define CURL_TIMEOUT 10
 #define ENDPOINTS 6
 
-#define q_free(a) g_free(a);a=NULL;
-
 static char *endpoints[ENDPOINTS][2] = {
 	{"com", "United States"},
 	{"co.uk", "United Kingdom"},
@@ -77,7 +75,7 @@ static void
 gmpc_easy_download_clean(gmpc_easy_download_struct * dld)
 {
 	if (dld->data)
-		q_free(dld->data);
+		g_free(dld->data);
 	dld->data = NULL;
 	dld->size = 0;
 }
@@ -141,7 +139,8 @@ gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld)
 			/*                      curl_easy_setopt(curl, CURLOPT_PROXY, value);
 			   curl_easy_setopt(curl, CURLOPT_PROXYPORT, port);
 			 */
-			q_free(ppath);
+			g_free(ppath);
+			ppath = NULL;
 			//cfg_free_string(value);
 		} else {
 			debug_printf(DEBUG_ERROR, "Proxy enabled, but no proxy defined");
@@ -178,7 +177,7 @@ gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld)
 	if (success)
 		return 1;
 	if (dld->data)
-		q_free(dld->data);
+		g_free(dld->data);
 	dld->data = NULL;
 	return 0;
 }
