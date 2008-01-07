@@ -28,8 +28,6 @@
 #include <string.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-#include <libmpd/debug_printf.h>
-#include <config.h>
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <curl/curl.h>
@@ -159,7 +157,7 @@ gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld)
 		gint port = 8080;
 		if (value) {
 			gchar *ppath = g_strdup_printf("http://%s:%i", value, port);
-			debug_printf(DEBUG_INFO, "Setting proxy: %s:%i\n", value, port);
+			printf("Setting proxy: %s:%i\n", value, port);
 			/* hack to make stuff work */
 			curl_easy_setopt(curl, CURLOPT_PROXY, ppath);
 			/*                      curl_easy_setopt(curl, CURLOPT_PROXY, value);
@@ -169,7 +167,7 @@ gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld)
 			ppath = NULL;
 			//cfg_free_string(value);
 		} else {
-			debug_printf(DEBUG_ERROR, "Proxy enabled, but no proxy defined");
+			printf("Proxy enabled, but no proxy defined");
 		}
 	}
 
@@ -184,9 +182,9 @@ gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld)
 				} else {
 					/* don't print the can't resolve.. */
 					if (msg->data.result != 108) {
-						debug_printf(DEBUG_ERROR, "Error: %i '%s' url: %s",
-							     msg->data.result,
-							     curl_easy_strerror(msg->data.result), url);
+						printf("Error: %i '%s' url: %s",
+						       msg->data.result,
+						       curl_easy_strerror(msg->data.result), url);
 					}
 				}
 			}
@@ -199,7 +197,7 @@ gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld)
 	/* cleanup */
 	curl_easy_cleanup(curl);
 	curl_multi_cleanup(curlm);
-	debug_printf(DEBUG_INFO, "Downloaded: %i\n", dld->size);
+	printf("Downloaded: %i\n", dld->size);
 	if (success)
 		return 1;
 	if (dld->data)
@@ -422,17 +420,17 @@ fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, 
 	gchar *artist;
 	gchar *album;
 
-	debug_printf(DEBUG_INFO, "search-type: %s\n", stype);
+	printf("search-type: %s\n", stype);
 	artist = cover_art_process_string(nartist);
 	album = cover_art_process_string(nalbum);
 	snprintf(furl, 1024, host, endp, AMAZONKEY, artist, stype, album);
-	debug_printf(DEBUG_INFO, "furl: %s\n", furl);
+	printf("furl: %s\n", furl);
 	if (gmpc_easy_download(furl, &data)) {
 		amazon_song_info *asi = cover_art_xml_get_image(data.data, data.size);
 		gmpc_easy_download_clean(&data);
 		if (asi) {
 			if (type & META_ALBUM_ART) {
-				debug_printf(DEBUG_INFO, "Trying to fetch album art");
+				printf("Trying to fetch album art");
 				gmpc_easy_download(asi->image_big, &data);
 				if (data.size <= 900) {
 					gmpc_easy_download_clean(&data);
@@ -463,7 +461,7 @@ fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, 
 
 
 			} else if (type & META_ALBUM_TXT) {
-				debug_printf(DEBUG_INFO, "Trying to fetch album txt");
+				printf("Trying to fetch album txt");
 				if (asi->album_info) {
 					FILE *fp;
 					gchar *filename, *imgpath;
@@ -545,7 +543,6 @@ main(int argc, char *argv[])
 
 	fprintf(stderr, "getcover 1, Copyright (C) 2008 by Adrian Reber <adrian@lisas.de>\n");
 	fprintf(stderr, "getcover comes with ABSOLUTELY NO WARRANTY - for details read the license.\n");
-	debug_set_level(3);
 
 	while (1) {
 		next_option = getopt_long(argc, argv, short_options, long_options, NULL);
