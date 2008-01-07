@@ -8,24 +8,13 @@
 #include <glib/gstdio.h>
 #include <curl/curl.h>
 #include <getopt.h>
+
 #define AMAZONKEY "14TC04B24356BPHXW1R2"
-
-typedef enum {
-	META_DATA_AVAILABLE,
-	META_DATA_UNAVAILABLE,
-	META_DATA_FETCHING
-} MetaDataResult;
-typedef enum {
-	META_ALBUM_ART = 1,	/* Album Cover art      */
-	META_ALBUM_TXT = 4	/* Album story          */
-} MetaDataType;
-
-static char *host =
-    "http://ecs.amazonaws.%s/onca/xml?Service=AWSECommerceService&Operation=ItemSearch&SearchIndex=Music&ResponseGroup=Images,EditorialReview&SubscriptionId=%s&Artist=%s&%s=%s";
+#define CURL_TIMEOUT 10
+#define ENDPOINTS 6
 
 #define q_free(a) g_free(a);a=NULL;
 
-#define ENDPOINTS 6
 static char *endpoints[ENDPOINTS][2] = {
 	{"com", "United States"},
 	{"co.uk", "United Kingdom"},
@@ -35,17 +24,26 @@ static char *endpoints[ENDPOINTS][2] = {
 	{"de", "Germany"}
 };
 
+typedef enum {
+	META_DATA_AVAILABLE,
+	META_DATA_UNAVAILABLE,
+	META_DATA_FETCHING
+} MetaDataResult;
+
+typedef enum {
+	META_ALBUM_ART = 1,	/* Album Cover art      */
+	META_ALBUM_TXT = 4	/* Album story          */
+} MetaDataType;
+
+static char *host =
+    "http://ecs.amazonaws.%s/onca/xml?Service=AWSECommerceService&Operation=ItemSearch&SearchIndex=Music&ResponseGroup=Images,EditorialReview&SubscriptionId=%s&Artist=%s&%s=%s";
+
 typedef struct amazon_song_info {
 	char *image_big;
 	char *image_medium;
 	char *image_small;
 	char *album_info;
-
 } amazon_song_info;
-
-
-static void usage(int) __attribute__ ((noreturn));
-
 
 typedef struct _gmpc_easy_download_struct {
 	char *data;
@@ -53,7 +51,7 @@ typedef struct _gmpc_easy_download_struct {
 	int max_size;
 } gmpc_easy_download_struct;
 
-#define CURL_TIMEOUT 10
+static void usage(int) __attribute__ ((noreturn));
 
 static size_t
 write_data(void *buffer, size_t size, size_t nmemb, gmpc_easy_download_struct * dld)
@@ -185,8 +183,6 @@ gmpc_easy_download(const char *url, gmpc_easy_download_struct * dld)
 	return 0;
 }
 
-
-
 static int
 shrink_string(gchar * string, int start, int end)
 {
@@ -202,7 +198,7 @@ shrink_string(gchar * string, int start, int end)
 
 /* Convert string to the wonderful % notation for url*/
 static char *
-__cover_art_process_string(const gchar * string)
+cover_art_process_string(const gchar * string)
 {
 #define ACCEPTABLE(a) (((a) >= 'a' && (a) <= 'z') || ((a) >= 'A' && (a) <= 'Z') || ((a) >= '0' && (a) <= '9'))
 
@@ -340,7 +336,7 @@ get_first_node_by_name(xmlNodePtr xml, gchar * name)
 }
 
 static amazon_song_info *
-__cover_art_xml_get_image(char *data, int size)
+cover_art_xml_get_image(char *data, int size)
 {
 	xmlDocPtr doc = xmlParseMemory(data, size);
 	if (doc) {
@@ -389,11 +385,9 @@ __cover_art_xml_get_image(char *data, int size)
 	return NULL;
 }
 
-
 static int
 fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, char **url)
 {
-
 	gmpc_easy_download_struct data = { NULL, 0, -1 };
 	int found = 0;
 	char furl[1024];
@@ -404,12 +398,12 @@ fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, 
 	gchar *album;
 
 	debug_printf(DEBUG_INFO, "search-type: %s\n", stype);
-	artist = __cover_art_process_string(nartist);
-	album = __cover_art_process_string(nalbum);
+	artist = cover_art_process_string(nartist);
+	album = cover_art_process_string(nalbum);
 	snprintf(furl, 1024, host, endp, AMAZONKEY, artist, stype, album);
 	debug_printf(DEBUG_INFO, "furl: %s\n", furl);
 	if (gmpc_easy_download(furl, &data)) {
-		amazon_song_info *asi = __cover_art_xml_get_image(data.data, data.size);
+		amazon_song_info *asi = cover_art_xml_get_image(data.data, data.size);
 		gmpc_easy_download_clean(&data);
 		if (asi) {
 			if (type & META_ALBUM_ART) {
