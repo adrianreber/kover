@@ -56,18 +56,18 @@ write_data(void *buffer, size_t size, size_t nmemb, gmpc_easy_download_struct * 
 {
 	if (!size || !nmemb)
 		return 0;
-	if (dld->data == NULL) {
+	if (dld->data == NULL)
 		dld->size = 0;
-	}
+
 	dld->data = g_realloc(dld->data, (gulong) (size * nmemb + dld->size) + 1);
 
 	memset(&(dld->data)[dld->size], '\0', (size * nmemb) + 1);
 	memcpy(&(dld->data)[dld->size], buffer, size * nmemb);
 
 	dld->size += size * nmemb;
-	if (dld->size >= dld->max_size && dld->max_size > 0) {
+	if (dld->size >= dld->max_size && dld->max_size > 0)
 		return 0;
-	}
+
 	return size * nmemb;
 }
 
@@ -290,9 +290,9 @@ static void
 init()
 {
 	char *file = g_strdup("covers");
-	if (!g_file_test(file, G_FILE_TEST_EXISTS)) {
+	if (!g_file_test(file, G_FILE_TEST_EXISTS))
 		g_mkdir(file, 0755);
-	}
+
 	g_free(file);
 }
 
@@ -414,9 +414,8 @@ fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, 
 					if (data.size <= 900) {
 						gmpc_easy_download_clean(&data);
 						gmpc_easy_download(asi->image_small, &data);
-						if (data.size <= 900) {
+						if (data.size <= 900)
 							gmpc_easy_download_clean(&data);
-						}
 					}
 				}
 				if (data.size) {
@@ -457,9 +456,8 @@ fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, 
 								depth++;
 							else if ((asi->album_info)[j] == '>' && depth)
 								depth--;
-							else if (depth == 0) {
+							else if (depth == 0)
 								fputc((asi->album_info)[j], fp);
-							}
 						}
 						fclose(fp);
 						found = 1;
