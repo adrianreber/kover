@@ -20,44 +20,6 @@ typedef enum {
 	META_ALBUM_TXT = 4	/* Album story          */
 } MetaDataType;
 
-typedef struct _mpd_Song {
-	/* filename of song */
-	char *file;
-	/* artist, maybe NULL if there is no tag */
-	char *artist;
-	/* title, maybe NULL if there is no tag */
-	char *title;
-	/* album, maybe NULL if there is no tag */
-	char *album;
-	/* track, maybe NULL if there is no tag */
-	char *track;
-	/* name, maybe NULL if there is no tag; it's the name of the current
-	 * song, f.e. the icyName of the stream */
-	char *name;
-	/* date */
-	char *date;
-
-	/* added by qball */
-	/* Genre */
-	char *genre;
-	/* Composer */
-	char *composer;
-	/* Performer */
-	char *performer;
-	/* Disc */
-	char *disc;
-	/* Comment */
-	char *comment;
-
-	/* length of song in seconds, check that it is not MPD_SONG_NO_TIME  */
-	int time;
-	/* if plchanges/playlistinfo/playlistid used, is the position of the
-	 * song in the playlist */
-	int pos;
-	/* song id for a song in the playlist */
-	int id;
-} mpd_Song;
-
 static char *host =
     "http://ecs.amazonaws.%s/onca/xml?Service=AWSECommerceService&Operation=ItemSearch&SearchIndex=Music&ResponseGroup=Images,EditorialReview&SubscriptionId=%s&Artist=%s&%s=%s";
 
@@ -429,7 +391,7 @@ __cover_art_xml_get_image(char *data, int size)
 
 
 static int
-__fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, char **url)
+fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, char **url)
 {
 
 	gmpc_easy_download_struct data = { NULL, 0, -1 };
@@ -535,6 +497,8 @@ usage(int rc)
 	fprintf(stderr, "                  (required)\n");
 	fprintf(stderr, "  -t, --title     search type: Title (default)\n");
 	fprintf(stderr, "  -k, --keyword   search type: Keyword\n");
+	fprintf(stderr, "  -c, --cover     download cover (default)\n");
+	fprintf(stderr, "  -i, --info      download artist information\n");
 	exit(rc);
 }
 
@@ -545,24 +509,26 @@ main(int argc, char *argv[])
 	int next_option;
 	char album[256];
 	char artist[256];
-	const char *short_options = "htka:l:";
 	const char *searchtype[] = { "Title", "Keyword" };
-	int type = 0;
+	int stype = 0;
+	int mtype = META_ALBUM_ART;
+
+	const char *short_options = "hcitka:l:";
 
 	struct option long_options[] = {
 		{"help", no_argument, NULL, 'h'},
 		{"artist", required_argument, NULL, 'a'},
 		{"album", required_argument, NULL, 'l'},
-		{"title", required_argument, NULL, 't'},
-		{"keyword", required_argument, NULL, 'k'},
+		{"title", no_argument, NULL, 't'},
+		{"keyword", no_argument, NULL, 'k'},
+		{"cover", no_argument, NULL, 'c'},
+		{"info", no_argument, NULL, 'i'},
 		{0, 0, 0, 0}
 	};
 
 	fprintf(stderr, "getcover 1, Copyright (C) 2008 by Adrian Reber <adrian@lisas.de>\n");
 	fprintf(stderr, "getcover comes with ABSOLUTELY NO WARRANTY - for details read the license.\n");
 	debug_set_level(3);
-
-	printf("%s\n", searchtype[1]);
 
 	while (1) {
 		next_option = getopt_long(argc, argv, short_options, long_options, NULL);
@@ -576,10 +542,16 @@ main(int argc, char *argv[])
 			strncpy(album, optarg, 256);
 			break;
 		case 't':
-			type = 0;
+			stype = 0;
 			break;
 		case 'k':
-			type = 1;
+			stype = 1;
+			break;
+		case 'i':
+			mtype = META_ALBUM_TXT;
+			break;
+		case 'c':
+			mtype = META_ALBUM_ART;
 			break;
 		case 'h':
 			usage(0);
@@ -589,7 +561,7 @@ main(int argc, char *argv[])
 	}
 
 	init();
-	__fetch_metadata_amazon(searchtype[type], artist, album, META_ALBUM_ART, &url);
+	fetch_metadata_amazon(searchtype[stype], artist, album, mtype, &url);
 	printf("url %s\n", url);
 	return 0;
 }
