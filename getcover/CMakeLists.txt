@@ -5,6 +5,8 @@ include(FindPkgConfig)
 set(VERSION 1)
 set(PACKAGE ${PROJECT_NAME})
 
+set(CMAKE_C_FLAGS "-g -Wall")
+
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 pkg_check_modules(BLA libcurl)
