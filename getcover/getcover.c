@@ -33,7 +33,6 @@
 #include <config.h>
 
 #define AMAZONKEY "14TC04B24356BPHXW1R2"
-#define CURL_TIMEOUT 10
 #define ENDPOINTS 6
 
 static char *endpoints[ENDPOINTS][2] = {
@@ -73,6 +72,12 @@ typedef struct download {
 	int max_size;
 } download;
 
+typedef struct extra_params {
+	int ep;
+	int port;
+	char *proxy;
+} ep;
+
 static void usage(int) __attribute__ ((noreturn));
 
 static size_t
@@ -105,15 +110,15 @@ download_clean(download * dld)
 }
 
 static int
-easy_download(const char *url, download * dld)
+easy_download(const char *url, download * dld, ep ep)
 {
-	int timeout = 0;
 	int running = 0;
 	int msgs_left = 0;
 	int success = FALSE;
 	CURL *curl = NULL;
 	CURLM *curlm = NULL;
 	CURLMsg *msg = NULL;
+	char *proxy = NULL;
 	/*int res; */
 	if (!dld)
 		return 0;
@@ -140,35 +145,24 @@ easy_download(const char *url, download * dld)
 	/* set callback function */
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 	/* set timeout */
-	//timeout = cfg_get_single_value_as_int_with_default(config, "Network Settings", "Connection Timeout", CURL_TIMEOUT);
-	timeout = CURL_TIMEOUT;
-	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
+	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10);
 	/* set redirect */
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 	curl_easy_setopt(curl, CURLOPT_AUTOREFERER, 1);
 	/* set NO SIGNAL */
 	curl_easy_setopt(curl, CURLOPT_NOSIGNAL, TRUE);
 
-	//if(cfg_get_single_value_as_int_with_default(config, "Network Settings", "Use Proxy", FALSE))
-	if (FALSE) {
-		//char *value = cfg_get_single_value_as_string(config, "Network Settings", "Proxy Address");
-		char *value = g_strdup("localhost");
-		//gint port =  cfg_get_single_value_as_int_with_default(config, "Network Settings", "Proxy Port",8080);
-		gint port = 8080;
-		if (value) {
-			gchar *ppath = g_strdup_printf("http://%s:%i", value, port);
-			printf("Setting proxy: %s:%i\n", value, port);
-			/* hack to make stuff work */
-			curl_easy_setopt(curl, CURLOPT_PROXY, ppath);
-			/*                      curl_easy_setopt(curl, CURLOPT_PROXY, value);
-			   curl_easy_setopt(curl, CURLOPT_PROXYPORT, port);
-			 */
-			g_free(ppath);
-			ppath = NULL;
-			//cfg_free_string(value);
-		} else {
-			printf("Proxy enabled, but no proxy defined");
-		}
+	if (ep.proxy)
+		proxy = g_strdup_printf("http://%s:%i/", ep.proxy, ep.port);
+
+	if (getenv("http_proxy") && !proxy)
+		proxy = g_strdup(getenv("http_proxy"));
+
+	if (proxy) {
+		printf("Setting proxy: %s\n", proxy);
+		curl_easy_setopt(curl, CURLOPT_PROXY, proxy);
+		g_free(proxy);
+		proxy = NULL;
 	}
 
 	curl_multi_add_handle(curlm, curl);
@@ -207,7 +201,7 @@ easy_download(const char *url, download * dld)
 }
 
 static int
-shrink_string(gchar * string, int start, int end)
+shrink_string(char *string, int start, int end)
 {
 	int i;
 
@@ -221,18 +215,18 @@ shrink_string(gchar * string, int start, int end)
 
 /* Convert string to the wonderful % notation for url*/
 static char *
-cover_art_process_string(const gchar * string)
+cover_art_process_string(const char *string)
 {
 #define ACCEPTABLE(a) (((a) >= 'a' && (a) <= 'z') || ((a) >= 'A' && (a) <= 'Z') || ((a) >= '0' && (a) <= '9'))
 
-	const gchar hex[16] = "0123456789ABCDEF";
-	const gchar *p;
-	gchar *q;
-	gchar *result;
+	const char hex[16] = "0123456789ABCDEF";
+	const char *p;
+	char *q;
+	char *result;
 	int c;
 	gint unacceptable = 0;
-	const gchar *tmp_p;
-	gchar *new_string;
+	const char *tmp_p;
+	char *new_string;
 	int depth = 0;
 	int len;
 	int i = 0;
@@ -346,7 +340,7 @@ amazon_song_info_free(amazon_song_info * asi)
 }
 
 static xmlNodePtr
-get_first_node_by_name(xmlNodePtr xml, gchar * name)
+get_first_node_by_name(xmlNodePtr xml, char *name)
 {
 	if (xml) {
 		xmlNodePtr c = xml->xmlChildrenNode;
@@ -409,40 +403,40 @@ cover_art_xml_get_image(char *data, int size)
 }
 
 static int
-fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, char **url, int ep)
+fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, char **url, ep ep)
 {
 	download data = { NULL, 0, -1 };
 	int found = 0;
 	char furl[1024];
-	char *endp = endpoints[ep][0];
-	gchar *artist;
-	gchar *album;
+	char *endp = endpoints[ep.ep][0];
+	char *artist;
+	char *album;
 
 	printf("search-type: %s\n", stype);
 	artist = cover_art_process_string(nartist);
 	album = cover_art_process_string(nalbum);
 	snprintf(furl, 1024, host, endp, AMAZONKEY, artist, stype, album);
-	if (easy_download(furl, &data)) {
+	if (easy_download(furl, &data, ep)) {
 		amazon_song_info *asi = cover_art_xml_get_image(data.data, data.size);
 		download_clean(&data);
 		if (asi) {
 			if (type & META_ALBUM_ART) {
 				printf("Trying to fetch album art");
-				easy_download(asi->image_big, &data);
+				easy_download(asi->image_big, &data, ep);
 				if (data.size <= 900) {
 					download_clean(&data);
-					easy_download(asi->image_medium, &data);
+					easy_download(asi->image_medium, &data, ep);
 					if (data.size <= 900) {
 						download_clean(&data);
-						easy_download(asi->image_small, &data);
+						easy_download(asi->image_small, &data, ep);
 						if (data.size <= 900)
 							download_clean(&data);
 					}
 				}
 				if (data.size) {
 					FILE *fp = NULL;
-					gchar *imgpath = NULL;
-					gchar *filename = g_strdup_printf("%s-%s.jpg", nartist, nalbum);
+					char *imgpath = NULL;
+					char *filename = g_strdup_printf("%s-%s.jpg", nartist, nalbum);
 					imgpath = g_strdup_printf("covers/%s", filename);
 					g_free(filename);
 					fp = fopen(imgpath, "wb");
@@ -461,7 +455,7 @@ fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, 
 				printf("Trying to fetch album txt");
 				if (asi->album_info) {
 					FILE *fp;
-					gchar *filename, *imgpath;
+					char *filename, *imgpath;
 					filename = g_strdup_printf("%s-%s.albuminfo", nartist, nalbum);
 					imgpath = g_strdup_printf("covers/%s", filename);
 					g_free(filename);
@@ -523,22 +517,28 @@ usage(int rc)
 	fprintf(stderr, "  -c, --cover     download cover (default)\n");
 	fprintf(stderr, "  -i, --info      download artist information\n");
 	fprintf(stderr, "  -e, --endpoint  select endpoint (specify \"list\" to see all options)\n");
+	fprintf(stderr, "  -o, --host      specify proxy host\n");
+	fprintf(stderr, "  -p, --port      specify proxy port\n");
+	fprintf(stderr, "                  if the environment variable http_proxy is set\n");
+	fprintf(stderr, "                  that value will be used. to disable the use of\n");
+	fprintf(stderr, "                  proxy in that case the environment variable has to be unset.\n");
 	exit(rc);
 }
 
 int
 main(int argc, char *argv[])
 {
-	gchar *url = NULL;
+	char *url = NULL;
 	int next_option;
-	char album[256];
-	char artist[256];
+	char *album = NULL;
+	char *artist = NULL;
 	const char *searchtype[] = { "Title", "Keyword" };
 	int stype = 0;
 	int mtype = META_ALBUM_ART;
-	int ep = 0;
+	ep ep = { 0, -1, NULL };
+	int proxy = 0;
 
-	const char *short_options = "hcitka:l:e:";
+	const char *short_options = "hcitka:l:e:p:o:";
 
 	struct option long_options[] = {
 		{"help", no_argument, NULL, 'h'},
@@ -549,11 +549,16 @@ main(int argc, char *argv[])
 		{"cover", no_argument, NULL, 'c'},
 		{"info", no_argument, NULL, 'i'},
 		{"endpoint", required_argument, NULL, 'e'},
+		{"host", required_argument, NULL, 'o'},
+		{"port", required_argument, NULL, 'p'},
 		{0, 0, 0, 0}
 	};
 
 	fprintf(stderr, "%s %s, Copyright (C) 2008 by Adrian Reber <adrian@lisas.de>\n", PACKAGE, VERSION);
 	fprintf(stderr, "%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n", PACKAGE);
+
+	if (argc < 3)
+		usage(-1);
 
 	while (1) {
 		next_option = getopt_long(argc, argv, short_options, long_options, NULL);
@@ -561,10 +566,10 @@ main(int argc, char *argv[])
 			break;
 		switch (next_option) {
 		case 'a':
-			strncpy(artist, optarg, 256);
+			artist = g_strdup(optarg);
 			break;
 		case 'l':
-			strncpy(album, optarg, 256);
+			album = g_strdup(optarg);
 			break;
 		case 't':
 			stype = 0;
@@ -581,19 +586,49 @@ main(int argc, char *argv[])
 		case 'e':
 			if (!strncmp("list", optarg, 4))
 				dump_endpoints();
-			ep = atoi(optarg);
-			if (ep > ENDPOINTS || ep < 0)
+			ep.ep = atoi(optarg);
+			if (ep.ep > ENDPOINTS || ep.ep < 0)
 				dump_endpoints();
+			break;
+		case 'p':
+			proxy++;
+			ep.port = atoi(optarg);
+			break;
+		case 'o':
+			proxy++;
+			ep.proxy = g_strdup(optarg);
 			break;
 		case 'h':
 			usage(0);
 		default:
-			usage(-1);
+			usage(-2);
 		}
 	}
+
+	/* let's do a few sanity checks to see if all parameters are used
+	 * like they are supposed to
+	 *
+	 * we need at least an artist and an album name */
+	if (!artist || !album)
+		usage(-3);
+
+	/* only if a hostname and a port a specfied
+	 * for the proxy it makes sense */
+	if ((ep.port < 1 || !ep.proxy) && (proxy == 2))
+		usage(-4);
 
 	init();
 	fetch_metadata_amazon(searchtype[stype], artist, album, mtype, &url, ep);
 	printf("url %s\n", url);
+	/* freeing the memory so close to the end of the application
+	 * makes not much sense; but hey... it should be done */
+	if (url)
+		g_free(url);
+	if (ep.proxy)
+		g_free(ep.proxy);
+	if (artist)
+		g_free(artist);
+	if (album)
+		g_free(album);
 	return 0;
 }
