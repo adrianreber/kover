@@ -410,14 +410,12 @@ cover_art_xml_get_image(char *data, int size)
 }
 
 static int
-fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, char **url)
+fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, char **url, int ep)
 {
 	download data = { NULL, 0, -1 };
 	int found = 0;
 	char furl[1024];
-	//int endpoint = cfg_get_single_value_as_int_with_default(config, "cover-amazon", "location", 0);
-	int endpoint = 0;
-	char *endp = endpoints[endpoint][0];
+	char *endp = endpoints[ep][0];
 	gchar *artist;
 	gchar *album;
 
@@ -425,7 +423,6 @@ fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, 
 	artist = cover_art_process_string(nartist);
 	album = cover_art_process_string(nalbum);
 	snprintf(furl, 1024, host, endp, AMAZONKEY, artist, stype, album);
-	printf("furl: %s\n", furl);
 	if (easy_download(furl, &data)) {
 		amazon_song_info *asi = cover_art_xml_get_image(data.data, data.size);
 		download_clean(&data);
@@ -501,6 +498,17 @@ fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, 
 }
 
 static void
+dump_endpoints()
+{
+	int i;
+	fprintf(stderr, "\nSelect an endpoint by specifying the corresponding number:\n\n");
+	for (i = 0; i < ENDPOINTS; i++) {
+		fprintf(stderr, "  %d: %s (%s)\n", i, endpoints[i][1], endpoints[i][0]);
+	}
+	exit(0);
+}
+
+static void
 usage(int rc)
 {
 	fprintf(stderr, "Usage: getcover [options]\n\n");
@@ -515,6 +523,7 @@ usage(int rc)
 	fprintf(stderr, "  -k, --keyword   search type: Keyword\n");
 	fprintf(stderr, "  -c, --cover     download cover (default)\n");
 	fprintf(stderr, "  -i, --info      download artist information\n");
+	fprintf(stderr, "  -e, --endpoint  select endpoint (specify \"list\" to see all options)\n");
 	exit(rc);
 }
 
@@ -528,8 +537,9 @@ main(int argc, char *argv[])
 	const char *searchtype[] = { "Title", "Keyword" };
 	int stype = 0;
 	int mtype = META_ALBUM_ART;
+	int ep = 0;
 
-	const char *short_options = "hcitka:l:";
+	const char *short_options = "hcitka:l:e:";
 
 	struct option long_options[] = {
 		{"help", no_argument, NULL, 'h'},
@@ -539,6 +549,7 @@ main(int argc, char *argv[])
 		{"keyword", no_argument, NULL, 'k'},
 		{"cover", no_argument, NULL, 'c'},
 		{"info", no_argument, NULL, 'i'},
+		{"endpoint", required_argument, NULL, 'e'},
 		{0, 0, 0, 0}
 	};
 
@@ -568,6 +579,13 @@ main(int argc, char *argv[])
 		case 'c':
 			mtype = META_ALBUM_ART;
 			break;
+		case 'e':
+			if (!strncmp("list", optarg, 4))
+				dump_endpoints();
+			ep = atoi(optarg);
+			if (ep > ENDPOINTS || ep < 0)
+				dump_endpoints();
+			break;
 		case 'h':
 			usage(0);
 		default:
@@ -576,7 +594,7 @@ main(int argc, char *argv[])
 	}
 
 	init();
-	fetch_metadata_amazon(searchtype[stype], artist, album, mtype, &url);
+	fetch_metadata_amazon(searchtype[stype], artist, album, mtype, &url, ep);
 	printf("url %s\n", url);
 	return 0;
 }
