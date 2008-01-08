@@ -24,14 +24,13 @@
  * run as standalone command-line tool.
  */
 
-#include <stdio.h>
 #include <string.h>
 #include <libxml/parser.h>
-#include <libxml/tree.h>
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <curl/curl.h>
 #include <getopt.h>
+#include <config.h>
 
 #define AMAZONKEY "14TC04B24356BPHXW1R2"
 #define CURL_TIMEOUT 10
@@ -553,8 +552,8 @@ main(int argc, char *argv[])
 		{0, 0, 0, 0}
 	};
 
-	fprintf(stderr, "getcover 1, Copyright (C) 2008 by Adrian Reber <adrian@lisas.de>\n");
-	fprintf(stderr, "getcover comes with ABSOLUTELY NO WARRANTY - for details read the license.\n");
+	fprintf(stderr, "%s %s, Copyright (C) 2008 by Adrian Reber <adrian@lisas.de>\n", PACKAGE, VERSION);
+	fprintf(stderr, "%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n", PACKAGE);
 
 	while (1) {
 		next_option = getopt_long(argc, argv, short_options, long_options, NULL);
