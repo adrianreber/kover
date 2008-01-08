@@ -11,7 +11,7 @@ pkg_check_modules(BLA libcurl)
 pkg_check_modules(BLU libxml-2.0)
 pkg_check_modules(BLO glib-2.0)
 
-add_executable(${PROJECT_NAME} plugin.c)
+add_executable(${PROJECT_NAME} ${PROJECT_NAME}.c)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${BLA_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${BLU_INCLUDE_DIRS})
