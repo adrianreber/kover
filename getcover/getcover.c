@@ -88,11 +88,11 @@ static int verbose = 0;
 static void usage(int) __attribute__ ((noreturn));
 
 static void
-d_printf(const char *fn, int line, const char *format,...)
+d_printf(const char *fn, int line, const char *format, ...)
 {
 	char *tmp;
 	va_list arglist;
-	va_start(arglist,format);
+	va_start(arglist, format);
 	tmp = g_strdup_vprintf(format, arglist);
 	fprintf(stderr, "  %s():%d: %s", fn, line, tmp);
 	g_free(tmp);
@@ -100,7 +100,7 @@ d_printf(const char *fn, int line, const char *format,...)
 }
 
 static size_t
-write_data(void *buffer, size_t size, size_t nmemb, download * dld)
+write_data(void *buffer, size_t size, size_t nmemb, download *dld)
 {
 	if (!size || !nmemb)
 		return 0;
@@ -120,7 +120,7 @@ write_data(void *buffer, size_t size, size_t nmemb, download * dld)
 }
 
 static void
-download_clean(download * dld)
+download_clean(download *dld)
 {
 	if (dld->data)
 		g_free(dld->data);
@@ -129,7 +129,7 @@ download_clean(download * dld)
 }
 
 static int
-easy_download(const char *url, download * dld, ep *ep)
+easy_download(const char *url, download *dld, ep *ep)
 {
 	int running = 0;
 	int msgs_left = 0;
@@ -334,7 +334,7 @@ amazon_song_info_new()
 	return asi;
 }
 static void
-amazon_song_info_free(amazon_song_info * asi)
+amazon_song_info_free(amazon_song_info *asi)
 {
 	if (asi->image_big != NULL)
 		g_free(asi->image_big);
