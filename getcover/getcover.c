@@ -445,6 +445,8 @@ fetch_metadata_amazon(ep *ep)
 
 	dprintf("search-type: %s\n", ep->stype);
 	dprintf("using endpoint %s (%s)\n", endp, endpoints[ep->ep][1]);
+	dprintf("artist %s\n", ep->artist);
+	dprintf("album %s\n", ep->album);
 	artist = cover_art_process_string(ep->artist);
 	album = cover_art_process_string(ep->album);
 	snprintf(furl, 1024, host, endp, AMAZONKEY, artist, ep->stype, album);
