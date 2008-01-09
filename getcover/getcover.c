@@ -257,7 +257,7 @@ cover_art_process_string(const char *string)
 	/*      Get count of chars that will need to be converted to %
 	   and remove ([{}]) and everything between */
 	for (p = string; *p != '\0'; p++) {
-		c = (guchar) * p;
+		c = (unsigned char) *p;
 
 		if (c == '(' || c == '[' || c == '{') {
 			depth++;
@@ -282,7 +282,7 @@ cover_art_process_string(const char *string)
 	/* remove double spaces from the string because removing ([{}])
 	   tends to create those */
 	for (p = new_string + 1; *p != '\0'; p++) {
-		c = (guchar) * p;
+		c = (unsigned char) *p;
 		if (c == ' ') {
 			tmp_p = p - 1;
 			if (*tmp_p == ' ') {
@@ -306,7 +306,7 @@ cover_art_process_string(const char *string)
 
 	/*time to create the escaped string */
 	for (q = result, p = new_string; *p != '\0'; p++) {
-		c = (guchar) * p;
+		c = (unsigned char) *p;
 
 		if (!ACCEPTABLE(c)) {
 			*q++ = '%';	/* means hex coming */
@@ -364,51 +364,55 @@ get_first_node_by_name(xmlNodePtr xml, char *name)
 static amazon_song_info *
 cover_art_xml_get_image(char *data, int size)
 {
+	amazon_song_info *asi = NULL;
 	xmlDocPtr doc = xmlParseMemory(data, size);
-	if (doc) {
-		xmlNodePtr root = xmlDocGetRootElement(doc);
-		xmlNodePtr cur = get_first_node_by_name(root, "Items");
-		amazon_song_info *asi = NULL;
-		if (cur) {
-			cur = get_first_node_by_name(cur, "Item");
-			if (cur) {
-				xmlNodePtr child = NULL;
-				asi = amazon_song_info_new();
-				if ((child = get_first_node_by_name(cur, "LargeImage"))) {
-					xmlChar *temp =
-					    xmlNodeGetContent(get_first_node_by_name(child, "URL"));
-					/* copy it, so we can free it, and don't need xmlFree */
-					asi->image_big = g_strdup((char *) temp);
-					xmlFree(temp);
-				}
-				if ((child = get_first_node_by_name(cur, "MediumImage"))) {
-					xmlChar *temp =
-					    xmlNodeGetContent(get_first_node_by_name(child, "URL"));
-					asi->image_medium = g_strdup((char *) temp);
-					xmlFree(temp);
-				}
-				if ((child = get_first_node_by_name(cur, "SmallImage"))) {
-					xmlChar *temp =
-					    xmlNodeGetContent(get_first_node_by_name(child, "URL"));
-					asi->image_small = g_strdup((char *) temp);
-					xmlFree(temp);
-				}
+	if (!doc)
+		goto no_doc;
 
-				if ((child = get_first_node_by_name(cur, "EditorialReviews"))) {
-					child = get_first_node_by_name(child, "EditorialReview");
-					if (child) {
-						xmlChar *temp = xmlNodeGetContent(get_first_node_by_name(child, "Content"));	/* ugy, lazy */
-						asi->album_info = g_strdup((char *) temp);
-						xmlFree(temp);
-					}
-				}
-			}
-		}
-		xmlFreeDoc(doc);
-		return asi;
+	xmlNodePtr root = xmlDocGetRootElement(doc);
+	xmlNodePtr cur = get_first_node_by_name(root, "Items");
+	if (!cur)
+		goto no_items;
+
+	cur = get_first_node_by_name(cur, "Item");
+	if (!cur)
+		goto no_items;
+
+	xmlNodePtr child = NULL;
+	asi = amazon_song_info_new();
+
+	if ((child = get_first_node_by_name(cur, "LargeImage"))) {
+		xmlChar *temp = xmlNodeGetContent(get_first_node_by_name(child, "URL"));
+		/* copy it, so we can free it, and don't need xmlFree */
+		asi->image_big = g_strdup((char *) temp);
+		xmlFree(temp);
 	}
+	if ((child = get_first_node_by_name(cur, "MediumImage"))) {
+		xmlChar *temp = xmlNodeGetContent(get_first_node_by_name(child, "URL"));
+		asi->image_medium = g_strdup((char *) temp);
+		xmlFree(temp);
+	}
+	if ((child = get_first_node_by_name(cur, "SmallImage"))) {
+		xmlChar *temp = xmlNodeGetContent(get_first_node_by_name(child, "URL"));
+		asi->image_small = g_strdup((char *) temp);
+		xmlFree(temp);
+	}
+
+	if ((child = get_first_node_by_name(cur, "EditorialReviews"))) {
+		child = get_first_node_by_name(child, "EditorialReview");
+		if (child) {
+			/* ugy, lazy */
+			xmlChar *temp = xmlNodeGetContent(get_first_node_by_name(child, "Content"));
+			asi->album_info = g_strdup((char *) temp);
+			xmlFree(temp);
+		}
+	}
+
+no_items:
+	xmlFreeDoc(doc);
+no_doc:
 	xmlCleanupParser();
-	return NULL;
+	return asi;
 }
 
 static FILE *
@@ -440,6 +444,7 @@ fetch_metadata_amazon(ep *ep)
 	FILE *fp = NULL;
 
 	dprintf("search-type: %s\n", ep->stype);
+	dprintf("using endpoint %s (%s)\n", endp, endpoints[ep->ep][1]);
 	artist = cover_art_process_string(ep->artist);
 	album = cover_art_process_string(ep->album);
 	snprintf(furl, 1024, host, endp, AMAZONKEY, artist, ep->stype, album);
