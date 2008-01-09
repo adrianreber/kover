@@ -76,6 +76,12 @@ typedef struct extra_params {
 	int ep;
 	int port;
 	char *proxy;
+	char *dir;
+	char *artist;
+	char *album;
+	char *stype;
+	char *url;
+	int type;
 } ep;
 
 static void usage(int) __attribute__ ((noreturn));
@@ -110,7 +116,7 @@ download_clean(download * dld)
 }
 
 static int
-easy_download(const char *url, download * dld, ep ep)
+easy_download(const char *url, download * dld, ep *ep)
 {
 	int running = 0;
 	int msgs_left = 0;
@@ -152,8 +158,8 @@ easy_download(const char *url, download * dld, ep ep)
 	/* set NO SIGNAL */
 	curl_easy_setopt(curl, CURLOPT_NOSIGNAL, TRUE);
 
-	if (ep.proxy)
-		proxy = g_strdup_printf("http://%s:%i/", ep.proxy, ep.port);
+	if (ep->proxy)
+		proxy = g_strdup_printf("http://%s:%i/", ep->proxy, ep->port);
 
 	if (getenv("http_proxy") && !proxy)
 		proxy = g_strdup(getenv("http_proxy"));
@@ -304,16 +310,6 @@ cover_art_process_string(const char *string)
 	return result;
 }
 
-static void
-init()
-{
-	char *file = g_strdup("covers");
-	if (!g_file_test(file, G_FILE_TEST_EXISTS))
-		g_mkdir(file, 0755);
-
-	g_free(file);
-}
-
 static amazon_song_info *
 amazon_song_info_new()
 {
@@ -402,25 +398,43 @@ cover_art_xml_get_image(char *data, int size)
 	return NULL;
 }
 
+static FILE *
+file_open(ep *ep)
+{
+	char *tmp;
+	char *mode;
+	tmp = g_strdup_printf("%s/%s-%s.", ep->dir, ep->artist, ep->album);
+	if (ep->type & META_ALBUM_TXT) {
+		ep->url = g_strdup_printf("%s%s", tmp, "albuminfo");
+		mode = "w";
+	} else {
+		ep->url = g_strdup_printf("%s%s", tmp, "jpg");
+		mode = "wb";
+	}
+	g_free(tmp);
+	printf("1 ep->url %s\n", ep->url);
+	return fopen(ep->url, mode);
+}
+
 static int
-fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, char **url, ep ep)
+fetch_metadata_amazon(ep *ep)
 {
 	download data = { NULL, 0, -1 };
-	int found = 0;
 	char furl[1024];
-	char *endp = endpoints[ep.ep][0];
+	char *endp = endpoints[ep->ep][0];
 	char *artist;
 	char *album;
+	FILE *fp = NULL;
 
-	printf("search-type: %s\n", stype);
-	artist = cover_art_process_string(nartist);
-	album = cover_art_process_string(nalbum);
-	snprintf(furl, 1024, host, endp, AMAZONKEY, artist, stype, album);
+	printf("search-type: %s\n", ep->stype);
+	artist = cover_art_process_string(ep->artist);
+	album = cover_art_process_string(ep->album);
+	snprintf(furl, 1024, host, endp, AMAZONKEY, artist, ep->stype, album);
 	if (easy_download(furl, &data, ep)) {
 		amazon_song_info *asi = cover_art_xml_get_image(data.data, data.size);
 		download_clean(&data);
 		if (asi) {
-			if (type & META_ALBUM_ART) {
+			if (ep->type & META_ALBUM_ART) {
 				printf("Trying to fetch album art");
 				easy_download(asi->image_big, &data, ep);
 				if (data.size <= 900) {
@@ -434,38 +448,21 @@ fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, 
 					}
 				}
 				if (data.size) {
-					FILE *fp = NULL;
-					char *imgpath = NULL;
-					char *filename = g_strdup_printf("%s-%s.jpg", nartist, nalbum);
-					imgpath = g_strdup_printf("covers/%s", filename);
-					g_free(filename);
-					fp = fopen(imgpath, "wb");
-					if (fp) {
+					fp = file_open(ep);
+					printf("2 ep.url %s\n", ep->url);
+					if (fp)
 						fwrite(data.data, sizeof(char), data.size, fp);
-						*url = g_strdup(imgpath);
-						found = 1;
-						fclose(fp);
-					}
-					g_free(imgpath);
 				}
 				download_clean(&data);
 
-
-			} else if (type & META_ALBUM_TXT) {
+			} else if (ep->type & META_ALBUM_TXT) {
 				printf("Trying to fetch album txt");
 				if (asi->album_info) {
-					FILE *fp;
-					char *filename, *imgpath;
-					filename = g_strdup_printf("%s-%s.albuminfo", nartist, nalbum);
-					imgpath = g_strdup_printf("covers/%s", filename);
-					g_free(filename);
-					fp = fopen(imgpath, "w");
+					fp = file_open(ep);
+					printf("3 ep.url %s\n", ep->url);
 					if (fp) {
 						int j = 0, depth = 0;;
-						*url = g_strdup(imgpath);
-						/**
-						 * Quick 'n Dirty html stripper
-						 */
+						/* Quick 'n Dirty html stripper */
 						for (j = 0; j < strlen(asi->album_info); j++) {
 							if ((asi->album_info)[j] == '<')
 								depth++;
@@ -474,11 +471,7 @@ fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, 
 							else if (depth == 0)
 								fputc((asi->album_info)[j], fp);
 						}
-						fclose(fp);
-						found = 1;
 					}
-
-					g_free(imgpath);
 				}
 			}
 			amazon_song_info_free(asi);
@@ -487,7 +480,13 @@ fetch_metadata_amazon(const char *stype, char *nartist, char *nalbum, int type, 
 
 	g_free(artist);
 	g_free(album);
-	return found;
+
+	if (fp) {
+		fclose(fp);
+		return 1;
+	}
+
+	return 0;
 }
 
 static void
@@ -507,38 +506,34 @@ usage(int rc)
 	fprintf(stderr, "Usage: getcover [options]\n\n");
 	fprintf(stderr, "getcover is command-line tool to download covers\n\n");
 	fprintf(stderr, "Options:\n");
-	fprintf(stderr, "  -h, --help      print out this information\n");
-	fprintf(stderr, "  -a, --artist    specify the artist whose cover should be retrieved\n");
-	fprintf(stderr, "                  (required)\n");
-	fprintf(stderr, "  -l, --album     specify the album\n");
-	fprintf(stderr, "                  (required)\n");
-	fprintf(stderr, "  -t, --title     search type: Title (default)\n");
-	fprintf(stderr, "  -k, --keyword   search type: Keyword\n");
-	fprintf(stderr, "  -c, --cover     download cover (default)\n");
-	fprintf(stderr, "  -i, --info      download artist information\n");
-	fprintf(stderr, "  -e, --endpoint  select endpoint (specify \"list\" to see all options)\n");
-	fprintf(stderr, "  -o, --host      specify proxy host\n");
-	fprintf(stderr, "  -p, --port      specify proxy port\n");
-	fprintf(stderr, "                  if the environment variable http_proxy is set\n");
-	fprintf(stderr, "                  that value will be used. to disable the use of\n");
-	fprintf(stderr, "                  proxy in that case the environment variable has to be unset.\n");
+	fprintf(stderr, "  -h, --help       print out this information\n");
+	fprintf(stderr, "  -a, --artist     specify the artist whose cover should be retrieved\n");
+	fprintf(stderr, "                   (required)\n");
+	fprintf(stderr, "  -l, --album      specify the album\n");
+	fprintf(stderr, "                   (required)\n");
+	fprintf(stderr, "  -t, --title      search type: Title (default)\n");
+	fprintf(stderr, "  -k, --keyword    search type: Keyword\n");
+	fprintf(stderr, "  -c, --cover      download cover (default)\n");
+	fprintf(stderr, "  -i, --info       download artist information\n");
+	fprintf(stderr, "  -e, --endpoint   select endpoint (specify \"list\" to see all options)\n");
+	fprintf(stderr, "  -o, --host       specify proxy host\n");
+	fprintf(stderr, "  -p, --port       specify proxy port\n");
+	fprintf(stderr, "                   if the environment variable http_proxy is set\n");
+	fprintf(stderr, "                   that value will be used. to disable the use of\n");
+	fprintf(stderr, "                   proxy in that case the environment variable has to be unset.\n");
+	fprintf(stderr, "  -d, --directory  destination directory (defaults to current directory)\n");
 	exit(rc);
 }
 
 int
 main(int argc, char *argv[])
 {
-	char *url = NULL;
 	int next_option;
-	char *album = NULL;
-	char *artist = NULL;
-	const char *searchtype[] = { "Title", "Keyword" };
-	int stype = 0;
-	int mtype = META_ALBUM_ART;
-	ep ep = { 0, -1, NULL };
+	char *searchtype[] = { "Title", "Keyword" };
+	ep ep = { 0, -1, NULL, NULL, NULL, NULL, NULL, NULL, META_ALBUM_ART };
 	int proxy = 0;
 
-	const char *short_options = "hcitka:l:e:p:o:";
+	const char *short_options = "hcitka:l:e:p:o:d:";
 
 	struct option long_options[] = {
 		{"help", no_argument, NULL, 'h'},
@@ -551,6 +546,7 @@ main(int argc, char *argv[])
 		{"endpoint", required_argument, NULL, 'e'},
 		{"host", required_argument, NULL, 'o'},
 		{"port", required_argument, NULL, 'p'},
+		{"directory", required_argument, NULL, 'd'},
 		{0, 0, 0, 0}
 	};
 
@@ -560,28 +556,31 @@ main(int argc, char *argv[])
 	if (argc < 3)
 		usage(-1);
 
+	/* default is "Title" search */
+	ep.stype = searchtype[0];
+
 	while (1) {
 		next_option = getopt_long(argc, argv, short_options, long_options, NULL);
 		if (next_option == -1)
 			break;
 		switch (next_option) {
 		case 'a':
-			artist = g_strdup(optarg);
+			ep.artist = g_strdup(optarg);
 			break;
 		case 'l':
-			album = g_strdup(optarg);
+			ep.album = g_strdup(optarg);
 			break;
 		case 't':
-			stype = 0;
+			ep.stype = searchtype[0];
 			break;
 		case 'k':
-			stype = 1;
+			ep.stype = searchtype[1];
 			break;
 		case 'i':
-			mtype = META_ALBUM_TXT;
+			ep.type = META_ALBUM_TXT;
 			break;
 		case 'c':
-			mtype = META_ALBUM_ART;
+			ep.type = META_ALBUM_ART;
 			break;
 		case 'e':
 			if (!strncmp("list", optarg, 4))
@@ -598,6 +597,9 @@ main(int argc, char *argv[])
 			proxy++;
 			ep.proxy = g_strdup(optarg);
 			break;
+		case 'd':
+			ep.dir = g_strdup(optarg);
+			break;
 		case 'h':
 			usage(0);
 		default:
@@ -609,26 +611,32 @@ main(int argc, char *argv[])
 	 * like they are supposed to
 	 *
 	 * we need at least an artist and an album name */
-	if (!artist || !album)
+	if (!ep.artist || !ep.album)
 		usage(-3);
 
 	/* only if a hostname and a port a specfied
 	 * for the proxy it makes sense */
-	if ((ep.port < 1 || !ep.proxy) && (proxy == 2))
+	if ((ep.port < 1 || !ep.proxy) && (proxy >= 1))
 		usage(-4);
 
-	init();
-	fetch_metadata_amazon(searchtype[stype], artist, album, mtype, &url, ep);
-	printf("url %s\n", url);
+	if (!ep.dir)
+		ep.dir = g_strdup(".");
+	else if (!g_file_test(ep.dir, G_FILE_TEST_EXISTS))
+		g_mkdir(ep.dir, 0755);
+
+	fetch_metadata_amazon(&ep);
+	printf("url %s\n", ep.url);
 	/* freeing the memory so close to the end of the application
 	 * makes not much sense; but hey... it should be done */
-	if (url)
-		g_free(url);
+	if (ep.url)
+		g_free(ep.url);
 	if (ep.proxy)
 		g_free(ep.proxy);
-	if (artist)
-		g_free(artist);
-	if (album)
-		g_free(album);
+	if (ep.dir)
+		g_free(ep.dir);
+	if (ep.artist)
+		g_free(ep.artist);
+	if (ep.album)
+		g_free(ep.album);
 	return 0;
 }
