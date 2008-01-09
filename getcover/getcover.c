@@ -31,9 +31,14 @@
 #include <curl/curl.h>
 #include <getopt.h>
 #include <config.h>
+#include <stdarg.h>
 
 #define AMAZONKEY "14TC04B24356BPHXW1R2"
 #define ENDPOINTS 6
+
+#define dprintf(format, ARGS...)	\
+	{ if (verbose) \
+		d_printf(__PRETTY_FUNCTION__, __LINE__, format, ##ARGS); }
 
 static char *endpoints[ENDPOINTS][2] = {
 	{"com", "United States"},
@@ -45,15 +50,9 @@ static char *endpoints[ENDPOINTS][2] = {
 };
 
 typedef enum {
-	META_DATA_AVAILABLE,
-	META_DATA_UNAVAILABLE,
-	META_DATA_FETCHING
-} MetaDataResult;
-
-typedef enum {
 	META_ALBUM_ART = 1,	/* Album Cover art      */
 	META_ALBUM_TXT = 4	/* Album story          */
-} MetaDataType;
+} meta_data_type;
 
 static char *host =
     "http://ecs.amazonaws.%s/onca/xml?Service=" "AWSECommerceService&Operation=ItemSearch&SearchIndex="
@@ -84,7 +83,21 @@ typedef struct extra_params {
 	int type;
 } ep;
 
+static int verbose = 0;
+
 static void usage(int) __attribute__ ((noreturn));
+
+static void
+d_printf(const char *fn, int line, const char *format,...)
+{
+	char *tmp;
+	va_list arglist;
+	va_start(arglist,format);
+	tmp = g_strdup_vprintf(format, arglist);
+	fprintf(stderr, "  %s():%d: %s", fn, line, tmp);
+	g_free(tmp);
+	va_end(arglist);
+}
 
 static size_t
 write_data(void *buffer, size_t size, size_t nmemb, download * dld)
@@ -165,7 +178,7 @@ easy_download(const char *url, download * dld, ep *ep)
 		proxy = g_strdup(getenv("http_proxy"));
 
 	if (proxy) {
-		printf("Setting proxy: %s\n", proxy);
+		dprintf("setting proxy: %s\n", proxy);
 		curl_easy_setopt(curl, CURLOPT_PROXY, proxy);
 		g_free(proxy);
 		proxy = NULL;
@@ -197,7 +210,7 @@ easy_download(const char *url, download * dld, ep *ep)
 	/* cleanup */
 	curl_easy_cleanup(curl);
 	curl_multi_cleanup(curlm);
-	printf("Downloaded: %i\n", dld->size);
+	dprintf("downloaded: %i\n", dld->size);
 	if (success)
 		return 1;
 	if (dld->data)
@@ -412,7 +425,7 @@ file_open(ep *ep)
 		mode = "wb";
 	}
 	g_free(tmp);
-	printf("1 ep->url %s\n", ep->url);
+	dprintf("destination %s\n", ep->url);
 	return fopen(ep->url, mode);
 }
 
@@ -426,7 +439,7 @@ fetch_metadata_amazon(ep *ep)
 	char *album;
 	FILE *fp = NULL;
 
-	printf("search-type: %s\n", ep->stype);
+	dprintf("search-type: %s\n", ep->stype);
 	artist = cover_art_process_string(ep->artist);
 	album = cover_art_process_string(ep->album);
 	snprintf(furl, 1024, host, endp, AMAZONKEY, artist, ep->stype, album);
@@ -435,7 +448,7 @@ fetch_metadata_amazon(ep *ep)
 		download_clean(&data);
 		if (asi) {
 			if (ep->type & META_ALBUM_ART) {
-				printf("Trying to fetch album art");
+				dprintf("trying to fetch album art\n");
 				easy_download(asi->image_big, &data, ep);
 				if (data.size <= 900) {
 					download_clean(&data);
@@ -449,17 +462,15 @@ fetch_metadata_amazon(ep *ep)
 				}
 				if (data.size) {
 					fp = file_open(ep);
-					printf("2 ep.url %s\n", ep->url);
 					if (fp)
 						fwrite(data.data, sizeof(char), data.size, fp);
 				}
 				download_clean(&data);
 
 			} else if (ep->type & META_ALBUM_TXT) {
-				printf("Trying to fetch album txt");
+				dprintf("trying to fetch album txt\n");
 				if (asi->album_info) {
 					fp = file_open(ep);
-					printf("3 ep.url %s\n", ep->url);
 					if (fp) {
 						int j = 0, depth = 0;;
 						/* Quick 'n Dirty html stripper */
@@ -483,10 +494,10 @@ fetch_metadata_amazon(ep *ep)
 
 	if (fp) {
 		fclose(fp);
-		return 1;
+		return 0;
 	}
 
-	return 0;
+	return -1;
 }
 
 static void
@@ -522,6 +533,7 @@ usage(int rc)
 	fprintf(stderr, "                   that value will be used. to disable the use of\n");
 	fprintf(stderr, "                   proxy in that case the environment variable has to be unset.\n");
 	fprintf(stderr, "  -d, --directory  destination directory (defaults to current directory)\n");
+	fprintf(stderr, "  -v, --verbose    verbose output\n");
 	exit(rc);
 }
 
@@ -532,8 +544,9 @@ main(int argc, char *argv[])
 	char *searchtype[] = { "Title", "Keyword" };
 	ep ep = { 0, -1, NULL, NULL, NULL, NULL, NULL, NULL, META_ALBUM_ART };
 	int proxy = 0;
+	int result;
 
-	const char *short_options = "hcitka:l:e:p:o:d:";
+	const char *short_options = "hcitka:l:e:p:o:d:v";
 
 	struct option long_options[] = {
 		{"help", no_argument, NULL, 'h'},
@@ -547,14 +560,15 @@ main(int argc, char *argv[])
 		{"host", required_argument, NULL, 'o'},
 		{"port", required_argument, NULL, 'p'},
 		{"directory", required_argument, NULL, 'd'},
+		{"verbose", no_argument, NULL, 'v'},
 		{0, 0, 0, 0}
 	};
 
 	fprintf(stderr, "%s %s, Copyright (C) 2008 by Adrian Reber <adrian@lisas.de>\n", PACKAGE, VERSION);
-	fprintf(stderr, "%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n", PACKAGE);
+	fprintf(stderr, "%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n\n", PACKAGE);
 
 	if (argc < 3)
-		usage(-1);
+		usage(-2);
 
 	/* default is "Title" search */
 	ep.stype = searchtype[0];
@@ -578,9 +592,11 @@ main(int argc, char *argv[])
 			break;
 		case 'i':
 			ep.type = META_ALBUM_TXT;
+			dprintf("trying to download album text\n");
 			break;
 		case 'c':
 			ep.type = META_ALBUM_ART;
+			dprintf("trying to download album art\n");
 			break;
 		case 'e':
 			if (!strncmp("list", optarg, 4))
@@ -600,10 +616,13 @@ main(int argc, char *argv[])
 		case 'd':
 			ep.dir = g_strdup(optarg);
 			break;
+		case 'v':
+			verbose++;
+			break;
 		case 'h':
 			usage(0);
 		default:
-			usage(-2);
+			usage(-3);
 		}
 	}
 
@@ -612,22 +631,26 @@ main(int argc, char *argv[])
 	 *
 	 * we need at least an artist and an album name */
 	if (!ep.artist || !ep.album)
-		usage(-3);
+		usage(-4);
 
 	/* only if a hostname and a port a specfied
 	 * for the proxy it makes sense */
 	if ((ep.port < 1 || !ep.proxy) && (proxy >= 1))
-		usage(-4);
+		usage(-5);
 
 	if (!ep.dir)
 		ep.dir = g_strdup(".");
 	else if (!g_file_test(ep.dir, G_FILE_TEST_EXISTS))
 		g_mkdir(ep.dir, 0755);
 
-	fetch_metadata_amazon(&ep);
-	printf("url %s\n", ep.url);
+	result = fetch_metadata_amazon(&ep);
+	if (!result)
+		printf("\nDownloaded %s\n", ep.url);
+	else
+		printf("\nDownload failed\n");
 	/* freeing the memory so close to the end of the application
 	 * makes not much sense; but hey... it should be done */
+	dprintf("freeing memory\n");
 	if (ep.url)
 		g_free(ep.url);
 	if (ep.proxy)
@@ -638,5 +661,5 @@ main(int argc, char *argv[])
 		g_free(ep.artist);
 	if (ep.album)
 		g_free(ep.album);
-	return 0;
+	return result;
 }
