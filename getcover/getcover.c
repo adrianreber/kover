@@ -40,7 +40,7 @@
 	{ if (verbose) \
 		d_printf(__PRETTY_FUNCTION__, __LINE__, format, ##ARGS); }
 
-static char *endpoints[ENDPOINTS][2] = {
+static const char *endpoints[ENDPOINTS][2] = {
 	{"com", "United States"},
 	{"co.uk", "United Kingdom"},
 	{"jp", "Japan"},
@@ -54,7 +54,7 @@ typedef enum {
 	META_ALBUM_TXT = 4	/* Album story          */
 } meta_data_type;
 
-static char *host =
+static const char *host =
     "http://ecs.amazonaws.%s/onca/xml?Service=" "AWSECommerceService&Operation=ItemSearch&SearchIndex="
     "Music&ResponseGroup=Images,EditorialReview&" "SubscriptionId=%s&Artist=%s&%s=%s";
 
@@ -438,7 +438,7 @@ fetch_metadata_amazon(ep *ep)
 {
 	download data = { NULL, 0, -1 };
 	char furl[1024];
-	char *endp = endpoints[ep->ep][0];
+	const char *endp = endpoints[ep->ep][0];
 	char *artist;
 	char *album;
 	FILE *fp = NULL;
@@ -555,7 +555,7 @@ main(int argc, char *argv[])
 
 	const char *short_options = "hcitka:l:e:p:o:d:v";
 
-	struct option long_options[] = {
+	const struct option long_options[] = {
 		{"help", no_argument, NULL, 'h'},
 		{"artist", required_argument, NULL, 'a'},
 		{"album", required_argument, NULL, 'l'},
