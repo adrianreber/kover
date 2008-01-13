@@ -36,7 +36,7 @@
 #include "server.h"
 #include "sites.h"
 #include <list>
-#include <qlistbox.h>
+#include <q3listbox.h>
 
 using namespace std;
 
@@ -51,12 +51,12 @@ class server_dialog:public QDialog {
     int exec();
     string get(int index);
   private:
-      QListBox * box;
+      Q3ListBox * box;
       list < server * >server_list;
     sites *site_ref;
     private slots:void accept();
     void quit();
-    public slots: void double_clicked(QListBoxItem *);
+    public slots: void double_clicked(Q3ListBoxItem *);
 
 };
 

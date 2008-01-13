@@ -22,11 +22,13 @@
 #include "filemode.h"
 
 #include <qpushbutton.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qstring.h>
 #include <qlayout.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
 
 /**
  * The constructor filemode::filemode
@@ -37,7 +39,7 @@
 filemode::filemode():QDialog(0, 0, TRUE, 0)
 {
 
-	QVBoxLayout *top_layout = new QVBoxLayout(this);
+	Q3VBoxLayout *top_layout = new Q3VBoxLayout(this);
 
 	top_layout->setMargin(7);
 	top_layout->addSpacing(10);
@@ -45,11 +47,11 @@ filemode::filemode():QDialog(0, 0, TRUE, 0)
 
 	top_layout->addWidget(label);
 	top_layout->addSpacing(10);
-	box = new QListBox(this);
+	box = new Q3ListBox(this);
 
 	box->setMinimumWidth(box->maxItemWidth() + 30);
 
-	connect(box, SIGNAL(doubleClicked(QListBoxItem *)), SLOT(double_clicked(QListBoxItem *)));
+	connect(box, SIGNAL(doubleClicked(Q3ListBoxItem *)), SLOT(double_clicked(Q3ListBoxItem *)));
 
 	top_layout->addWidget(box);
 	top_layout->addSpacing(10);
@@ -58,7 +60,7 @@ filemode::filemode():QDialog(0, 0, TRUE, 0)
 	top_layout->addWidget(directory);
 	top_layout->addSpacing(20);
 
-	QBoxLayout *button_layout = new QBoxLayout(top_layout, QBoxLayout::RightToLeft, -10);
+	Q3BoxLayout *button_layout = new Q3BoxLayout(top_layout, Q3BoxLayout::RightToLeft, -10);
 
 	QPushButton *ok = new QPushButton(tr("Ok"), this, "ok");
 
@@ -107,7 +109,7 @@ void filemode::quit()
  * The double_clicked() slot. Setting the return value.
  * reimplemented from QDialog
  */
-void filemode::double_clicked(QListBoxItem * item)
+void filemode::double_clicked(Q3ListBoxItem * item)
 {
 	QDialog::done(item->listBox()->currentItem());
 }

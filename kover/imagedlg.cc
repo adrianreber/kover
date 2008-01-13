@@ -32,6 +32,8 @@
 #include "imagedlg.moc"
 #include "imagedlg.h"
 #include <kfiledialog.h>
+//Added by qt3to4:
+#include <QLabel>
 
 ImageDlg::ImageDlg(QWidget * parent, KoverFile * _kover_file)
 :  QDialog(parent, "image_dlg", true)
@@ -116,7 +118,7 @@ void ImageDlg::Browse3()
 void ImageDlg::initDialog()
 {
     this->resize(500, 440);
-    ImageGroup_1 = new QGroupBox(this, "ImageGroup_1");
+    ImageGroup_1 = new Q3GroupBox(this, "ImageGroup_1");
     ImageGroup_1->setGeometry(10, 10, 480, 120);
     ImageGroup_1->setTitle(tr("First Image"));
 
@@ -153,7 +155,7 @@ void ImageDlg::initDialog()
     QLabel_3->setGeometry(240, 80, 70, 30);
     QLabel_3->setText(tr("Appearance"));
 
-    QGroupBox_2 = new QGroupBox(this, "NoName");
+    QGroupBox_2 = new Q3GroupBox(this, "NoName");
     QGroupBox_2->setGeometry(10, 140, 480, 120);
     QGroupBox_2->setTitle(tr("Second Image"));
 
@@ -190,7 +192,7 @@ void ImageDlg::initDialog()
     QLabel_6->setGeometry(240, 210, 70, 30);
     QLabel_6->setText(tr("Appearance"));
 
-    QGroupBox_3 = new QGroupBox(this, "NoName");
+    QGroupBox_3 = new Q3GroupBox(this, "NoName");
     QGroupBox_3->setGeometry(10, 270, 480, 120);
     QGroupBox_3->setTitle(tr("Third Image"));
 

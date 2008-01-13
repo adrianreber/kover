@@ -33,7 +33,7 @@
 #define IMAGEDLG_H
 
 #include <qwidget.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -56,7 +56,7 @@ class ImageDlg:public QDialog {
 
   protected:
     void initDialog ();
-    QGroupBox *ImageGroup_1;
+    Q3GroupBox *ImageGroup_1;
     QLineEdit *FileEdit_1;
     QLabel *FileLabel_1;
     QPushButton *BrowseButton_1;
@@ -64,7 +64,7 @@ class ImageDlg:public QDialog {
     QComboBox *AppearanceCombo_1;
     QLabel *QLabel_2;
     QLabel *QLabel_3;
-    QGroupBox *QGroupBox_2;
+    Q3GroupBox *QGroupBox_2;
     QLabel *QLabel_4;
     QLineEdit *FileEdit_2;
     QPushButton *BrowseButton_2;
@@ -72,7 +72,7 @@ class ImageDlg:public QDialog {
     QComboBox *TargetCombo_2;
     QComboBox *AppearanceCombo_2;
     QLabel *QLabel_6;
-    QGroupBox *QGroupBox_3;
+    Q3GroupBox *QGroupBox_3;
     QLabel *QLabel_7;
     QLineEdit *FileEdit_3;
     QPushButton *BrowseButton_3;

@@ -35,7 +35,7 @@
 #include <qdialog.h>
 #include "cddb_211_item.h"
 #include <list>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qlineedit.h>
 
 using namespace std;
@@ -51,11 +51,11 @@ class filemode:public QDialog {
     int exec();
     char *get(int index);
   private:
-      QListBox * box;
+      Q3ListBox * box;
       QLineEdit *directory;
     private slots:void accept();
     void quit();
-    public slots:void double_clicked(QListBoxItem *);
+    public slots:void double_clicked(Q3ListBoxItem *);
 
 };
 

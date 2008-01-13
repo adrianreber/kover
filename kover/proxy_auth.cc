@@ -24,8 +24,10 @@
 #include <qpushbutton.h>
 #include <qstring.h>
 #include <qlayout.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -35,7 +37,7 @@ proxy_auth::proxy_auth(char *host, int port):QDialog(0, 0, TRUE, 0)
 	username = NULL;
 	QString greeting;
 	QString tmp;
-	QVBoxLayout *top_layout = new QVBoxLayout(this);
+	Q3VBoxLayout *top_layout = new Q3VBoxLayout(this);
 
 	top_layout->setMargin(7);
 	top_layout->addSpacing(10);
@@ -60,7 +62,7 @@ proxy_auth::proxy_auth(char *host, int port):QDialog(0, 0, TRUE, 0)
 	top_layout->addSpacing(5);
 	top_layout->addWidget(pw);
 	top_layout->addSpacing(10);
-	QBoxLayout *button_layout = new QBoxLayout(top_layout, QBoxLayout::RightToLeft, -10);
+	Q3BoxLayout *button_layout = new Q3BoxLayout(top_layout, Q3BoxLayout::RightToLeft, -10);
 	QPushButton *ok = new QPushButton(tr("Ok"), this, "ok");
 
 	ok->setDefault(TRUE);

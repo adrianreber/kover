@@ -31,11 +31,13 @@
 
 #include "server_dialog.h"
 #include <qpushbutton.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qstring.h>
 #include <qlayout.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
 
 /**
  * The constructor server_dialog::server_dialog
@@ -46,7 +48,7 @@ server_dialog::server_dialog():QDialog(0, 0, TRUE, 0)
 {
     site_ref = new sites();
     site_ref->gen_server_list(server_list);
-    QVBoxLayout *top_layout = new QVBoxLayout(this);
+    Q3VBoxLayout *top_layout = new Q3VBoxLayout(this);
 
     top_layout->setMargin(7);
     top_layout->addSpacing(10);
@@ -54,7 +56,7 @@ server_dialog::server_dialog():QDialog(0, 0, TRUE, 0)
 
     top_layout->addWidget(label);
     top_layout->addSpacing(10);
-    box = new QListBox(this);
+    box = new Q3ListBox(this);
     list < server * >::iterator item;
 
     QString string;
@@ -70,14 +72,14 @@ server_dialog::server_dialog():QDialog(0, 0, TRUE, 0)
 
     }
     box->setMinimumWidth(box->maxItemWidth() + 30);
-    connect(box, SIGNAL(doubleClicked(QListBoxItem *)),
-        SLOT(double_clicked(QListBoxItem *)));
+    connect(box, SIGNAL(doubleClicked(Q3ListBoxItem *)),
+        SLOT(double_clicked(Q3ListBoxItem *)));
 
     top_layout->addWidget(box);
     top_layout->addSpacing(20);
 
-    QBoxLayout *button_layout =
-        new QBoxLayout(top_layout, QBoxLayout::RightToLeft, -10);
+    Q3BoxLayout *button_layout =
+        new Q3BoxLayout(top_layout, Q3BoxLayout::RightToLeft, -10);
 
     QPushButton *ok = new QPushButton(tr("Ok"), this, "ok");
 
@@ -133,7 +135,7 @@ void server_dialog::quit()
  * The double_clicked() slot. Setting the return value.
  * reimplemented from QDialog
  */
-void server_dialog::double_clicked(QListBoxItem * item)
+void server_dialog::double_clicked(Q3ListBoxItem * item)
 {
     QDialog::done(item->listBox()->currentItem());
 }

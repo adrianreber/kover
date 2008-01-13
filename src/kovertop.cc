@@ -1,26 +1,26 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 1999-2000 by Denis Oliver Kropp
- * Copyright (C) 2000-2005 by Adrian Reber 
- * 
+ * Copyright (C) 1999, 2000 by Denis Oliver Kropp
+ * Copyright (C) 2000, 2008 by Adrian Reber
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * 
- * $Id: kovertop.cc,v 1.26 2005/06/25 19:16:15 adrian Exp $ */
+ */
 
 #include "kovertop.moc"
 
+#include <qnamespace.h>
 #include "kovertop.h"
 #include "imagedlg.h"
 #include "without_cd.h"
@@ -28,8 +28,10 @@
 #include <directory.h>
 #include <klocale.h>
 #include <kmainwindow.h>
-#include <kapp.h>
-#include <kstdaction.h>
+#include <kxmlguiwindow.h>
+//#include <kapp.h>
+#include <kactioncollection.h>
+#include <kstandardaction.h>
 #include <kaction.h>
 #include <kmenubar.h>
 #include <kmessagebox.h>
@@ -37,26 +39,35 @@
 #include <kfontdialog.h>
 #include <kcolordialog.h>
 #include <krecentdocument.h>
-#include <kstdaccel.h>
+#include <kstandardshortcut.h>
 #include <kurl.h>
 #include <qlayout.h>
 #include <qpoint.h>
-#include <qvbox.h>
-#include <kkeydialog.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <Q3GridLayout>
+#include <Q3Frame>
+#include <Q3VBoxLayout>
+//#include <kkeydialog.h>
+#include <kshortcutsdialog.h>
+#include <kapplication.h>
 
 #define PREV_WIDTH 695
 #define PREV_HEIGHT 684
 
+#define i18n(x) x
+
 #define CDVIEW_WIDTH	291
 #define CDVIEW_HEIGHT 310
 
-KoverTop::KoverTop(const char *name):KMainWindow(0, name)
+KoverTop::KoverTop(const char *name):KXmlGuiWindow()
 {
-	centralWidget = new QVBox(this);
-	main_frame = new QHBox(centralWidget);
-	option_frame = new QGroupBox(centralWidget);
-	dead_space = new QFrame(centralWidget);
-	more_frame = new QFrame(centralWidget);
+	centralWidget = new Q3VBox(this);
+	main_frame = new Q3HBox(centralWidget);
+	option_frame = new Q3GroupBox(centralWidget);
+	dead_space = new Q3Frame(centralWidget);
+	more_frame = new Q3Frame(centralWidget);
 	option_frame->setTitle(tr("All this options are not global"));
 
 
@@ -80,7 +91,7 @@ KoverTop::KoverTop(const char *name):KMainWindow(0, name)
 	if (globals.save_position)
 		move(globals.xpos, globals.ypos);
 
-	recent->loadEntries((KApplication::kApplication())->config());
+	//recent->loadEntries((KApplication::kApplication())->config());
 	setCentralWidget(centralWidget);
 	orig_width = width();
 	orig_height = height();
@@ -88,7 +99,7 @@ KoverTop::KoverTop(const char *name):KMainWindow(0, name)
 
 KoverTop::~KoverTop()
 {
-	recent->saveEntries((KApplication::kApplication())->config());
+	//recent->saveEntries((KApplication::kApplication())->config());
 	delete status_bar;
 	delete cddbfill;
 	delete cdview;
@@ -97,27 +108,33 @@ KoverTop::~KoverTop()
 
 void KoverTop::make_menu()
 {
-	KStdAction::openNew(this, SLOT(fileNew()), actionCollection());
-	KStdAction::open(this, SLOT(fileOpen()), actionCollection());
-	KStdAction::save(this, SLOT(fileSave()), actionCollection());
-	KStdAction::saveAs(this, SLOT(fileSaveAs()), actionCollection());
-	KStdAction::print(this, SLOT(filePrint()), actionCollection());
-	KStdAction::quit(this, SLOT(close()), actionCollection());
-	KStdAction::cut(this, SLOT(cut()), actionCollection());
-	KStdAction::copy(this, SLOT(copy()), actionCollection());
-	KStdAction::paste(this, SLOT(paste()), actionCollection());
-	recent = KStdAction::openRecent(this, SLOT(fileOpen(const KURL &)), actionCollection());
-	new KAction(i18n("&Actual size"), "viewmag",
-		    KStdAccel::shortcut(KStdAccel::ZoomIn), this, SLOT(actualSize()),
+	KStandardAction::openNew(this, SLOT(fileNew()), actionCollection());
+	KStandardAction::open(this, SLOT(fileOpen()), actionCollection());
+	KStandardAction::save(this, SLOT(fileSave()), actionCollection());
+	KStandardAction::saveAs(this, SLOT(fileSaveAs()), actionCollection());
+	KStandardAction::print(this, SLOT(filePrint()), actionCollection());
+	KStandardAction::quit(this, SLOT(close()), actionCollection());
+	KStandardAction::cut(this, SLOT(cut()), actionCollection());
+	KStandardAction::copy(this, SLOT(copy()), actionCollection());
+	KStandardAction::paste(this, SLOT(paste()), actionCollection());
+	recent = KStandardAction::openRecent(this, SLOT(fileOpen(const KUrl &)), actionCollection());
+#define KCM_KAction(var, text, rcvr, slot, parent, name)        \
+        KAction* var = new KAction(text, this); \
+        parent->addAction(name, var); \
+        connect(var, SIGNAL(triggered()), rcvr, slot)
+
+/*
+	new KCM_KAction(i18n("&Actual size"), "viewmag",
+		    KStandardShortcut::shortcut(KStandardShortcut::ZoomIn), this, SLOT(actualSize()),
 		    actionCollection(), "actual_size");
 	new KAction(i18n("&Actual size"), "viewmag",
-		    KStdAccel::shortcut(KStdAccel::ZoomOut), this, SLOT(stopPreview()),
+		    KStandardShortcut::shortcut(KStandardShortcut::ZoomOut), this, SLOT(stopPreview()),
 		    actionCollection(), "stop_preview");
 	new KAction(i18n("&File mode"), "view_tree",
 		    0, this, SLOT(file_mode()), actionCollection(), "file_mode");
 	new KAction(i18n("&CDDB lookup"), "network", 0, this,
 		    SLOT(cddbFill()), actionCollection(), "cddb");
-	KStdAction::preferences(this, SLOT(preferences()), actionCollection());
+	KStandardAction::preferences(this, SLOT(preferences()), actionCollection());
 	new KAction(i18n("&Image Embedding..."), "background", 0, this,
 		    SLOT(imageEmbedding()), actionCollection(), "image_embedding");
 	new KAction(i18n("Title Font..."), "fonts", 0, this,
@@ -139,26 +156,26 @@ void KoverTop::make_menu()
 	new KAction(i18n("Read CD-TEXT"), "network", 0, this,
 		    SLOT(read_cd_text()), actionCollection(), "read_cd_text");
 
-	KStdAction::keyBindings(this, SLOT(slotConfigureKeys()), actionCollection());
-
+	KStandardAction::keyBindings(this, SLOT(slotConfigureKeys()), actionCollection());
+*/
 	createGUI();
 }
 
 void KoverTop::slotConfigureKeys()
 {
-	KKeyDialog::configure(actionCollection(), this);
+	//KShortcutsDialog::configure(actionCollection(), this);
 }
 
 void KoverTop::make_main_frame()
 {
-	left_frame = new QVBox(main_frame);
+	left_frame = new Q3VBox(main_frame);
 
-	title_label = new QLabel(i18n("Title"), left_frame, "title_label");
-	title_edit = new QMultiLineEdit(left_frame, "title_edit");
+	title_label = new QLabel(i18n("Title"), left_frame);
+	title_edit = new Q3MultiLineEdit(left_frame);
 	connect(title_edit, SIGNAL(textChanged()), SLOT(titleBoxChanged()));
 
-	contents_label = new QLabel(i18n("Contents"), left_frame, "contents_label");
-	contents_edit = new QMultiLineEdit(left_frame, "contents_edit");
+	contents_label = new QLabel(i18n("Contents"), left_frame);
+	contents_edit = new Q3MultiLineEdit(left_frame);
 	connect(contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()));
 
 	cdview = new CDView(&kover_file, main_frame);
@@ -171,33 +188,33 @@ void KoverTop::make_main_frame()
 
 void KoverTop::make_option_frame()
 {
-	QVBoxLayout *vlay = new QVBoxLayout(option_frame, 4);
+	Q3VBoxLayout *vlay = new Q3VBoxLayout(option_frame, 4);
 	vlay->addSpacing(fontMetrics().lineSpacing());
 
-	QGridLayout *gbox = new QGridLayout(5, 4);
+	Q3GridLayout *gbox = new Q3GridLayout(5, 4);
 	vlay->addLayout(gbox);
 
-	display_title = new QCheckBox(tr("No title on booklet"), option_frame, "display_title");
+	display_title = new QCheckBox(tr("No title on booklet"), option_frame);
 	connect(display_title, SIGNAL(clicked()), SLOT(display_title_signal()));
-	gbox->addMultiCellWidget(display_title, 0, 0, 0, 1);
+	gbox->addWidget(display_title, 0, 0, 0, 1);
 
-	spine_text = new QCheckBox(i18n("Separate Spine Text"), option_frame, "spine_text");
-	gbox->addMultiCellWidget(spine_text, 1, 1, 0, 1);
+	spine_text = new QCheckBox(i18n("Separate Spine Text"), option_frame);
+	gbox->addWidget(spine_text, 1, 1, 0, 1);
 	connect(spine_text, SIGNAL(clicked()), SLOT(spine_text_method()));
 
-	the_spine_text = new QLineEdit(option_frame, "the_spine_text");
-	gbox->addMultiCellWidget(the_spine_text, 2, 2, 0, 4);
+	the_spine_text = new QLineEdit(option_frame);
+	gbox->addWidget(the_spine_text, 2, 2, 0, 4);
 	the_spine_text->setEnabled(false);
 	connect(the_spine_text, SIGNAL(textChanged(const QString &)),
 		SLOT(spine_text_changed_method(const QString &)));
 
-	number_check = new QCheckBox(i18n("CD Number"), option_frame, "number_check");
-	gbox->addMultiCellWidget(number_check, 3, 3, 0, 0);
+	number_check = new QCheckBox(i18n("CD Number"), option_frame);
+	gbox->addWidget(number_check, 3, 3, 0, 0);
 	connect(number_check, SIGNAL(toggled(bool)), SLOT(numberChecked(bool)));
 
-	number_spin = new QSpinBox(1, 999, 1, option_frame, "numberspin");
+	number_spin = new QSpinBox(option_frame);
 	number_spin->setEnabled(false);
-	gbox->addMultiCellWidget(number_spin, 3, 3, 1, 1);
+	gbox->addWidget(number_spin, 3, 3, 1, 1);
 	connect(number_spin, SIGNAL(valueChanged(int)), SLOT(numberChanged(int)));
 
 	option_frame->hide();
@@ -205,18 +222,18 @@ void KoverTop::make_option_frame()
 
 void KoverTop::make_more_frame()
 {
-	QVBoxLayout *top_layout = new QVBoxLayout(more_frame);
+	Q3VBoxLayout *top_layout = new Q3VBoxLayout(more_frame);
 
-	button_layout = new QBoxLayout(top_layout, QBoxLayout::RightToLeft, -10);
+	button_layout = new Q3BoxLayout(top_layout, Q3BoxLayout::RightToLeft, -10);
 	button_layout->setAlignment(Qt::AlignTop);
 	button_layout->setMargin(7);
 	more_frame->setMargin(0);
-	more_button = new QPushButton(i18n("Options"), more_frame, "more");
-	button_layout->addWidget(more_button, 0, AlignRight);
+	more_button = new QPushButton(i18n("Options"), more_frame);
+	button_layout->addWidget(more_button, 0);
 	connect(more_button, SIGNAL(clicked()), SLOT(more_or_less()));
 	top_layout->addSpacing(5);
-	cddb_id = new QLabel("", more_frame, "cddb_id");
-	button_layout->addWidget(cddb_id, 0, AlignLeft);
+	cddb_id = new QLabel("", more_frame);
+	button_layout->addWidget(cddb_id, 0);
 }
 
 void KoverTop::dataChanged(bool image)
@@ -333,7 +350,7 @@ void KoverTop::fileNew()
 	spine_text->setChecked(kover_file.spine_text());
 	setStatusText("Chop!");
 	altered_data = false;
-	m_url = KURL();
+	m_url = KUrl();
 	setCaption(i18n("[New Document]"), false);
 	update_id();
 }
@@ -345,7 +362,7 @@ void KoverTop::fileOpen()
 			return;
 	}
 
-	KURL url = KFileDialog::getOpenURL(":koverfile",
+	KUrl url = KFileDialog::getOpenURL(":koverfile",
 					   i18n
 					   ("*.kover|Kover files\n*|All files\n*.k3b|k3b files"));
 
@@ -354,7 +371,7 @@ void KoverTop::fileOpen()
 	}
 }
 
-void KoverTop::fileOpen(const KURL & url)
+void KoverTop::fileOpen(const KUrl & url)
 {
 	if (!url.isEmpty()) {
 		if (kover_file.openFile(url)) {
@@ -416,7 +433,7 @@ int KoverTop::how_about_saving()
 	return -1;
 }
 
-void KoverTop::saveFile(const KURL & url)
+void KoverTop::saveFile(const KUrl & url)
 {
 	if (kover_file.saveFile(url)) {
 		setCaption(i18n(url.url()), false);
@@ -438,7 +455,7 @@ void KoverTop::fileSave()
 
 void KoverTop::fileSaveAs()
 {
-	KURL url = KFileDialog::getSaveURL(":koverfile",
+	KUrl url = KFileDialog::getSaveURL(":koverfile",
 					   i18n("*.kover|Kover files\n*|All files"));
 
 	if (!url.isEmpty()) {

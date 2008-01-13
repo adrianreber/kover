@@ -1,23 +1,22 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
  * Copyright (C) 1999-2000 by Denis Oliver Kropp
- * Copyright (C) 2000-2005 by Adrian Reber 
- * 
+ * Copyright (C) 2000-2007 by Adrian Reber
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * 
- * $Id: main.cc,v 1.16 2005/06/25 19:12:16 adrian Exp $ */
+ */
 
 #include "kover.h"
 #include "kovertop.h"
@@ -108,14 +107,14 @@ int main(int argc, char *argv[])
 
 	fprintf(stderr, "kover 3 (dodongo-dislike-smoke)\n");
 	fprintf(stderr, "    Copyright (C) 1998-2000 by Denis Oliver Kropp\n");
-	fprintf(stderr, "    Copyright (C) 2000-2005 by Adrian Reber\n");
+	fprintf(stderr, "    Copyright (C) 2000-2007 by Adrian Reber\n");
 	fprintf(stderr,
 		"%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n", PACKAGE);
 
 	KAboutData aboutData(PACKAGE, I18N_NOOP(PACKAGE), VERSION,
 			     "Kover is an easy to use WYSIWYG CD cover printer with CDDB support.",
 			     KAboutData::License_GPL_V2,
-			     "(C) 1998-2000 Denis Oliver Kropp\n(C) 2000-2005 Adrian Reber");
+			     "(C) 1998-2000 Denis Oliver Kropp\n(C) 2000-2007 Adrian Reber");
 	aboutData.addAuthor("Denis Oliver Kropp", 0, "dok@fischlustig.de");
 	aboutData.addAuthor("Adrian Reber", 0, "adrian@lisas.de");
 

@@ -28,15 +28,19 @@
 
 #include "kover.h"
 #include <qradiobutton.h>
-#include <kdialogbase.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <kdialog.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include "koverfile.h"
+#include <Q3Button>
+#include <krecentfilesaction.h>
 
 using namespace std;
 
-class PreferencesDialog:public KDialogBase {
+class PreferencesDialog:public KDialog {
   Q_OBJECT public:
       PreferencesDialog (QWidget * parent, const QString & caption, bool changed=false);
      ~PreferencesDialog ();
@@ -118,9 +122,9 @@ class PreferencesDialog:public KDialogBase {
     } cover_widgets;
 
     struct font_widgets {
-        QButton *change_content_font;
-        QButton *change_title_font;
-        QButton *change_inlet_title_font;
+        Q3Button *change_content_font;
+        Q3Button *change_title_font;
+        Q3Button *change_inlet_title_font;
     } font_widgets;
 
     bool changed;

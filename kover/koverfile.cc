@@ -305,7 +305,7 @@ bool KoverFile::checkForECD(QString & filename)
 {
     QFile ecd_file(filename);
 
-    if (!ecd_file.open(IO_ReadOnly))
+    if (!ecd_file.open(QIODevice::ReadOnly))
         return false;
 
     // Some kind off hacky, I just test for three of eight ID bytes: "DCE", whole id: "DCEi20RP"
@@ -334,7 +334,7 @@ bool KoverFile::openECD(QString & filename)
     int i, length;
     QFile ecd_file(filename);
 
-    if (!ecd_file.open(IO_ReadOnly))
+    if (!ecd_file.open(QIODevice::ReadOnly))
         return false;
 
     // ID
@@ -430,7 +430,7 @@ bool KoverFile::openFile(const KURL & url)
     QDomDocument doc("kover");
     QFile f(filename);
 
-    if (!f.open(IO_ReadOnly)) {
+    if (!f.open(QIODevice::ReadOnly)) {
         if (!url.isLocalFile())
             KIO::NetAccess::removeTempFile(tempFile);
         return false;
@@ -449,7 +449,7 @@ bool KoverFile::openFile(const KURL & url)
                 bool answer = false;
                 QIODevice *dev = store->device();
 
-                dev->open(IO_ReadOnly);
+                dev->open(QIODevice::ReadOnly);
                 if (doc.setContent(dev))
                     answer = true;
                 dev->close();
@@ -651,7 +651,7 @@ bool KoverFile::save_as_XML(const QString & filename)
     //saving
     QFile f(filename);
 
-    if (!f.open(IO_WriteOnly))
+    if (!f.open(QIODevice::WriteOnly))
         return false;
 
     f.writeBlock((doc.toString()).latin1(),
@@ -670,7 +670,7 @@ bool KoverFile::open_XML(const QString & filename)
     QDomDocument doc;
     QFile f(filename);
 
-    if (!f.open(IO_ReadOnly))
+    if (!f.open(QIODevice::ReadOnly))
         return false;
     if (!doc.setContent(&f)) {
         f.close();

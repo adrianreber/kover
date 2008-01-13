@@ -36,11 +36,13 @@
 #include "inexact_dialog.h"
 
 #include <qpushbutton.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qstring.h>
 #include <qlayout.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
 
 /**
  * The constructor inexact_dialog::inexact_dialog
@@ -52,7 +54,7 @@ inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list):QDialog(0, 
     0)
 {
     local_list = inexact_list;
-    QVBoxLayout *top_layout = new QVBoxLayout(this);
+    Q3VBoxLayout *top_layout = new Q3VBoxLayout(this);
 
     top_layout->setMargin(7);
     top_layout->addSpacing(10);
@@ -60,7 +62,7 @@ inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list):QDialog(0, 
 
     top_layout->addWidget(label);
     top_layout->addSpacing(10);
-    box = new QListBox(this);
+    box = new Q3ListBox(this);
     list < cddb_211_item * >::iterator item;
 
     for (item = inexact_list.begin(); item != inexact_list.end(); item++) {
@@ -78,14 +80,14 @@ inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list):QDialog(0, 
     }
     box->setMinimumWidth(box->maxItemWidth() + 30);
 
-    connect(box, SIGNAL(doubleClicked(QListBoxItem *)),
-        SLOT(double_clicked(QListBoxItem *)));
+    connect(box, SIGNAL(doubleClicked(Q3ListBoxItem *)),
+        SLOT(double_clicked(Q3ListBoxItem *)));
 
     top_layout->addWidget(box);
     top_layout->addSpacing(20);
 
-    QBoxLayout *button_layout =
-        new QBoxLayout(top_layout, QBoxLayout::RightToLeft, -10);
+    Q3BoxLayout *button_layout =
+        new Q3BoxLayout(top_layout, Q3BoxLayout::RightToLeft, -10);
 
     QPushButton *ok = new QPushButton(tr("Ok"), this, "ok");
 
@@ -134,7 +136,7 @@ void inexact_dialog::quit()
  * The double_clicked() slot. Setting the return value.
  * reimplemented from QDialog
  */
-void inexact_dialog::double_clicked(QListBoxItem * item)
+void inexact_dialog::double_clicked(Q3ListBoxItem * item)
 {
     QDialog::done(item->listBox()->currentItem());
 }

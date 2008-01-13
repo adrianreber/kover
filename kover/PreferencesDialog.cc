@@ -21,7 +21,11 @@
 #include "PreferencesDialog.h"
 #include "server_dialog.h"
 
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3Frame>
+#include <Q3VBoxLayout>
 #include <klocale.h>
 #include <kiconloader.h>
 #include <qlayout.h>
@@ -54,18 +58,18 @@ PreferencesDialog::~PreferencesDialog()
 
 void PreferencesDialog::setupCDDBPage(void)
 {
-	QFrame *page = addPage(i18n("CDDB"), i18n("CDDB options"),
+	Q3Frame *page = addPage(i18n("CDDB"), i18n("CDDB options"),
 			       BarIcon("network", KIcon::SizeMedium));
-	QVBoxLayout *topLayout = new QVBoxLayout(page, 0, spacingHint());
+	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
 
-	QGroupBox *group = new QGroupBox(i18n("&CDDB server"), page);
+	Q3GroupBox *group = new Q3GroupBox(i18n("&CDDB server"), page);
 
 	topLayout->addWidget(group);
-	QVBoxLayout *vlay = new QVBoxLayout(group, spacingHint());
+	Q3VBoxLayout *vlay = new Q3VBoxLayout(group, spacingHint());
 
 	vlay->addSpacing(fontMetrics().lineSpacing());
 
-	QGridLayout *gbox = new QGridLayout(5, 4);
+	Q3GridLayout *gbox = new Q3GridLayout(5, 4);
 
 	vlay->addLayout(gbox);
 
@@ -95,12 +99,12 @@ void PreferencesDialog::setupCDDBPage(void)
 	cddb_widgets.cgi_path->setMinimumWidth(fontMetrics().maxWidth() * 10);
 	gbox->addWidget(cddb_widgets.cgi_path, 1, 2);
 
-	group = new QGroupBox(i18n("&Proxy configuration"), page);
+	group = new Q3GroupBox(i18n("&Proxy configuration"), page);
 	topLayout->addWidget(group);
-	vlay = new QVBoxLayout(group, spacingHint());
+	vlay = new Q3VBoxLayout(group, spacingHint());
 	vlay->addSpacing(fontMetrics().lineSpacing());
 
-	gbox = new QGridLayout(5, 5);
+	gbox = new Q3GridLayout(5, 5);
 	vlay->addLayout(gbox);
 	text = i18n("Use proxy for CDDB lookups");
 	cddb_widgets.use_proxy = new QCheckBox(text, group, "use_proxy");
@@ -128,18 +132,18 @@ void PreferencesDialog::setupCDDBPage(void)
 
 void PreferencesDialog::setupCDROMPage(void)
 {
-	QFrame *page = addPage(i18n("CDROM"), i18n("CDROM options"),
+	Q3Frame *page = addPage(i18n("CDROM"), i18n("CDROM options"),
 			       BarIcon("cdrom_unmount",
 				       KIcon::SizeMedium));
-	QVBoxLayout *topLayout = new QVBoxLayout(page, 0, spacingHint());
+	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
 
-	QGroupBox *group = new QGroupBox(i18n("&CDROM"), page);
+	Q3GroupBox *group = new Q3GroupBox(i18n("&CDROM"), page);
 
 	topLayout->addWidget(group);
-	QVBoxLayout *vlay = new QVBoxLayout(group, spacingHint());
+	Q3VBoxLayout *vlay = new Q3VBoxLayout(group, spacingHint());
 
 	vlay->addSpacing(fontMetrics().lineSpacing());
-	QGridLayout *gbox = new QGridLayout(5, 5);
+	Q3GridLayout *gbox = new Q3GridLayout(5, 5);
 
 	vlay->addLayout(gbox);
 
@@ -364,17 +368,17 @@ void PreferencesDialog::set_cddb_files()
 
 void PreferencesDialog::setup_cddb_files_page(void)
 {
-	QFrame *page = addPage(i18n("CDDB files"), i18n("Local CDDB files"),
+	Q3Frame *page = addPage(i18n("CDDB files"), i18n("Local CDDB files"),
 			       BarIcon("folder_blue", KIcon::SizeMedium));
-	QVBoxLayout *topLayout = new QVBoxLayout(page, 0, spacingHint());
+	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
 
-	QGroupBox *group = new QGroupBox(i18n("&Local CDDB files"), page);
+	Q3GroupBox *group = new Q3GroupBox(i18n("&Local CDDB files"), page);
 
 	topLayout->addWidget(group);
-	QVBoxLayout *vlay = new QVBoxLayout(group, spacingHint());
+	Q3VBoxLayout *vlay = new Q3VBoxLayout(group, spacingHint());
 
 	vlay->addSpacing(fontMetrics().lineSpacing());
-	QGridLayout *gbox = new QGridLayout(5, 5);
+	Q3GridLayout *gbox = new Q3GridLayout(5, 5);
 
 	vlay->addLayout(gbox);
 
@@ -411,17 +415,17 @@ void PreferencesDialog::save_cddb_files()
 
 void PreferencesDialog::setup_cover_page()
 {
-	QFrame *page = addPage(i18n("Cover"), i18n("Cover"),
+	Q3Frame *page = addPage(i18n("Cover"), i18n("Cover"),
 			       BarIcon("kover", KIcon::SizeMedium));
-	QVBoxLayout *topLayout = new QVBoxLayout(page, 0, spacingHint());
+	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
 
-	QButtonGroup *group = new QButtonGroup(i18n("Cover"), page);
+	Q3ButtonGroup *group = new Q3ButtonGroup(i18n("Cover"), page);
 
 	topLayout->addWidget(group);
-	QVBoxLayout *vlay = new QVBoxLayout(group, spacingHint());
+	Q3VBoxLayout *vlay = new Q3VBoxLayout(group, spacingHint());
 
 	vlay->addSpacing(fontMetrics().lineSpacing());
-	QGridLayout *gbox = new QGridLayout(6, 5);
+	Q3GridLayout *gbox = new Q3GridLayout(6, 5);
 
 	vlay->addLayout(gbox);
 
@@ -518,17 +522,17 @@ void PreferencesDialog::save_cover()
 
 void PreferencesDialog::setup_font_page()
 {
-	QFrame *page = addPage(i18n("Fonts"), i18n("Standard Fonts"),
+	Q3Frame *page = addPage(i18n("Fonts"), i18n("Standard Fonts"),
 			       BarIcon("fonts", KIcon::SizeMedium));
-	QVBoxLayout *topLayout = new QVBoxLayout(page, 0, spacingHint());
+	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
 
-	QGroupBox *group = new QGroupBox(i18n("&Standard Fonts"), page);
+	Q3GroupBox *group = new Q3GroupBox(i18n("&Standard Fonts"), page);
 
 	topLayout->addWidget(group);
-	QVBoxLayout *vlay = new QVBoxLayout(group, spacingHint());
+	Q3VBoxLayout *vlay = new Q3VBoxLayout(group, spacingHint());
 
 	vlay->addSpacing(fontMetrics().lineSpacing());
-	QGridLayout *gbox = new QGridLayout(4, 1);
+	Q3GridLayout *gbox = new Q3GridLayout(4, 1);
 
 	vlay->addLayout(gbox);
 
@@ -634,17 +638,17 @@ void PreferencesDialog::browsing()
 
 void PreferencesDialog::setup_misc_page(void)
 {
-	QFrame *page = addPage(i18n("Miscellaneous"), i18n("Various properties"),
+	Q3Frame *page = addPage(i18n("Miscellaneous"), i18n("Various properties"),
 			       BarIcon("misc", KIcon::SizeMedium));
-	QVBoxLayout *topLayout = new QVBoxLayout(page, 0, spacingHint());
+	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
 
-	QGroupBox *group = new QGroupBox(i18n("&Stuff"), page);
+	Q3GroupBox *group = new Q3GroupBox(i18n("&Stuff"), page);
 
 	topLayout->addWidget(group);
-	QVBoxLayout *vlay = new QVBoxLayout(group, spacingHint());
+	Q3VBoxLayout *vlay = new Q3VBoxLayout(group, spacingHint());
 
 	vlay->addSpacing(fontMetrics().lineSpacing());
-	QGridLayout *gbox = new QGridLayout(5, 5);
+	Q3GridLayout *gbox = new Q3GridLayout(5, 5);
 
 	vlay->addLayout(gbox);
 

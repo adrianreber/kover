@@ -37,6 +37,10 @@
 #include <qimage.h>
 #include <qregexp.h>
 #include <qprinter.h>
+//Added by qt3to4:
+#include <QPaintEvent>
+#include <Q3Frame>
+#include <QMouseEvent>
 #include <kprinter.h>
 #include <qpainter.h>
 #include <qsemimodal.h>
@@ -51,7 +55,7 @@
 #define BACK_V 334
 
 CDView::CDView(KoverFile * _kover_file, QWidget * parent, const char *name)
-:QFrame(parent, name)
+:Q3Frame(parent, name)
 {
     kover_file = _kover_file;
     connect(kover_file, SIGNAL(dataChanged(bool)), SLOT(dataChanged(bool)));
@@ -76,7 +80,7 @@ void CDView::paintEvent(QPaintEvent *)
     if (previewMode) {
         drawBooklet(&paint, 4, 4);
         drawInlet(&paint, 150, 4 * 2 + FRONT_V);
-        paint.setWorldMatrix(QWMatrix());
+        paint.setWorldMatrix(QMatrix());
         paint.setFont(QFont("helvetica", 14));
         paint.setPen(black);
         paint.drawText(20, 400, tr("Click to close"));

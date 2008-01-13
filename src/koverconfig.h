@@ -1,6 +1,6 @@
-/** -*- adrian-c -*-
+/** -*- adrian-c -*-, ho!
 	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-	 Copyright (C) 2001 by Adrian Reber 
+	 Copyright (C) 2001 by Adrian Reber
 	 
 	 This program is free software; you can redistribute it and/or modify
 	 it under the terms of the GNU General Public License as published by
@@ -16,37 +16,26 @@
 	 along with this program; if not, write to the Free Software
 	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 	 
-	 File: categories.h 
+	 File: config.h
 	 
-	 Description: entity for the categories
-
+	 Description: header for the config class
+	 
 	 Changes:
 	 
-	 11 Nov 2001: Initial release
-	 
+	 13 Jun 2001: Initial creation 
 */
 
-/* $Id: categories.h,v 1.3 2002/01/13 00:33:21 adrian Exp $ */
+#ifndef CONFIG_H
+#define CONFIG_H
 
-#ifndef CATEGORIES_H
-#define CATEGORIES_H
+class config_class {
 
-#include "../config.h"
-#include <list>
-#include <string>
-
-using namespace std;
-
-class categories {
-
-public:
-	 categories();
-	 ~categories();
-	 int how_many();
-	 string get_category(int id);
-private:
-	 list <string> category;
-
+  public:
+    void store_globals();
+    void load_globals();
+    void sync();
+  private:
+    char *check_cddb_dir();
 };
 
-#endif /* CATEGORIES_H */
+#endif /* CONFIG_H */

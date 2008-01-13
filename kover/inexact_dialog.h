@@ -36,7 +36,7 @@
 #include "cddb_211_item.h"
 #include <list>
 #include <string>
-#include <qlistbox.h>
+#include <q3listbox.h>
 
 using namespace std;
 
@@ -52,11 +52,11 @@ class inexact_dialog:public QDialog {
     char *get(int index);
     cddb_211_item *get_object(int index);
   private:
-      QListBox * box;
+      Q3ListBox * box;
       list < cddb_211_item * >local_list;
     private slots:void accept();
     void quit();
-    public slots:void double_clicked(QListBoxItem *);
+    public slots:void double_clicked(Q3ListBoxItem *);
 
 };
 

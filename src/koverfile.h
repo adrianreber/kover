@@ -131,7 +131,7 @@ class KoverFile:public QObject {
     bool open_XML(const QString & filename);
     bool open_XML(QDomDocument doc);
     bool old_save_method(const QString & filename);
-    void old_open_method(KSimpleConfig & file);
+    void old_open_method(KConfig & file);
     bool checkForECD(QString & filename);
     bool openECD(QString & filename);
     void open_k3b_audio_project(QDomDocument doc);

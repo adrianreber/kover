@@ -22,7 +22,7 @@
 #ifndef KOVER_TOP_H
 #define KOVER_TOP_H
 
-#include "kover.h"
+#include "kover_old.h"
 #include "cdview.h"
 #include "koverfile.h"
 #include "cddb_fill.h"
@@ -30,25 +30,33 @@
 
 #include "PreferencesDialog.h"
 
-#include <kapp.h>
+//#include <kapp.h>
 #include <qspinbox.h>
 #include <qcheckbox.h>
+//Added by qt3to4:
+#include <Q3Frame>
+#include <QBoxLayout>
+//#include <Q3BoxLayout>
 #include <kmainwindow.h>
+#include <kxmlguiwindow.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qlabel.h>
-#include <qhbox.h>
-#include <qmultilinedit.h>
-#include <qgroupbox.h>
+#include <q3hbox.h>
+//Use QTextEdit in new code
+#include <Q3MultiLineEdit>
+#include <q3groupbox.h>
 #include <ktoolbar.h>
 #include <kstatusbar.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kurl.h>
+//You can achieve the same result as QVBox by creating a QWidget with a vertical layout
+#include <Q3VBox>
 #include <kaction.h>
 
 /** KoverTop is the TopLevelWidget. */
 
-class KoverTop:public KMainWindow, no_qobject {
+class KoverTop:public KXmlGuiWindow, no_qobject {
       Q_OBJECT 
 public:
 	 KoverTop(const char *name = NULL);
@@ -110,8 +118,8 @@ private:
 	void make_option_frame();
 	void update_id(QString id);
 
-	QGroupBox *option_frame;
-	QFrame *dead_space;
+	Q3GroupBox *option_frame;
+	Q3Frame *dead_space;
 	QCheckBox *display_title;
 	QLineEdit *the_spine_text;
 	QCheckBox *spine_text;
@@ -119,21 +127,21 @@ private:
 	KRecentFilesAction *recent;
 	QCheckBox *slim_case;
 
-	QVBox *centralWidget;
-	QHBox *main_frame;
-	QVBox *left_frame;
+	Q3VBox *centralWidget;
+	Q3HBox *main_frame;
+	Q3VBox *left_frame;
 
 	KoverFile kover_file;
 	cddb_fill *cddbfill;
 
-	KURL m_url;
+	KUrl m_url;
 	bool altered_data;
 
 	QLabel *title_label;
-	QMultiLineEdit *title_edit;
+	Q3MultiLineEdit *title_edit;
 
 	QLabel *contents_label;
-	QMultiLineEdit *contents_edit;
+	Q3MultiLineEdit *contents_edit;
 
 	QCheckBox *number_check;
 	QSpinBox *number_spin;
@@ -146,7 +154,7 @@ private:
 	CDView *cdview;
 
 	QBoxLayout *button_layout;
-	QFrame *more_frame;
+	Q3Frame *more_frame;
 	QPushButton *more_button;
 	bool more;
 	int orig_width;
