@@ -29,7 +29,7 @@
 #include <stdio.h>
 
 #include <cddb/cddb.h>
-#include <kover_global.h>
+#include <globals.h>
 
 void config_class::load_globals()
 {

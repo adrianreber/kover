@@ -1,6 +1,6 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 2000-2007 by Adrian Reber
+ * Copyright (C) 2000, 2008 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,152 +17,184 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "PreferencesDialog.moc"
-#include "PreferencesDialog.h"
+/* This is the Preferences Dialog (pd) */
+
+#include "pd.moc"
+#include "pd.h"
 #include "server_dialog.h"
 
-#include <q3buttongroup.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3Frame>
-#include <Q3VBoxLayout>
-#include <klocale.h>
-#include <kiconloader.h>
-#include <qlayout.h>
-#include <kmessagebox.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qfontdialog.h>
-#include <kfontdialog.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdio.h>
+#include <globals.h>
 
-PreferencesDialog::PreferencesDialog(QWidget * parent,
-				     const QString & caption,
-				     bool changed):KDialogBase(KJanusWidget::IconList, caption, Ok | Cancel, Ok, parent)
+#include <QGroupBox>
+
+
+pd::pd(QWidget * p, KConfigSkeleton* cs, bool changed):KConfigDialog(p, "configure", cs)
 {
-	this->parent = parent;
-	setupCDDBPage();
-	setupCDROMPage();
-	setup_cddb_files_page();
-	setup_cover_page();
-	setup_font_page();
-	setup_misc_page();
+	setButtons(Ok | Cancel | Help);
+	setup_cddb();
+	setup_cdrom();
+	//setup_cddb_files_page();
+	//setup_cover_page();
+	//setup_font_page();
+	//setup_misc_page();
 	this->changed = changed;
 }
 
-PreferencesDialog::~PreferencesDialog()
+pd::~pd()
 {
 }
 
-void PreferencesDialog::setupCDDBPage(void)
+void pd::setup_cdrom(void)
 {
-	Q3Frame *page = addPage(i18n("CDDB"), i18n("CDDB options"),
-			       BarIcon("network", KIcon::SizeMedium));
-	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
+	QWidget* page = new QWidget;
+	QVBoxLayout *topLayout = new QVBoxLayout(page);
 
-	Q3GroupBox *group = new Q3GroupBox(i18n("&CDDB server"), page);
+	QGroupBox *group = new QGroupBox(i18n("&CDROM"), page);
 
 	topLayout->addWidget(group);
-	Q3VBoxLayout *vlay = new Q3VBoxLayout(group, spacingHint());
+	QVBoxLayout *vlay = new QVBoxLayout(group);
 
 	vlay->addSpacing(fontMetrics().lineSpacing());
-
-	Q3GridLayout *gbox = new Q3GridLayout(5, 4);
+	QGridLayout *gbox = new QGridLayout();
+	gbox->setMargin(2);
+	gbox->setSpacing(4);
 
 	vlay->addLayout(gbox);
 
 	QString text;
-	QLabel *label = new QLabel(i18n("CDDB server:"), group, "cddblabel");
+	QLabel *label = new QLabel(i18n("CDROM device:"), group);
 
-	gbox->addWidget(label, 0, 0);
-
-	cddb_widgets.cddb_protocol = new QComboBox(FALSE, group, "cddb_protocol");
-	cddb_widgets.cddb_protocol->insertItem("HTTP");
-	cddb_widgets.cddb_protocol->insertItem("CDDBP");
-	connect(cddb_widgets.cddb_protocol, SIGNAL(activated(int)), SLOT(protocol_changed(int)));
-	gbox->addWidget(cddb_widgets.cddb_protocol, 0, 1);
-
-	cddb_widgets.cddb_server = new QLineEdit(group, "server");
-	cddb_widgets.cddb_server->setMinimumWidth(fontMetrics().maxWidth() * 10);
-	gbox->addWidget(cddb_widgets.cddb_server, 0, 2);
-
-	QPushButton *browse = new QPushButton(i18n("Browse"), group, "browse");
-
-	connect(browse, SIGNAL(clicked()), SLOT(browsing()));
-	gbox->addWidget(browse, 0, 3);
-
-	label = new QLabel(i18n("CGI path:"), group, "cgilabel");
-	gbox->addWidget(label, 1, 0);
-	cddb_widgets.cgi_path = new QLineEdit(group, "cgi");
-	cddb_widgets.cgi_path->setMinimumWidth(fontMetrics().maxWidth() * 10);
-	gbox->addWidget(cddb_widgets.cgi_path, 1, 2);
-
-	group = new Q3GroupBox(i18n("&Proxy configuration"), page);
-	topLayout->addWidget(group);
-	vlay = new Q3VBoxLayout(group, spacingHint());
-	vlay->addSpacing(fontMetrics().lineSpacing());
-
-	gbox = new Q3GridLayout(5, 5);
-	vlay->addLayout(gbox);
-	text = i18n("Use proxy for CDDB lookups");
-	cddb_widgets.use_proxy = new QCheckBox(text, group, "use_proxy");
-	connect(cddb_widgets.use_proxy, SIGNAL(toggled(bool)), this, SLOT(use_proxy(bool)));
-	gbox->addMultiCellWidget(cddb_widgets.use_proxy, 0, 0, 0, 5);
-	text = i18n("Use 'http_proxy' environment variable");
-	cddb_widgets.proxy_from_env = new QCheckBox(text, group, "proxy_from_env");
-	connect(cddb_widgets.proxy_from_env, SIGNAL(toggled(bool)), this, SLOT(use_proxy_env(bool)));
-	gbox->addMultiCellWidget(cddb_widgets.proxy_from_env, 1, 1, 0, 5);
-	label = new QLabel(i18n("Proxy server:"), group, "proxylabel");
-	gbox->addWidget(label, 2, 0);
-	cddb_widgets.proxy_server = new QLineEdit(group, "proxy");
-	cddb_widgets.proxy_server->setMinimumWidth(fontMetrics().maxWidth() * 10);
-
-	gbox->addMultiCellWidget(cddb_widgets.proxy_server, 2, 2, 1, 5);
-	label = new QLabel(i18n("Proxy server port:"), group, "proxyportlabel");
-	gbox->addWidget(label, 3, 0);
-	cddb_widgets.proxy_port = new QLineEdit(group, "proxyport");
-	cddb_widgets.proxy_port->setMaxLength(5);
-
-	gbox->addMultiCellWidget(cddb_widgets.proxy_port, 3, 3, 1, 5);
-	set_cddb();
-	topLayout->addStretch(10);
-}
-
-void PreferencesDialog::setupCDROMPage(void)
-{
-	Q3Frame *page = addPage(i18n("CDROM"), i18n("CDROM options"),
-			       BarIcon("cdrom_unmount",
-				       KIcon::SizeMedium));
-	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
-
-	Q3GroupBox *group = new Q3GroupBox(i18n("&CDROM"), page);
-
-	topLayout->addWidget(group);
-	Q3VBoxLayout *vlay = new Q3VBoxLayout(group, spacingHint());
-
-	vlay->addSpacing(fontMetrics().lineSpacing());
-	Q3GridLayout *gbox = new Q3GridLayout(5, 5);
-
-	vlay->addLayout(gbox);
-
-	QString text;
-	QLabel *label = new QLabel(i18n("CDROM device:"), group, "cdromlabel");
-
-	gbox->addWidget(label, 0, 0);
-	cdrom_widgets.cdrom_device = new QLineEdit(group, "device");
+	gbox->addWidget(label, 0, 0, 1, 1);
+	cdrom_widgets.cdrom_device = new QLineEdit(group);
 	cdrom_widgets.cdrom_device->setMinimumWidth(fontMetrics().maxWidth() * 10);
-	gbox->addMultiCellWidget(cdrom_widgets.cdrom_device, 0, 0, 1, 5);
+	gbox->addWidget(cdrom_widgets.cdrom_device, 0, 1, 1, 1);
 
 	text = i18n("Eject CD on exit");
-	cdrom_widgets.eject_cdrom = new QCheckBox(text, group, "eject_cdrom");
-	gbox->addMultiCellWidget(cdrom_widgets.eject_cdrom, 1, 1, 0, 5);
+	cdrom_widgets.eject_cdrom = new QCheckBox(text, group);
+	gbox->addWidget(cdrom_widgets.eject_cdrom, 1, 0, 1, -1);
 
 	set_cdrom();
 
 	topLayout->addStretch(10);
+	addPage(page, i18n("CDROM"));
 }
+
+void pd::set_cdrom()
+{
+	cdrom_widgets.cdrom_device->setText(globals.cdrom_device);
+	if (globals.eject_cdrom)
+		cdrom_widgets.eject_cdrom->setChecked(true);
+	else
+		cdrom_widgets.eject_cdrom->setChecked(false);
+}
+
+
+void pd::slotButtonClicked(int button) {
+             if (button == KDialog::Ok) {
+	printf("OK\n");
+		apply_settings();
+		accept();
+}
+             else
+                 KDialog::slotButtonClicked(button);
+         }
+
+
+void pd::apply_settings()
+{
+
+	globals.eject_cdrom = ((cdrom_widgets.eject_cdrom)->isChecked())? 1 : 0;
+
+	if (!((cdrom_widgets.cdrom_device)->text()).isEmpty()) {
+		if (globals.cdrom_device)
+			free(globals.cdrom_device);
+		globals.cdrom_device = strdup(((cdrom_widgets.cdrom_device)->text()).toUtf8());
+	} else {
+		if (globals.cdrom_device)
+			free(globals.cdrom_device);
+		globals.cdrom_device = NULL;
+	}
+
+}
+
+
+void pd::setup_cddb(void)
+{
+	QWidget* page = new QWidget;
+	QVBoxLayout *topLayout = new QVBoxLayout(page);
+
+	QGroupBox *group = new QGroupBox(i18n("&CDDB server"));
+
+	topLayout->addWidget(group);
+	QVBoxLayout *vlay = new QVBoxLayout(group);
+
+	vlay->addSpacing(fontMetrics().lineSpacing());
+
+	QGridLayout *gbox = new QGridLayout();
+	gbox->setMargin(2);
+	gbox->setSpacing(4);
+
+	vlay->addLayout(gbox);
+
+	QString text;
+	QLabel *label = new QLabel(i18n("CDDB server:"), group);
+
+	gbox->addWidget(label, 0, 0);
+
+	cddb_widgets.cddb_protocol = new QComboBox(group);
+	cddb_widgets.cddb_protocol->insertItem(0, "HTTP");
+	cddb_widgets.cddb_protocol->insertItem(0, "CDDBP");
+	//connect(cddb_widgets.cddb_protocol, SIGNAL(activated(int)), SLOT(protocol_changed(int)));
+	gbox->addWidget(cddb_widgets.cddb_protocol, 0, 1);
+
+	cddb_widgets.cddb_server = new QLineEdit(group);
+	cddb_widgets.cddb_server->setMinimumWidth(fontMetrics().maxWidth() * 10);
+	gbox->addWidget(cddb_widgets.cddb_server, 0, 2);
+
+	QPushButton *browse = new QPushButton(i18n("Browse"), group);
+
+	//connect(browse, SIGNAL(clicked()), SLOT(browsing()));
+	gbox->addWidget(browse, 0, 3);
+
+	label = new QLabel(i18n("CGI path:"), group);
+	gbox->addWidget(label, 1, 0);
+	cddb_widgets.cgi_path = new QLineEdit(group);
+	cddb_widgets.cgi_path->setMinimumWidth(fontMetrics().maxWidth() * 10);
+	gbox->addWidget(cddb_widgets.cgi_path, 1, 2);
+
+	group = new QGroupBox(i18n("&Proxy configuration"));
+	topLayout->addWidget(group);
+	vlay = new QVBoxLayout(group);
+	vlay->addSpacing(fontMetrics().lineSpacing());
+
+	gbox = new QGridLayout();
+	vlay->addLayout(gbox);
+	text = i18n("Use proxy for CDDB lookups");
+	cddb_widgets.use_proxy = new QCheckBox(text, group);
+	//connect(cddb_widgets.use_proxy, SIGNAL(toggled(bool)), this, SLOT(use_proxy(bool)));
+	gbox->addWidget(cddb_widgets.use_proxy, 0, 0, 1, 2);
+	text = i18n("Use 'http_proxy' environment variable");
+	cddb_widgets.proxy_from_env = new QCheckBox(text, group);
+	//connect(cddb_widgets.proxy_from_env, SIGNAL(toggled(bool)), this, SLOT(use_proxy_env(bool)));
+	gbox->addWidget(cddb_widgets.proxy_from_env, 1, 0, 1, 2);
+
+	label = new QLabel(i18n("Proxy server:"), group);
+	gbox->addWidget(label, 2, 0);
+	cddb_widgets.proxy_server = new QLineEdit(group);
+	cddb_widgets.proxy_server->setMinimumWidth(fontMetrics().maxWidth() * 10);
+	gbox->addWidget(cddb_widgets.proxy_server, 2, 1, 1, 1);
+
+	label = new QLabel(i18n("Proxy server port:"), group);
+	gbox->addWidget(label, 3, 0);
+	cddb_widgets.proxy_port = new QLineEdit(group);
+	cddb_widgets.proxy_port->setMaxLength(5);
+	gbox->addWidget(cddb_widgets.proxy_port, 3, 1, 1, 1);
+	//set_cddb();
+	topLayout->addStretch(10);
+	addPage(page, i18n("CDDB"));
+}
+
+#if 0
 
 void PreferencesDialog::use_proxy(bool status)
 {
@@ -345,15 +377,6 @@ void PreferencesDialog::set_cddb()
 		cddb_widgets.cddb_protocol->setCurrentItem(0);
 		cddb_widgets.cgi_path->setEnabled(true);
 	}
-}
-
-void PreferencesDialog::set_cdrom()
-{
-	cdrom_widgets.cdrom_device->setText(globals.cdrom_device);
-	if (globals.eject_cdrom)
-		cdrom_widgets.eject_cdrom->setChecked(true);
-	else
-		cdrom_widgets.eject_cdrom->setChecked(false);
 }
 
 void PreferencesDialog::set_cddb_files()
@@ -732,3 +755,4 @@ void PreferencesDialog::protocol_changed(int prot)
 		}
 	}
 }
+#endif

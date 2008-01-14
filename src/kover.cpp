@@ -20,6 +20,8 @@
 
 #include <KDE/KLocale>
 
+#include <pd.h>
+
 kover::kover()
     : KXmlGuiWindow(),
       m_view(new koverView(this)),
@@ -79,6 +81,7 @@ void kover::optionsPreferences()
     // compare the names of the widgets in the .ui file
     // to the names of the variables in the .kcfg file
     //avoid to have 2 dialogs shown
+#if 0
     if ( KConfigDialog::showDialog( "settings" ) )  {
         return;
     }
@@ -89,6 +92,13 @@ void kover::optionsPreferences()
     connect(dialog, SIGNAL(settingsChanged(QString)), m_view, SLOT(settingsChanged()));
     dialog->setAttribute( Qt::WA_DeleteOnClose );
     dialog->show();
+#endif
+	KConfigSkeleton* cs = new KConfigSkeleton;
+	pd *dialog = NULL;
+
+	dialog = new pd(this,cs,true);
+	dialog->exec();
+	delete dialog;
 }
 
 #include "kover.moc"

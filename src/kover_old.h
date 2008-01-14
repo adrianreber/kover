@@ -31,7 +31,7 @@
 #include <string>
 #include <list>
 
-#include "kover_global.h"
+#include "globals.h"
 
 using std::string;
 

@@ -5,6 +5,7 @@ set(${PROJECT_NAME}_SRCS
    main.cpp
    koverview.cpp
    config.cc
+   pd.cpp
  )
 
 pkg_check_modules(CDIO REQUIRED libcdio)

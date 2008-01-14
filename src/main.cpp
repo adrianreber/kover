@@ -26,7 +26,7 @@
 #include <KDE/KLocale>
 #include <kover_old.h>
 #include <signal.h>
-#include <kover_global.h>
+#include <globals.h>
 #include <koverconfig.h>
 #include <cdio/cdio.h>
 
@@ -72,10 +72,10 @@ void the_end()
 		//globals.xpos = kovertop->x();
 		//globals.ypos = kovertop->y();
 	}
-/*
+
 	config->store_globals();
 	config->sync();
-*/
+
 	cleanup();
 	fprintf(stderr, "In Double Vision where drunk.\n");
 }

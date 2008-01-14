@@ -1,53 +1,48 @@
-/**  hey emacs! check this out: -*- adrian-c -*-
-	kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-	Copyright (C) 2000-2002 by Adrian Reber
-	
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
-	
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-	
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-	
-	File: PreferencesDialog.h
-	
-	Description: Header to PreferencesDialog.h
-*/
+/*
+ * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
+ * Copyright (C) 2000, 2008 by Adrian Reber
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
-/* $Id: PreferencesDialog.h,v 1.22 2005/06/25 19:17:21 adrian Exp $ */
+/* This is the Preferences Dialog (pd) */
 
-#ifndef PREFERENCES_DIALOG_H
-#define PREFERENCES_DIALOG_H
+#ifndef PD_H
+#define PD_H
 
-#include "kover.h"
-#include <qradiobutton.h>
-//Added by qt3to4:
+#include <kconfigdialog.h>
 #include <QLabel>
-#include <kdialog.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include "koverfile.h"
-#include <Q3Button>
-#include <krecentfilesaction.h>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QRadioButton>
 
 using namespace std;
 
-class PreferencesDialog:public KDialog {
+class pd:public KConfigDialog {
   Q_OBJECT public:
-      PreferencesDialog (QWidget * parent, const QString & caption, bool changed=false);
-     ~PreferencesDialog ();
+      pd (QWidget * p, KConfigSkeleton* cs, bool changed=false);
+     ~pd ();
 
   private:
+    void setup_cdrom();
+    void set_cdrom();
+    void apply_settings();
+    void setup_cddb();
+#if 0
     void setupCDDBPage ();
-    void setupCDROMPage ();
     void setup_cddb_files_page ();
     void setup_misc_page ();
     void setup_font_page ();
@@ -65,7 +60,7 @@ class PreferencesDialog:public KDialog {
     void save_misc ();
     void save_cover ();
     void show_font_warning();
-
+#endif
     struct cddb_widgets {
         QLineEdit *cddb_server;
         QLineEdit *cgi_path;
@@ -75,8 +70,6 @@ class PreferencesDialog:public KDialog {
         QLineEdit *proxy_port;
 	QComboBox *cddb_protocol;
     } cddb_widgets;
-
-    QWidget *parent;
 
     enum Page {
         page_cddb = 0,
@@ -121,14 +114,14 @@ class PreferencesDialog:public KDialog {
         QLabel *booklet;
     } cover_widgets;
 
-    struct font_widgets {
-        Q3Button *change_content_font;
-        Q3Button *change_title_font;
-        Q3Button *change_inlet_title_font;
-    } font_widgets;
+    //struct font_widgets {
+        //QButton *change_content_font;
+        //QButton *change_title_font;
+        //QButton *change_inlet_title_font;
+    //} font_widgets;
 
     bool changed;
-    
+#if 0
     private slots:void use_proxy (bool status);
     void use_proxy_env (bool status);
     virtual void slotOk (void);
@@ -139,6 +132,11 @@ class PreferencesDialog:public KDialog {
     void output_changed (int type);
     void browsing ();
     void protocol_changed(int);
+#endif
+	protected Q_SLOTS:
+
+	virtual void slotButtonClicked(int button);
+	//virtual void slotDefault();
 };
 
-#endif /* PREFERENCES_DIALOG_H */
+#endif /* PD_H */
