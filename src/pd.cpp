@@ -28,7 +28,8 @@
 #include <QGroupBox>
 
 
-pd::pd(QWidget * p, KConfigSkeleton* cs, bool changed):KConfigDialog(p, "configure", cs)
+pd::pd(QWidget *p, KConfigSkeleton *cs, bool changed):
+KConfigDialog(p, "configure", cs)
 {
 	setButtons(Ok | Cancel | Help);
 	setup_cddb();
@@ -44,9 +45,10 @@ pd::~pd()
 {
 }
 
-void pd::setup_cdrom(void)
+void
+pd::setup_cdrom(void)
 {
-	QWidget* page = new QWidget;
+	QWidget *page = new QWidget;
 	QVBoxLayout *topLayout = new QVBoxLayout(page);
 
 	QGroupBox *group = new QGroupBox(i18n("&CDROM"), page);
@@ -79,7 +81,8 @@ void pd::setup_cdrom(void)
 	addPage(page, i18n("CDROM"));
 }
 
-void pd::set_cdrom()
+void
+pd::set_cdrom()
 {
 	cdrom_widgets.cdrom_device->setText(globals.cdrom_device);
 	if (globals.eject_cdrom)
@@ -89,19 +92,53 @@ void pd::set_cdrom()
 }
 
 
-void pd::slotButtonClicked(int button) {
-             if (button == KDialog::Ok) {
-	printf("OK\n");
+void
+pd::slotButtonClicked(int button)
+{
+	if (button == KDialog::Ok) {
+		printf("OK\n");
 		apply_settings();
 		accept();
+	} else
+		KDialog::slotButtonClicked(button);
 }
-             else
-                 KDialog::slotButtonClicked(button);
-         }
 
 
-void pd::apply_settings()
+void
+pd::apply_settings()
 {
+	if (!((cddb_widgets.proxy_port)->text()).isEmpty()) {
+		globals.proxy_port = ((cddb_widgets.proxy_port)->text()).toInt();
+	}
+
+	if (!((cddb_widgets.cddb_server)->text()).isEmpty()) {
+		fprintf(stderr,
+			"kover:old value :%s\nkover:new value: %s\n",
+			globals.cddb_server, ((cddb_widgets.cddb_server)->text()).toUtf8().constData());
+		free(globals.cddb_server);
+		globals.cddb_server = strdup(((cddb_widgets.cddb_server)->text()).toUtf8());
+	}
+
+	if (!((cddb_widgets.cgi_path)->text()).isEmpty()) {
+		fprintf(stderr,
+			"kover:old value :%s\nkover:new value: %s\n",
+			globals.cgi_path, ((cddb_widgets.cgi_path)->text()).toUtf8().constData());
+		free(globals.cgi_path);
+		globals.cgi_path = strdup(((cddb_widgets.cgi_path)->text()).toUtf8());
+	}
+
+	if (!((cddb_widgets.proxy_server)->text()).isEmpty()) {
+		if (globals.proxy_server)
+			free(globals.proxy_server);
+		globals.proxy_server = strdup(((cddb_widgets.proxy_server)->text()).toUtf8());
+	} else {
+		if (globals.proxy_server)
+			free(globals.proxy_server);
+		globals.proxy_server = NULL;
+	}
+
+	globals.use_proxy = ((cddb_widgets.use_proxy)->isChecked())? 1 : 0;
+	globals.proxy_from_env = ((cddb_widgets.proxy_from_env)->isChecked())? 1 : 0;
 
 	globals.eject_cdrom = ((cdrom_widgets.eject_cdrom)->isChecked())? 1 : 0;
 
@@ -117,10 +154,10 @@ void pd::apply_settings()
 
 }
 
-
-void pd::setup_cddb(void)
+void
+pd::setup_cddb(void)
 {
-	QWidget* page = new QWidget;
+	QWidget *page = new QWidget;
 	QVBoxLayout *topLayout = new QVBoxLayout(page);
 
 	QGroupBox *group = new QGroupBox(i18n("&CDDB server"));
@@ -142,9 +179,9 @@ void pd::setup_cddb(void)
 	gbox->addWidget(label, 0, 0);
 
 	cddb_widgets.cddb_protocol = new QComboBox(group);
-	cddb_widgets.cddb_protocol->insertItem(0, "HTTP");
 	cddb_widgets.cddb_protocol->insertItem(0, "CDDBP");
-	//connect(cddb_widgets.cddb_protocol, SIGNAL(activated(int)), SLOT(protocol_changed(int)));
+	cddb_widgets.cddb_protocol->insertItem(0, "HTTP");
+	connect(cddb_widgets.cddb_protocol, SIGNAL(activated(int)), SLOT(protocol_changed(int)));
 	gbox->addWidget(cddb_widgets.cddb_protocol, 0, 1);
 
 	cddb_widgets.cddb_server = new QLineEdit(group);
@@ -171,42 +208,88 @@ void pd::setup_cddb(void)
 	vlay->addLayout(gbox);
 	text = i18n("Use proxy for CDDB lookups");
 	cddb_widgets.use_proxy = new QCheckBox(text, group);
-	//connect(cddb_widgets.use_proxy, SIGNAL(toggled(bool)), this, SLOT(use_proxy(bool)));
+	connect(cddb_widgets.use_proxy, SIGNAL(toggled(bool)), this, SLOT(use_proxy(bool)));
 	gbox->addWidget(cddb_widgets.use_proxy, 0, 0, 1, 2);
 	text = i18n("Use 'http_proxy' environment variable");
 	cddb_widgets.proxy_from_env = new QCheckBox(text, group);
-	//connect(cddb_widgets.proxy_from_env, SIGNAL(toggled(bool)), this, SLOT(use_proxy_env(bool)));
-	gbox->addWidget(cddb_widgets.proxy_from_env, 1, 0, 1, 2);
+	connect(cddb_widgets.proxy_from_env, SIGNAL(toggled(bool)), this, SLOT(use_proxy_env(bool)));
+	gbox->addWidget(cddb_widgets.proxy_from_env, 3, 0, 1, 2);
 
 	label = new QLabel(i18n("Proxy server:"), group);
-	gbox->addWidget(label, 2, 0);
+	gbox->addWidget(label, 1, 0);
 	cddb_widgets.proxy_server = new QLineEdit(group);
 	cddb_widgets.proxy_server->setMinimumWidth(fontMetrics().maxWidth() * 10);
-	gbox->addWidget(cddb_widgets.proxy_server, 2, 1, 1, 1);
+	gbox->addWidget(cddb_widgets.proxy_server, 1, 1, 1, 1);
 
 	label = new QLabel(i18n("Proxy server port:"), group);
-	gbox->addWidget(label, 3, 0);
+	gbox->addWidget(label, 2, 0);
 	cddb_widgets.proxy_port = new QLineEdit(group);
 	cddb_widgets.proxy_port->setMaxLength(5);
-	gbox->addWidget(cddb_widgets.proxy_port, 3, 1, 1, 1);
-	//set_cddb();
+	gbox->addWidget(cddb_widgets.proxy_port, 2, 1, 1, 1);
+	set_cddb();
 	topLayout->addStretch(10);
 	addPage(page, i18n("CDDB"));
 }
 
-#if 0
-
-void PreferencesDialog::use_proxy(bool status)
+void
+pd::set_cddb()
 {
+	QString text;
+
+	cddb_widgets.cddb_server->setText(globals.cddb_server);
+	cddb_widgets.cgi_path->setText(globals.cgi_path);
+
+	if (globals.proxy_server)
+		cddb_widgets.proxy_server->setText(globals.proxy_server);
+
+	cddb_widgets.proxy_port->setText(text.sprintf("%d", globals.proxy_port));
+
+	if (globals.use_proxy) {
+		use_proxy(false);
+		if (globals.proxy_from_env) {
+			cddb_widgets.proxy_from_env->setChecked(true);
+			printf("1\n");
+			use_proxy_env(false);
+		} else {
+			cddb_widgets.proxy_from_env->setChecked(false);
+			printf("2\n");
+			use_proxy_env(true);
+		}
+
+		cddb_widgets.use_proxy->setChecked(true);
+	} else {
+		printf("2.5\n");
+		use_proxy(false);
+		cddb_widgets.use_proxy->setChecked(false);
+		if (globals.proxy_from_env)
+			cddb_widgets.proxy_from_env->setChecked(true);
+		else
+			cddb_widgets.proxy_from_env->setChecked(false);
+	}
+
+	if (globals.use_cddbp) {
+		cddb_widgets.cddb_protocol->setCurrentIndex(1);
+		cddb_widgets.cgi_path->setEnabled(false);
+		cddb_widgets.proxy_from_env->setEnabled(false);
+		printf("3\n");
+		use_proxy_env(true);
+		cddb_widgets.use_proxy->setEnabled(false);
+	} else {
+		cddb_widgets.cddb_protocol->setCurrentIndex(0);
+		cddb_widgets.cgi_path->setEnabled(true);
+	}
+}
+
+void
+pd::use_proxy(bool status)
+{
+	printf("status %d\n", status);
 	if (status) {
 		cddb_widgets.proxy_from_env->setEnabled(true);
-		if ((cddb_widgets.proxy_from_env)->isChecked()) {
-			cddb_widgets.proxy_server->setEnabled(false);
-			cddb_widgets.proxy_port->setEnabled(false);
-		} else {
-			cddb_widgets.proxy_server->setEnabled(true);
-			cddb_widgets.proxy_port->setEnabled(true);
-		}
+		if ((cddb_widgets.proxy_from_env)->isChecked())
+			use_proxy_env(true);
+		else
+			use_proxy_env(false);
 	} else {
 		cddb_widgets.proxy_from_env->setEnabled(false);
 		cddb_widgets.proxy_server->setEnabled(false);
@@ -214,20 +297,53 @@ void PreferencesDialog::use_proxy(bool status)
 	}
 }
 
-void PreferencesDialog::use_proxy_env(bool status)
+void
+pd::use_proxy_env(bool status)
 {
+	printf("use_proxy_env %d\n", status);
 	cddb_widgets.proxy_server->setEnabled(!status);
 	cddb_widgets.proxy_port->setEnabled(!status);
 }
 
-void PreferencesDialog::slotOk()
+void
+pd::protocol_changed(int prot)
+{
+	bool http = prot ? false : true;
+	globals.use_cddbp = prot;
+
+	printf("http %d\n", http);
+
+	if (http) {
+		cddb_widgets.cgi_path->setEnabled(http);
+		cddb_widgets.use_proxy->setEnabled(http);
+		if (cddb_widgets.use_proxy->isChecked()) {
+			cddb_widgets.proxy_from_env->setEnabled(http);
+			if (cddb_widgets.proxy_from_env->isChecked())
+				use_proxy_env(http);
+			else
+				use_proxy_env(!http);
+		} else {
+			use_proxy_env(http);
+			cddb_widgets.proxy_from_env->setEnabled(!http);
+		}
+
+	} else {
+		cddb_widgets.cgi_path->setEnabled(http);
+		cddb_widgets.use_proxy->setEnabled(http);
+		cddb_widgets.proxy_from_env->setEnabled(http);
+		use_proxy_env(!http);
+	}
+}
+
+#if 0
+void
+PreferencesDialog::slotOk()
 {
 	static int i = 0;
 
 	if ((((cddb_widgets.proxy_server)->text()).isEmpty()
 	     || ((cddb_widgets.proxy_port)->text()).isEmpty())
-	    && (cddb_widgets.use_proxy)->isChecked()
-	    && !(cddb_widgets.proxy_from_env)->isChecked()) {
+	    && (cddb_widgets.use_proxy)->isChecked() && !(cddb_widgets.proxy_from_env)->isChecked()) {
 		switch (i) {
 		case 0:
 			KMessageBox::information(this, "Come for the third, Laertes. You do but dally.");
@@ -254,45 +370,12 @@ void PreferencesDialog::slotOk()
 	accept();
 }
 
-void PreferencesDialog::apply_settings()
+void
+PreferencesDialog::apply_settings()
 {
 	save_cddb_files();
 	save_misc();
 	save_cover();
-
-	if (!((cddb_widgets.proxy_port)->text()).isEmpty()) {
-		globals.proxy_port = ((cddb_widgets.proxy_port)->text()).toInt();
-	}
-
-	if (!((cddb_widgets.cddb_server)->text()).isEmpty()) {
-		_DEBUG_ fprintf(stderr,
-				"kover:old value :%s\nkover:new value: %s\n",
-				globals.cddb_server, ((cddb_widgets.cddb_server)->text()).latin1());
-		free(globals.cddb_server);
-		globals.cddb_server = strdup(((cddb_widgets.cddb_server)->text()).latin1());
-	}
-
-	if (!((cddb_widgets.cgi_path)->text()).isEmpty()) {
-		_DEBUG_ fprintf(stderr,
-				"kover:old value :%s\nkover:new value: %s\n",
-				globals.cgi_path, ((cddb_widgets.cgi_path)->text()).latin1());
-		free(globals.cgi_path);
-		globals.cgi_path = strdup(((cddb_widgets.cgi_path)->text()).latin1());
-	}
-
-	if (!((cddb_widgets.proxy_server)->text()).isEmpty()) {
-		if (globals.proxy_server)
-			free(globals.proxy_server);
-		globals.proxy_server = strdup(((cddb_widgets.proxy_server)->text()).latin1());
-	} else {
-		if (globals.proxy_server)
-			free(globals.proxy_server);
-		globals.proxy_server = NULL;
-	}
-
-	globals.use_proxy = ((cddb_widgets.use_proxy)->isChecked())? 1 : 0;
-	globals.proxy_from_env = ((cddb_widgets.proxy_from_env)->isChecked())? 1 : 0;
-	globals.eject_cdrom = ((cdrom_widgets.eject_cdrom)->isChecked())? 1 : 0;
 
 	if (!((cdrom_widgets.cdrom_device)->text()).isEmpty()) {
 		if (globals.cdrom_device)
@@ -306,7 +389,8 @@ void PreferencesDialog::apply_settings()
 
 }
 
-void PreferencesDialog::slotDefault()
+void
+PreferencesDialog::slotDefault()
 {
 	switch (activePageIndex()) {
 	case page_cddb:
@@ -339,47 +423,8 @@ void PreferencesDialog::slotDefault()
 	}
 }
 
-void PreferencesDialog::set_cddb()
-{
-	QString text;
-
-	cddb_widgets.cddb_server->setText(globals.cddb_server);
-	cddb_widgets.cgi_path->setText(globals.cgi_path);
-
-	if (globals.proxy_server)
-		cddb_widgets.proxy_server->setText(globals.proxy_server);
-
-	cddb_widgets.proxy_port->setText(text.sprintf("%d", globals.proxy_port));
-
-	if (globals.use_proxy) {
-		use_proxy(true);
-		cddb_widgets.use_proxy->setChecked(true);
-	} else {
-		use_proxy(false);
-		cddb_widgets.use_proxy->setChecked(false);
-	}
-
-	if (globals.proxy_from_env) {
-		cddb_widgets.proxy_from_env->setChecked(true);
-		use_proxy_env(true);
-	} else {
-		cddb_widgets.proxy_from_env->setChecked(false);
-		use_proxy_env(false);
-	}
-
-	if (globals.use_cddbp) {
-		cddb_widgets.cddb_protocol->setCurrentItem(1);
-		cddb_widgets.cgi_path->setEnabled(false);
-		cddb_widgets.proxy_from_env->setEnabled(false);
-		use_proxy_env(true);
-		cddb_widgets.use_proxy->setEnabled(false);
-	} else {
-		cddb_widgets.cddb_protocol->setCurrentItem(0);
-		cddb_widgets.cgi_path->setEnabled(true);
-	}
-}
-
-void PreferencesDialog::set_cddb_files()
+void
+PreferencesDialog::set_cddb_files()
 {
 	if (globals.use_cache)
 		cddb_files_widgets.use_cache->setChecked(true);
@@ -389,10 +434,13 @@ void PreferencesDialog::set_cddb_files()
 	cddb_files_widgets.cddb_path->setText(globals.cddb_path);
 }
 
-void PreferencesDialog::setup_cddb_files_page(void)
+void
+PreferencesDialog::setup_cddb_files_page(void)
 {
-	Q3Frame *page = addPage(i18n("CDDB files"), i18n("Local CDDB files"),
-			       BarIcon("folder_blue", KIcon::SizeMedium));
+	Q3Frame *page = addPage(i18n("CDDB files"),
+				i18n("Local CDDB files"),
+				BarIcon("folder_blue",
+					KIcon::SizeMedium));
 	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
 
 	Q3GroupBox *group = new Q3GroupBox(i18n("&Local CDDB files"), page);
@@ -411,7 +459,8 @@ void PreferencesDialog::setup_cddb_files_page(void)
 	cddb_files_widgets.use_cache = new QCheckBox(text, group, "use_cache");
 	gbox->addMultiCellWidget(cddb_files_widgets.use_cache, 0, 0, 0, 5);
 
-	QLabel *label = new QLabel(i18n("CDDB path:"), group, "pathlabel");
+	QLabel *label = new QLabel(i18n("CDDB path:"), group,
+				   "pathlabel");
 
 	gbox->addWidget(label, 2, 0);
 	cddb_files_widgets.cddb_path = new QLineEdit(group, "path");
@@ -422,7 +471,8 @@ void PreferencesDialog::setup_cddb_files_page(void)
 	topLayout->addStretch(10);
 }
 
-void PreferencesDialog::save_cddb_files()
+void
+PreferencesDialog::save_cddb_files()
 {
 	globals.use_cache = ((cddb_files_widgets.use_cache)->isChecked())? 1 : 0;
 
@@ -436,10 +486,12 @@ void PreferencesDialog::save_cddb_files()
 
 }
 
-void PreferencesDialog::setup_cover_page()
+void
+PreferencesDialog::setup_cover_page()
 {
 	Q3Frame *page = addPage(i18n("Cover"), i18n("Cover"),
-			       BarIcon("kover", KIcon::SizeMedium));
+				BarIcon("kover",
+					KIcon::SizeMedium));
 	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
 
 	Q3ButtonGroup *group = new Q3ButtonGroup(i18n("Cover"), page);
@@ -488,7 +540,8 @@ void PreferencesDialog::setup_cover_page()
 	set_cover();
 }
 
-void PreferencesDialog::set_cover()
+void
+PreferencesDialog::set_cover()
 {
 	if (globals.display_track_duration)
 		cover_widgets.display_track_duration->setChecked(true);
@@ -520,7 +573,8 @@ void PreferencesDialog::set_cover()
 		cover_widgets.one_page->setChecked(false);
 }
 
-void PreferencesDialog::save_cover()
+void
+PreferencesDialog::save_cover()
 {
 	if ((cover_widgets.display_track_duration)->isChecked())
 		globals.display_track_duration = 1;
@@ -543,10 +597,11 @@ void PreferencesDialog::save_cover()
 		globals.one_page = 0;
 }
 
-void PreferencesDialog::setup_font_page()
+void
+PreferencesDialog::setup_font_page()
 {
 	Q3Frame *page = addPage(i18n("Fonts"), i18n("Standard Fonts"),
-			       BarIcon("fonts", KIcon::SizeMedium));
+				BarIcon("fonts", KIcon::SizeMedium));
 	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
 
 	Q3GroupBox *group = new Q3GroupBox(i18n("&Standard Fonts"), page);
@@ -560,13 +615,14 @@ void PreferencesDialog::setup_font_page()
 	vlay->addLayout(gbox);
 
 	QLabel *label =
-	    new
-	    QLabel(i18n("<qt>Changes to any of these fonts are global. "
+		new
+		QLabel(i18n
+		       ("<qt>Changes to any of these fonts are global. "
 			"This means, that changes will only be available "
 			"for the next new cover. "
 			"Except that the current cover is empty. "
 			"Then changes are applied to the current cover.</qt>"),
-		   group, "font_info");
+		       group, "font_info");
 
 	gbox->addMultiCellWidget(label, 0, 0, 0, 1);
 
@@ -588,25 +644,31 @@ void PreferencesDialog::setup_font_page()
 	label = new QLabel(i18n("Spine Text Font: "), group, "inlet_title_font");
 	gbox->addWidget(label, 3, 0);
 
-	font_widgets.change_inlet_title_font = new QPushButton(i18n("Change"), group, "change_inlet_title_font");
+	font_widgets.change_inlet_title_font =
+		new QPushButton(i18n("Change"), group, "change_inlet_title_font");
 	gbox->addWidget(font_widgets.change_inlet_title_font, 3, 1);
-	connect(font_widgets.change_inlet_title_font, SIGNAL(clicked()), this, SLOT(inlet_title_font_dialog()));
+	connect(font_widgets.change_inlet_title_font,
+		SIGNAL(clicked()), this, SLOT(inlet_title_font_dialog()));
 
 	topLayout->addStretch();
 }
 
-void PreferencesDialog::content_font_dialog()
+void
+PreferencesDialog::content_font_dialog()
 {
-	_DEBUG_ fprintf(stderr, "%s:font name before: %s\n", PACKAGE, ((globals.content_font)->rawName()).latin1());
+	_DEBUG_ fprintf(stderr, "%s:font name before: %s\n", PACKAGE,
+			((globals.content_font)->rawName()).latin1());
 	KFontDialog *kf = new KFontDialog(this, "kf", true);
 
 	kf->getFont(*globals.content_font);
-	_DEBUG_ fprintf(stderr, "%s:font name after: %s\n", PACKAGE, ((globals.content_font)->rawName()).latin1());
+	_DEBUG_ fprintf(stderr, "%s:font name after: %s\n", PACKAGE,
+			((globals.content_font)->rawName()).latin1());
 	if (changed)
 		show_font_warning();
 }
 
-void PreferencesDialog::title_font_dialog()
+void
+PreferencesDialog::title_font_dialog()
 {
 	KFontDialog *kf = new KFontDialog(this, "kf", true);
 
@@ -615,7 +677,8 @@ void PreferencesDialog::title_font_dialog()
 		show_font_warning();
 }
 
-void PreferencesDialog::inlet_title_font_dialog()
+void
+PreferencesDialog::inlet_title_font_dialog()
 {
 	KFontDialog *kf = new KFontDialog(this, "kf", true);
 
@@ -624,7 +687,8 @@ void PreferencesDialog::inlet_title_font_dialog()
 		show_font_warning();
 }
 
-void PreferencesDialog::output_changed(int type)
+void
+PreferencesDialog::output_changed(int type)
 {
 	KIconLoader pixmap = KIconLoader();
 
@@ -634,7 +698,8 @@ void PreferencesDialog::output_changed(int type)
 	}
 	if (type == 2) {
 		cover_widgets.inlet->setPixmap(NULL);
-		cover_widgets.booklet->setPixmap(pixmap.loadIcon("front_title-right_content-left", KIcon::NoGroup));
+		cover_widgets.booklet->setPixmap(pixmap.
+						 loadIcon("front_title-right_content-left", KIcon::NoGroup));
 	}
 	if (type == 3) {
 		cover_widgets.inlet->setPixmap(pixmap.loadIcon("back_title_content", KIcon::NoGroup));
@@ -646,7 +711,8 @@ void PreferencesDialog::output_changed(int type)
 	}
 }
 
-void PreferencesDialog::browsing()
+void
+PreferencesDialog::browsing()
 {
 	server_dialog *dialog;
 	int aber = 0;
@@ -659,10 +725,12 @@ void PreferencesDialog::browsing()
 	delete(dialog);
 }
 
-void PreferencesDialog::setup_misc_page(void)
+void
+PreferencesDialog::setup_misc_page(void)
 {
-	Q3Frame *page = addPage(i18n("Miscellaneous"), i18n("Various properties"),
-			       BarIcon("misc", KIcon::SizeMedium));
+	Q3Frame *page = addPage(i18n("Miscellaneous"),
+				i18n("Various properties"),
+				BarIcon("misc", KIcon::SizeMedium));
 	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
 
 	Q3GroupBox *group = new Q3GroupBox(i18n("&Stuff"), page);
@@ -693,7 +761,8 @@ void PreferencesDialog::setup_misc_page(void)
 	topLayout->addStretch(10);
 }
 
-void PreferencesDialog::save_misc()
+void
+PreferencesDialog::save_misc()
 {
 	if ((misc_widgets.save_position)->isChecked())
 		globals.save_position = 1;
@@ -711,7 +780,8 @@ void PreferencesDialog::save_misc()
 		globals.trigger_actual_size = 0;
 }
 
-void PreferencesDialog::set_misc()
+void
+PreferencesDialog::set_misc()
 {
 	if (globals.save_position)
 		misc_widgets.save_position->setChecked(true);
@@ -729,7 +799,8 @@ void PreferencesDialog::set_misc()
 		misc_widgets.trigger_actual_size->setChecked(false);
 }
 
-void PreferencesDialog::show_font_warning()
+void
+PreferencesDialog::show_font_warning()
 {
 	KMessageBox::information(this,
 				 tr
@@ -737,22 +808,4 @@ void PreferencesDialog::show_font_warning()
 	changed = false;
 }
 
-void PreferencesDialog::protocol_changed(int prot)
-{
-	globals.use_cddbp = prot;
-	if (prot) {
-		cddb_widgets.cgi_path->setEnabled(false);
-		cddb_widgets.proxy_from_env->setEnabled(false);
-		cddb_widgets.proxy_server->setEnabled(false);
-		cddb_widgets.proxy_port->setEnabled(false);
-		cddb_widgets.use_proxy->setEnabled(false);
-	} else {
-		cddb_widgets.cgi_path->setEnabled(true);
-		cddb_widgets.use_proxy->setEnabled(true);
-		if (cddb_widgets.use_proxy->isChecked()) {
-			cddb_widgets.proxy_from_env->setEnabled(true);
-			use_proxy_env(cddb_widgets.proxy_from_env->isChecked());
-		}
-	}
-}
 #endif
