@@ -51,6 +51,7 @@ void eject_cdrom()
 	cdio = cdio_open(device, DRIVER_UNKNOWN);
 	cdio_eject_media(&cdio);
 	cdio_destroy(cdio);
+	free(device);
 	return;
 }
 
