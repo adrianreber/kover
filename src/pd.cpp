@@ -34,8 +34,8 @@ KConfigDialog(p, "configure", cs)
 	setButtons(Ok | Cancel | Help);
 	setup_cddb();
 	setup_cdrom();
-	//setup_cddb_files_page();
-	//setup_cover_page();
+	setup_cddb_files();
+	setup_cover();
 	//setup_font_page();
 	//setup_misc_page();
 	this->changed = changed;
@@ -137,6 +137,7 @@ pd::apply_settings()
 		globals.proxy_server = NULL;
 	}
 
+	globals.use_cddbp = cddb_widgets.cddb_protocol->currentIndex();
 	globals.use_proxy = ((cddb_widgets.use_proxy)->isChecked())? 1 : 0;
 	globals.proxy_from_env = ((cddb_widgets.proxy_from_env)->isChecked())? 1 : 0;
 
@@ -152,6 +153,7 @@ pd::apply_settings()
 		globals.cdrom_device = NULL;
 	}
 
+	save_cddb_files();
 }
 
 void
@@ -244,95 +246,170 @@ pd::set_cddb()
 
 	cddb_widgets.proxy_port->setText(text.sprintf("%d", globals.proxy_port));
 
-	if (globals.use_proxy) {
-		use_proxy(false);
-		if (globals.proxy_from_env) {
-			cddb_widgets.proxy_from_env->setChecked(true);
-			printf("1\n");
-			use_proxy_env(false);
-		} else {
-			cddb_widgets.proxy_from_env->setChecked(false);
-			printf("2\n");
-			use_proxy_env(true);
-		}
+	cddb_widgets.cddb_protocol->setCurrentIndex(globals.use_cddbp ? 1 : 0);
+	cddb_widgets.proxy_from_env->setChecked(globals.proxy_from_env);
+	cddb_widgets.use_proxy->setChecked(globals.use_proxy);
 
-		cddb_widgets.use_proxy->setChecked(true);
-	} else {
-		printf("2.5\n");
-		use_proxy(false);
-		cddb_widgets.use_proxy->setChecked(false);
-		if (globals.proxy_from_env)
-			cddb_widgets.proxy_from_env->setChecked(true);
-		else
-			cddb_widgets.proxy_from_env->setChecked(false);
-	}
-
-	if (globals.use_cddbp) {
-		cddb_widgets.cddb_protocol->setCurrentIndex(1);
-		cddb_widgets.cgi_path->setEnabled(false);
-		cddb_widgets.proxy_from_env->setEnabled(false);
-		printf("3\n");
-		use_proxy_env(true);
-		cddb_widgets.use_proxy->setEnabled(false);
-	} else {
-		cddb_widgets.cddb_protocol->setCurrentIndex(0);
-		cddb_widgets.cgi_path->setEnabled(true);
-	}
+	protocol_changed(globals.use_cddbp ? 1 : 0);
 }
 
+/**
+ * enable/disable the use proxy and proxy information input fields
+ *
+ * @param status  true if proxy input fields should be enabled
+ */
 void
 pd::use_proxy(bool status)
 {
-	printf("status %d\n", status);
-	if (status) {
-		cddb_widgets.proxy_from_env->setEnabled(true);
-		if ((cddb_widgets.proxy_from_env)->isChecked())
-			use_proxy_env(true);
-		else
-			use_proxy_env(false);
-	} else {
-		cddb_widgets.proxy_from_env->setEnabled(false);
-		cddb_widgets.proxy_server->setEnabled(false);
-		cddb_widgets.proxy_port->setEnabled(false);
-	}
+	if ((cddb_widgets.proxy_from_env)->isChecked() && status)
+		use_proxy_env(true);
+	else
+		use_proxy_env(!status);
+
+	cddb_widgets.proxy_from_env->setEnabled(status);
 }
 
+/**
+ * if status is true the proxy server and proxy port input
+ * text area are disabled
+ *
+ * @param status  true if proxy should be read from environment variable
+ *                this will disable the input text area for proxy information
+ */
 void
 pd::use_proxy_env(bool status)
 {
-	printf("use_proxy_env %d\n", status);
 	cddb_widgets.proxy_server->setEnabled(!status);
 	cddb_widgets.proxy_port->setEnabled(!status);
 }
 
+/**
+ * protocol_changed is called everytime the user selects between the
+ * protocols (HTTP/CDDBP)
+ *
+ * @param prot  0 = CDDBP
+ *              1 = HTTP
+ */
 void
 pd::protocol_changed(int prot)
 {
 	bool http = prot ? false : true;
-	globals.use_cddbp = prot;
 
-	printf("http %d\n", http);
+	if (!cddb_widgets.use_proxy->isChecked() && http) {
+		use_proxy_env(true);
+		cddb_widgets.proxy_from_env->setEnabled(false);
+	} else
+		use_proxy(http);
 
-	if (http) {
-		cddb_widgets.cgi_path->setEnabled(http);
-		cddb_widgets.use_proxy->setEnabled(http);
-		if (cddb_widgets.use_proxy->isChecked()) {
-			cddb_widgets.proxy_from_env->setEnabled(http);
-			if (cddb_widgets.proxy_from_env->isChecked())
-				use_proxy_env(http);
-			else
-				use_proxy_env(!http);
-		} else {
-			use_proxy_env(http);
-			cddb_widgets.proxy_from_env->setEnabled(!http);
-		}
+	cddb_widgets.cgi_path->setEnabled(http);
+	cddb_widgets.use_proxy->setEnabled(http);
+}
 
-	} else {
-		cddb_widgets.cgi_path->setEnabled(http);
-		cddb_widgets.use_proxy->setEnabled(http);
-		cddb_widgets.proxy_from_env->setEnabled(http);
-		use_proxy_env(!http);
-	}
+void
+pd::setup_cddb_files(void)
+{
+	QWidget *page = new QWidget;
+	QVBoxLayout *topLayout = new QVBoxLayout(page);
+
+	QGroupBox *group = new QGroupBox(i18n("&Local CDDB files"), page);
+
+	topLayout->addWidget(group);
+	QVBoxLayout *vlay = new QVBoxLayout(group);
+
+	vlay->addSpacing(fontMetrics().lineSpacing());
+	QGridLayout *gbox = new QGridLayout();
+
+	vlay->addLayout(gbox);
+
+	QString text;
+
+	text = i18n("Enable caching of CDDB entries locally");
+	cddb_files_widgets.use_cache = new QCheckBox(text, group);
+	gbox->addWidget(cddb_files_widgets.use_cache, 0, 0, 1, -1);
+
+	QLabel *label = new QLabel(i18n("CDDB path:"), group);
+
+	gbox->addWidget(label, 1, 0);
+	cddb_files_widgets.cddb_path = new QLineEdit(group);
+	cddb_files_widgets.cddb_path->setMinimumWidth(fontMetrics().maxWidth() * 10);
+	gbox->addWidget(cddb_files_widgets.cddb_path, 1, 1, 1, 1);
+
+	set_cddb_files();
+	topLayout->addStretch(10);
+	addPage(page, i18n("CDDB files"));
+}
+
+void
+pd::set_cddb_files()
+{
+	cddb_files_widgets.use_cache->setChecked(globals.use_cache);
+	cddb_files_widgets.cddb_path->setText(globals.cddb_path);
+}
+
+void
+pd::save_cddb_files()
+{
+	globals.use_cache = ((cddb_files_widgets.use_cache)->isChecked())? 1 : 0;
+
+	if (globals.cddb_path)
+		free(globals.cddb_path);
+	if (!((cddb_files_widgets.cddb_path)->text()).isEmpty())
+		globals.cddb_path = strdup(((cddb_files_widgets.cddb_path)->text()).toUtf8());
+	else
+		globals.cddb_path = NULL;
+}
+
+void
+pd::setup_cover()
+{
+	QWidget *page = new QWidget;
+	QVBoxLayout *topLayout = new QVBoxLayout(page);
+
+	QGroupBox *group = new QGroupBox(i18n("Cover"), page);
+
+	topLayout->addWidget(group);
+	QVBoxLayout *vlay = new QVBoxLayout(group);
+
+	vlay->addSpacing(fontMetrics().lineSpacing());
+	QGridLayout *gbox = new QGridLayout();
+
+	vlay->addLayout(gbox);
+
+	QString text;
+
+	text = i18n("Display track duration after a CDDB request");
+	cover_widgets.display_track_duration = new QCheckBox(text, group);
+	gbox->addWidget(cover_widgets.display_track_duration, 0, 0, 1, -1);
+
+	text = i18n("Print inlet and booklet");
+	cover_widgets.its_normal = new QRadioButton(text, group);
+	gbox->addWidget(cover_widgets.its_normal, 1, 0);
+
+	text = i18n("Print inlet on left side of booklet.\n(slim case option)");
+	cover_widgets.its_a_slim_case = new QRadioButton(text, group);
+	gbox->addWidget(cover_widgets.its_a_slim_case, 2, 0, 1, -1);
+
+	text = i18n("Don't print booklet.\n(inlet only option)");
+	cover_widgets.inlet_only = new QRadioButton(text, group);
+	gbox->addWidget(cover_widgets.inlet_only, 3, 0, 1, -1);
+
+	text = i18n("Print all on one page");
+	cover_widgets.one_page = new QRadioButton(text, group);
+	gbox->addWidget(cover_widgets.one_page, 4, 0, 1, -1);
+	//connect(group, SIGNAL(clicked(int)), SLOT(output_changed(int)));
+
+	cover_widgets.inlet = new QLabel(group);
+	KIconLoader *pixmap = KIconLoader::global ();
+
+	cover_widgets.inlet->setPixmap(pixmap->loadIcon("back_content", KIconLoader::NoGroup));
+	gbox->addWidget(cover_widgets.inlet, 5, 0, 1, 1, Qt::AlignHCenter);
+
+	cover_widgets.booklet = new QLabel(group);
+	cover_widgets.booklet->setPixmap(pixmap->loadIcon("front_title_only", KIconLoader::NoGroup));
+	gbox->addWidget(cover_widgets.booklet, 5, 1, 1, 1, Qt::AlignHCenter);
+
+	//set_cover();
+	addPage(page, i18n("Cover"));
 }
 
 #if 0
@@ -423,122 +500,8 @@ PreferencesDialog::slotDefault()
 	}
 }
 
-void
-PreferencesDialog::set_cddb_files()
-{
-	if (globals.use_cache)
-		cddb_files_widgets.use_cache->setChecked(true);
-	else
-		cddb_files_widgets.use_cache->setChecked(false);
-
-	cddb_files_widgets.cddb_path->setText(globals.cddb_path);
-}
-
-void
-PreferencesDialog::setup_cddb_files_page(void)
-{
-	Q3Frame *page = addPage(i18n("CDDB files"),
-				i18n("Local CDDB files"),
-				BarIcon("folder_blue",
-					KIcon::SizeMedium));
-	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
-
-	Q3GroupBox *group = new Q3GroupBox(i18n("&Local CDDB files"), page);
-
-	topLayout->addWidget(group);
-	Q3VBoxLayout *vlay = new Q3VBoxLayout(group, spacingHint());
-
-	vlay->addSpacing(fontMetrics().lineSpacing());
-	Q3GridLayout *gbox = new Q3GridLayout(5, 5);
-
-	vlay->addLayout(gbox);
-
-	QString text;
-
-	text = i18n("Enable caching of CDDB entries locally");
-	cddb_files_widgets.use_cache = new QCheckBox(text, group, "use_cache");
-	gbox->addMultiCellWidget(cddb_files_widgets.use_cache, 0, 0, 0, 5);
-
-	QLabel *label = new QLabel(i18n("CDDB path:"), group,
-				   "pathlabel");
-
-	gbox->addWidget(label, 2, 0);
-	cddb_files_widgets.cddb_path = new QLineEdit(group, "path");
-	cddb_files_widgets.cddb_path->setMinimumWidth(fontMetrics().maxWidth() * 10);
-	gbox->addMultiCellWidget(cddb_files_widgets.cddb_path, 2, 2, 1, 5);
-
-	set_cddb_files();
-	topLayout->addStretch(10);
-}
-
-void
-PreferencesDialog::save_cddb_files()
-{
-	globals.use_cache = ((cddb_files_widgets.use_cache)->isChecked())? 1 : 0;
-
-	if (globals.cddb_path)
-		free(globals.cddb_path);
-	if (!((cddb_files_widgets.cddb_path)->text()).isEmpty())
-		globals.cddb_path = strdup(((cddb_files_widgets.cddb_path)->text()).latin1());
-	else
-		globals.cddb_path = NULL;
 
 
-}
-
-void
-PreferencesDialog::setup_cover_page()
-{
-	Q3Frame *page = addPage(i18n("Cover"), i18n("Cover"),
-				BarIcon("kover",
-					KIcon::SizeMedium));
-	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
-
-	Q3ButtonGroup *group = new Q3ButtonGroup(i18n("Cover"), page);
-
-	topLayout->addWidget(group);
-	Q3VBoxLayout *vlay = new Q3VBoxLayout(group, spacingHint());
-
-	vlay->addSpacing(fontMetrics().lineSpacing());
-	Q3GridLayout *gbox = new Q3GridLayout(6, 5);
-
-	vlay->addLayout(gbox);
-
-	QString text;
-
-	text = i18n("Display track duration after a CDDB request");
-	cover_widgets.display_track_duration = new QCheckBox(text, group, "display_track_duration");
-	gbox->addMultiCellWidget(cover_widgets.display_track_duration, 0, 0, 0, 5);
-
-	text = i18n("Print inlet and booklet");
-	cover_widgets.its_normal = new QRadioButton(text, group, "its_normal");
-	gbox->addMultiCellWidget(cover_widgets.its_normal, 1, 1, 0, 3);
-
-	text = i18n("Print inlet on left side of booklet.\n(slim case option)");
-	cover_widgets.its_a_slim_case = new QRadioButton(text, group, "its_a_slim_case");
-	gbox->addMultiCellWidget(cover_widgets.its_a_slim_case, 2, 2, 0, 3);
-
-	text = i18n("Don't print booklet.\n(inlet only option)");
-	cover_widgets.inlet_only = new QRadioButton(text, group, "inlet_only");
-	gbox->addMultiCellWidget(cover_widgets.inlet_only, 3, 3, 0, 3);
-
-	text = i18n("Print all on one page");
-	cover_widgets.one_page = new QRadioButton(text, group, "one_page");
-	gbox->addMultiCellWidget(cover_widgets.one_page, 4, 4, 0, 3);
-	connect(group, SIGNAL(clicked(int)), SLOT(output_changed(int)));
-
-	cover_widgets.inlet = new QLabel(group);
-	KIconLoader pixmap = KIconLoader();
-
-	cover_widgets.inlet->setPixmap(pixmap.loadIcon("back_content", KIcon::NoGroup));
-	gbox->addMultiCellWidget(cover_widgets.inlet, 5, 5, 1, 2);
-
-	cover_widgets.booklet = new QLabel(group);
-	cover_widgets.booklet->setPixmap(pixmap.loadIcon("front_title_only", KIcon::NoGroup));
-	gbox->addMultiCellWidget(cover_widgets.booklet, 5, 5, 3, 4);
-
-	set_cover();
-}
 
 void
 PreferencesDialog::set_cover()

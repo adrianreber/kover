@@ -43,6 +43,10 @@ class pd:public KConfigDialog
 	void apply_settings();
 	void setup_cddb();
 	void set_cddb();
+	void setup_cddb_files();
+	void save_cddb_files();
+	void set_cddb_files();
+	void setup_cover();
 #if 0
 	void setupCDDBPage();
 	void setup_cddb_files_page();
