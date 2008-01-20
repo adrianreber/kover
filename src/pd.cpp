@@ -193,7 +193,7 @@ pd::setup_cddb(void)
 
 	QPushButton *browse = new QPushButton(i18n("Browse"), group);
 
-	//connect(browse, SIGNAL(clicked()), SLOT(browsing()));
+	connect(browse, SIGNAL(clicked()), SLOT(browsing()));
 	gbox->addWidget(browse, 0, 3);
 
 	label = new QLabel(i18n("CGI path:"), group);
@@ -498,6 +498,20 @@ pd::save_cover()
 	globals.one_page = (cover_widgets.one_page)->isChecked()? 1 : 0;
 }
 
+void
+pd::browsing()
+{
+	server_dialog *dialog;
+	int aber = 0;
+
+	dialog = new server_dialog();
+	aber = dialog->exec();
+	fprintf(stderr, "kover:server_dialog returns: %d %s\n", aber, (dialog->get(aber)).c_str());
+
+	cddb_widgets.cddb_server->setText((dialog->get(aber)).c_str());
+	delete(dialog);
+}
+
 #if 0
 void
 PreferencesDialog::slotOk()
@@ -678,19 +692,6 @@ PreferencesDialog::inlet_title_font_dialog()
 		show_font_warning();
 }
 
-void
-PreferencesDialog::browsing()
-{
-	server_dialog *dialog;
-	int aber = 0;
-
-	dialog = new server_dialog();
-	aber = dialog->exec();
-	_DEBUG_ fprintf(stderr, "kover:server_dialog returns: %d %s\n", aber, (dialog->get(aber)).c_str());
-
-	cddb_widgets.cddb_server->setText((dialog->get(aber)).c_str());
-	delete(dialog);
-}
 
 void
 PreferencesDialog::setup_misc_page(void)

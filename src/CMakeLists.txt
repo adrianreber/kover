@@ -6,6 +6,9 @@ set(${PROJECT_NAME}_SRCS
    koverview.cpp
    config.cc
    pd.cpp
+   server_dialog.cpp
+   sites.cpp
+   server.cpp
  )
 
 pkg_check_modules(CDIO REQUIRED libcdio)

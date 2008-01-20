@@ -144,7 +144,6 @@ class pd:public KConfigDialog
 	void title_font_dialog();
 	void inlet_title_font_dialog();
 	void output_changed(int type);
-	void browsing();
 #endif
 
       private slots:
@@ -156,6 +155,7 @@ class pd:public KConfigDialog
 	void output_changed_2();
 	void output_changed_3();
 	void output_changed_4();
+	void browsing();
 
       protected Q_SLOTS:
 
