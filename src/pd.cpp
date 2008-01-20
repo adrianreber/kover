@@ -154,6 +154,7 @@ pd::apply_settings()
 	}
 
 	save_cddb_files();
+	save_cover();
 }
 
 void
@@ -384,19 +385,22 @@ pd::setup_cover()
 	text = i18n("Print inlet and booklet");
 	cover_widgets.its_normal = new QRadioButton(text, group);
 	gbox->addWidget(cover_widgets.its_normal, 1, 0);
+	connect(cover_widgets.its_normal, SIGNAL(clicked(bool)), SLOT(output_changed_1()));
 
 	text = i18n("Print inlet on left side of booklet.\n(slim case option)");
 	cover_widgets.its_a_slim_case = new QRadioButton(text, group);
 	gbox->addWidget(cover_widgets.its_a_slim_case, 2, 0, 1, -1);
+	connect(cover_widgets.its_a_slim_case, SIGNAL(clicked(bool)), SLOT(output_changed_2()));
 
 	text = i18n("Don't print booklet.\n(inlet only option)");
 	cover_widgets.inlet_only = new QRadioButton(text, group);
 	gbox->addWidget(cover_widgets.inlet_only, 3, 0, 1, -1);
+	connect(cover_widgets.inlet_only, SIGNAL(clicked(bool)), SLOT(output_changed_3()));
 
 	text = i18n("Print all on one page");
 	cover_widgets.one_page = new QRadioButton(text, group);
 	gbox->addWidget(cover_widgets.one_page, 4, 0, 1, -1);
-	//connect(group, SIGNAL(clicked(int)), SLOT(output_changed(int)));
+	connect(cover_widgets.one_page, SIGNAL(clicked(bool)), SLOT(output_changed_4()));
 
 	cover_widgets.inlet = new QLabel(group);
 	KIconLoader *pixmap = KIconLoader::global ();
@@ -408,8 +412,90 @@ pd::setup_cover()
 	cover_widgets.booklet->setPixmap(pixmap->loadIcon("front_title_only", KIconLoader::NoGroup));
 	gbox->addWidget(cover_widgets.booklet, 5, 1, 1, 1, Qt::AlignHCenter);
 
-	//set_cover();
+	set_cover();
 	addPage(page, i18n("Cover"));
+}
+
+void
+pd::output_changed_1()
+{
+	output_changed(1);
+}
+
+void
+pd::output_changed_2()
+{
+	output_changed(2);
+}
+
+void
+pd::output_changed_3()
+{
+	output_changed(3);
+}
+
+void
+pd::output_changed_4()
+{
+	output_changed(4);
+}
+
+void
+pd::output_changed(int type)
+{
+	KIconLoader *pixmap = KIconLoader::global ();
+
+	if (type == 1) {
+		cover_widgets.inlet->setPixmap(pixmap->loadIcon("back_content", KIconLoader::NoGroup));
+		cover_widgets.booklet->setPixmap(pixmap->loadIcon("front_title_only", KIconLoader::NoGroup));
+	}
+	if (type == 2) {
+		cover_widgets.inlet->setPixmap(NULL);
+		cover_widgets.booklet->setPixmap(pixmap->
+						 loadIcon("front_title-right_content-left",
+							  KIconLoader::NoGroup));
+	}
+	if (type == 3) {
+		cover_widgets.inlet->setPixmap(pixmap->loadIcon("back_title_content", KIconLoader::NoGroup));
+		cover_widgets.booklet->setPixmap(NULL);
+	}
+	if (type == 4) {
+		cover_widgets.inlet->setPixmap(pixmap->loadIcon("back_content", KIconLoader::NoGroup));
+		cover_widgets.booklet->setPixmap(pixmap->loadIcon("one_page", KIconLoader::NoGroup));
+	}
+}
+
+void
+pd::set_cover()
+{
+	cover_widgets.display_track_duration->setChecked(globals.display_track_duration);
+
+	/* no comment */
+	if (!globals.inlet_only && !globals.its_a_slim_case && !globals.one_page) {
+		cover_widgets.its_normal->setChecked(true);
+		output_changed(1);
+	}
+
+	cover_widgets.its_a_slim_case->setChecked(globals.its_a_slim_case);
+	cover_widgets.inlet_only->setChecked(globals.inlet_only);
+	cover_widgets.one_page->setChecked(globals.one_page);
+	if (globals.its_a_slim_case)
+		output_changed(2);
+
+	if (globals.inlet_only)
+		output_changed(3);
+
+	if (globals.one_page)
+		output_changed(4);
+}
+
+void
+pd::save_cover()
+{
+	globals.display_track_duration = (cover_widgets.display_track_duration)->isChecked()? 1 : 0;
+	globals.its_a_slim_case = (cover_widgets.its_a_slim_case)->isChecked()? 1 : 0;
+	globals.inlet_only = (cover_widgets.inlet_only)->isChecked()? 1 : 0;
+	globals.one_page = (cover_widgets.one_page)->isChecked()? 1 : 0;
 }
 
 #if 0
@@ -452,7 +538,6 @@ PreferencesDialog::apply_settings()
 {
 	save_cddb_files();
 	save_misc();
-	save_cover();
 
 	if (!((cdrom_widgets.cdrom_device)->text()).isEmpty()) {
 		if (globals.cdrom_device)
@@ -502,63 +587,6 @@ PreferencesDialog::slotDefault()
 
 
 
-
-void
-PreferencesDialog::set_cover()
-{
-	if (globals.display_track_duration)
-		cover_widgets.display_track_duration->setChecked(true);
-	else
-		cover_widgets.display_track_duration->setChecked(false);
-
-	/* no comment */
-	if (globals.its_a_slim_case) {
-		cover_widgets.its_a_slim_case->setChecked(true);
-		output_changed(2);
-	} else
-		cover_widgets.its_a_slim_case->setChecked(false);
-
-	if (globals.inlet_only) {
-		cover_widgets.inlet_only->setChecked(true);
-		output_changed(3);
-	} else
-		cover_widgets.inlet_only->setChecked(false);
-
-	if (!globals.inlet_only && !globals.its_a_slim_case && !globals.one_page) {
-		cover_widgets.its_normal->setChecked(true);
-		output_changed(1);
-	}
-
-	if (globals.one_page) {
-		cover_widgets.one_page->setChecked(true);
-		output_changed(4);
-	} else
-		cover_widgets.one_page->setChecked(false);
-}
-
-void
-PreferencesDialog::save_cover()
-{
-	if ((cover_widgets.display_track_duration)->isChecked())
-		globals.display_track_duration = 1;
-	else
-		globals.display_track_duration = 0;
-
-	if ((cover_widgets.its_a_slim_case)->isChecked())
-		globals.its_a_slim_case = 1;
-	else
-		globals.its_a_slim_case = 0;
-
-	if ((cover_widgets.inlet_only)->isChecked())
-		globals.inlet_only = 1;
-	else
-		globals.inlet_only = 0;
-
-	if ((cover_widgets.one_page)->isChecked())
-		globals.one_page = 1;
-	else
-		globals.one_page = 0;
-}
 
 void
 PreferencesDialog::setup_font_page()
@@ -648,30 +676,6 @@ PreferencesDialog::inlet_title_font_dialog()
 	kf->getFont(*globals.inlet_title_font);
 	if (changed)
 		show_font_warning();
-}
-
-void
-PreferencesDialog::output_changed(int type)
-{
-	KIconLoader pixmap = KIconLoader();
-
-	if (type == 1) {
-		cover_widgets.inlet->setPixmap(pixmap.loadIcon("back_content", KIcon::NoGroup));
-		cover_widgets.booklet->setPixmap(pixmap.loadIcon("front_title_only", KIcon::NoGroup));
-	}
-	if (type == 2) {
-		cover_widgets.inlet->setPixmap(NULL);
-		cover_widgets.booklet->setPixmap(pixmap.
-						 loadIcon("front_title-right_content-left", KIcon::NoGroup));
-	}
-	if (type == 3) {
-		cover_widgets.inlet->setPixmap(pixmap.loadIcon("back_title_content", KIcon::NoGroup));
-		cover_widgets.booklet->setPixmap(NULL);
-	}
-	if (type == 4) {
-		cover_widgets.inlet->setPixmap(pixmap.loadIcon("back_content", KIcon::NoGroup));
-		cover_widgets.booklet->setPixmap(pixmap.loadIcon("one_page", KIcon::NoGroup));
-	}
 }
 
 void

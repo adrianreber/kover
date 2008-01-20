@@ -47,6 +47,9 @@ class pd:public KConfigDialog
 	void save_cddb_files();
 	void set_cddb_files();
 	void setup_cover();
+	void output_changed(int type);
+	void set_cover();
+	void save_cover();
 #if 0
 	void setupCDDBPage();
 	void setup_cddb_files_page();
@@ -60,11 +63,9 @@ class pd:public KConfigDialog
 	void set_cdrom();
 	void set_cddb_files();
 	void set_misc();
-	void set_cover();
 
 	void save_cddb_files();
 	void save_misc();
-	void save_cover();
 	void show_font_warning();
 #endif
 	struct cddb_widgets
@@ -151,6 +152,10 @@ class pd:public KConfigDialog
 	void use_proxy(bool status);
 	void use_proxy_env(bool status);
 	void protocol_changed(int);
+	void output_changed_1();
+	void output_changed_2();
+	void output_changed_3();
+	void output_changed_4();
 
       protected Q_SLOTS:
 
