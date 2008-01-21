@@ -17,16 +17,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef KOVER_H
-#define KOVER_H
+#ifndef KOVER_OLD_H
+#define KOVER_OLD_H
 
-#include "config.h"
+#include <config.h>
 
-#ifdef ENABLE_DEBUG_OUTPUT
-#define _DEBUG_ if(_debug_)
-#else
-#define _DEBUG_ if(0)
-#endif
+#define kprintf(format, ARGS...)	\
+	{ if (verbose) \
+		k_printf(__PRETTY_FUNCTION__, __LINE__, format, ##ARGS); }
 
 #include <string>
 #include <list>
@@ -35,8 +33,9 @@
 
 using std::string;
 
-extern int _debug_;
+extern int verbose;
 
 void eject_cdrom();
+void k_printf(const char *, int, const char *, ...);
 
 #endif

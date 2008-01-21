@@ -24,8 +24,8 @@
 #include "sd.h"
 
 #include <globals.h>
-
 #include <QGroupBox>
+#include <kover_old.h>
 
 
 pd::pd(QWidget *p, KConfigSkeleton *cs, bool changed):
@@ -96,7 +96,7 @@ void
 pd::slotButtonClicked(int button)
 {
 	if (button == KDialog::Ok) {
-		printf("OK\n");
+		kprintf("OK\n");
 		apply_settings();
 		accept();
 	} else
@@ -112,17 +112,15 @@ pd::apply_settings()
 	}
 
 	if (!((cddb_widgets.cddb_server)->text()).isEmpty()) {
-		fprintf(stderr,
-			"kover:old value :%s\nkover:new value: %s\n",
-			globals.cddb_server, ((cddb_widgets.cddb_server)->text()).toUtf8().constData());
+		kprintf("old value :%s\n", globals.cddb_server);
+		kprintf("new value: %s\n", ((cddb_widgets.cddb_server)->text()).toUtf8().constData());
 		free(globals.cddb_server);
 		globals.cddb_server = strdup(((cddb_widgets.cddb_server)->text()).toUtf8());
 	}
 
 	if (!((cddb_widgets.cgi_path)->text()).isEmpty()) {
-		fprintf(stderr,
-			"kover:old value :%s\nkover:new value: %s\n",
-			globals.cgi_path, ((cddb_widgets.cgi_path)->text()).toUtf8().constData());
+		kprintf("old value :%s\n", globals.cgi_path);
+		kprintf("new value: %s\n", ((cddb_widgets.cgi_path)->text()).toUtf8().constData());
 		free(globals.cgi_path);
 		globals.cgi_path = strdup(((cddb_widgets.cgi_path)->text()).toUtf8());
 	}
@@ -506,7 +504,7 @@ pd::browsing()
 
 	dialog = new sd();
 	aber = dialog->exec();
-	fprintf(stderr, "kover:sd returns: %d %s\n", aber, (dialog->get(aber)).c_str());
+	kprintf("sd returns: %d %s\n", aber, (dialog->get(aber)).c_str());
 	if (aber >= 0)
 		cddb_widgets.cddb_server->setText((dialog->get(aber)).c_str());
 	delete(dialog);

@@ -20,6 +20,7 @@
 
 #include <config.h>
 #include <kover.h>
+#include <kover_old.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
@@ -32,9 +33,20 @@
 
 kover_global globals;
 
-int _debug_ = 0;
+int verbose = 0;
 
 config_class *config = NULL;
+
+void
+k_printf(const char *fn, int line, const char *format, ...)
+{
+	char tmp[1024];
+	va_list arglist;
+	va_start(arglist, format);
+	vsnprintf(tmp, 1024, format, arglist);
+	fprintf(stderr, "  %s(%s):%s:%d: %s", PACKAGE, VERSION, fn, line, tmp);
+	va_end(arglist);
+}
 
 void eject_cdrom()
 {
@@ -84,11 +96,11 @@ void the_end()
 void sighandler(int i)
 {
 	if (i == 2) {
-		fprintf(stderr, "kover:SIGINT received...");
+		kprintf("SIGINT received...\n");
 	} else {
-		fprintf(stderr, "kover:SIGTERM received...");
+		kprintf("SIGTERM received...\n");
 	}
-	fprintf(stderr, "cleaning up...\n");
+	kprintf("cleaning up...\n");
 
 	the_end();
 	exit(0);
@@ -129,8 +141,8 @@ main(int argc, char **argv)
 	}
 
 	if (args->isSet("debug")) {
-		_debug_ = 1;
-		fprintf(stderr, "kover:debug output enabled\n");
+		verbose = 1;
+		kprintf("debug output enabled\n");
 	}
 
 	config->load_globals();
