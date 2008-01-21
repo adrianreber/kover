@@ -35,14 +35,9 @@
 #include "inexact_dialog.moc"
 #include "inexact_dialog.h"
 
-#include <qpushbutton.h>
-#include <q3listbox.h>
-#include <qstring.h>
-#include <qlayout.h>
-#include <q3groupbox.h>
-#include <qlabel.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
 
 /**
  * The constructor inexact_dialog::inexact_dialog
@@ -50,11 +45,10 @@
  * @param inexact_list is a STL list containing the 211 (inexact match) items
  */
 
-inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list):QDialog(0, 0, TRUE,
-    0)
+inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list):QDialog()
 {
     local_list = inexact_list;
-    Q3VBoxLayout *top_layout = new Q3VBoxLayout(this);
+    QVBoxLayout *top_layout = new QVBoxLayout(this);
 
     top_layout->setMargin(7);
     top_layout->addSpacing(10);
@@ -62,7 +56,7 @@ inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list):QDialog(0, 
 
     top_layout->addWidget(label);
     top_layout->addSpacing(10);
-    box = new Q3ListBox(this);
+	box = new QListWidget(this);
     list < cddb_211_item * >::iterator item;
 
     for (item = inexact_list.begin(); item != inexact_list.end(); item++) {
@@ -76,34 +70,37 @@ inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list):QDialog(0, 
         tmp += " (";
         tmp += string((*item)->get_category());
         tmp += ")";
-        box->insertItem(tmp.c_str());
+			QListWidgetItem *newItem = new QListWidgetItem;
+			newItem->setText(tmp.c_str());
+			box->addItem(newItem);
     }
-    box->setMinimumWidth(box->maxItemWidth() + 30);
+    //box->setMinimumWidth(box->maxItemWidth() + 30);
 
-    connect(box, SIGNAL(doubleClicked(Q3ListBoxItem *)),
-        SLOT(double_clicked(Q3ListBoxItem *)));
+    //connect(box, SIGNAL(doubleClicked(QListBoxItem *)), SLOT(double_clicked(QListBoxItem *)));
 
     top_layout->addWidget(box);
     top_layout->addSpacing(20);
 
-    Q3BoxLayout *button_layout =
-        new Q3BoxLayout(top_layout, Q3BoxLayout::RightToLeft, -10);
+    QBoxLayout *button_layout =
+        new QBoxLayout(QBoxLayout::RightToLeft);
 
-    QPushButton *ok = new QPushButton(tr("Ok"), this, "ok");
+    top_layout->addLayout(button_layout);
+
+    QPushButton *ok = new QPushButton(tr("Ok"), this);
 
     ok->setDefault(TRUE);
 
     ok->setMaximumWidth(70);
 
     connect(ok, SIGNAL(clicked()), SLOT(accept()));
-    button_layout->addWidget(ok, 0, AlignRight);
+    button_layout->addWidget(ok, 0, Qt::AlignRight);
     button_layout->addSpacing(5);
 
-    QPushButton *quit = new QPushButton(tr("Quit"), this, "quit");
+    QPushButton *quit = new QPushButton(tr("Quit"), this);
 
     connect(quit, SIGNAL(clicked()), SLOT(quit()));
     quit->setMaximumWidth(70);
-    button_layout->addWidget(quit, 0, AlignRight);
+    button_layout->addWidget(quit, 0, Qt::AlignRight);
     button_layout->addStretch(20);
     adjustSize();
 }
@@ -121,7 +118,7 @@ inexact_dialog::~inexact_dialog()
  */
 void inexact_dialog::accept()
 {
-    QDialog::done(box->currentItem());
+    QDialog::done(box->currentRow());
 }
 
 /**
@@ -136,10 +133,10 @@ void inexact_dialog::quit()
  * The double_clicked() slot. Setting the return value.
  * reimplemented from QDialog
  */
-void inexact_dialog::double_clicked(Q3ListBoxItem * item)
-{
-    QDialog::done(item->listBox()->currentItem());
-}
+//void inexact_dialog::double_clicked(Q3ListBoxItem * item)
+//{
+//    QDialog::done(item->listBox()->currentItem());
+//}
 
 /**
  * The exec() method. Executing the dialog.

@@ -9,6 +9,11 @@ set(${PROJECT_NAME}_SRCS
    sd.cpp
    sites.cpp
    server.cpp
+   cddb_fill.cc
+   proxy_auth.cc
+   categories.cc
+   cddb_211_item.cc
+   inexact_dialog.cc
  )
 
 pkg_check_modules(CDIO REQUIRED libcdio)

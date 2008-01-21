@@ -32,7 +32,7 @@
 #define CDDB_211_ITEM_H
 
 #include <string>
-#include "../config.h"
+#include <config.h>
 
 using namespace std;
 

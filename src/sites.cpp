@@ -32,9 +32,9 @@ sites::~sites()
 
 bool sites::gen_server_list(list < server * >&server_list)
 {
-	//cddb_fill *bla = new cddb_fill();
-	//bla->sites(server_list);
+	cddb_fill *bla = new cddb_fill();
+	bla->sites(server_list);
 
-	//delete(bla);
+	delete(bla);
 	return true;
 }

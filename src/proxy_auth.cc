@@ -21,23 +21,17 @@
 #include "proxy_auth.moc"
 #include "proxy_auth.h"
 
-#include <qpushbutton.h>
-#include <qstring.h>
-#include <qlayout.h>
-#include <q3groupbox.h>
-#include <qlabel.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
-#include <stdlib.h>
-#include <stdio.h>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
 
-proxy_auth::proxy_auth(char *host, int port):QDialog(0, 0, TRUE, 0)
+proxy_auth::proxy_auth(char *host, int port):QDialog()
 {
 	password = NULL;
 	username = NULL;
 	QString greeting;
 	QString tmp;
-	Q3VBoxLayout *top_layout = new Q3VBoxLayout(this);
+	QVBoxLayout *top_layout = new QVBoxLayout(this);
 
 	top_layout->setMargin(7);
 	top_layout->addSpacing(10);
@@ -62,19 +56,20 @@ proxy_auth::proxy_auth(char *host, int port):QDialog(0, 0, TRUE, 0)
 	top_layout->addSpacing(5);
 	top_layout->addWidget(pw);
 	top_layout->addSpacing(10);
-	Q3BoxLayout *button_layout = new Q3BoxLayout(top_layout, Q3BoxLayout::RightToLeft, -10);
-	QPushButton *ok = new QPushButton(tr("Ok"), this, "ok");
+	QBoxLayout *button_layout = new QBoxLayout(QBoxLayout::RightToLeft);
+	top_layout->addLayout(button_layout);
+	QPushButton *ok = new QPushButton(tr("Ok"), this);
 
 	ok->setDefault(TRUE);
 	ok->setMaximumWidth(70);
 	connect(ok, SIGNAL(clicked()), SLOT(accept()));
-	button_layout->addWidget(ok, 0, AlignRight);
+	button_layout->addWidget(ok, 0, Qt::AlignRight);
 	button_layout->addSpacing(10);
-	QPushButton *quit = new QPushButton(tr("Cancel"), this, "quit");
+	QPushButton *quit = new QPushButton(tr("Cancel"), this);
 
 	connect(quit, SIGNAL(clicked()), SLOT(quit()));
 	quit->setMaximumWidth(70);
-	button_layout->addWidget(quit, 0, AlignRight);
+	button_layout->addWidget(quit, 0, Qt::AlignRight);
 	button_layout->addStretch(20);
 	adjustSize();
 }
@@ -92,9 +87,9 @@ proxy_auth::~proxy_auth()
 void proxy_auth::accept()
 {
 	QString tmp = user->text();
-	username = strdup(tmp.latin1());
+	username = strdup(tmp.toUtf8());
 	tmp = pw->text();
-	password = strdup(tmp.latin1());
+	password = strdup(tmp.toUtf8());
 	QDialog::done(0);
 }
 

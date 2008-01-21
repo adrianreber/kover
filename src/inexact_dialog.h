@@ -31,12 +31,12 @@
 #ifndef INEXACT_DIALOG_H
 #define INEXACT_DIALOG_H
 
-#include "../config.h"
-#include <qdialog.h>
+#include <config.h>
+#include <QDialog>
 #include "cddb_211_item.h"
 #include <list>
 #include <string>
-#include <q3listbox.h>
+#include <QListWidget>
 
 using namespace std;
 
@@ -52,11 +52,11 @@ class inexact_dialog:public QDialog {
     char *get(int index);
     cddb_211_item *get_object(int index);
   private:
-      Q3ListBox * box;
+	QListWidget * box;
       list < cddb_211_item * >local_list;
     private slots:void accept();
     void quit();
-    public slots:void double_clicked(Q3ListBoxItem *);
+ //   public slots:void double_clicked(Q3ListBoxItem *);
 
 };
 

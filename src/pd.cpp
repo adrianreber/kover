@@ -507,8 +507,8 @@ pd::browsing()
 	dialog = new sd();
 	aber = dialog->exec();
 	fprintf(stderr, "kover:sd returns: %d %s\n", aber, (dialog->get(aber)).c_str());
-
-	cddb_widgets.cddb_server->setText((dialog->get(aber)).c_str());
+	if (aber >= 0)
+		cddb_widgets.cddb_server->setText((dialog->get(aber)).c_str());
 	delete(dialog);
 }
 

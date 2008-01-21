@@ -21,9 +21,9 @@
 #ifndef PROXY_AUTH_H
 #define PROXY_AUTH_H
 
-#include "../config.h"
-#include <qdialog.h>
-#include <qlineedit.h>
+#include <config.h>
+#include <QDialog>
+#include <QLineEdit>
 
 class proxy_auth:public QDialog {
       Q_OBJECT public:

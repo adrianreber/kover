@@ -18,6 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <globals.h>
 #include "cddb_fill.h"
 #include <string>
 #include <klocale.h>
@@ -50,18 +51,18 @@ bool cddb_fill::read_cdtext()
 		if (!device) {
 			blub->
 			    set_status_text(i18n
-					    ("Unable to get default CD device."));
+					    ("Unable to get default CD device.").toUtf8());
 			return false;
 		}
 
 	} else
 		device = globals.cdrom_device;
-	_DEBUG_ fprintf(stderr, "CD-ROM device: %s\n", device);
+	 fprintf(stderr, "CD-ROM device: %s\n", device);
 	cdio = cdio_open(device, DRIVER_UNKNOWN);
-	_DEBUG_ fprintf(stderr, "cdio_get_num_tracks: %d\n",
+	 fprintf(stderr, "cdio_get_num_tracks: %d\n",
 			cdio_get_num_tracks(cdio));
 	cd_info.ntracks = cdio_get_num_tracks(cdio);
-	_DEBUG_ fprintf(stderr, "CDIO_INVALID_TRACK %d\n", CDIO_INVALID_TRACK);
+	 fprintf(stderr, "CDIO_INVALID_TRACK %d\n", CDIO_INVALID_TRACK);
 	if (!cdio) {
 		blub->set_status_text("unable to open CD device");
 		return false;
@@ -135,7 +136,7 @@ void cddb_fill::setTitleAndContents()
 	QString tracks, contents, cddb_id;
 	string artist = cd_info.artist + "\n" + cd_info.cdname;
 
-	kover_file->setTitle(artist.c_str());
+	//kover_file->setTitle(artist.c_str());
 	for (int i = 0; i < cd_info.ntracks; i++) {
 		if (globals.display_track_duration) {
 			int m = 0;
@@ -152,9 +153,9 @@ void cddb_fill::setTitleAndContents()
 			tracks.append("\n");
 		contents.append(tracks);
 	}
-	kover_file->setContents(contents);
+	//kover_file->setContents(contents);
 	cddb_id.sprintf("0x%lx", cd_info.cddb_id);
-	kover_file->set_cddb_id(cddb_id);
+	//kover_file->set_cddb_id(cddb_id);
 }
 
 void cddb_fill::cdInfo()
@@ -163,11 +164,11 @@ void cddb_fill::cdInfo()
 
 	str.sprintf
 	    (i18n
-	     ("CD contains %d tracks, total time is %d:%02d, the magic number is 0x%lx"),
+	     ("CD contains %d tracks, total time is %d:%02d, the magic number is 0x%lx").toUtf8(),
 	     cd_info.ntracks, cd_info.length / 60, cd_info.length % 60,
 	     cd_info.cddb_id);
-	_DEBUG_ fprintf(stderr, "%s:%s\n", PACKAGE, str.latin1());
-	blub->set_status_text(str);
+	 fprintf(stderr, "%s:%s\n", PACKAGE, str.toUtf8().constData());
+	blub->set_status_text(str.toUtf8());
 	blub->update_id(cd_info.cddb_id);
 }
 
@@ -190,18 +191,18 @@ bool cddb_fill::readTOC()
 		if (!device) {
 			blub->
 			    set_status_text(i18n
-					    ("Unable to get default CD device."));
+					    ("Unable to get default CD device.").toUtf8());
 			return false;
 		}
 
 	}
 	device = globals.cdrom_device;
-	_DEBUG_ fprintf(stderr, "CD-ROM device: %s\n", device);
+	 fprintf(stderr, "CD-ROM device: %s\n", device);
 	cdio = cdio_open(device, DRIVER_UNKNOWN);
-	_DEBUG_ fprintf(stderr, "cdio_get_num_tracks: %d\n",
+	 fprintf(stderr, "cdio_get_num_tracks: %d\n",
 			cdio_get_num_tracks(cdio));
-	_DEBUG_ fprintf(stderr, "CDIO_INVALID_TRACK %d\n", CDIO_INVALID_TRACK);
-	_DEBUG_ fprintf(stderr, "device %p\n", cdio);
+	 fprintf(stderr, "CDIO_INVALID_TRACK %d\n", CDIO_INVALID_TRACK);
+	 fprintf(stderr, "device %p\n", cdio);
 	if (!cdio) {
 		blub->set_status_text("unable to open CD device");
 		return false;
@@ -212,14 +213,14 @@ bool cddb_fill::readTOC()
 	if (cnt == 0) {
 		blub->set_status_text("no audio tracks on CD");
 	}
-	_DEBUG_ fprintf(stderr, "CD contains %d track(s)\n", cnt);
+	 fprintf(stderr, "CD contains %d track(s)\n", cnt);
 
 
 	cd_info.ntracks = cnt;
 	for (t = 1; t <= cnt; t++) {
 
 		lsn = cdio_get_track_lsn(cdio, t);
-		_DEBUG_ fprintf(stderr, "lsn: %d\n", lsn);
+		 fprintf(stderr, "lsn: %d\n", lsn);
 		if (lsn == CDIO_INVALID_LSN) {
 			blub->
 			    set_status_text
@@ -247,15 +248,15 @@ bool cddb_fill::readTOC()
 	cd_info.tracks.push_back(blub);
 
 	cd_info.length = FRAMES_TO_SECONDS(lsn);
-	_DEBUG_ fprintf(stderr, "cd_info.length %d\n", cd_info.length);
+	 fprintf(stderr, "cd_info.length %d\n", cd_info.length);
 
 	pos = cd_info.tracks[0]->start;
 	for (i = 0; i < cd_info.ntracks; i++) {
-		_DEBUG_ fprintf(stderr, "pos: %d\n", pos);
+		 fprintf(stderr, "pos: %d\n", pos);
 		cd_info.tracks[i]->length = cd_info.tracks[i + 1]->start - pos;
-		_DEBUG_ fprintf(stderr, "length: %ld\n",
+		 fprintf(stderr, "length: %ld\n",
 				cd_info.tracks[i]->length);
-		_DEBUG_ fprintf(stderr, "3: min %ld sec %ld\n",
+		 fprintf(stderr, "3: min %ld sec %ld\n",
 				FRAMES_TO_SECONDS(cd_info.tracks[i]->length -
 						  SECONDS_TO_FRAMES(2)) / 60,
 				FRAMES_TO_SECONDS(cd_info.tracks[i]->length -
@@ -263,9 +264,9 @@ bool cddb_fill::readTOC()
 		pos = cd_info.tracks[i + 1]->start;
 	}
 
-	_DEBUG_ fprintf(stderr, "Table of contents successfully read: %08lx\n",
+	 fprintf(stderr, "Table of contents successfully read: %08lx\n",
 			cd_info.cddb_id);
-	_DEBUG_ fprintf(stderr, "Disc length: %d\n", cd_info.length);
+	 fprintf(stderr, "Disc length: %d\n", cd_info.length);
 
 	cdio_destroy(cdio);
 
@@ -276,7 +277,7 @@ bool cddb_fill::reading_proxy_env_failed()
 {
 	blub->
 	    set_status_text(i18n
-			    ("Reading http_proxy environment variable failed!"));
+			    ("Reading http_proxy environment variable failed!").toUtf8());
 	return false;
 }
 
@@ -384,7 +385,7 @@ bool cddb_fill::check_for_auth(cddb_conn_t * conn)
 	    new proxy_auth(globals.proxy_server, globals.proxy_port);
 	blubber = proxy_auth_dialog->exec();
 	if (blubber) {
-		blub->set_status_text(i18n("Operation aborted."));
+		blub->set_status_text(i18n("Operation aborted.").toUtf8());
 		//canceled
 		return false;
 	}
@@ -415,7 +416,7 @@ bool cddb_fill::cddb_query()
 	int matches;
 	string inexact_string = "";
 
-	blub->set_status_text(i18n("Querying database..."));
+	blub->set_status_text(i18n("Querying database...").toUtf8());
 
 	disc = cddb_disc_new();
 	if (disc == NULL) {
@@ -465,7 +466,7 @@ bool cddb_fill::cddb_query()
 	i = matches;
 
 	if (i == 0) {
-		blub->set_status_text(i18n("No match found."));
+		blub->set_status_text(i18n("No match found.").toUtf8());
 		return false;
 	}
 	if (i == 1) {
@@ -496,7 +497,7 @@ bool cddb_fill::cddb_query()
 	cddb_destroy(conn);
 
 	if (inexact_list.empty()) {
-		blub->set_status_text(i18n("No match found."));
+		blub->set_status_text(i18n("No match found.").toUtf8());
 		return false;
 	}
 	inexact = new inexact_dialog(inexact_list);
@@ -506,12 +507,12 @@ bool cddb_fill::cddb_query()
 	}
 
 	if (aber == -1) {
-		blub->set_status_text(i18n("Query aborted..."));
+		blub->set_status_text(i18n("Query aborted...").toUtf8());
 		return false;
 	}
 	ref_211 = inexact->get_object(aber);
 
-	_DEBUG_ fprintf(stderr, "Using disc: %08lX:%s:%s:%s\n",
+	 fprintf(stderr, "Using disc: %08lX:%s:%s:%s\n",
 			ref_211->get_id(), ref_211->get_artist().c_str(),
 			ref_211->get_title().c_str(),
 			ref_211->get_category().c_str());
@@ -568,7 +569,7 @@ bool cddb_fill::cddb_read(unsigned long disc_id, string category)
 
 		blub->
 		    set_status_text(i18n
-				    ("Disc length == 0; this can't be right. Aborting."));
+				    ("Disc length == 0; this can't be right. Aborting.").toUtf8());
 		return false;
 	}
 	cd_info.artist = cddb_disc_get_artist(disc);
