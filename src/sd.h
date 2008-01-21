@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef SERVER_DIALOG_H
-#define SERVER_DIALOG_H
+#ifndef SD_H
+#define SD_H
 
 #include <config.h>
 #include <QDialog>
@@ -33,20 +33,27 @@ using namespace std;
  * The server_dialog class
  * A dialog used to select one of the freedb servers.
  */
-class server_dialog:public QDialog {
-  Q_OBJECT public:
-    server_dialog();
-    ~server_dialog();
-    int exec();
-    string get(int index);
-  private:
-      QListWidget * box;
-      list < server * >server_list;
-    sites *site_ref;
-    private slots:void accept();
-    void quit();
-    //public slots: void double_clicked(QListBoxItem *);
+class sd:public QDialog
+{
+      Q_OBJECT public:
 
+	sd();
+	~sd();
+	int exec();
+	string get(int index);
+
+      private:
+
+	QListWidget * box;
+	list < server * >server_list;
+	sites *site_ref;
+      private slots:
+
+	void accept();
+	void quit();
+      public slots:
+
+	void double_clicked(QListWidgetItem *);
 };
 
-#endif /* SERVER_DIALOG_H */
+#endif /* SD_H */

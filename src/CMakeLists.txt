@@ -6,7 +6,7 @@ set(${PROJECT_NAME}_SRCS
    koverview.cpp
    config.cc
    pd.cpp
-   server_dialog.cpp
+   sd.cpp
    sites.cpp
    server.cpp
  )

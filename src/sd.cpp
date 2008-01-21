@@ -19,23 +19,11 @@
 
 /* This is the dialog for freedb server selection */
 
-#include "server_dialog.moc"
+#include "sd.moc"
 
-#include "server_dialog.h"
-//#include <qpushbutton.h>
-//#include <qstring.h>
-//#include <qlayout.h>
-//#include <q3groupbox.h>
-//#include <qlabel.h>
-//Added by qt3to4:
-//#include <Q3VBoxLayout>
+#include "sd.h"
 
-/**
- * The constructor server_dialog::server_dialog
- * constructing the dialog
- */
-
-server_dialog::server_dialog():QDialog()
+sd::sd():QDialog()
 {
 	site_ref = new sites();
 	site_ref->gen_server_list(server_list);
@@ -43,7 +31,7 @@ server_dialog::server_dialog():QDialog()
 
 	top_layout->setMargin(7);
 	top_layout->addSpacing(10);
-	QLabel *label = new QLabel(tr("Choose wisely!"), this);
+	QLabel *label = new QLabel (tr("Choose wisely!"), this);
 
 	top_layout->addWidget(label);
 	top_layout->addSpacing(10);
@@ -64,39 +52,36 @@ server_dialog::server_dialog():QDialog()
 		}
 
 	}
-	//box->setMinimumWidth(box->maxItemWidth() + 30);
-	//connect(box, SIGNAL(doubleClicked(Q3ListBoxItem *)), SLOT(double_clicked(Q3ListBoxItem *)));
+	connect(box, SIGNAL(itemDoubleClicked(QListWidgetItem *)), SLOT(double_clicked(QListWidgetItem *)));
 
 	top_layout->addWidget(box);
 	top_layout->addSpacing(20);
 
-	QBoxLayout * button_layout = new QBoxLayout(QBoxLayout::RightToLeft);
+	QBoxLayout *button_layout = new QBoxLayout(QBoxLayout::RightToLeft);
 
-	QPushButton * ok = new QPushButton(tr("Ok"), this);
+	top_layout->addLayout(button_layout);
+	QPushButton *ok = new QPushButton(tr("Ok"), this);
 
 	ok->setDefault(TRUE);
 
 	ok->setMaximumWidth(70);
 
-	//connect(ok, SIGNAL(clicked()), SLOT(accept()));
+	connect(ok, SIGNAL(clicked()), SLOT(accept()));
 	button_layout->addWidget(ok, 0, Qt::AlignRight);
 	button_layout->addSpacing(5);
 
-	QPushButton * quit = new QPushButton(tr("Quit"), this);
+	QPushButton *quit = new QPushButton(tr("Quit"), this);
 
-	//connect(quit, SIGNAL(clicked()), SLOT(quit()));
+	connect(quit, SIGNAL(clicked()), SLOT(quit()));
 	quit->setMaximumWidth(70);
 	button_layout->addWidget(quit, 0, Qt::AlignRight);
 	button_layout->addStretch(20);
 	adjustSize();
 }
 
-/**
- * The highly sophisticated destructor is doing nothing.
- */
-server_dialog::~server_dialog()
+sd::~sd()
 {
-	fprintf(stderr, "%s:server_dialog::~server_dialog()\n", PACKAGE);
+	fprintf(stderr, "%s:sd::~sd()\n", PACKAGE);
 
 	while (server_list.size()) {
 		delete((server_list.back()));
@@ -110,16 +95,16 @@ server_dialog::~server_dialog()
  * reimplemented from QDialog
  */
 void
-server_dialog::accept()
+sd::accept()
 {
-	//QDialog::done(box->currentItem());
+	QDialog::done(box->currentRow());
 }
 
 /**
  * The done() slot. Setting the return value.
  */
 void
-server_dialog::quit()
+sd::quit()
 {
 	QDialog::done(-1);
 }
@@ -128,11 +113,11 @@ server_dialog::quit()
  * The double_clicked() slot. Setting the return value.
  * reimplemented from QDialog
  */
-//void
-//server_dialog::double_clicked(Q3ListBoxItem * item)
-//{
-//	QDialog::done(item->listBox()->currentItem());
-//}
+void
+sd::double_clicked(QListWidgetItem *item)
+{
+	QDialog::done(item->listWidget()->currentRow());
+}
 
 /**
  * The exec() method. Executing the dialog.
@@ -142,7 +127,7 @@ server_dialog::quit()
  * @return an int representation of the selected item
  */
 int
-server_dialog::exec()
+sd::exec()
 {
 	if (server_list.size() == 1) {
 		return 0;
@@ -157,10 +142,10 @@ server_dialog::exec()
  * @see exec()
  * @return the string containing the cddb id and category. Can be freed with free(3).
  */
-string
-server_dialog::get(int index)
+string sd::get(int index)
 {
-	int i = 0;
+	int
+		i = 0;
 
 	list < server * >::iterator item;
 

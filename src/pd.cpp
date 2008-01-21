@@ -21,7 +21,7 @@
 
 #include "pd.moc"
 #include "pd.h"
-#include "server_dialog.h"
+#include "sd.h"
 
 #include <globals.h>
 
@@ -501,12 +501,12 @@ pd::save_cover()
 void
 pd::browsing()
 {
-	server_dialog *dialog;
+	sd *dialog;
 	int aber = 0;
 
-	dialog = new server_dialog();
+	dialog = new sd();
 	aber = dialog->exec();
-	fprintf(stderr, "kover:server_dialog returns: %d %s\n", aber, (dialog->get(aber)).c_str());
+	fprintf(stderr, "kover:sd returns: %d %s\n", aber, (dialog->get(aber)).c_str());
 
 	cddb_widgets.cddb_server->setText((dialog->get(aber)).c_str());
 	delete(dialog);
