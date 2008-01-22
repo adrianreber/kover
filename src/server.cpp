@@ -18,9 +18,7 @@
  */
 
 #include "server.h"
-
-#include <stdlib.h>
-#include <stdio.h>
+#include <kover_old.h>
 #include <iostream>
 
 server::server(string _site, string _proto, int _port, string _path,
@@ -37,50 +35,56 @@ server::server(string _site, string _proto, int _port, string _path,
 
 server::~server()
 {
-	fprintf(stderr, "%s:server::~server()\n", PACKAGE);
+	kprintf("server::~server()\n");
 }
 
-string server::get_site()
+string
+server::get_site()
 {
 	return site;
 }
 
-string server::get_proto()
+string
+server::get_proto()
 {
 	return proto;
 }
 
-int server::get_port()
+int
+server::get_port()
 {
 	return port;
 }
 
-string server::get_path()
+string
+server::get_path()
 {
 	return path;
 }
 
-string server::get_latitude()
+string
+server::get_latitude()
 {
 	return latitude;
 }
 
-string server::get_longitude()
+string
+server::get_longitude()
 {
 	return longitude;
 }
 
-string server::get_description()
+string
+server::get_description()
 {
 	return description;
 }
 
-void server::dump()
+void
+server::dump()
 {
-	cerr << PACKAGE << ":"
-	    << site << ":"
-	    << proto << ":"
-	    << port << ":"
-	    << path << ":"
-	    << latitude << ":" << longitude << ":" << description << endl;
+	kprintf("");
+	cerr << site << ":"
+		<< proto << ":"
+		<< port << ":" << path << ":" << latitude << ":" << longitude << ":" << description << endl;
 }

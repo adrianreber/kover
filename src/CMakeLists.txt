@@ -7,7 +7,6 @@ set(${PROJECT_NAME}_SRCS
    config.cc
    pd.cpp
    sd.cpp
-   sites.cpp
    server.cpp
    cddb_fill.cc
    proxy_auth.cc

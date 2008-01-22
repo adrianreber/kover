@@ -23,7 +23,6 @@
 #include <config.h>
 #include <QDialog>
 #include "server.h"
-#include "sites.h"
 #include <list>
 #include <QListWidget>
 
@@ -46,11 +45,12 @@ class sd:public QDialog
 
 	QListWidget * box;
 	list < server * >server_list;
-	sites *site_ref;
+
       private slots:
 
 	void accept();
 	void quit();
+
       public slots:
 
 	void double_clicked(QListWidgetItem *);

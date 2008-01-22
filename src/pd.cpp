@@ -22,11 +22,12 @@
 #include "pd.moc"
 #include "pd.h"
 #include "sd.h"
-
 #include <globals.h>
 #include <QGroupBox>
+#include <QPushButton>
+#include <QVBoxLayout>
 #include <kover_old.h>
-
+#include <klocalizedstring.h>
 
 pd::pd(QWidget *p, KConfigSkeleton *cs, bool changed):
 KConfigDialog(p, "configure", cs)

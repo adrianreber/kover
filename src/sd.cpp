@@ -20,13 +20,15 @@
 /* This is the dialog for freedb server selection */
 
 #include "sd.moc"
-
 #include "sd.h"
+#include <cddb_fill.h>
+#include <kover_old.h>
 
 sd::sd():QDialog()
 {
-	site_ref = new sites();
-	site_ref->gen_server_list(server_list);
+	cddb_fill *bla = new cddb_fill();
+	bla->sites(server_list);
+	delete(bla);
 	QVBoxLayout *top_layout = new QVBoxLayout(this);
 
 	top_layout->setMargin(7);
@@ -41,6 +43,8 @@ sd::sd():QDialog()
 	QString string;
 
 	for (item = server_list.begin(); item != server_list.end(); item++) {
+		if (verbose)
+			(*item)->dump();
 		if (((*item)->get_proto()).compare("http")) {
 			string = ((*item)->get_site()).c_str();
 			string += " (";
@@ -87,7 +91,6 @@ sd::~sd()
 		delete((server_list.back()));
 		server_list.pop_back();
 	}
-	delete site_ref;
 }
 
 /**

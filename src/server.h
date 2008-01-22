@@ -20,33 +20,32 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include <config.h>
-#include "kover.h"
-
+#include <string>
 using namespace std;
 
-class server {
+class server
+{
+      public:
 
-  public:
-    server(string, string, int, string, string, string, string);
-     ~server();
-    string get_site();
-    string get_proto();
-    int get_port();
-    string get_path();
-    string get_latitude();
-    string get_longitude();
-    string get_description();
-    void dump();
-  private:
-      string site;
-    string proto;
-    int port;
-    string path;
-    string latitude;
-    string longitude;
-    string description;
+	server(string, string, int, string, string, string, string);
+	 ~server();
+	string get_site();
+	string get_proto();
+	int get_port();
+	string get_path();
+	string get_latitude();
+	string get_longitude();
+	string get_description();
+	void dump();
 
+      private:
+
+	string site;
+	string proto;
+	int port;
+	string path;
+	string latitude;
+	string longitude;
+	string description;
 };
-
 #endif /* SERVER_H */
