@@ -9,7 +9,7 @@ set(${PROJECT_NAME}_SRCS
    sd.cpp
    server.cpp
    cddb_fill.cc
-   proxy_auth.cc
+   pa.cpp
    categories.cc
    cddb_211_item.cc
    inexact_dialog.cc

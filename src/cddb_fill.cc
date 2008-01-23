@@ -26,7 +26,7 @@
 #include <cdio/cdtext.h>
 #include "cddb_211_item.h"
 #include "inexact_dialog.h"
-#include "proxy_auth.h"
+#include "pa.h"
 #include "categories.h"
 
 cddb_fill::cddb_fill(KoverFile * _kover_file, no_qobject * bla)
@@ -381,9 +381,9 @@ bool cddb_fill::check_for_auth(cddb_conn_t * conn)
 		return false;
 
 	blub->set_status_text(cddb_error_str(cddb_errno(conn)));
-	proxy_auth *proxy_auth_dialog =
-	    new proxy_auth(globals.proxy_server, globals.proxy_port);
-	blubber = proxy_auth_dialog->exec();
+	pa *pad =
+	    new pa(globals.proxy_server, globals.proxy_port);
+	blubber = pad->exec();
 	if (blubber) {
 		blub->set_status_text(i18n("Operation aborted.").toUtf8());
 		//canceled
@@ -393,11 +393,11 @@ bool cddb_fill::check_for_auth(cddb_conn_t * conn)
 		free(globals.username);
 	if (globals.password)
 		free(globals.password);
-	globals.username = proxy_auth_dialog->get_username();
-	globals.password = proxy_auth_dialog->get_password();
+	globals.username = pad->get_username();
+	globals.password = pad->get_password();
 	if (!set_connection_params(conn))
 		return false;
-	delete proxy_auth_dialog;
+	delete pad;
 
 	return true;
 }

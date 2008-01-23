@@ -1,31 +1,30 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 2000-2005 by Adrian Reber 
- * 
+ * Copyright (C) 2000, 2008 by Adrian Reber
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * 
- * $Id: proxy_auth.cc,v 1.7 2005/06/25 18:56:55 adrian Exp $ */
+ */
 
-#include "proxy_auth.moc"
-#include "proxy_auth.h"
+#include "pa.moc"
+#include "pa.h"
 
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 
-proxy_auth::proxy_auth(char *host, int port):QDialog()
+pa::pa(char *host, int port):QDialog()
 {
 	password = NULL;
 	username = NULL;
@@ -74,7 +73,7 @@ proxy_auth::proxy_auth(char *host, int port):QDialog()
 	adjustSize();
 }
 
-proxy_auth::~proxy_auth()
+pa::~pa()
 {
 	if (password)
 		free(password);
@@ -84,7 +83,8 @@ proxy_auth::~proxy_auth()
 	username = NULL;
 }
 
-void proxy_auth::accept()
+void
+pa::accept()
 {
 	QString tmp = user->text();
 	username = strdup(tmp.toUtf8());
@@ -93,14 +93,16 @@ void proxy_auth::accept()
 	QDialog::done(0);
 }
 
-void proxy_auth::quit()
+void
+pa::quit()
 {
 	password = NULL;
 	username = NULL;
 	QDialog::done(-1);
 }
 
-char *proxy_auth::get_password()
+char *
+pa::get_password()
 {
 	if (!password)
 		return NULL;
@@ -112,7 +114,8 @@ char *proxy_auth::get_password()
 	return pw;
 }
 
-char *proxy_auth::get_username()
+char *
+pa::get_username()
 {
 	if (!username)
 		return NULL;
