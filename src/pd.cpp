@@ -24,10 +24,11 @@
 #include "sd.h"
 #include <globals.h>
 #include <QGroupBox>
-#include <QPushButton>
 #include <QVBoxLayout>
 #include <kover_old.h>
 #include <klocalizedstring.h>
+#include <kfontdialog.h>
+#include <kmessagebox.h>
 
 pd::pd(QWidget *p, KConfigSkeleton *cs, bool changed):
 KConfigDialog(p, "configure", cs)
@@ -37,9 +38,12 @@ KConfigDialog(p, "configure", cs)
 	setup_cdrom();
 	setup_cddb_files();
 	setup_cover();
-	//setup_font_page();
+	setup_font();
 	//setup_misc_page();
 	this->changed = changed;
+	content = *globals.content_font;
+	title = *globals.title_font;
+	inlet_title = *globals.inlet_title_font;
 }
 
 pd::~pd()
@@ -151,6 +155,9 @@ pd::apply_settings()
 			free(globals.cdrom_device);
 		globals.cdrom_device = NULL;
 	}
+	*globals.content_font = content;
+	*globals.title_font = title;
+	*globals.inlet_title_font = inlet_title;
 
 	save_cddb_files();
 	save_cover();
@@ -511,6 +518,90 @@ pd::browsing()
 	delete(dialog);
 }
 
+void
+pd::setup_font()
+{
+	QWidget *page = new QWidget;
+	QVBoxLayout *topLayout = new QVBoxLayout(page);
+
+	QGroupBox *group = new QGroupBox(i18n("&Standard Fonts"), page);
+
+	topLayout->addWidget(group);
+	QVBoxLayout *vlay = new QVBoxLayout(group);
+
+	vlay->addSpacing(fontMetrics().lineSpacing());
+	QGridLayout *gbox = new QGridLayout();
+
+	vlay->addLayout(gbox);
+
+	QLabel *label = new QLabel(i18n
+		       ("<qt>Changes to any of these fonts are global. "
+			"This means, that changes will only be available "
+			"for the next new cover. "
+			"Except that the current cover is empty. "
+			"Then changes are applied to the current cover.</qt>"),
+		       group);
+	label->setWordWrap(true);
+	gbox->addWidget(label, 0, 0, 1, -1);
+
+	label = new QLabel(i18n("Content Font: "), group);
+
+	gbox->addWidget(label, 1, 0);
+
+	font_widgets.change_content_font = new QPushButton(i18n("Change"), group);
+	gbox->addWidget(font_widgets.change_content_font, 1, 1);
+	connect(font_widgets.change_content_font, SIGNAL(clicked()), SLOT(content_font_dialog()));
+
+	label = new QLabel(i18n("Title Font: "), group);
+	gbox->addWidget(label, 2, 0);
+
+	font_widgets.change_title_font = new QPushButton(i18n("Change"), group);
+	gbox->addWidget(font_widgets.change_title_font, 2, 1);
+	connect(font_widgets.change_title_font, SIGNAL(clicked()), this, SLOT(title_font_dialog()));
+
+	label = new QLabel(i18n("Spine Text Font: "), group);
+	gbox->addWidget(label, 3, 0);
+
+	font_widgets.change_inlet_title_font = new QPushButton(i18n("Change"), group);
+	gbox->addWidget(font_widgets.change_inlet_title_font, 3, 1);
+	connect(font_widgets.change_inlet_title_font, SIGNAL(clicked()), this, SLOT(inlet_title_font_dialog()));
+
+	topLayout->addStretch();
+	addPage(page, i18n("Fonts"));
+}
+
+void
+pd::font_dialog(QFont *f)
+{
+	KFontDialog kf;
+	kprintf("font name before: %s\n", f->family().toUtf8().constData());
+
+	kf.setFont(*f);
+	if (kf.getFont(*f) && changed) {
+		KMessageBox::information(this, i18n ("Changes to the fonts" " will not be applied to" " the current cover," " but for the next new cover."));
+		changed = false;
+	}
+	kprintf("font name after: %s\n", f->family().toUtf8().constData());
+}
+
+void
+pd::content_font_dialog()
+{
+	font_dialog(&content);
+}
+
+void
+pd::title_font_dialog()
+{
+	font_dialog(&title);
+}
+
+void
+pd::inlet_title_font_dialog()
+{
+	font_dialog(&inlet_title);
+}
+
 #if 0
 void
 PreferencesDialog::slotOk()
@@ -547,24 +638,6 @@ PreferencesDialog::slotOk()
 }
 
 void
-PreferencesDialog::apply_settings()
-{
-	save_cddb_files();
-	save_misc();
-
-	if (!((cdrom_widgets.cdrom_device)->text()).isEmpty()) {
-		if (globals.cdrom_device)
-			free(globals.cdrom_device);
-		globals.cdrom_device = strdup(((cdrom_widgets.cdrom_device)->text()).latin1());
-	} else {
-		if (globals.cdrom_device)
-			free(globals.cdrom_device);
-		globals.cdrom_device = NULL;
-	}
-
-}
-
-void
 PreferencesDialog::slotDefault()
 {
 	switch (activePageIndex()) {
@@ -598,98 +671,6 @@ PreferencesDialog::slotDefault()
 	}
 }
 
-
-
-
-void
-PreferencesDialog::setup_font_page()
-{
-	Q3Frame *page = addPage(i18n("Fonts"), i18n("Standard Fonts"),
-				BarIcon("fonts", KIcon::SizeMedium));
-	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
-
-	Q3GroupBox *group = new Q3GroupBox(i18n("&Standard Fonts"), page);
-
-	topLayout->addWidget(group);
-	Q3VBoxLayout *vlay = new Q3VBoxLayout(group, spacingHint());
-
-	vlay->addSpacing(fontMetrics().lineSpacing());
-	Q3GridLayout *gbox = new Q3GridLayout(4, 1);
-
-	vlay->addLayout(gbox);
-
-	QLabel *label =
-		new
-		QLabel(i18n
-		       ("<qt>Changes to any of these fonts are global. "
-			"This means, that changes will only be available "
-			"for the next new cover. "
-			"Except that the current cover is empty. "
-			"Then changes are applied to the current cover.</qt>"),
-		       group, "font_info");
-
-	gbox->addMultiCellWidget(label, 0, 0, 0, 1);
-
-	label = new QLabel(i18n("Content Font: "), group, "content_font");
-
-	gbox->addWidget(label, 1, 0);
-
-	font_widgets.change_content_font = new QPushButton(i18n("Change"), group, "change_content_font");
-	gbox->addWidget(font_widgets.change_content_font, 1, 1);
-	connect(font_widgets.change_content_font, SIGNAL(clicked()), SLOT(content_font_dialog()));
-
-	label = new QLabel(i18n("Title Font: "), group, "title_font");
-	gbox->addWidget(label, 2, 0);
-
-	font_widgets.change_title_font = new QPushButton(i18n("Change"), group, "change_title_font");
-	gbox->addWidget(font_widgets.change_title_font, 2, 1);
-	connect(font_widgets.change_title_font, SIGNAL(clicked()), this, SLOT(title_font_dialog()));
-
-	label = new QLabel(i18n("Spine Text Font: "), group, "inlet_title_font");
-	gbox->addWidget(label, 3, 0);
-
-	font_widgets.change_inlet_title_font =
-		new QPushButton(i18n("Change"), group, "change_inlet_title_font");
-	gbox->addWidget(font_widgets.change_inlet_title_font, 3, 1);
-	connect(font_widgets.change_inlet_title_font,
-		SIGNAL(clicked()), this, SLOT(inlet_title_font_dialog()));
-
-	topLayout->addStretch();
-}
-
-void
-PreferencesDialog::content_font_dialog()
-{
-	_DEBUG_ fprintf(stderr, "%s:font name before: %s\n", PACKAGE,
-			((globals.content_font)->rawName()).latin1());
-	KFontDialog *kf = new KFontDialog(this, "kf", true);
-
-	kf->getFont(*globals.content_font);
-	_DEBUG_ fprintf(stderr, "%s:font name after: %s\n", PACKAGE,
-			((globals.content_font)->rawName()).latin1());
-	if (changed)
-		show_font_warning();
-}
-
-void
-PreferencesDialog::title_font_dialog()
-{
-	KFontDialog *kf = new KFontDialog(this, "kf", true);
-
-	kf->getFont(*globals.title_font);
-	if (changed)
-		show_font_warning();
-}
-
-void
-PreferencesDialog::inlet_title_font_dialog()
-{
-	KFontDialog *kf = new KFontDialog(this, "kf", true);
-
-	kf->getFont(*globals.inlet_title_font);
-	if (changed)
-		show_font_warning();
-}
 
 
 void
@@ -764,15 +745,6 @@ PreferencesDialog::set_misc()
 		misc_widgets.trigger_actual_size->setChecked(true);
 	else
 		misc_widgets.trigger_actual_size->setChecked(false);
-}
-
-void
-PreferencesDialog::show_font_warning()
-{
-	KMessageBox::information(this,
-				 tr
-				 ("Changes to the fonts will not be applied to the current cover, but for the next new cover."));
-	changed = false;
 }
 
 #endif

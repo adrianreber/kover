@@ -28,16 +28,19 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QRadioButton>
+#include <QPushButton>
 
 using namespace std;
 
 class pd:public KConfigDialog
 {
       Q_OBJECT public:
-	  pd(QWidget *p, KConfigSkeleton *cs, bool changed = false);
-	 ~pd();
+
+	pd(QWidget *p, KConfigSkeleton *cs, bool changed = false);
+	~pd();
 
       private:
+
 	void setup_cdrom();
 	void set_cdrom();
 	void apply_settings();
@@ -50,6 +53,8 @@ class pd:public KConfigDialog
 	void output_changed(int type);
 	void set_cover();
 	void save_cover();
+	void setup_font();
+	void font_dialog(QFont *);
 #if 0
 	void setupCDDBPage();
 	void setup_cddb_files_page();
@@ -66,10 +71,12 @@ class pd:public KConfigDialog
 
 	void save_cddb_files();
 	void save_misc();
-	void show_font_warning();
 #endif
-	struct cddb_widgets
-	{
+	QFont content;
+	QFont title;
+	QFont inlet_title;
+
+	struct cddb_widgets {
 		QLineEdit *cddb_server;
 		QLineEdit *cgi_path;
 		QCheckBox *use_proxy;
@@ -98,27 +105,23 @@ class pd:public KConfigDialog
 		one_page
 	};
 
-	struct cdrom_widgets
-	{
+	struct cdrom_widgets {
 		QLineEdit *cdrom_device;
 		QCheckBox *eject_cdrom;
 	} cdrom_widgets;
 
-	struct cddb_files_widgets
-	{
+	struct cddb_files_widgets {
 		QCheckBox *use_cache;
 		QLineEdit *cddb_path;
 	} cddb_files_widgets;
 
-	struct misc_widgets
-	{
+	struct misc_widgets {
 		QCheckBox *save_position;
 		QCheckBox *disable_animation;
 		QCheckBox *trigger_actual_size;
 	} misc_widgets;
 
-	struct cover_widgets
-	{
+	struct cover_widgets {
 		QCheckBox *display_track_duration;
 		QRadioButton *its_a_slim_case;
 		QRadioButton *inlet_only;
@@ -128,11 +131,11 @@ class pd:public KConfigDialog
 		QLabel *booklet;
 	} cover_widgets;
 
-	//struct font_widgets {
-	//QButton *change_content_font;
-	//QButton *change_title_font;
-	//QButton *change_inlet_title_font;
-	//} font_widgets;
+	struct font_widgets {
+		QPushButton *change_content_font;
+		QPushButton *change_title_font;
+		QPushButton *change_inlet_title_font;
+	} font_widgets;
 
 	bool changed;
 #if 0
@@ -156,6 +159,9 @@ class pd:public KConfigDialog
 	void output_changed_3();
 	void output_changed_4();
 	void browsing();
+	void content_font_dialog();
+	void title_font_dialog();
+	void inlet_title_font_dialog();
 
       protected Q_SLOTS:
 
