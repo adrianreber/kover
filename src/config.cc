@@ -30,6 +30,7 @@
 
 #include <cddb/cddb.h>
 #include <globals.h>
+#include <kover_old.h>
 
 void config_class::load_globals()
 {
@@ -61,7 +62,7 @@ void config_class::load_globals()
 	else
 		globals.proxy_port = string->toInt();
 
-	 fprintf(stderr, "proxy port: %d\n", globals.proxy_port);
+	kprintf("proxy port: %d\n", globals.proxy_port);
 
 	*string = config.readEntry("use_proxy");
 	if (string->isNull())
@@ -175,7 +176,7 @@ void config_class::load_globals()
 				readEntry("content_font_settings"));
 		globals.content_font = new QFont(*bla);
 		delete(bla);
-		fprintf(stderr, "kover:font loaded: %s\n", ((globals.content_font)->rawName()).toUtf8().constData());
+		kprintf("font loaded: %s\n", ((globals.content_font)->family()).toUtf8().constData());
 	}
 
 	if ((config.readEntry("title_font_settings")).isEmpty())
@@ -186,7 +187,7 @@ void config_class::load_globals()
 		bla->fromString(config.readEntry("title_font_settings"));
 		globals.title_font = new QFont(*bla);
 		delete(bla);
-		fprintf(stderr, "kover:font loaded: %s\n", ((globals.title_font)->rawName()).toUtf8().constData());
+		kprintf("font loaded: %s\n", ((globals.title_font)->family()).toUtf8().constData());
 	}
 
 	if ((config.readEntry("inlet_title_font_settings")).isEmpty())
@@ -198,7 +199,7 @@ void config_class::load_globals()
 				readEntry("inlet_title_font_settings"));
 		globals.inlet_title_font = new QFont(*bla);
 		delete(bla);
-		 fprintf(stderr, "kover:font loaded: %s\n%s\n", ((globals.inlet_title_font)->rawName()).toUtf8().constData(),
+		kprintf("font loaded: %s\n%s\n", ((globals.inlet_title_font)->family()).toUtf8().constData(),
 				config.readEntry("inlet_title_font").toUtf8().constData());
 	}
 
@@ -209,7 +210,7 @@ void config_class::load_globals()
 
 void config_class::store_globals()
 {
-	fprintf(stderr, "kover: entering config_class::store_globals()\n");
+	kprintf("entering config_class::store_globals()\n");
 	KConfigGroup config = KGlobal::config()->group("CDDB");
 	QString *string = new QString();
 
@@ -274,8 +275,7 @@ void config_class::store_globals()
 			   ((globals.inlet_title_font)->toString()));
 
 	delete(string);
-	 fprintf(stderr,
-			"kover: leaving config_class::store_globals()\n");
+	kprintf("leaving config_class::store_globals()\n");
 }
 
 char *config_class::check_cddb_dir()
