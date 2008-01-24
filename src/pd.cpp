@@ -535,12 +535,12 @@ pd::setup_font()
 	vlay->addLayout(gbox);
 
 	QLabel *label = new QLabel(i18n
-		       ("<qt>Changes to any of these fonts are global. "
-			"This means, that changes will only be available "
-			"for the next new cover. "
-			"Except that the current cover is empty. "
-			"Then changes are applied to the current cover.</qt>"),
-		       group);
+				   ("<qt>Changes to any of these fonts are global. "
+				    "This means, that changes will only be available "
+				    "for the next new cover. "
+				    "Except that the current cover is empty. "
+				    "Then changes are applied to the current cover.</qt>"),
+				   group);
 	label->setWordWrap(true);
 	gbox->addWidget(label, 0, 0, 1, -1);
 
@@ -564,7 +564,8 @@ pd::setup_font()
 
 	font_widgets.change_inlet_title_font = new QPushButton(i18n("Change"), group);
 	gbox->addWidget(font_widgets.change_inlet_title_font, 3, 1);
-	connect(font_widgets.change_inlet_title_font, SIGNAL(clicked()), this, SLOT(inlet_title_font_dialog()));
+	connect(font_widgets.change_inlet_title_font, SIGNAL(clicked()), this,
+		SLOT(inlet_title_font_dialog()));
 
 	topLayout->addStretch();
 	addPage(page, i18n("Fonts"));
@@ -578,7 +579,9 @@ pd::font_dialog(QFont *f)
 
 	kf.setFont(*f);
 	if (kf.getFont(*f) && changed) {
-		KMessageBox::information(this, i18n ("Changes to the fonts" " will not be applied to" " the current cover," " but for the next new cover."));
+		KMessageBox::information(this,
+					 i18n("Changes to the fonts" " will not be applied to"
+					      " the current cover," " but for the next new cover."));
 		changed = false;
 	}
 	kprintf("font name after: %s\n", f->family().toUtf8().constData());
