@@ -142,6 +142,7 @@ main(int argc, char **argv)
 
 	if (args->isSet("debug")) {
 		verbose = 1;
+		fprintf(stderr, "\n");
 		kprintf("debug output enabled\n");
 	}
 
