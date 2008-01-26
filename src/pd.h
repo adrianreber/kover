@@ -55,23 +55,11 @@ class pd:public KConfigDialog
 	void save_cover();
 	void setup_font();
 	void font_dialog(QFont *);
-#if 0
-	void setupCDDBPage();
-	void setup_cddb_files_page();
-	void setup_misc_page();
-	void setup_font_page();
-	void setup_cover_page();
-
-	void apply_settings();
-
-	void set_cddb();
-	void set_cdrom();
-	void set_cddb_files();
+	void setup_misc();
 	void set_misc();
-
-	void save_cddb_files();
 	void save_misc();
-#endif
+	int check();
+
 	QFont content;
 	QFont title;
 	QFont inlet_title;
@@ -85,25 +73,6 @@ class pd:public KConfigDialog
 		QLineEdit *proxy_port;
 		QComboBox *cddb_protocol;
 	} cddb_widgets;
-
-	enum Page
-	{
-		page_cddb = 0,
-		page_cdrom,
-		page_cddb_files,
-		page_cover,
-		page_font,
-		page_misc,
-		page_max
-	};
-
-	enum output
-	{
-		normal = 0,
-		slim_case,
-		inlet_only,
-		one_page
-	};
 
 	struct cdrom_widgets {
 		QLineEdit *cdrom_device;
@@ -138,16 +107,6 @@ class pd:public KConfigDialog
 	} font_widgets;
 
 	bool changed;
-#if 0
-	private slots:void use_proxy(bool status);
-	void use_proxy_env(bool status);
-	virtual void slotOk(void);
-	virtual void slotDefault();
-	void content_font_dialog();
-	void title_font_dialog();
-	void inlet_title_font_dialog();
-	void output_changed(int type);
-#endif
 
       private slots:
 

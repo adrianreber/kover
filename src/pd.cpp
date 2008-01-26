@@ -33,13 +33,13 @@
 pd::pd(QWidget *p, KConfigSkeleton *cs, bool changed):
 KConfigDialog(p, "configure", cs)
 {
-	setButtons(Ok | Cancel | Help);
+	setButtons(Ok | Cancel);
 	setup_cddb();
 	setup_cdrom();
 	setup_cddb_files();
 	setup_cover();
 	setup_font();
-	//setup_misc_page();
+	setup_misc();
 	this->changed = changed;
 	content = *globals.content_font;
 	title = *globals.title_font;
@@ -83,7 +83,7 @@ pd::setup_cdrom(void)
 	set_cdrom();
 
 	topLayout->addStretch(10);
-	addPage(page, i18n("CDROM"));
+	addPage(page, i18n("CDROM"), "drive-optical");
 }
 
 void
@@ -96,11 +96,30 @@ pd::set_cdrom()
 		cdrom_widgets.eject_cdrom->setChecked(false);
 }
 
+int
+pd::check()
+{
+	if (((cdrom_widgets.cdrom_device)->text()).isEmpty()) {
+		KMessageBox::sorry(this, i18n("Please enter a cdrom device."));
+		return -1;
+	}
+
+	if ((((cddb_widgets.proxy_server)->text()).isEmpty()
+	     || ((cddb_widgets.proxy_port)->text()).isEmpty())
+	    && (cddb_widgets.use_proxy)->isChecked() && !(cddb_widgets.proxy_from_env)->isChecked()) {
+		KMessageBox::sorry(this, i18n("Please enter a correct proxy setup."));
+		return -1;
+	}
+	return 0;
+
+}
 
 void
 pd::slotButtonClicked(int button)
 {
 	if (button == KDialog::Ok) {
+		if (check())
+			return;
 		kprintf("OK\n");
 		apply_settings();
 		accept();
@@ -161,6 +180,7 @@ pd::apply_settings()
 
 	save_cddb_files();
 	save_cover();
+	save_misc();
 }
 
 void
@@ -237,7 +257,7 @@ pd::setup_cddb(void)
 	gbox->addWidget(cddb_widgets.proxy_port, 2, 1, 1, 1);
 	set_cddb();
 	topLayout->addStretch(10);
-	addPage(page, i18n("CDDB"));
+	addPage(page, i18n("CDDB"), "network-wired");
 }
 
 void
@@ -343,7 +363,7 @@ pd::setup_cddb_files(void)
 
 	set_cddb_files();
 	topLayout->addStretch(10);
-	addPage(page, i18n("CDDB files"));
+	addPage(page, i18n("CDDB files"), "preferences-desktop-filetype-association");
 }
 
 void
@@ -419,7 +439,7 @@ pd::setup_cover()
 	gbox->addWidget(cover_widgets.booklet, 5, 1, 1, 1, Qt::AlignHCenter);
 
 	set_cover();
-	addPage(page, i18n("Cover"));
+	addPage(page, i18n("Cover"), "kover");
 }
 
 void
@@ -568,7 +588,7 @@ pd::setup_font()
 		SLOT(inlet_title_font_dialog()));
 
 	topLayout->addStretch();
-	addPage(page, i18n("Fonts"));
+	addPage(page, i18n("Fonts"), "preferences-desktop-font");
 }
 
 void
@@ -605,149 +625,53 @@ pd::inlet_title_font_dialog()
 	font_dialog(&inlet_title);
 }
 
-#if 0
 void
-PreferencesDialog::slotOk()
+pd::setup_misc(void)
 {
-	static int i = 0;
+	QWidget *page = new QWidget;
+	QVBoxLayout *topLayout = new QVBoxLayout(page);
 
-	if ((((cddb_widgets.proxy_server)->text()).isEmpty()
-	     || ((cddb_widgets.proxy_port)->text()).isEmpty())
-	    && (cddb_widgets.use_proxy)->isChecked() && !(cddb_widgets.proxy_from_env)->isChecked()) {
-		switch (i) {
-		case 0:
-			KMessageBox::information(this, "Come for the third, Laertes. You do but dally.");
-			i++;
-			return;
-		case 1:
-			KMessageBox::sorry(this, "I pray you, pass with your best violence.");
-			i++;
-			return;
-		case 2:
-			KMessageBox::error(this, "I am afeard you make a wanton of me.");
-		default:
-			i = 0;
-			return;
-		}
-	}
-
-	if (((cdrom_widgets.cdrom_device)->text()).isEmpty()) {
-		KMessageBox::sorry(this, i18n("Please enter a cdrom device."));
-		return;
-	}
-
-	apply_settings();
-	accept();
-}
-
-void
-PreferencesDialog::slotDefault()
-{
-	switch (activePageIndex()) {
-	case page_cddb:
-		set_cddb();
-		break;
-
-	case page_cdrom:
-		set_cdrom();
-		break;
-
-	case page_cddb_files:
-		set_cddb_files();
-		break;
-
-	case page_misc:
-		set_misc();
-		break;
-
-	case page_font:
-
-		break;
-
-	case page_cover:
-		set_cover();
-		break;
-
-	default:
-		fprintf(stderr, "kover:%s:%d: this should not happen\n", __FILE__, __LINE__);
-		return;
-	}
-}
-
-
-
-void
-PreferencesDialog::setup_misc_page(void)
-{
-	Q3Frame *page = addPage(i18n("Miscellaneous"),
-				i18n("Various properties"),
-				BarIcon("misc", KIcon::SizeMedium));
-	Q3VBoxLayout *topLayout = new Q3VBoxLayout(page, 0, spacingHint());
-
-	Q3GroupBox *group = new Q3GroupBox(i18n("&Stuff"), page);
+	QGroupBox *group = new QGroupBox(i18n("&Stuff"), page);
 
 	topLayout->addWidget(group);
-	Q3VBoxLayout *vlay = new Q3VBoxLayout(group, spacingHint());
+	QVBoxLayout *vlay = new QVBoxLayout(group);
 
 	vlay->addSpacing(fontMetrics().lineSpacing());
-	Q3GridLayout *gbox = new Q3GridLayout(5, 5);
+	QGridLayout *gbox = new QGridLayout();
 
 	vlay->addLayout(gbox);
 
 	QString text;
 
 	text = i18n("Save window position");
-	misc_widgets.save_position = new QCheckBox(text, group, "save_position");
+	misc_widgets.save_position = new QCheckBox(text, group);
 	gbox->addWidget(misc_widgets.save_position, 0, 0);
 
 	text = i18n("Disable unnecessary animation");
-	misc_widgets.disable_animation = new QCheckBox(text, group, "disable_animation");
+	misc_widgets.disable_animation = new QCheckBox(text, group);
 	gbox->addWidget(misc_widgets.disable_animation, 1, 0);
 
 	text = i18n("Mouse click on kover preview triggers actual size");
-	misc_widgets.trigger_actual_size = new QCheckBox(text, group, "trigger_actual_size");
+	misc_widgets.trigger_actual_size = new QCheckBox(text, group);
 	gbox->addWidget(misc_widgets.trigger_actual_size, 2, 0);
 
 	set_misc();
 	topLayout->addStretch(10);
+	addPage(page, i18n("Miscellaneous"), "preferences-desktop-icons");
 }
 
 void
-PreferencesDialog::save_misc()
+pd::set_misc()
 {
-	if ((misc_widgets.save_position)->isChecked())
-		globals.save_position = 1;
-	else
-		globals.save_position = 0;
-
-	if ((misc_widgets.disable_animation)->isChecked())
-		globals.disable_animation = 1;
-	else
-		globals.disable_animation = 0;
-
-	if ((misc_widgets.trigger_actual_size)->isChecked())
-		globals.trigger_actual_size = 1;
-	else
-		globals.trigger_actual_size = 0;
+	misc_widgets.save_position->setChecked(globals.save_position);
+	misc_widgets.disable_animation->setChecked(globals.disable_animation);
+	misc_widgets.trigger_actual_size->setChecked(globals.trigger_actual_size);
 }
 
 void
-PreferencesDialog::set_misc()
+pd::save_misc()
 {
-	if (globals.save_position)
-		misc_widgets.save_position->setChecked(true);
-	else
-		misc_widgets.save_position->setChecked(false);
-
-	if (globals.disable_animation)
-		misc_widgets.disable_animation->setChecked(true);
-	else
-		misc_widgets.disable_animation->setChecked(false);
-
-	if (globals.trigger_actual_size)
-		misc_widgets.trigger_actual_size->setChecked(true);
-	else
-		misc_widgets.trigger_actual_size->setChecked(false);
+	globals.save_position = (misc_widgets.save_position)->isChecked()? 1 : 0;
+	globals.disable_animation = (misc_widgets.disable_animation)->isChecked()? 1 : 0;
+	globals.trigger_actual_size = (misc_widgets.trigger_actual_size)->isChecked()? 1 : 0;
 }
-
-#endif
