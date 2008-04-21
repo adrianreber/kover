@@ -38,8 +38,9 @@
 #include <qcolor.h>
 #include <ksimpleconfig.h>
 #include <qdom.h>
+#include <kurl.h>
 
-class KURL;
+//class KURL;
 
 typedef enum {
     IMG_CENTER,
@@ -100,8 +101,8 @@ class KoverFile:public QObject {
     QString the_spine_text() const;
     QString cddb_id() const;
 
-    bool openFile(const KURL & url);
-    bool saveFile(const KURL & url);
+    bool openFile(const KUrl & url);
+    bool saveFile(const KUrl & url);
     void reset();
     bool empty();
 
@@ -130,8 +131,6 @@ class KoverFile:public QObject {
     bool save_as_XML(const QString & filename);
     bool open_XML(const QString & filename);
     bool open_XML(QDomDocument doc);
-    bool old_save_method(const QString & filename);
-    void old_open_method(KConfig & file);
     bool checkForECD(QString & filename);
     bool openECD(QString & filename);
     void open_k3b_audio_project(QDomDocument doc);
