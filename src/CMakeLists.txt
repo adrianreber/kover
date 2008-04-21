@@ -13,6 +13,7 @@ set(${PROJECT_NAME}_SRCS
    categories.cc
    cddb_211_item.cc
    inexact_dialog.cc
+   koverfile.cpp
  )
 
 pkg_check_modules(CDIO REQUIRED libcdio)
