@@ -29,12 +29,13 @@
 #ifndef _CDVIEW_H
 #define _CDVIEW_H
 
+#include <QFrame>
 #include <q3frame.h>
 #include <qpixmap.h>
 //Added by qt3to4:
 #include <QPaintEvent>
 #include <QMouseEvent>
-#include <qprinter.h>
+#include <QPrinter>
 #include "koverfile.h"
 
 #include "kover.h"
@@ -43,7 +44,7 @@
  * CDView draws the cover in mini form, print preview or direct to the printer.
  * @author Denis Oliver Kropp (dok@fischlustig.de)
  */
-class CDView : public Q3Frame {
+class CDView : public QFrame {
 	 Q_OBJECT
 public:
 	 /**

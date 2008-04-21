@@ -1,34 +1,32 @@
-/**  emacs, I suggest you use: -*- adrian-c -*-
-	 kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
-	 Copyright (C) 1998-2000 by Denis Oliver Kropp
-	 Copyright (C) 2000-2003 by Adrian Reber 
-	 
-	 This program is free software; you can redistribute it and/or modify
-	 it under the terms of the GNU General Public License as published by
-	 the Free Software Foundation; either version 2 of the License, or
-	 (at your option) any later version.
-	 
-	 This program is distributed in the hope that it will be useful,
-	 but WITHOUT ANY WARRANTY; without even the implied warranty of
-	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	 GNU General Public License for more details.
-	 
-	 You should have received a copy of the GNU General Public License
-	 along with this program; if not, write to the Free Software
-	 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-	 
-	 File: cdview.cc
-	 
-	 Description: Implements CDView Widget
-	 
-	 Changes: 
-	 
-	 14 Dec 1998: Initial release
-	 18 Oct 2001: Added routines for 'inlet only' option
-	 29 Oct 2001: Change size of the inlet title font
-*/
+/*
+ * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
+ * Copyright (C) 1998, 2000 by Denis Oliver Kropp
+ * Copyright (C) 2000, 2008 by Adrian Reber
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ * 14 Dec 1998: Initial release
+ * 18 Oct 2001: Added routines for 'inlet only' option
+ * 29 Oct 2001: Change size of the inlet title font
+ */
 
-/* $Id: cdview.cc,v 1.13 2004/09/17 19:57:12 adrian Exp $ */
+#include <globals.h>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <kover_old.h>
+
 
 #include "cdview.moc"
 #include "koverfile.h"
@@ -39,11 +37,11 @@
 #include <qprinter.h>
 //Added by qt3to4:
 #include <QPaintEvent>
-#include <Q3Frame>
+#include <QFrame>
 #include <QMouseEvent>
-#include <kprinter.h>
+//#include <kprinter.h>
 #include <qpainter.h>
-#include <qsemimodal.h>
+//#include <qsemimodal.h>
 #include <kmessagebox.h>
 #include <math.h>
 #include <stdio.h>
@@ -55,19 +53,19 @@
 #define BACK_V 334
 
 CDView::CDView(KoverFile * _kover_file, QWidget * parent, const char *name)
-:Q3Frame(parent, name)
+:QFrame(parent)
 {
     kover_file = _kover_file;
     connect(kover_file, SIGNAL(dataChanged(bool)), SLOT(dataChanged(bool)));
 
-    setBackgroundColor(white);
+    //setBackgroundColor(Qt::white);
     previewMode = false;
     setFrameRect(QRect(0, 0, 0, 0));
     setFrameStyle(WinPanel | Sunken);
 
-    printer = new KPrinter(true, QPrinter::Compatible);
-    printer->setOrientation(KPrinter::Landscape);
-    printer->setMinMax(1, 2);
+    printer = new QPrinter();
+    printer->setOrientation(QPrinter::Landscape);
+    //printer->setMinMax(1, 2);
     printer->setFromTo(1, 2);
 }
 
@@ -82,7 +80,7 @@ void CDView::paintEvent(QPaintEvent *)
         drawInlet(&paint, 150, 4 * 2 + FRONT_V);
         paint.setWorldMatrix(QMatrix());
         paint.setFont(QFont("helvetica", 14));
-        paint.setPen(black);
+        paint.setPen(Qt::black);
         paint.drawText(20, 400, tr("Click to close"));
     } else {
         paint.scale(0.4f, 0.4f);
@@ -112,16 +110,20 @@ void CDView::print_information(QPainter * p)
 void CDView::printKover()
 {
     if (globals.one_page) {
-        printer->setOrientation(KPrinter::Portrait);
-        printer->setMinMax(1, 1);
+        printer->setOrientation(QPrinter::Portrait);
         printer->setFromTo(1, 1);
     } else {    
-    	printer->setOrientation(KPrinter::Landscape);
-    	printer->setMinMax(1, 2);
+    	printer->setOrientation(QPrinter::Landscape);
     	printer->setFromTo(1, 2);
     }    
    
-    if (printer->setup(this)) {
+
+	QPrintDialog printDialog(printer, this);
+	printDialog.setWindowTitle(i18n("Print Dialog Title"));
+
+	if (!printDialog.exec())
+		return;
+
         QPainter *paint = new QPainter(printer);
 
 	//paint->save();
@@ -151,8 +153,6 @@ void CDView::printKover()
         previewMode = false;
         paint->end();
         delete(paint);
-    }
-    return;
 }
 
 void CDView::drawBooklet(QPainter * p, int X, int Y)
@@ -268,15 +268,13 @@ void CDView::drawBooklet(QPainter * p, int X, int Y)
     if (!kover_file->display_title()) {
         if (globals.one_page)
             p->drawText(X + 10, Y + 10, FRONT_H - 20, FRONT_V - 10,
-                AlignHCenter, kover_file->title(),
-                kover_file->title().length());
+                Qt::AlignHCenter, kover_file->title());
         else
             p->drawText(X + FRONT_H, Y + 10, FRONT_H, FRONT_V - 10,
-                AlignHCenter, kover_file->title(),
-                kover_file->title().length());
+                Qt::AlignHCenter, kover_file->title());
     }
 
-    p->setPen(black);
+    p->setPen(Qt::black);
 
     if (globals.one_page) {
         //top
@@ -298,8 +296,8 @@ void CDView::drawBooklet(QPainter * p, int X, int Y)
     //p->drawLine(X, Y-2, X, Y);
     p->drawLine(X, Y, X, Y + FRONT_V);
 
-    if (kover_file->backColor() == black)
-        p->setPen(white);
+    if (kover_file->backColor() == Qt::black)
+        p->setPen(Qt::white);
 
     //middle
     p->drawLine(X + FRONT_H, Y, X + FRONT_H, Y + FRONT_V);
@@ -307,8 +305,8 @@ void CDView::drawBooklet(QPainter * p, int X, int Y)
     if (globals.its_a_slim_case) {
         p->setFont(kover_file->contentsFont());
         p->setPen(kover_file->contentsColor());
-        p->drawText(X + 10, Y + 10, FRONT_H - 20, FRONT_V - 10, AlignLeft,
-            kover_file->contents(), kover_file->contents().length());
+        p->drawText(X + 10, Y + 10, FRONT_H - 20, FRONT_V - 10, Qt::AlignLeft,
+            kover_file->contents());
     }
 }
 
@@ -386,7 +384,7 @@ void CDView::drawInlet(QPainter * p, int X, int Y)
         }
     }
 
-    p->setPen(black);
+    p->setPen(Qt::black);
 
     //help
     p->drawLine(X -20 , Y, X -15, Y);
@@ -405,8 +403,8 @@ void CDView::drawInlet(QPainter * p, int X, int Y)
     p->drawLine(X + BACK_HI + BACK_HS * 2, Y, X + BACK_HI + BACK_HS * 2,
         Y + BACK_V);
 
-    if (kover_file->backColor() == black)
-        p->setPen(white);
+    if (kover_file->backColor() == Qt::black)
+        p->setPen(Qt::white);
 
     p->drawLine(X + BACK_HS, Y, X + BACK_HS, Y + BACK_V);
     p->drawLine(X + BACK_HS + BACK_HI, Y, X + BACK_HS + BACK_HI, Y + BACK_V);
@@ -418,19 +416,19 @@ void CDView::drawInlet(QPainter * p, int X, int Y)
         QString numberStr;
 
         numberStr.setNum(kover_file->number());
-        p->setPen(red);
+        p->setPen(Qt::red);
         p->setFont(QFont("helvetica", 12, QFont::Bold));
-        p->drawText(10, 0, BACK_V - 10, BACK_HS, AlignLeft | AlignVCenter,
-            numberStr, numberStr.length());
+        p->drawText(10, 0, BACK_V - 10, BACK_HS, Qt::AlignLeft | Qt::AlignVCenter,
+            numberStr);
         p->setPen(kover_file->titleColor());
         p->setFont(kover_file->inlet_title_font());
-        p->drawText(38, 0, BACK_V - 38, BACK_HS, AlignLeft | AlignVCenter,
-            title, title.length());
+        p->drawText(38, 0, BACK_V - 38, BACK_HS, Qt::AlignLeft | Qt::AlignVCenter,
+            title);
     } else {
         p->setPen(kover_file->titleColor());
         p->setFont(kover_file->inlet_title_font());
-        p->drawText(10, 0, BACK_V - 10, BACK_HS, AlignLeft | AlignVCenter,
-            title, title.length());
+        p->drawText(10, 0, BACK_V - 10, BACK_HS, Qt::AlignLeft | Qt::AlignVCenter,
+            title);
     }
 
     p->translate(BACK_V, BACK_HS + BACK_HI);
@@ -440,19 +438,19 @@ void CDView::drawInlet(QPainter * p, int X, int Y)
         QString numberStr;
 
         numberStr.setNum(kover_file->number());
-        p->setPen(red);
+        p->setPen(Qt::red);
         p->setFont(QFont("helvetica", 12, QFont::Bold));
-        p->drawText(10, -1, BACK_V - 10, -BACK_HS, AlignLeft | AlignVCenter,
-            numberStr, numberStr.length());
+        p->drawText(10, -1, BACK_V - 10, -BACK_HS, Qt::AlignLeft | Qt::AlignVCenter,
+            numberStr);
         p->setPen(kover_file->titleColor());
         p->setFont(kover_file->inlet_title_font());
-        p->drawText(38, -1, BACK_V - 38, -BACK_HS, AlignLeft | AlignVCenter,
-            title, title.length());
+        p->drawText(38, -1, BACK_V - 38, -BACK_HS, Qt::AlignLeft | Qt::AlignVCenter,
+            title);
     } else {
         p->setPen(kover_file->titleColor());
         p->setFont(kover_file->inlet_title_font());
-        p->drawText(10, -1, BACK_V - 10, -BACK_HS, AlignLeft | AlignVCenter,
-            title, title.length());
+        p->drawText(10, -1, BACK_V - 10, -BACK_HS, Qt::AlignLeft | Qt::AlignVCenter,
+            title);
     }
 
     p->translate(0, BACK_HI);
@@ -461,21 +459,21 @@ void CDView::drawInlet(QPainter * p, int X, int Y)
     if (!globals.inlet_only) {
         p->setFont(kover_file->contentsFont());
         p->setPen(kover_file->contentsColor());
-        p->drawText(5, 7, BACK_HI - 5, BACK_V - 7, AlignLeft,
-            kover_file->contents(), kover_file->contents().length());
+        p->drawText(5, 7, BACK_HI - 5, BACK_V - 7, Qt::AlignLeft,
+            kover_file->contents());
     } else {
         p->setFont(kover_file->titleFont());
         p->setPen(kover_file->titleColor());
-        p->drawText(5, 7, BACK_HI - 5, BACK_V - 7, AlignHCenter,
-            kover_file->title(), kover_file->title().length());
+        p->drawText(5, 7, BACK_HI - 5, BACK_V - 7, Qt::AlignHCenter,
+            kover_file->title());
 
         p->setFont(kover_file->contentsFont());
         p->setPen(kover_file->contentsColor());
-        int lines = kover_file->title().contains(QRegExp("\n")) + 2;
+        int lines = kover_file->title().count(QRegExp("\n"));
+	lines += 2;
 
         p->drawText(5, kover_file->titleFont().pointSize() * lines + 5,
-            BACK_HI - 5, BACK_V - 7, AlignLeft, kover_file->contents(),
-            kover_file->contents().length());
+            BACK_HI - 5, BACK_V - 7, Qt::AlignLeft, kover_file->contents());
     }
 }
 
@@ -497,47 +495,42 @@ void CDView::mousePressEvent(QMouseEvent * evt)
 void CDView::dataChanged(bool image)
 {
     int i = 3;
-    _DEBUG_ fprintf(stderr, "kover:CDView::dataChanged() %d\n",
+    kprintf("kover:CDView::dataChanged() %d\n",
         globals.one_page);
 
     while (i--) {
         if (kover_file->imageFile(i).isEmpty())
-            images[i].resize(0, 0);
+            images[i] = QPixmap();
     }
     if (image) {
         for (i = 0; i < 3; i++) {
             QImage load(kover_file->imageFile(i));
 
             if (load.isNull()) {
-                images[i].resize(0, 0);
+                images[i] = QPixmap();
             } else {
                 switch (kover_file->imageMode(i)) {
                 case IMG_TILE:
                 case IMG_CENTER:
-                    images[i].convertFromImage(load);
+                    images[i] = QPixmap::fromImage(load);
                     break;
                 case IMG_STRETCH:
                     switch (kover_file->imageTarget(i)) {
                     case IMG_FRONT_LEFT:
                     case IMG_FRONT_RIGHT:
-                        images[i].convertFromImage(load.smoothScale(FRONT_H,
-                                FRONT_V));
+                        images[i] = QPixmap::fromImage(load);
                         break;
                     case IMG_FRONT_FULL:
                         if (globals.one_page)
-                            images[i].convertFromImage(load.
-                                smoothScale(FRONT_H, FRONT_V));
+                            images[i] = QPixmap::fromImage(load);
                         else
-                            images[i].convertFromImage(load.
-                                smoothScale(FRONT_H * 2, FRONT_V));
+                            images[i] = QPixmap::fromImage(load);
                         break;
                     case IMG_BACK_INNER:
-                        images[i].convertFromImage(load.smoothScale(BACK_HI,
-                                BACK_V));
+                        images[i] = QPixmap::fromImage(load);
                         break;
                     case IMG_BACK_FULL:
-                        images[i].convertFromImage(load.
-                            smoothScale(BACK_HI + BACK_HS * 2, BACK_V));
+                        images[i] = QPixmap::fromImage(load);
                         break;
                     }
                     break;
@@ -545,5 +538,5 @@ void CDView::dataChanged(bool image)
             }
         }
     }
-    repaint(false);
+    repaint();
 }

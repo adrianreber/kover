@@ -14,6 +14,7 @@ set(${PROJECT_NAME}_SRCS
    cddb_211_item.cc
    inexact_dialog.cc
    koverfile.cpp
+   cdview.cc
  )
 
 pkg_check_modules(CDIO REQUIRED libcdio)
