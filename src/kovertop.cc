@@ -19,6 +19,8 @@
  */
 
 #include "kovertop.moc"
+#include <QGridLayout>
+#include <QVBoxLayout>
 
 #include <qnamespace.h>
 #include "kovertop.h"
@@ -46,9 +48,7 @@
 #include <q3vbox.h>
 //Added by qt3to4:
 #include <QLabel>
-#include <Q3GridLayout>
 #include <Q3Frame>
-#include <Q3VBoxLayout>
 //#include <kkeydialog.h>
 #include <kshortcutsdialog.h>
 #include <kapplication.h>
@@ -61,13 +61,25 @@
 #define CDVIEW_WIDTH	291
 #define CDVIEW_HEIGHT 310
 
-KoverTop::KoverTop(const char *name):KXmlGuiWindow()
+KoverTop::KoverTop():KXmlGuiWindow()
 {
-	centralWidget = new Q3VBox(this);
-	main_frame = new Q3HBox(centralWidget);
-	option_frame = new Q3GroupBox(centralWidget);
-	dead_space = new Q3Frame(centralWidget);
-	more_frame = new Q3Frame(centralWidget);
+	centralWidget = new QWidget(this);
+	QVBoxLayout *vlayout = new QVBoxLayout();
+	centralWidget->setLayout(vlayout);
+
+	QHBoxLayout *hlayout = new QHBoxLayout();
+	main_frame = new QWidget(centralWidget);
+	vlayout->addWidget(main_frame);
+	main_frame->setLayout(hlayout);
+
+
+	option_frame = new QGroupBox(centralWidget);
+	vlayout->addWidget(option_frame);
+
+	dead_space = new QFrame(centralWidget);
+	vlayout->addWidget(dead_space);
+	more_frame = new QFrame(centralWidget);
+	vlayout->addWidget(more_frame);
 	option_frame->setTitle(tr("All this options are not global"));
 
 
@@ -103,7 +115,7 @@ KoverTop::~KoverTop()
 	delete status_bar;
 	delete cddbfill;
 	delete cdview;
-	_DEBUG_ fprintf(stderr, "~KoverTop()\n");
+	kprintf("~KoverTop()\n");
 }
 
 void KoverTop::make_menu()
@@ -117,7 +129,7 @@ void KoverTop::make_menu()
 	KStandardAction::cut(this, SLOT(cut()), actionCollection());
 	KStandardAction::copy(this, SLOT(copy()), actionCollection());
 	KStandardAction::paste(this, SLOT(paste()), actionCollection());
-	recent = KStandardAction::openRecent(this, SLOT(fileOpen(const KUrl &)), actionCollection());
+	//recent = KStandardAction::openRecent(this, SLOT(fileOpen(const KUrl &)), actionCollection());
 #define KCM_KAction(var, text, rcvr, slot, parent, name)        \
         KAction* var = new KAction(text, this); \
         parent->addAction(name, var); \
@@ -168,17 +180,27 @@ void KoverTop::slotConfigureKeys()
 
 void KoverTop::make_main_frame()
 {
-	left_frame = new Q3VBox(main_frame);
+	left_frame = new QWidget(main_frame);
+
+	 QVBoxLayout *layout = new QVBoxLayout;
+	    left_frame->setLayout(layout);
+
 
 	title_label = new QLabel(i18n("Title"), left_frame);
-	title_edit = new Q3MultiLineEdit(left_frame);
+	layout->addWidget(title_label);
+
+	title_edit = new QTextEdit(left_frame);
+	layout->addWidget(title_edit);
 	connect(title_edit, SIGNAL(textChanged()), SLOT(titleBoxChanged()));
 
 	contents_label = new QLabel(i18n("Contents"), left_frame);
-	contents_edit = new Q3MultiLineEdit(left_frame);
+	layout->addWidget(contents_label);
+	contents_edit = new QTextEdit(left_frame);
+	layout->addWidget(contents_edit);
 	connect(contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()));
 
 	cdview = new CDView(&kover_file, main_frame);
+	layout->addWidget(cdview);
 	cdview->setFixedSize(CDVIEW_WIDTH, CDVIEW_HEIGHT);
 	connect(cdview, SIGNAL(stopPreview()), SLOT(stopPreview()));
 	connect(cdview, SIGNAL(actualSize()), SLOT(actualSize()));
@@ -188,10 +210,10 @@ void KoverTop::make_main_frame()
 
 void KoverTop::make_option_frame()
 {
-	Q3VBoxLayout *vlay = new Q3VBoxLayout(option_frame, 4);
+	QVBoxLayout *vlay = new QVBoxLayout(option_frame);
 	vlay->addSpacing(fontMetrics().lineSpacing());
 
-	Q3GridLayout *gbox = new Q3GridLayout(5, 4);
+	QGridLayout *gbox = new QGridLayout();
 	vlay->addLayout(gbox);
 
 	display_title = new QCheckBox(tr("No title on booklet"), option_frame);
@@ -222,12 +244,13 @@ void KoverTop::make_option_frame()
 
 void KoverTop::make_more_frame()
 {
-	Q3VBoxLayout *top_layout = new Q3VBoxLayout(more_frame);
+	QVBoxLayout *top_layout = new QVBoxLayout(more_frame);
 
-	button_layout = new Q3BoxLayout(top_layout, Q3BoxLayout::RightToLeft, -10);
+	button_layout = new QBoxLayout(QBoxLayout::LeftToRight);
+	button_layout->addLayout(top_layout);
 	button_layout->setAlignment(Qt::AlignTop);
 	button_layout->setMargin(7);
-	more_frame->setMargin(0);
+	//more_frame->setMargin(0);
 	more_button = new QPushButton(i18n("Options"), more_frame);
 	button_layout->addWidget(more_button, 0);
 	connect(more_button, SIGNAL(clicked()), SLOT(more_or_less()));
@@ -282,14 +305,14 @@ void KoverTop::update_id(QString id)
 
 void KoverTop::titleBoxChanged()
 {
-	kover_file.setTitle(title_edit->text());
+	kover_file.setTitle(title_edit->toPlainText());
 	if (!kover_file.spine_text())
-		the_spine_text->setText(title_edit->text());
+		the_spine_text->setText(title_edit->toPlainText());
 }
 
 void KoverTop::contentsBoxChanged()
 {
-	kover_file.setContents(contents_edit->text());
+	kover_file.setContents(contents_edit->toPlainText());
 }
 
 void KoverTop::numberChanged(int value)
@@ -362,9 +385,7 @@ void KoverTop::fileOpen()
 			return;
 	}
 
-	KUrl url = KFileDialog::getOpenURL(":koverfile",
-					   i18n
-					   ("*.kover|Kover files\n*|All files\n*.k3b|k3b files"));
+	KUrl url = KFileDialog::getOpenUrl(KUrl(), i18n ("*.kover|Kover files\n*|All files\n*.k3b|k3b files"));
 
 	if (!url.isEmpty()) {
 		fileOpen(url);
@@ -388,7 +409,7 @@ void KoverTop::fileOpen(const KUrl & url)
 			display_title->setChecked(kover_file.display_title());
 
 			if (!kover_file.spine_text()) {
-				the_spine_text->setText(title_edit->text());
+				the_spine_text->setText(title_edit->toPlainText());
 				the_spine_text->setEnabled(kover_file.spine_text());
 				spine_text->setChecked(kover_file.spine_text());
 			} else {
@@ -408,7 +429,7 @@ void KoverTop::fileOpen(const KUrl & url)
 
 			setStatusText(i18n("File loaded"));
 			altered_data = false;
-			recent->addURL(url);
+			//recent->addURL(url);
 		} else
 			KMessageBox::error(this, i18n("Error while opening/reading file!"));
 	}
@@ -439,7 +460,7 @@ void KoverTop::saveFile(const KUrl & url)
 		setCaption(i18n(url.url()), false);
 		setStatusText(i18n("File saved"));
 		altered_data = false;
-		recent->addURL(url);
+		//recent->addURL(url);
 		m_url = url;
 	} else
 		KMessageBox::error(this, i18n("Error while opening/reading file!"));
@@ -455,11 +476,10 @@ void KoverTop::fileSave()
 
 void KoverTop::fileSaveAs()
 {
-	KUrl url = KFileDialog::getSaveURL(":koverfile",
-					   i18n("*.kover|Kover files\n*|All files"));
+	KUrl url = KFileDialog::getSaveUrl(KUrl(), i18n("*.kover|Kover files\n*|All files"));
 
 	if (!url.isEmpty()) {
-		if (url.fileName().find('.') == -1)
+		if (url.fileName().contains('.'))
 			url.setFileName(url.fileName() + ".kover");
 		saveFile(url);
 	}
@@ -468,7 +488,7 @@ void KoverTop::fileSaveAs()
 void KoverTop::filePrint()
 {
 	cdview->printKover();
-	_DEBUG_ fprintf(stderr, "Printing done\n");
+	kprintf("Printing done\n");
 }
 
 void KoverTop::cut()
@@ -534,12 +554,13 @@ void KoverTop::cddbFill()
 
 void KoverTop::preferences()
 {
-	PreferencesDialog *dialog = NULL;
+#if 0
+	pd *dialog = NULL;
 
 	if (kover_file.empty())
-		dialog = new PreferencesDialog(this, i18n("config me"));
+		dialog = new pd(this, i18n("config me"));
 	else
-		dialog = new PreferencesDialog(this, i18n("config me"), true);
+		dialog = new pd(this, i18n("config me"), true);
 	if (dialog->exec())
 		cdview->dataChanged(true);
 	delete dialog;
@@ -551,33 +572,43 @@ void KoverTop::preferences()
 			setCaption(i18n("[New Document]"), false);
 		}
 	}
+#endif
+}
+
+QFont *
+KoverTop::font_dialog(QFont *f)
+{
+	KFontDialog kf;
+	kprintf("font name before: %s\n", f->family().toUtf8().constData());
+
+	kf.setFont(*f);
+	if (kf.getFont(*f))
+		return f;
+
+	return NULL;
 }
 
 void KoverTop::titleFont()
 {
-	QFont new_font;
-	KFontDialog *kf = new KFontDialog(this, "kf", true);
-
-	new_font = kover_file.titleFont();
-	if (kf->getFont(new_font))
-		kover_file.setTitleFont(new_font);
-	delete kf;
+	QFont *font2 = NULL;
+	QFont font = kover_file.titleFont();
+	font2 = font_dialog(&font);
+	if (font2)
+		kover_file.setTitleFont(*font2);
 }
 
 void KoverTop::inlet_title_font()
 {
-	QFont new_font;
-	KFontDialog *kf = new KFontDialog(this, "inlet_font", true);
-
-	new_font = kover_file.inlet_title_font();
-	if (kf->getFont(new_font))
-		kover_file.set_inlet_title_font(new_font);
-	delete kf;
+	QFont *font2 = NULL;
+	QFont font = kover_file.inlet_title_font();
+	font2 = font_dialog(&font);
+	if (font2)
+		kover_file.set_inlet_title_font(*font2);
 }
 
 void KoverTop::imageEmbedding()
 {
-	ImageDlg *imgdlg = new ImageDlg(this, &kover_file);
+	ImageDlg *imgdlg = new ImageDlg(&kover_file);
 
 	if (imgdlg->exec())
 		cdview->dataChanged(true);
@@ -587,7 +618,7 @@ void KoverTop::imageEmbedding()
 void KoverTop::titleFontColor()
 {
 	QColor new_color;
-	KColorDialog *kc = new KColorDialog(this, "kc", true);
+	KColorDialog *kc = new KColorDialog(this, true);
 
 	new_color = kover_file.titleColor();
 	if (kc->getColor(new_color))
@@ -597,19 +628,17 @@ void KoverTop::titleFontColor()
 
 void KoverTop::contentsFont()
 {
-	QFont new_font;
-	KFontDialog *kf = new KFontDialog(this, "kf", true);
-
-	new_font = kover_file.contentsFont();
-	if (kf->getFont(new_font))
-		kover_file.setContentsFont(new_font);
-	delete kf;
+	QFont *font2 = NULL;
+	QFont font = kover_file.contentsFont();
+	font2 = font_dialog(&font);
+	if (font2)
+		kover_file.setContentsFont(*font2);
 }
 
 void KoverTop::contentsFontColor()
 {
 	QColor new_color;
-	KColorDialog *kc = new KColorDialog(this, "kc", true);
+	KColorDialog *kc = new KColorDialog(this, true);
 
 	new_color = kover_file.contentsColor();
 	if (kc->getColor(new_color))
@@ -620,7 +649,7 @@ void KoverTop::contentsFontColor()
 void KoverTop::backgroundColor()
 {
 	QColor new_color;
-	KColorDialog *kc = new KColorDialog(this, "kc", true);
+	KColorDialog *kc = new KColorDialog(this, true);
 
 	new_color = kover_file.backColor();
 	if (kc->getColor(new_color))
@@ -635,6 +664,7 @@ void KoverTop::cdrom_eject()
 
 void KoverTop::cddb_without_cd()
 {
+#if 0
 	int display_track_duration = globals.display_track_duration;
 
 	setStatusText(i18n("Initiating CDDB lookup!"));
@@ -666,6 +696,7 @@ void KoverTop::cddb_without_cd()
 	delete(without);
 	free(id);
 	globals.display_track_duration = display_track_duration;
+#endif
 }
 
 void KoverTop::more_or_less()
@@ -694,7 +725,7 @@ void KoverTop::spine_text_method()
 	the_spine_text->setEnabled(spine_text->isChecked());
 	kover_file.set_spine_text(spine_text->isChecked());
 	if (!kover_file.spine_text())
-		the_spine_text->setText(title_edit->text());
+		the_spine_text->setText(title_edit->toPlainText());
 	else {
 		kover_file.set_the_spine_text(the_spine_text->text());
 	}
@@ -711,6 +742,7 @@ void KoverTop::spine_text_changed_method(const QString & s)
 
 void KoverTop::file_mode()
 {
+#if 0
 	filemode *file_mode = new filemode();
 
 	file_mode->exec();
@@ -734,7 +766,7 @@ void KoverTop::file_mode()
 	}
 	delete tmp;
 	contents_edit->setText(add.c_str());
-
+#endif
 }
 
 void KoverTop::read_cd_text()

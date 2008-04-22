@@ -1,23 +1,22 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 1999-2000 by Denis Oliver Kropp
- * Copyright (C) 2000-2005 by Adrian Reber 
- * 
+ * Copyright (C) 1999, 2000 by Denis Oliver Kropp
+ * Copyright (C) 2000, 2008 by Adrian Reber
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * 
- * $Id: kovertop.h,v 1.12 2005/06/25 19:16:15 adrian Exp $ */
+ */
 
 #ifndef KOVER_TOP_H
 #define KOVER_TOP_H
@@ -28,7 +27,8 @@
 #include "cddb_fill.h"
 #include "no_qobject.h"
 
-#include "PreferencesDialog.h"
+#include "pd.h"
+#include <QTextEdit>
 
 //#include <kapp.h>
 #include <qspinbox.h>
@@ -44,7 +44,6 @@
 #include <qlabel.h>
 #include <q3hbox.h>
 //Use QTextEdit in new code
-#include <Q3MultiLineEdit>
 #include <q3groupbox.h>
 #include <ktoolbar.h>
 #include <kstatusbar.h>
@@ -59,7 +58,7 @@
 class KoverTop:public KXmlGuiWindow, no_qobject {
       Q_OBJECT 
 public:
-	 KoverTop(const char *name = NULL);
+	 KoverTop();
 	~KoverTop();
 
 public slots:
@@ -73,10 +72,10 @@ public slots:
 	void setStatusText(const char *_status_text);
 	void actualSize();
 	void update_id(unsigned long = 0);
-	void fileOpen(const KURL &);
+	void fileOpen(const KUrl &);
 
 private:
-	void saveFile(const KURL &);
+	void saveFile(const KUrl &);
 
 private slots:
 	void fileNew();
@@ -118,18 +117,20 @@ private:
 	void make_option_frame();
 	void update_id(QString id);
 
-	Q3GroupBox *option_frame;
-	Q3Frame *dead_space;
+	QGroupBox *option_frame;
+	QFrame *dead_space;
 	QCheckBox *display_title;
 	QLineEdit *the_spine_text;
 	QCheckBox *spine_text;
 
-	KRecentFilesAction *recent;
+	//KRecentFilesAction *recent;
 	QCheckBox *slim_case;
 
-	Q3VBox *centralWidget;
-	Q3HBox *main_frame;
-	Q3VBox *left_frame;
+	QWidget *centralWidget;
+	QWidget *main_frame;
+	QWidget *left_frame;
+
+	QFont *font_dialog(QFont *f);
 
 	KoverFile kover_file;
 	cddb_fill *cddbfill;
@@ -138,10 +139,10 @@ private:
 	bool altered_data;
 
 	QLabel *title_label;
-	Q3MultiLineEdit *title_edit;
+	QTextEdit *title_edit;
 
 	QLabel *contents_label;
-	Q3MultiLineEdit *contents_edit;
+	QTextEdit *contents_edit;
 
 	QCheckBox *number_check;
 	QSpinBox *number_spin;
@@ -154,7 +155,7 @@ private:
 	CDView *cdview;
 
 	QBoxLayout *button_layout;
-	Q3Frame *more_frame;
+	QFrame *more_frame;
 	QPushButton *more_button;
 	bool more;
 	int orig_width;

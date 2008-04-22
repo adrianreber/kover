@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <cstring>
 
 directory::directory(string current_dir)
 {

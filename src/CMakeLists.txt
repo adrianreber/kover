@@ -15,7 +15,10 @@ set(${PROJECT_NAME}_SRCS
    inexact_dialog.cc
    koverfile.cpp
    cdview.cc
- )
+   kovertop.cc
+   imagedlg.cc 
+   directory.cc
+)
 
 pkg_check_modules(CDIO REQUIRED libcdio)
 pkg_check_modules(CDDB REQUIRED libcddb)
@@ -28,6 +31,7 @@ kde4_add_kcfg_files(kover_SRCS settings.kcfgc )
 kde4_add_executable(${PROJECT_NAME} ${kover_SRCS})
 
 target_link_libraries(${PROJECT_NAME} ${KDE4_KDEUI_LIBS})
+target_link_libraries(${PROJECT_NAME} ${KDE4_KFILE_LIBS})
 target_link_libraries(${PROJECT_NAME} ${CDIO_LDFLAGS})
 target_link_libraries(${PROJECT_NAME} ${CDDB_LDFLAGS})
 

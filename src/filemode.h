@@ -31,7 +31,6 @@
 #ifndef FILEMODE_H
 #define FILEMODE_H
 
-#include "../config.h"
 #include <qdialog.h>
 #include "cddb_211_item.h"
 #include <list>

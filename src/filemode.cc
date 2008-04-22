@@ -22,7 +22,6 @@
 #include "filemode.h"
 
 #include <qpushbutton.h>
-#include <q3listbox.h>
 #include <qstring.h>
 #include <qlayout.h>
 #include <q3groupbox.h>

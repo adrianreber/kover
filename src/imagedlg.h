@@ -32,8 +32,9 @@
 #ifndef IMAGEDLG_H
 #define IMAGEDLG_H
 
+#include <QGroupBox>
+
 #include <qwidget.h>
-#include <q3groupbox.h>
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -45,7 +46,7 @@
 
 class ImageDlg:public QDialog {
   Q_OBJECT public:
-    ImageDlg (QWidget * parent, KoverFile * _kover_file);
+    ImageDlg (KoverFile * _kover_file);
     ~ImageDlg ();
 
     protected slots:void OK ();
@@ -56,7 +57,7 @@ class ImageDlg:public QDialog {
 
   protected:
     void initDialog ();
-    Q3GroupBox *ImageGroup_1;
+    QGroupBox *ImageGroup_1;
     QLineEdit *FileEdit_1;
     QLabel *FileLabel_1;
     QPushButton *BrowseButton_1;
@@ -64,7 +65,7 @@ class ImageDlg:public QDialog {
     QComboBox *AppearanceCombo_1;
     QLabel *QLabel_2;
     QLabel *QLabel_3;
-    Q3GroupBox *QGroupBox_2;
+    QGroupBox *QGroupBox_2;
     QLabel *QLabel_4;
     QLineEdit *FileEdit_2;
     QPushButton *BrowseButton_2;
@@ -72,7 +73,7 @@ class ImageDlg:public QDialog {
     QComboBox *TargetCombo_2;
     QComboBox *AppearanceCombo_2;
     QLabel *QLabel_6;
-    Q3GroupBox *QGroupBox_3;
+    QGroupBox *QGroupBox_3;
     QLabel *QLabel_7;
     QLineEdit *FileEdit_3;
     QPushButton *BrowseButton_3;

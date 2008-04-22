@@ -31,7 +31,6 @@
 #ifndef WITHOUT_CD_H
 #define WITHOUT_CD_H
 
-#include "../config.h"
 #include <qdialog.h>
 #include <qlineedit.h>
 #include <qcombobox.h>
