@@ -55,13 +55,13 @@
 
 /** KoverTop is the TopLevelWidget. */
 
-class KoverTop:public KXmlGuiWindow, no_qobject {
-      Q_OBJECT 
-public:
-	 KoverTop();
+class KoverTop : public KXmlGuiWindow, no_qobject {
+	Q_OBJECT
+ public:
+	KoverTop();
 	~KoverTop();
 
-public slots:
+ public slots:
 	void contentsBoxChanged();
 	void titleBoxChanged();
 	void stopPreview();
@@ -74,10 +74,10 @@ public slots:
 	void update_id(unsigned long = 0);
 	void fileOpen(const KUrl &);
 
-private:
+ private:
 	void saveFile(const KUrl &);
 
-private slots:
+ private slots:
 	void fileNew();
 	void fileOpen();
 	void fileSave();
@@ -106,7 +106,7 @@ private slots:
 	void slotConfigureKeys();
 	void read_cd_text();
 
-private:
+ private:
 
 	bool queryClose();
 	int how_about_saving();
@@ -162,4 +162,4 @@ private:
 	int orig_height;
 };
 
-#endif				/* KOVER_TOP_H */
+#endif                          /* KOVER_TOP_H */
