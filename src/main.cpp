@@ -30,6 +30,7 @@
 #include <globals.h>
 #include <koverconfig.h>
 #include <cdio/cdio.h>
+#include <kovertop.h>
 
 kover_global globals;
 
@@ -42,20 +43,24 @@ k_printf(const char *fn, int line, const char *format, ...)
 {
 	char tmp[1024];
 	va_list arglist;
+
 	va_start(arglist, format);
 	vsnprintf(tmp, 1024, format, arglist);
 	fprintf(stderr, "  %s(%s):%s:%d: %s", PACKAGE, VERSION, fn, line, tmp);
 	va_end(arglist);
 }
 
-void eject_cdrom()
+void
+eject_cdrom()
 {
 	CdIo_t *cdio;
 	char *device = NULL;
+
 	if (!globals.cdrom_device) {
 		device = cdio_get_default_device(NULL);
 		if (!device) {
-			fprintf(stderr, "%s: Unable to get default CD device.", PACKAGE);
+			fprintf(stderr, "%s: Unable to get default CD device.",
+				PACKAGE);
 			return;
 		}
 	} else
@@ -67,7 +72,8 @@ void eject_cdrom()
 	return;
 }
 
-void cleanup()
+void
+cleanup()
 {
 	free(globals.cddb_server);
 	free(globals.cgi_path);
@@ -76,14 +82,15 @@ void cleanup()
 	free(globals.cddb_path);
 }
 
-void the_end()
+void
+the_end()
 {
 	if (globals.eject_cdrom) {
 		eject_cdrom();
 	}
 	if (globals.save_position) {
-		//globals.xpos = kovertop->x();
-		//globals.ypos = kovertop->y();
+		/* globals.xpos = kovertop->x(); */
+		/* globals.ypos = kovertop->y(); */
 	}
 
 	config->store_globals();
@@ -93,7 +100,8 @@ void the_end()
 	fprintf(stderr, "In Double Vision where drunk.\n");
 }
 
-void sighandler(int i)
+void
+sighandler(int i)
 {
 	if (i == 2) {
 		kprintf("SIGINT received...\n");
@@ -116,14 +124,21 @@ main(int argc, char **argv)
 	fprintf(stderr, "%s %s\n", PACKAGE, VERSION);
 	fprintf(stderr, "    Copyright (C) 1998, 2000 by Denis Oliver Kropp\n");
 	fprintf(stderr, "    Copyright (C) 2000, 2008 by Adrian Reber\n");
-	fprintf(stderr, "%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n", PACKAGE);
+	fprintf(
+		stderr,
+		"%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n",
+		PACKAGE);
 	KAboutData about(PACKAGE, 0, ki18n(PACKAGE), VERSION,
-			 ki18n("Kover is an easy to use WYSIWYG CD cover printer with CDDB support."),
+			 ki18n(
+				 "Kover is an easy to use WYSIWYG CD cover printer with CDDB support."),
 			 KAboutData::License_GPL_V2,
-			 ki18n("(C) 1998, 2000 Denis Oliver Kropp\n(C) 2000, 2008 Adrian Reber"),
+			 ki18n(
+				 "(C) 1998, 2000 Denis Oliver Kropp\n(C) 2000, 2008 Adrian Reber"),
 			 KLocalizedString(), 0, "adrian@lisas.de");
-	about.addAuthor(ki18n("Adrian Reber"), KLocalizedString(), "adrian@lisas.de");
-	about.addAuthor(ki18n("Denis Oliver Kropp"), KLocalizedString(), "dok@fischlustig.de");
+	about.addAuthor(ki18n("Adrian Reber"),
+			KLocalizedString(), "adrian@lisas.de");
+	about.addAuthor(ki18n("Denis Oliver Kropp"),
+			KLocalizedString(), "dok@fischlustig.de");
 	KCmdLineArgs::init(argc, argv, &about);
 
 	KCmdLineOptions options;
@@ -148,25 +163,13 @@ main(int argc, char **argv)
 
 	config->load_globals();
 
-	kover *widget = new kover;
-	// see if we are starting with session management
-	if (app.isSessionRestored()) {
-		RESTORE(kover);
-	} else {
-		// no session.. just start up normally
-		KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-		if (args->count() == 0) {
-			//kover *widget = new kover;
-			widget->show();
-		} else {
-			int i = 0;
-			for (; i < args->count(); i++) {
-				//kover *widget = new kover;
-				widget->show();
-			}
-		}
-		args->clear();
-	}
+	KoverTop *kovertop = new KoverTop();
+
+	if (args->count() > 0)
+		kovertop->fileOpen(args->url(0));
+
+	args->clear();
+	kovertop->show();
 
 	int i = app.exec();
 	the_end();
