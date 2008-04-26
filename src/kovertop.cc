@@ -67,10 +67,10 @@ KoverTop::KoverTop() : KXmlGuiWindow()
 	QVBoxLayout *vlayout = new QVBoxLayout();
 	centralWidget->setLayout(vlayout);
 
-	QHBoxLayout *hlayout = new QHBoxLayout();
+	//QHBoxLayout *hlayout = new QHBoxLayout();
 	main_frame = new QWidget(centralWidget);
 	vlayout->addWidget(main_frame);
-	main_frame->setLayout(hlayout);
+	//main_frame->setLayout(hlayout);
 
 
 	option_frame = new QGroupBox(centralWidget);
@@ -183,22 +183,22 @@ KoverTop::slotConfigureKeys()
 void
 KoverTop::make_main_frame()
 {
-	left_frame = new QWidget(main_frame);
+	//left_frame = new QWidget(main_frame);
 
-	QVBoxLayout *layout = new QVBoxLayout;
-	left_frame->setLayout(layout);
+	QVBoxLayout *layout = new QVBoxLayout(main_frame);
+	//left_frame->setLayout(layout);
 
 
-	title_label = new QLabel(i18n("Title"), left_frame);
+	title_label = new QLabel(i18n("Title"), main_frame);
 	layout->addWidget(title_label);
 
-	title_edit = new QTextEdit(left_frame);
+	title_edit = new QTextEdit(main_frame);
 	layout->addWidget(title_edit);
 	connect(title_edit, SIGNAL(textChanged()), SLOT(titleBoxChanged()));
 
-	contents_label = new QLabel(i18n("Contents"), left_frame);
+	contents_label = new QLabel(i18n("Contents"), main_frame);
 	layout->addWidget(contents_label);
-	contents_edit = new QTextEdit(left_frame);
+	contents_edit = new QTextEdit(main_frame);
 	layout->addWidget(contents_edit);
 	connect(contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()));
 
@@ -223,13 +223,16 @@ KoverTop::make_option_frame()
 
 	display_title = new QCheckBox(tr("No title on booklet"), option_frame);
 	connect(display_title, SIGNAL(clicked()), SLOT(display_title_signal()));
+	kprintf("before display_title\n");
 	gbox->addWidget(display_title, 0, 0, 0, 1);
 
 	spine_text = new QCheckBox(i18n("Separate Spine Text"), option_frame);
+	kprintf("spine_text display_title\n");
 	gbox->addWidget(spine_text, 1, 1, 0, 1);
 	connect(spine_text, SIGNAL(clicked()), SLOT(spine_text_method()));
 
 	the_spine_text = new QLineEdit(option_frame);
+	kprintf("spine_text display_title\n");
 	gbox->addWidget(the_spine_text, 2, 2, 0, 4);
 	the_spine_text->setEnabled(false);
 	connect(the_spine_text, SIGNAL(textChanged(const QString &)),
