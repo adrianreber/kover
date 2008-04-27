@@ -67,11 +67,8 @@ KoverTop::KoverTop() : KXmlGuiWindow()
 	QVBoxLayout *vlayout = new QVBoxLayout();
 	centralWidget->setLayout(vlayout);
 
-	//QHBoxLayout *hlayout = new QHBoxLayout();
 	main_frame = new QWidget(centralWidget);
 	vlayout->addWidget(main_frame);
-	//main_frame->setLayout(hlayout);
-
 
 	option_frame = new QGroupBox(centralWidget);
 	vlayout->addWidget(option_frame);
@@ -183,27 +180,30 @@ KoverTop::slotConfigureKeys()
 void
 KoverTop::make_main_frame()
 {
-	//left_frame = new QWidget(main_frame);
+	QHBoxLayout *hlayout = new QHBoxLayout();
+	main_frame->setLayout(hlayout);
+	left_frame = new QWidget();
+	hlayout->addWidget(left_frame);
 
-	QVBoxLayout *layout = new QVBoxLayout(main_frame);
-	//left_frame->setLayout(layout);
+	QVBoxLayout *layout = new QVBoxLayout();
+	left_frame->setLayout(layout);
 
 
-	title_label = new QLabel(i18n("Title"), main_frame);
+	title_label = new QLabel(i18n("Title"), left_frame);
 	layout->addWidget(title_label);
 
-	title_edit = new QTextEdit(main_frame);
+	title_edit = new QTextEdit(left_frame);
 	layout->addWidget(title_edit);
 	connect(title_edit, SIGNAL(textChanged()), SLOT(titleBoxChanged()));
 
-	contents_label = new QLabel(i18n("Contents"), main_frame);
+	contents_label = new QLabel(i18n("Contents"), left_frame);
 	layout->addWidget(contents_label);
-	contents_edit = new QTextEdit(main_frame);
+	contents_edit = new QTextEdit(left_frame);
 	layout->addWidget(contents_edit);
 	connect(contents_edit, SIGNAL(textChanged()), SLOT(contentsBoxChanged()));
 
 	cdview = new CDView(&kover_file, main_frame);
-	layout->addWidget(cdview);
+	hlayout->addWidget(cdview);
 	cdview->setFixedSize(CDVIEW_WIDTH, CDVIEW_HEIGHT);
 	connect(cdview, SIGNAL(stopPreview()), SLOT(stopPreview()));
 	connect(cdview, SIGNAL(actualSize()), SLOT(actualSize()));
