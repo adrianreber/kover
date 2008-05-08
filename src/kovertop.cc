@@ -46,9 +46,7 @@
 #include <qlayout.h>
 #include <qpoint.h>
 #include <q3vbox.h>
-//Added by qt3to4:
 #include <QLabel>
-#include <Q3Frame>
 //#include <kkeydialog.h>
 #include <kshortcutsdialog.h>
 #include <kapplication.h>
@@ -253,17 +251,13 @@ KoverTop::make_option_frame()
 void
 KoverTop::make_more_frame()
 {
-	QVBoxLayout *top_layout = new QVBoxLayout(more_frame);
-
-	button_layout = new QBoxLayout(QBoxLayout::LeftToRight);
-	button_layout->addLayout(top_layout);
+	button_layout = new QBoxLayout(QBoxLayout::RightToLeft);
 	button_layout->setAlignment(Qt::AlignTop);
-	button_layout->setMargin(7);
-	//more_frame->setMargin(0);
+	more_frame->setLayout(button_layout);
 	more_button = new QPushButton(i18n("Options"), more_frame);
 	button_layout->addWidget(more_button, 0);
 	connect(more_button, SIGNAL(clicked()), SLOT(more_or_less()));
-	top_layout->addSpacing(5);
+	button_layout->addStretch(1);
 	cddb_id = new QLabel("", more_frame);
 	button_layout->addWidget(cddb_id, 0);
 }
