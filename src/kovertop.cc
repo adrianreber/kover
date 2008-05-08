@@ -19,6 +19,10 @@
  */
 
 #include "kovertop.moc"
+
+#include <pd.h>
+#include <kconfigskeleton.h>
+
 #include <QGridLayout>
 #include <QVBoxLayout>
 
@@ -125,6 +129,7 @@ KoverTop::make_menu()
 	KStandardAction::cut(this, SLOT(cut()), actionCollection());
 	KStandardAction::copy(this, SLOT(copy()), actionCollection());
 	KStandardAction::paste(this, SLOT(paste()), actionCollection());
+	KStandardAction::preferences(this, SLOT(preferences()), actionCollection());
 	//recent = KStandardAction::openRecent(this, SLOT(fileOpen(const KUrl &)), actionCollection());
 #define KCM_KAction(var, text, rcvr, slot, parent, name)	\
 	KAction * var = new KAction(text, this); \
@@ -593,13 +598,14 @@ KoverTop::cddbFill()
 void
 KoverTop::preferences()
 {
-#if 0
+	KConfigSkeleton* cs = new KConfigSkeleton();
 	pd *dialog = NULL;
 
 	if (kover_file.empty())
-		dialog = new pd(this, i18n("config me"));
+		dialog = new pd(this, cs);
 	else
-		dialog = new pd(this, i18n("config me"), true);
+		dialog = new pd(this, cs, true);
+
 	if (dialog->exec())
 		cdview->dataChanged(true);
 	delete dialog;
@@ -611,7 +617,6 @@ KoverTop::preferences()
 			setCaption(i18n("[New Document]"), false);
 		}
 	}
-#endif
 }
 
 QFont *
