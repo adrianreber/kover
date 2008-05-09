@@ -30,14 +30,14 @@
  * @param inexact_list is a STL list containing the 211 (inexact match) items
  */
 
-inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list):QDialog()
+inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list) : QDialog()
 {
 	local_list = inexact_list;
 	QVBoxLayout *top_layout = new QVBoxLayout(this);
 
 	top_layout->setMargin(7);
 	top_layout->addSpacing(10);
-	QLabel *label = new QLabel (tr("Choose wisely!"), this);
+	QLabel *label = new QLabel(tr("Choose wisely!"), this);
 
 	top_layout->addWidget(label);
 	top_layout->addSpacing(10);
@@ -60,7 +60,8 @@ inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list):QDialog()
 		box->addItem(newItem);
 	}
 
-	connect(box, SIGNAL(doubleClicked(QListWidget *)), SLOT(double_clicked(QListWidget *)));
+	connect(box, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
+		SLOT(double_clicked(QListWidgetItem *)));
 
 	top_layout->addWidget(box);
 	top_layout->addSpacing(20);
