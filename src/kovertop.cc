@@ -136,6 +136,10 @@ KoverTop::make_menu()
 	parent->addAction(name, var); \
 	connect(var, SIGNAL(triggered()), rcvr, slot)
 
+	KAction *newAct = new KAction(KIcon("network-connect"), i18n("&CDDB lookup"), actionCollection());
+	actionCollection()->addAction("cddb", newAct);
+	connect(newAct, SIGNAL(triggered(bool)), SLOT(cddbFill()));
+
 /*
    	new KCM_KAction(i18n("&Actual size"), "viewmag",
    		    KStandardShortcut::shortcut(KStandardShortcut::ZoomIn), this, SLOT(actualSize()),
@@ -147,7 +151,6 @@ KoverTop::make_menu()
    		    0, this, SLOT(file_mode()), actionCollection(), "file_mode");
    	new KAction(i18n("&CDDB lookup"), "network", 0, this,
    		    SLOT(cddbFill()), actionCollection(), "cddb");
-   	KStandardAction::preferences(this, SLOT(preferences()), actionCollection());
    	new KAction(i18n("&Image Embedding..."), "background", 0, this,
    		    SLOT(imageEmbedding()), actionCollection(), "image_embedding");
    	new KAction(i18n("Title Font..."), "fonts", 0, this,
@@ -227,27 +230,27 @@ KoverTop::make_option_frame()
 	display_title = new QCheckBox(tr("No title on booklet"), option_frame);
 	connect(display_title, SIGNAL(clicked()), SLOT(display_title_signal()));
 	kprintf("before display_title\n");
-	gbox->addWidget(display_title, 0, 0, 0, 1);
+	gbox->addWidget(display_title, 0, 0, 1, 1);
 
 	spine_text = new QCheckBox(i18n("Separate Spine Text"), option_frame);
 	kprintf("spine_text display_title\n");
-	gbox->addWidget(spine_text, 1, 1, 0, 1);
+	gbox->addWidget(spine_text, 1, 0, 1, 1);
 	connect(spine_text, SIGNAL(clicked()), SLOT(spine_text_method()));
 
 	the_spine_text = new QLineEdit(option_frame);
 	kprintf("spine_text display_title\n");
-	gbox->addWidget(the_spine_text, 2, 2, 0, 4);
+	gbox->addWidget(the_spine_text, 2, 0, 1, 4);
 	the_spine_text->setEnabled(false);
 	connect(the_spine_text, SIGNAL(textChanged(const QString &)),
 		SLOT(spine_text_changed_method(const QString &)));
 
 	number_check = new QCheckBox(i18n("CD Number"), option_frame);
-	gbox->addWidget(number_check, 3, 3, 0, 0);
+	gbox->addWidget(number_check, 3, 0, 1, 1);
 	connect(number_check, SIGNAL(toggled(bool)), SLOT(numberChecked(bool)));
 
 	number_spin = new QSpinBox(option_frame);
 	number_spin->setEnabled(false);
-	gbox->addWidget(number_spin, 3, 3, 1, 1);
+	gbox->addWidget(number_spin, 3, 1, 1, 1);
 	connect(number_spin, SIGNAL(valueChanged(int)), SLOT(numberChanged(int)));
 
 	option_frame->hide();
