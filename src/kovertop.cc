@@ -140,6 +140,9 @@ KoverTop::make_menu()
 	actionCollection()->addAction("cddb", newAct);
 	connect(newAct, SIGNAL(triggered(bool)), SLOT(cddbFill()));
 
+	newAct = new KAction(KIcon("media-eject"), i18n("Eject CD"), actionCollection());
+	actionCollection()->addAction("eject_cdrom", newAct);
+	connect(newAct, SIGNAL(triggered(bool)), SLOT(cdrom_eject()));
 /*
    	new KCM_KAction(i18n("&Actual size"), "viewmag",
    		    KStandardShortcut::shortcut(KStandardShortcut::ZoomIn), this, SLOT(actualSize()),
@@ -165,8 +168,6 @@ KoverTop::make_menu()
    		    SLOT(backgroundColor()), actionCollection(), "background_color");
    	new KAction(i18n("Spine Text Font..."), "fonts", 0, this,
    		    SLOT(inlet_title_font()), actionCollection(), "inlet_title_font");
-   	new KAction(i18n("Eject CD"), "player_eject", 0, this,
-   		    SLOT(cdrom_eject()), actionCollection(), "eject_cdrom");
    	new KAction(i18n("CDDB without CD"), "network", 0, this,
    		    SLOT(cddb_without_cd()), actionCollection(), "cddb_without_cd");
    	new KAction(i18n("Read CD-TEXT"), "network", 0, this,

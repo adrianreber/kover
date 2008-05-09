@@ -1,7 +1,7 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 1999-2000 by Denis Oliver Kropp
- * Copyright (C) 2000-2007 by Adrian Reber
+ * Copyright (C) 1999, 2000 by Denis Oliver Kropp
+ * Copyright (C) 2000, 2008 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +30,19 @@
 #include "categories.h"
 #include <kover_old.h>
 
-cddb_fill::cddb_fill(KoverFile * _kover_file, no_qobject * bla)
+cddb_fill::cddb_fill(KoverFile *_kover_file, no_qobject *bla)
 {
 	kover_file = _kover_file;
 	blub = bla;
 }
 
-bool cddb_fill::read_cdtext()
+bool
+cddb_fill::read_cdtext()
 {
 	CdIo_t *cdio;
 	char *device = NULL;
+	const char *status = "Unable to get default CD device.";
+
 	cd_info.artist = "Artist";
 	cd_info.cdname = "Title";
 	cd_info.length = 0;
@@ -50,25 +53,41 @@ bool cddb_fill::read_cdtext()
 	if (!globals.cdrom_device) {
 		device = cdio_get_default_device(NULL);
 		if (!device) {
-			blub->
-			    set_status_text(i18n
-					    ("Unable to get default CD device.").toUtf8());
+			blub->set_status_text(i18n(status).toUtf8());
 			return false;
 		}
 
 	} else
 		device = globals.cdrom_device;
-	 fprintf(stderr, "CD-ROM device: %s\n", device);
+
+	kprintf("CD-ROM device: %s\n", device);
+
 	cdio = cdio_open(device, DRIVER_UNKNOWN);
-	 fprintf(stderr, "cdio_get_num_tracks: %d\n",
-			cdio_get_num_tracks(cdio));
 	cd_info.ntracks = cdio_get_num_tracks(cdio);
-	 fprintf(stderr, "CDIO_INVALID_TRACK %d\n", CDIO_INVALID_TRACK);
+	kprintf("CDIO_INVALID_TRACK %d\n", CDIO_INVALID_TRACK);
+
 	if (!cdio) {
 		blub->set_status_text("unable to open CD device");
+		kprintf("unable to open CD device\n");
 		return false;
 	}
-	//get disc artist and title
+
+	/* Get the track count for the CD. */
+	cd_info.ntracks = cdio_get_num_tracks(cdio);
+
+	kprintf("cdio_get_num_tracks: %d\n", cd_info.ntracks);
+	kprintf("CDIO_INVALID_TRACK %d\n", CDIO_INVALID_TRACK);
+
+	if (cd_info.ntracks == CDIO_INVALID_TRACK) {
+		blub->set_status_text("unable to open CD device");
+		kprintf("unable to open CD device\n");
+		cdio_destroy(cdio);
+		return false;
+	}
+
+	kprintf("device %p\n", cdio);
+
+	/* get disc artist and title */
 	cdtext_t *cdtext = cdio_get_cdtext(cdio, 0);
 	if (cdtext) {
 		if (cdtext->field[CDTEXT_PERFORMER])
@@ -77,7 +96,7 @@ bool cddb_fill::read_cdtext()
 			cd_info.cdname = cdtext->field[CDTEXT_TITLE];
 		if (cdtext->field[CDTEXT_DISCID])
 			cd_info.cddb_id =
-			    strtoul(cdtext->field[CDTEXT_DISCID], NULL, 16);
+				strtoul(cdtext->field[CDTEXT_DISCID], NULL, 16);
 
 	}
 
@@ -95,12 +114,11 @@ bool cddb_fill::read_cdtext()
 	return true;
 }
 
-bool cddb_fill::execute()
+bool
+cddb_fill::execute()
 {
-
-	if (!readTOC()) {
+	if (!readTOC())
 		return false;
-	}
 
 	if (!cddb_query())
 		return false;
@@ -108,7 +126,8 @@ bool cddb_fill::execute()
 	return true;
 }
 
-bool cddb_fill::execute_without_cd(const char *id, int cat)
+bool
+cddb_fill::execute_without_cd(const char *id, int cat)
 {
 	bool without = true;
 	categories *category = new categories();
@@ -125,14 +144,15 @@ bool cddb_fill::execute_without_cd(const char *id, int cat)
 	without = cddb_read(cd_info.cddb_id, cd_info.category);
 
 	if (category) {
-		delete(category);
+		delete (category);
 		category = NULL;
 	}
 
 	return without;
 }
 
-void cddb_fill::setTitleAndContents()
+void
+cddb_fill::setTitleAndContents()
 {
 	QString tracks, contents, cddb_id;
 	string artist = cd_info.artist + "\n" + cd_info.cdname;
@@ -159,27 +179,32 @@ void cddb_fill::setTitleAndContents()
 	kover_file->set_cddb_id(cddb_id);
 }
 
-void cddb_fill::cdInfo()
+void
+cddb_fill::cdInfo()
 {
 	QString str;
 
 	str.sprintf
-	    (i18n
-	     ("CD contains %d tracks, total time is %d:%02d, the magic number is 0x%lx").toUtf8(),
-	     cd_info.ntracks, cd_info.length / 60, cd_info.length % 60,
-	     cd_info.cddb_id);
-	 fprintf(stderr, "%s:%s\n", PACKAGE, str.toUtf8().constData());
+	(i18n
+	 (
+		 "CD contains %d tracks, total time is %d:%02d, the magic number is 0x%lx")
+	 .toUtf8(),
+	 cd_info.ntracks, cd_info.length / 60, cd_info.length % 60,
+	 cd_info.cddb_id);
+	fprintf(stderr, "%s:%s\n", PACKAGE, str.toUtf8().constData());
 	blub->set_status_text(str.toUtf8());
 	blub->update_id(cd_info.cddb_id);
 }
 
-bool cddb_fill::readTOC()
+bool
+cddb_fill::readTOC()
 {
 	CdIo_t *cdio = NULL;
 	track_t cnt, t;
 	lsn_t lsn;
 	int i, pos;
 	char *device = NULL;
+	const char *status = "Unable to get default CD device.";
 
 	cd_info.artist = "Artist";
 	cd_info.cdname = "Title";
@@ -190,9 +215,7 @@ bool cddb_fill::readTOC()
 	if (!globals.cdrom_device) {
 		device = cdio_get_default_device(NULL);
 		if (!device) {
-			blub->
-			    set_status_text(i18n
-					    ("Unable to get default CD device.").toUtf8());
+			blub->set_status_text(i18n(status).toUtf8());
 			return false;
 		}
 
@@ -225,20 +248,20 @@ bool cddb_fill::readTOC()
 	if (cnt == 0) {
 		blub->set_status_text("no audio tracks on CD");
 	}
-	 fprintf(stderr, "CD contains %d track(s)\n", cnt);
+	fprintf(stderr, "CD contains %d track(s)\n", cnt);
 
 
 	cd_info.ntracks = cnt;
 	for (t = 1; t <= cnt; t++) {
 
 		lsn = cdio_get_track_lsn(cdio, t);
-		 fprintf(stderr, "lsn: %d\n", lsn);
+		fprintf(stderr, "lsn: %d\n", lsn);
 		if (lsn == CDIO_INVALID_LSN) {
 			blub->
-			    set_status_text
-			    ("track has invalid Logical Sector Number");
+			set_status_text
+			("track has invalid Logical Sector Number");
 		}
-		//lsn +=150;
+		/* lsn +=150; */
 
 		trackinfo *blub = new trackinfo();
 		blub->track = t;
@@ -247,8 +270,8 @@ bool cddb_fill::readTOC()
 
 		cd_info.tracks.push_back(blub);
 
-		//track_info(i + 1, entry.cdte_addr.msf.minute,
-		//            entry.cdte_addr.msf.second, entry.cdte_addr.msf.frame));
+		/* track_info(i + 1, entry.cdte_addr.msf.minute, */
+		/*            entry.cdte_addr.msf.second, entry.cdte_addr.msf.frame)); */
 
 	}
 
@@ -260,40 +283,44 @@ bool cddb_fill::readTOC()
 	cd_info.tracks.push_back(blub);
 
 	cd_info.length = FRAMES_TO_SECONDS(lsn);
-	 fprintf(stderr, "cd_info.length %d\n", cd_info.length);
+	fprintf(stderr, "cd_info.length %d\n", cd_info.length);
 
 	pos = cd_info.tracks[0]->start;
 	for (i = 0; i < cd_info.ntracks; i++) {
-		 fprintf(stderr, "pos: %d\n", pos);
+		fprintf(stderr, "pos: %d\n", pos);
 		cd_info.tracks[i]->length = cd_info.tracks[i + 1]->start - pos;
-		 fprintf(stderr, "length: %ld\n",
-				cd_info.tracks[i]->length);
-		 fprintf(stderr, "3: min %ld sec %ld\n",
-				FRAMES_TO_SECONDS(cd_info.tracks[i]->length -
-						  SECONDS_TO_FRAMES(2)) / 60,
-				FRAMES_TO_SECONDS(cd_info.tracks[i]->length -
-						  SECONDS_TO_FRAMES(2)) % 60);
+		fprintf(stderr, "length: %ld\n",
+			cd_info.tracks[i]->length);
+		fprintf(stderr, "3: min %ld sec %ld\n",
+			FRAMES_TO_SECONDS(cd_info.tracks[i]->length -
+					  SECONDS_TO_FRAMES(2)) / 60,
+			FRAMES_TO_SECONDS(cd_info.tracks[i]->length -
+					  SECONDS_TO_FRAMES(2)) % 60);
 		pos = cd_info.tracks[i + 1]->start;
 	}
 
-	 fprintf(stderr, "Table of contents successfully read: %08lx\n",
-			cd_info.cddb_id);
-	 fprintf(stderr, "Disc length: %d\n", cd_info.length);
+	fprintf(stderr, "Table of contents successfully read: %08lx\n",
+		cd_info.cddb_id);
+	fprintf(stderr, "Disc length: %d\n", cd_info.length);
 
 	cdio_destroy(cdio);
 
 	return true;
 }
 
-bool cddb_fill::reading_proxy_env_failed()
+bool
+cddb_fill::reading_proxy_env_failed()
 {
 	blub->
-	    set_status_text(i18n
-			    ("Reading http_proxy environment variable failed!").toUtf8());
+	set_status_text(i18n
+			(
+				"Reading http_proxy environment variable failed!")
+			.toUtf8());
 	return false;
 }
 
-bool cddb_fill::do_proxy_stuff(cddb_conn_t * conn)
+bool
+cddb_fill::do_proxy_stuff(cddb_conn_t *conn)
 {
 	char *proxy_server = NULL;
 	int proxy_port = 0;
@@ -316,15 +343,15 @@ bool cddb_fill::do_proxy_stuff(cddb_conn_t * conn)
 		cddb_set_http_proxy_server_port(conn, globals.proxy_port);
 		return true;
 	}
-	//saving the proxy configuration to temporary variables
-	//reading from environment
+	/* saving the proxy configuration to temporary variables */
+	/* reading from environment */
 	if (getenv("http_proxy"))
 		tmp = strdup(getenv("http_proxy"));
 	if (!tmp)
 		return reading_proxy_env_failed();
 	if (strncmp(tmp, "http://", 7))
 		return reading_proxy_env_failed();
-	//finding proxy server and port
+	/* finding proxy server and port */
 	s = strchr(tmp + 7, 58);
 	if (!s)
 		return reading_proxy_env_failed();
@@ -335,7 +362,7 @@ bool cddb_fill::do_proxy_stuff(cddb_conn_t * conn)
 		return reading_proxy_env_failed();
 
 	*ss = 0;
-	//now globals has the environment proxy information
+	/* now globals has the environment proxy information */
 	proxy_server = strdup(tmp + 7);
 	proxy_port = atoi(s + 1);
 
@@ -347,7 +374,8 @@ bool cddb_fill::do_proxy_stuff(cddb_conn_t * conn)
 	return true;
 }
 
-bool cddb_fill::set_connection_params(cddb_conn_t * conn)
+bool
+cddb_fill::set_connection_params(cddb_conn_t *conn)
 {
 	char *logname = NULL;
 	char *hostname = NULL;
@@ -377,14 +405,15 @@ bool cddb_fill::set_connection_params(cddb_conn_t * conn)
 	cddb_cache_set_dir(conn, globals.cddb_path);
 
 	if (!globals.use_cddbp) {
-		cddb_http_enable(conn);	/* REQ */
-		cddb_set_server_port(conn, 80);	/* REQ */
+		cddb_http_enable(conn);         /* REQ */
+		cddb_set_server_port(conn, 80); /* REQ */
 		return do_proxy_stuff(conn);
 	}
 	return true;
 }
 
-bool cddb_fill::check_for_auth(cddb_conn_t * conn)
+bool
+cddb_fill::check_for_auth(cddb_conn_t *conn)
 {
 
 	int blubber = -2;
@@ -394,11 +423,11 @@ bool cddb_fill::check_for_auth(cddb_conn_t * conn)
 
 	blub->set_status_text(cddb_error_str(cddb_errno(conn)));
 	pa *pad =
-	    new pa(globals.proxy_server, globals.proxy_port);
+		new pa(globals.proxy_server, globals.proxy_port);
 	blubber = pad->exec();
 	if (blubber) {
 		blub->set_status_text(i18n("Operation aborted.").toUtf8());
-		//canceled
+		/* canceled */
 		return false;
 	}
 	if (globals.username)
@@ -415,9 +444,11 @@ bool cddb_fill::check_for_auth(cddb_conn_t * conn)
 }
 
 /* Sends query to server -- this is the first thing to be done */
-bool cddb_fill::cddb_query()
+bool
+cddb_fill::cddb_query()
 {
 	int i;
+
 	list < cddb_211_item * >inexact_list;
 	inexact_dialog *inexact;
 	cddb_211_item *ref_211;
@@ -460,7 +491,7 @@ bool cddb_fill::cddb_query()
 
 	while (aber) {
 
-		matches =::cddb_query(conn, disc);
+		matches = ::cddb_query(conn, disc);
 		if (cddb_errno(conn) == CDDB_ERR_PROXY_AUTH) {
 			if (check_for_auth(conn))
 				continue;
@@ -514,7 +545,7 @@ bool cddb_fill::cddb_query()
 	}
 	inexact = new inexact_dialog(inexact_list);
 	if (inexact_list.size() > 1) {
-		//dialog to choose one of the matches
+		/* dialog to choose one of the matches */
 		aber = inexact->exec();
 	}
 
@@ -524,15 +555,16 @@ bool cddb_fill::cddb_query()
 	}
 	ref_211 = inexact->get_object(aber);
 
-	 fprintf(stderr, "Using disc: %08lX:%s:%s:%s\n",
-			ref_211->get_id(), ref_211->get_artist().c_str(),
-			ref_211->get_title().c_str(),
-			ref_211->get_category().c_str());
+	fprintf(stderr, "Using disc: %08lX:%s:%s:%s\n",
+		ref_211->get_id(), ref_211->get_artist().c_str(),
+		ref_211->get_title().c_str(),
+		ref_211->get_category().c_str());
 
 	return cddb_read(ref_211->get_id(), ref_211->get_category());
 }
 
-bool cddb_fill::cddb_read(unsigned long disc_id, string category)
+bool
+cddb_fill::cddb_read(unsigned long disc_id, string category)
 {
 
 	cddb_disc_t *disc = NULL;
@@ -560,7 +592,7 @@ bool cddb_fill::cddb_read(unsigned long disc_id, string category)
 
 	while (i) {
 
-		int success =::cddb_read(conn, disc);
+		int success = ::cddb_read(conn, disc);
 		if (cddb_errno(conn) == CDDB_ERR_PROXY_AUTH) {
 			if (check_for_auth(conn))
 				continue;
@@ -580,8 +612,10 @@ bool cddb_fill::cddb_read(unsigned long disc_id, string category)
 	if (cd_info.length == 0) {
 
 		blub->
-		    set_status_text(i18n
-				    ("Disc length == 0; this can't be right. Aborting.").toUtf8());
+		set_status_text(i18n
+				(
+					"Disc length == 0; this can't be right. Aborting.")
+				.toUtf8());
 		return false;
 	}
 	cd_info.artist = cddb_disc_get_artist(disc);
@@ -591,7 +625,7 @@ bool cddb_fill::cddb_read(unsigned long disc_id, string category)
 
 	i = 0;
 	cd_info.ntracks = cddb_disc_get_track_count(disc);
-	while ((signed int) cd_info.tracks.size() < cd_info.ntracks)
+	while ((signed int)cd_info.tracks.size() < cd_info.ntracks)
 		cd_info.tracks.push_back(new trackinfo());
 
 
@@ -607,7 +641,8 @@ bool cddb_fill::cddb_read(unsigned long disc_id, string category)
 	return true;
 }
 
-bool cddb_fill::sites(list < server * >&server_list)
+bool
+cddb_fill::sites(list < server * >&server_list)
 {
 
 	cddb_conn_t *conn = NULL;
@@ -655,9 +690,9 @@ bool cddb_fill::sites(list < server * >&server_list)
 		cddb_site_get_description(site, &desc);
 		cddb_site_print(site);
 		server_list.
-		    push_back(new
-			      server(address, protocol, port, path, lat, lon,
-				     desc));
+		push_back(new
+			  server(address, protocol, port, path, lat, lon,
+				 desc));
 		site = cddb_next_site(conn);
 	}
 	cddb_destroy(conn);
