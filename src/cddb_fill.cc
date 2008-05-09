@@ -28,6 +28,7 @@
 #include "inexact_dialog.h"
 #include "pa.h"
 #include "categories.h"
+#include <kover_old.h>
 
 cddb_fill::cddb_fill(KoverFile * _kover_file, no_qobject * bla)
 {
@@ -136,7 +137,7 @@ void cddb_fill::setTitleAndContents()
 	QString tracks, contents, cddb_id;
 	string artist = cd_info.artist + "\n" + cd_info.cdname;
 
-	//kover_file->setTitle(artist.c_str());
+	kover_file->setTitle(artist.c_str());
 	for (int i = 0; i < cd_info.ntracks; i++) {
 		if (globals.display_track_duration) {
 			int m = 0;
@@ -153,9 +154,9 @@ void cddb_fill::setTitleAndContents()
 			tracks.append("\n");
 		contents.append(tracks);
 	}
-	//kover_file->setContents(contents);
+	kover_file->setContents(contents);
 	cddb_id.sprintf("0x%lx", cd_info.cddb_id);
-	//kover_file->set_cddb_id(cddb_id);
+	kover_file->set_cddb_id(cddb_id);
 }
 
 void cddb_fill::cdInfo()
@@ -197,19 +198,30 @@ bool cddb_fill::readTOC()
 
 	}
 	device = globals.cdrom_device;
-	 fprintf(stderr, "CD-ROM device: %s\n", device);
-	cdio = cdio_open(device, DRIVER_UNKNOWN);
-	 fprintf(stderr, "cdio_get_num_tracks: %d\n",
-			cdio_get_num_tracks(cdio));
-	 fprintf(stderr, "CDIO_INVALID_TRACK %d\n", CDIO_INVALID_TRACK);
-	 fprintf(stderr, "device %p\n", cdio);
+	kprintf("CD-ROM device: %s\n", device);
+	cdio = cdio_open(device, DRIVER_DEVICE);
 	if (!cdio) {
 		blub->set_status_text("unable to open CD device");
+		kprintf("unable to open CD device\n");
 		return false;
 	}
 
+
 	/* Get the track count for the CD. */
 	cnt = cdio_get_num_tracks(cdio);
+
+	kprintf("cdio_get_num_tracks: %d\n", cnt);
+	kprintf("CDIO_INVALID_TRACK %d\n", CDIO_INVALID_TRACK);
+
+	if (cnt == CDIO_INVALID_TRACK) {
+		blub->set_status_text("unable to open CD device");
+		kprintf("unable to open CD device\n");
+		cdio_destroy(cdio);
+		return false;
+	}
+
+	kprintf("device %p\n", cdio);
+
 	if (cnt == 0) {
 		blub->set_status_text("no audio tracks on CD");
 	}
