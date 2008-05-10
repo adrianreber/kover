@@ -66,7 +66,7 @@ KoverTop::KoverTop() : KXmlGuiWindow()
 	vlayout->addWidget(dead_space);
 	more_frame = new QFrame(centralWidget);
 	vlayout->addWidget(more_frame);
-	option_frame->setTitle(tr("All this options are not global"));
+	option_frame->setTitle(tr("All these options are not global"));
 
 
 	setCaption(i18n("[New Document]"), false);
@@ -93,6 +93,9 @@ KoverTop::KoverTop() : KXmlGuiWindow()
 	setCentralWidget(centralWidget);
 	orig_width = width();
 	orig_height = height();
+
+	createGUI();
+
 	setAutoSaveSettings();
 }
 
@@ -121,10 +124,6 @@ KoverTop::make_menu()
 	KStandardAction::paste(this, SLOT(paste()), ac);
 	KStandardAction::preferences(this, SLOT(preferences()), ac);
 	//recent = KStandardAction::openRecent(this, SLOT(fileOpen(const KUrl &)), ac);
-#define KCM_KAction(var, text, rcvr, slot, parent, name)	\
-	KAction * var = new KAction(text, this); \
-	parent->addAction(name, var); \
-	connect(var, SIGNAL(triggered()), rcvr, slot)
 
 	KAction *act = new KAction(KIcon("network-connect"), i18n("&CDDB lookup"), ac);
 	ac->addAction("cddb", act);
@@ -147,27 +146,38 @@ KoverTop::make_menu()
 	act = new KAction(KIcon("image-loading"), i18n("&Image Embedding..."), ac);
 	ac->addAction("image_embedding", act);
 	connect(act, SIGNAL(triggered(bool)), SLOT(imageEmbedding()));
-/*
-   	new KAction(i18n("Title Font..."), "fonts", 0, this,
-   		    SLOT(titleFont()), actionCollection(), "title_font");
-   	new KAction(i18n("Title Fontcolor..."), "colorize", 0, this,
-   		    SLOT(titleFontColor()), actionCollection(), "title_font_color");
-   	new KAction(i18n("Contents Font..."), "fonts", 0, this,
-   		    SLOT(contentsFont()), actionCollection(), "contents_font");
-   	new KAction(i18n("Contents Fontcolor..."), "colorize", 0, this,
-   		    SLOT(contentsFontColor()), actionCollection(), "contents_font_color");
-   	new KAction(i18n("Background Color..."), "colors", 0, this,
-   		    SLOT(backgroundColor()), actionCollection(), "background_color");
-   	new KAction(i18n("Spine Text Font..."), "fonts", 0, this,
-   		    SLOT(inlet_title_font()), actionCollection(), "inlet_title_font");
-   	new KAction(i18n("CDDB without CD"), "network", 0, this,
-   		    SLOT(cddb_without_cd()), actionCollection(), "cddb_without_cd");
-   	new KAction(i18n("Read CD-TEXT"), "network", 0, this,
-   		    SLOT(read_cd_text()), actionCollection(), "read_cd_text");
 
-   	KStandardAction::keyBindings(this, SLOT(slotConfigureKeys()), actionCollection());
- */
-	createGUI();
+	act = new KAction(KIcon("fonts-package"), i18n("Title Font..."), ac);
+	ac->addAction("title_font", act);
+	connect(act, SIGNAL(triggered(bool)), SLOT(titleFont()));
+
+	act = new KAction(KIcon("fonts-package"), i18n("Contents Font..."), ac);
+	ac->addAction("contents_font", act);
+	connect(act, SIGNAL(triggered(bool)), SLOT(contentsFont()));
+
+	act = new KAction(KIcon("fonts-package"), i18n("Spine Text Font..."), ac);
+	ac->addAction("inlet_title_font", act);
+	connect(act, SIGNAL(triggered(bool)), SLOT(inlet_title_font()));
+
+	act = new KAction(KIcon("color-picker"), i18n("Title Fontcolor..."), ac);
+	ac->addAction("title_font_color", act);
+	connect(act, SIGNAL(triggered(bool)), SLOT(titleFontColor()));
+
+	act = new KAction(KIcon("color-picker"), i18n("Contents Fontcolor..."), ac);
+	ac->addAction("contents_font_color", act);
+	connect(act, SIGNAL(triggered(bool)), SLOT(contentsFontColor()));
+
+	act = new KAction(KIcon("color-picker"), i18n("Background Fontcolor..."), ac);
+	ac->addAction("background_color", act);
+	connect(act, SIGNAL(triggered(bool)), SLOT(backgroundColor()));
+
+	act = new KAction(KIcon("network-connect"), i18n("CDDB without CD"), ac);
+	ac->addAction("cddb_without_cd", act);
+	connect(act, SIGNAL(triggered(bool)), SLOT(cddb_without_cd()));
+
+	act = new KAction(KIcon("network-connect"), i18n("Read CD-TEXT"), ac);
+	ac->addAction("read_cd_text", act);
+	connect(act, SIGNAL(triggered(bool)), SLOT(read_cd_text()));
 }
 
 void
