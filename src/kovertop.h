@@ -32,6 +32,7 @@
 #include <QGroupBox>
 #include <QBoxLayout>
 
+#include <krecentfilesaction.h>
 
 /** KoverTop is the TopLevelWidget. */
 
@@ -103,7 +104,7 @@ class KoverTop : public KXmlGuiWindow, no_qobject {
 	QLineEdit *the_spine_text;
 	QCheckBox *spine_text;
 
-	//KRecentFilesAction *recent;
+	KRecentFilesAction *recent;
 	QCheckBox *slim_case;
 
 	QWidget *centralWidget;

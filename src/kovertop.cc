@@ -19,7 +19,6 @@
  */
 
 #include "kovertop.moc"
-#include "kovertop.h"
 #include "imagedlg.h"
 #include "without_cd.h"
 #include <pd.h>
@@ -90,7 +89,7 @@ KoverTop::KoverTop() : KXmlGuiWindow()
 	if (globals.save_position)
 		move(globals.xpos, globals.ypos);
 
-	//recent->loadEntries((KApplication::kApplication())->config());
+	recent->loadEntries(KGlobal::config()->group("RecentFiles"));
 	setCentralWidget(centralWidget);
 	orig_width = width();
 	orig_height = height();
@@ -102,7 +101,7 @@ KoverTop::KoverTop() : KXmlGuiWindow()
 
 KoverTop::~KoverTop()
 {
-	//recent->saveEntries((KApplication::kApplication())->config());
+	recent->saveEntries(KGlobal::config()->group("RecentFiles"));
 	delete status_bar;
 	delete cddbfill;
 	delete cdview;
@@ -125,7 +124,7 @@ KoverTop::make_menu()
 	KStandardAction::paste(this, SLOT(paste()), ac);
 	KStandardAction::preferences(this, SLOT(preferences()), ac);
 	KStandardAction::keyBindings(this, SLOT(config_keys()), ac);
-	//recent = KStandardAction::openRecent(this, SLOT(fileOpen(const KUrl &)), ac);
+	recent = KStandardAction::openRecent(this, SLOT(fileOpen(KUrl)), ac);
 
 	KAction *act = new KAction(KIcon("network-connect"), i18n("&CDDB lookup"), ac);
 	ac->addAction("cddb", act);
@@ -463,7 +462,7 @@ KoverTop::fileOpen(const KUrl & url)
 
 			setStatusText(i18n("File loaded"));
 			altered_data = false;
-			//recent->addURL(url);
+			recent->addUrl(url);
 		} else
 			KMessageBox::error(this,
 					   i18n(
@@ -499,7 +498,7 @@ KoverTop::saveFile(const KUrl & url)
 		setCaption(i18n(url.url()), false);
 		setStatusText(i18n("File saved"));
 		altered_data = false;
-		//recent->addURL(url);
+		recent->addUrl(url);
 		m_url = url;
 	} else
 		KMessageBox::error(this, i18n("Error while opening/reading file!"));
