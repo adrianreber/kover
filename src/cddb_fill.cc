@@ -42,6 +42,7 @@ cddb_fill::read_cdtext()
 	CdIo_t *cdio;
 	char *device = NULL;
 	const char *status = "Unable to get default CD device.";
+	const char *unable = "unable to open CD device";
 
 	cd_info.artist = "Artist";
 	cd_info.cdname = "Title";
@@ -67,8 +68,8 @@ cddb_fill::read_cdtext()
 	kprintf("CDIO_INVALID_TRACK %d\n", CDIO_INVALID_TRACK);
 
 	if (!cdio) {
-		blub->set_status_text("unable to open CD device");
-		kprintf("unable to open CD device\n");
+		blub->set_status_text(unable);
+		kprintf("%s\n", unable);
 		return false;
 	}
 
@@ -79,8 +80,8 @@ cddb_fill::read_cdtext()
 	kprintf("CDIO_INVALID_TRACK %d\n", CDIO_INVALID_TRACK);
 
 	if (cd_info.ntracks == CDIO_INVALID_TRACK) {
-		blub->set_status_text("unable to open CD device");
-		kprintf("unable to open CD device\n");
+		blub->set_status_text(unable);
+		kprintf("%s\n", unable);
 		cdio_destroy(cdio);
 		return false;
 	}
@@ -182,17 +183,18 @@ cddb_fill::setTitleAndContents()
 void
 cddb_fill::cdInfo()
 {
-	QString str;
+	const char *contains = "CD contains %d tracks, "
+			       "total time is %d:%02d, "
+			       "the magic number is 0x%lx";
+	char str[256];
 
-	str.sprintf
-	(i18n
-	 (
-		 "CD contains %d tracks, total time is %d:%02d, the magic number is 0x%lx")
-	 .toUtf8(),
-	 cd_info.ntracks, cd_info.length / 60, cd_info.length % 60,
-	 cd_info.cddb_id);
-	fprintf(stderr, "%s:%s\n", PACKAGE, str.toUtf8().constData());
-	blub->set_status_text(str.toUtf8());
+	sprintf(str, contains, cd_info.ntracks, cd_info.length / 60,
+		cd_info.length % 60,
+		cd_info.cddb_id);
+
+	kprintf("%s\n", str);
+
+	blub->set_status_text(str);
 	blub->update_id(cd_info.cddb_id);
 }
 
