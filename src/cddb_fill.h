@@ -60,7 +60,7 @@ public:
 	cddb_fill() {};
 	bool execute();
 	bool execute_without_cd(const char *, int);
-	void cdInfo();
+	void get_info();
 	void setTitleAndContents();
 	bool read_cdtext();
 	bool sites(list < server * >&);

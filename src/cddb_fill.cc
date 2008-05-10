@@ -181,7 +181,7 @@ cddb_fill::setTitleAndContents()
 }
 
 void
-cddb_fill::cdInfo()
+cddb_fill::get_info()
 {
 	const char *contains = "CD contains %d tracks, "
 			       "total time is %d:%02d, "

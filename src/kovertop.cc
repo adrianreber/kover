@@ -595,7 +595,7 @@ KoverTop::cddbFill()
 		connect(contents_edit, SIGNAL(textChanged()),
 			SLOT(contentsBoxChanged()));
 		altered_data = false;
-		cddbfill->cdInfo();
+		cddbfill->get_info();
 	}
 }
 
@@ -754,7 +754,7 @@ KoverTop::cddb_without_cd()
 		connect(contents_edit, SIGNAL(textChanged()),
 			SLOT(contentsBoxChanged()));
 		altered_data = false;
-		cddbfill->cdInfo();
+		cddbfill->get_info();
 	}
 	delete (without);
 	free(id);
