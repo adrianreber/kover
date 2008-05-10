@@ -106,6 +106,7 @@ KoverTop::KoverTop() : KXmlGuiWindow()
 	setCentralWidget(centralWidget);
 	orig_width = width();
 	orig_height = height();
+	setAutoSaveSettings();
 }
 
 KoverTop::~KoverTop()
@@ -120,42 +121,46 @@ KoverTop::~KoverTop()
 void
 KoverTop::make_menu()
 {
-	KStandardAction::openNew(this, SLOT(fileNew()), actionCollection());
-	KStandardAction::open(this, SLOT(fileOpen()), actionCollection());
-	KStandardAction::save(this, SLOT(fileSave()), actionCollection());
-	KStandardAction::saveAs(this, SLOT(fileSaveAs()), actionCollection());
-	KStandardAction::print(this, SLOT(filePrint()), actionCollection());
-	KStandardAction::quit(this, SLOT(close()), actionCollection());
-	KStandardAction::cut(this, SLOT(cut()), actionCollection());
-	KStandardAction::copy(this, SLOT(copy()), actionCollection());
-	KStandardAction::paste(this, SLOT(paste()), actionCollection());
-	KStandardAction::preferences(this, SLOT(preferences()), actionCollection());
-	//recent = KStandardAction::openRecent(this, SLOT(fileOpen(const KUrl &)), actionCollection());
+	KActionCollection *ac = actionCollection();
+
+	KStandardAction::openNew(this, SLOT(fileNew()), ac);
+	KStandardAction::open(this, SLOT(fileOpen()), ac);
+	KStandardAction::save(this, SLOT(fileSave()), ac);
+	KStandardAction::saveAs(this, SLOT(fileSaveAs()), ac);
+	KStandardAction::print(this, SLOT(filePrint()), ac);
+	KStandardAction::quit(this, SLOT(close()), ac);
+	KStandardAction::cut(this, SLOT(cut()), ac);
+	KStandardAction::copy(this, SLOT(copy()), ac);
+	KStandardAction::paste(this, SLOT(paste()), ac);
+	KStandardAction::preferences(this, SLOT(preferences()), ac);
+	//recent = KStandardAction::openRecent(this, SLOT(fileOpen(const KUrl &)), ac);
 #define KCM_KAction(var, text, rcvr, slot, parent, name)	\
 	KAction * var = new KAction(text, this); \
 	parent->addAction(name, var); \
 	connect(var, SIGNAL(triggered()), rcvr, slot)
 
-	KAction *newAct = new KAction(KIcon("network-connect"), i18n("&CDDB lookup"), actionCollection());
-	actionCollection()->addAction("cddb", newAct);
-	connect(newAct, SIGNAL(triggered(bool)), SLOT(cddbFill()));
+	KAction *act = new KAction(KIcon("network-connect"), i18n("&CDDB lookup"), ac);
+	ac->addAction("cddb", act);
+	connect(act, SIGNAL(triggered(bool)), SLOT(cddbFill()));
 
-	newAct = new KAction(KIcon("media-eject"), i18n("Eject CD"), actionCollection());
-	actionCollection()->addAction("eject_cdrom", newAct);
-	connect(newAct, SIGNAL(triggered(bool)), SLOT(cdrom_eject()));
+	act = new KAction(KIcon("media-eject"), i18n("Eject CD"), ac);
+	ac->addAction("eject_cdrom", act);
+	connect(act, SIGNAL(triggered(bool)), SLOT(cdrom_eject()));
+
+	act = new KAction(KIcon("zoom-in"), i18n("&Actual size"), ac);
+	ac->addAction("actual_size", act);
+	act->setShortcut(KStandardShortcut::zoomIn());
+	connect(act, SIGNAL(triggered(bool)), SLOT(actualSize()));
+
+	act = new KAction(KIcon("zoom-out"), "dumdi", ac);
+	ac->addAction("stop_preview", act);
+	act->setShortcut(KStandardShortcut::zoomOut());
+	connect(act, SIGNAL(triggered(bool)), SLOT(stopPreview()));
+
+	act = new KAction(KIcon("image-loading"), i18n("&Image Embedding..."), ac);
+	ac->addAction("image_embedding", act);
+	connect(act, SIGNAL(triggered(bool)), SLOT(imageEmbedding()));
 /*
-   	new KCM_KAction(i18n("&Actual size"), "viewmag",
-   		    KStandardShortcut::shortcut(KStandardShortcut::ZoomIn), this, SLOT(actualSize()),
-   		    actionCollection(), "actual_size");
-   	new KAction(i18n("&Actual size"), "viewmag",
-   		    KStandardShortcut::shortcut(KStandardShortcut::ZoomOut), this, SLOT(stopPreview()),
-   		    actionCollection(), "stop_preview");
-   	new KAction(i18n("&File mode"), "view_tree",
-   		    0, this, SLOT(file_mode()), actionCollection(), "file_mode");
-   	new KAction(i18n("&CDDB lookup"), "network", 0, this,
-   		    SLOT(cddbFill()), actionCollection(), "cddb");
-   	new KAction(i18n("&Image Embedding..."), "background", 0, this,
-   		    SLOT(imageEmbedding()), actionCollection(), "image_embedding");
    	new KAction(i18n("Title Font..."), "fonts", 0, this,
    		    SLOT(titleFont()), actionCollection(), "title_font");
    	new KAction(i18n("Title Fontcolor..."), "colorize", 0, this,
