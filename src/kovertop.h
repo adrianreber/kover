@@ -83,7 +83,7 @@ class KoverTop : public KXmlGuiWindow, no_qobject {
 	void spine_text_method();
 	void spine_text_changed_method(const QString & s);
 	void file_mode();
-	void slotConfigureKeys();
+	void config_keys();
 	void read_cd_text();
 
  private:

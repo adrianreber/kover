@@ -41,6 +41,7 @@
 #include <kapplication.h>
 #include <ktoolbar.h>
 #include <kstatusbar.h>
+#include <kshortcutsdialog.h>
 
 #define PREV_WIDTH 695
 #define PREV_HEIGHT 684
@@ -123,6 +124,7 @@ KoverTop::make_menu()
 	KStandardAction::copy(this, SLOT(copy()), ac);
 	KStandardAction::paste(this, SLOT(paste()), ac);
 	KStandardAction::preferences(this, SLOT(preferences()), ac);
+	KStandardAction::keyBindings(this, SLOT(config_keys()), ac);
 	//recent = KStandardAction::openRecent(this, SLOT(fileOpen(const KUrl &)), ac);
 
 	KAction *act = new KAction(KIcon("network-connect"), i18n("&CDDB lookup"), ac);
@@ -138,7 +140,7 @@ KoverTop::make_menu()
 	act->setShortcut(KStandardShortcut::zoomIn());
 	connect(act, SIGNAL(triggered(bool)), SLOT(actualSize()));
 
-	act = new KAction(KIcon("zoom-out"), "dumdi", ac);
+	act = new KAction(KIcon("zoom-out"), i18n("Preview size"), ac);
 	ac->addAction("stop_preview", act);
 	act->setShortcut(KStandardShortcut::zoomOut());
 	connect(act, SIGNAL(triggered(bool)), SLOT(stopPreview()));
@@ -181,9 +183,9 @@ KoverTop::make_menu()
 }
 
 void
-KoverTop::slotConfigureKeys()
+KoverTop::config_keys()
 {
-	//KShortcutsDialog::configure(actionCollection(), this);
+	KShortcutsDialog::configure(actionCollection());
 }
 
 void
