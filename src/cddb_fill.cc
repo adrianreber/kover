@@ -313,11 +313,9 @@ cddb_fill::readTOC()
 bool
 cddb_fill::reading_proxy_env_failed()
 {
-	blub->
-	set_status_text(i18n
-			(
-				"Reading http_proxy environment variable failed!")
-			.toUtf8());
+	const char *f = "Reading http_proxy environment variable failed!";
+
+	blub->set_status_text(i18n(f).toUtf8());
 	return false;
 }
 

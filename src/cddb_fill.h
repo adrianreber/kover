@@ -1,23 +1,22 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 1999-2000 by Denis Oliver Kropp
- * Copyright (C) 2000-2005 by Adrian Reber 
- * 
+ * Copyright (C) 1999, 2000 by Denis Oliver Kropp
+ * Copyright (C) 2000, 2008 by Adrian Reber
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * 
- * $Id: cddb_fill.h,v 1.27 2005/06/25 19:14:41 adrian Exp $ */
+ */
 
 
 #ifndef CDDB_FILL_H
@@ -35,7 +34,7 @@
 using namespace std;
 
 class trackinfo {
-public:
+ public:
 	trackinfo() {};
 	string name;
 	unsigned long length;
@@ -44,7 +43,7 @@ public:
 };
 
 class cdinfo {
-public:
+ public:
 	string artist;
 	string cdname;
 	string category;
@@ -55,7 +54,7 @@ public:
 };
 
 class cddb_fill {
-public:
+ public:
 	cddb_fill(KoverFile *, no_qobject *bla);
 	cddb_fill() {};
 	bool execute();
@@ -63,10 +62,10 @@ public:
 	void get_info();
 	void setTitleAndContents();
 	bool read_cdtext();
-	bool sites(list < server * >&);
+	bool sites(list <server *>&);
 
-private:
-	KoverFile * kover_file;
+ private:
+	KoverFile *kover_file;
 	cdinfo cd_info;
 	no_qobject *blub;
 
@@ -79,4 +78,4 @@ private:
 	bool reading_proxy_env_failed();
 };
 
-#endif				/* CDDB_FILL_H */
+#endif                          /* CDDB_FILL_H */
