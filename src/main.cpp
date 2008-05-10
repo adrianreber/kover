@@ -37,6 +37,7 @@ kover_global globals;
 int verbose = 0;
 
 config_class *config = NULL;
+static KoverTop *kovertop = NULL;
 
 void
 k_printf(const char *fn, int line, const char *format, ...)
@@ -82,7 +83,7 @@ cleanup()
 	free(globals.cddb_path);
 }
 
-void
+static void
 the_end()
 {
 	if (globals.eject_cdrom) {
@@ -163,7 +164,7 @@ main(int argc, char **argv)
 
 	config->load_globals();
 
-	KoverTop *kovertop = new KoverTop();
+	kovertop = new KoverTop();
 
 	if (args->count() > 0)
 		kovertop->fileOpen(args->url(0));
