@@ -26,32 +26,12 @@
 #include "koverfile.h"
 #include "cddb_fill.h"
 #include "no_qobject.h"
-
 #include "pd.h"
-#include <QTextEdit>
 
-//#include <kapp.h>
-#include <qspinbox.h>
-#include <qcheckbox.h>
-//Added by qt3to4:
-#include <Q3Frame>
+#include <QTextEdit>
+#include <QGroupBox>
 #include <QBoxLayout>
-//#include <Q3BoxLayout>
-#include <kmainwindow.h>
-#include <kxmlguiwindow.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <q3hbox.h>
-//Use QTextEdit in new code
-#include <q3groupbox.h>
-#include <ktoolbar.h>
-#include <kstatusbar.h>
-#include <kstandarddirs.h>
-#include <kurl.h>
-//You can achieve the same result as QVBox by creating a QWidget with a vertical layout
-#include <Q3VBox>
-#include <kaction.h>
+
 
 /** KoverTop is the TopLevelWidget. */
 

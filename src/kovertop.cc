@@ -19,41 +19,28 @@
  */
 
 #include "kovertop.moc"
-
-#include <pd.h>
-#include <kconfigskeleton.h>
-
-#include <QGridLayout>
-#include <QVBoxLayout>
-
-#include <qnamespace.h>
 #include "kovertop.h"
 #include "imagedlg.h"
 #include "without_cd.h"
-#include "filemode.h"
-#include <directory.h>
-#include <klocale.h>
-#include <kmainwindow.h>
+#include <pd.h>
+
+#include <QGridLayout>
+#include <QVBoxLayout>
+#include <QLabel>
+
 #include <kxmlguiwindow.h>
-//#include <kapp.h>
+#include <kconfigskeleton.h>
 #include <kactioncollection.h>
-#include <kstandardaction.h>
 #include <kaction.h>
 #include <kmenubar.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kfontdialog.h>
 #include <kcolordialog.h>
-#include <krecentdocument.h>
 #include <kstandardshortcut.h>
-#include <kurl.h>
-#include <qlayout.h>
-#include <qpoint.h>
-#include <q3vbox.h>
-#include <QLabel>
-//#include <kkeydialog.h>
-#include <kshortcutsdialog.h>
 #include <kapplication.h>
+#include <ktoolbar.h>
+#include <kstatusbar.h>
 
 #define PREV_WIDTH 695
 #define PREV_HEIGHT 684
