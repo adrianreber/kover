@@ -101,6 +101,11 @@ KoverTop::KoverTop() : KXmlGuiWindow()
 
 KoverTop::~KoverTop()
 {
+	if (globals.save_position) {
+		globals.xpos = x();
+		globals.ypos = y();
+	}
+
 	recent->saveEntries(KGlobal::config()->group("RecentFiles"));
 	delete status_bar;
 	delete cddbfill;

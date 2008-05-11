@@ -89,10 +89,6 @@ the_end()
 	if (globals.eject_cdrom) {
 		eject_cdrom();
 	}
-	if (globals.save_position) {
-		/* globals.xpos = kovertop->x(); */
-		/* globals.ypos = kovertop->y(); */
-	}
 
 	config->store_globals();
 	config->sync();
@@ -110,6 +106,13 @@ sighandler(int i)
 		kprintf("SIGTERM received...\n");
 	}
 	kprintf("cleaning up...\n");
+
+	if (globals.save_position) {
+		globals.xpos = kovertop->x();
+		globals.ypos = kovertop->y();
+	}
+
+	kovertop->close();
 
 	the_end();
 	exit(0);
