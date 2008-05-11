@@ -141,6 +141,7 @@ class KoverTop : public KXmlGuiWindow, no_qobject {
 	bool more;
 	int orig_width;
 	int orig_height;
+	bool actual;
 };
 
 #endif                          /* KOVER_TOP_H */

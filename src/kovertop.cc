@@ -97,6 +97,10 @@ KoverTop::KoverTop() : KXmlGuiWindow()
 	createGUI();
 
 	setAutoSaveSettings();
+
+	/* fill with useful default values */
+	orig_width = width();
+	orig_height = height();
 }
 
 KoverTop::~KoverTop()
@@ -362,6 +366,8 @@ KoverTop::numberChecked(bool checked)
 void
 KoverTop::stopPreview()
 {
+	if (more || !actual)
+		return;
 	cdview->setFixedSize(CDVIEW_WIDTH, CDVIEW_HEIGHT);
 	cdview->showPreview(false);
 	more_frame->show();
@@ -373,6 +379,7 @@ KoverTop::stopPreview()
 	toolBar("mainToolBar")->show();
 	adjustSize();
 	resize(orig_width, orig_height);
+	actual = false;
 }
 
 bool
@@ -569,7 +576,7 @@ KoverTop::paste()
 void
 KoverTop::actualSize()
 {
-	if (more)
+	if (more || actual)
 		return;
 	orig_width = width();
 	orig_height = height();
@@ -583,6 +590,7 @@ KoverTop::actualSize()
 	dead_space->hide();
 	toolBar("mainToolBar")->hide();
 	toolBar("koverToolBar")->hide();
+	actual = true;
 }
 
 void
@@ -781,9 +789,9 @@ KoverTop::more_or_less()
 		main_frame->show();
 	} else {
 		more = true;
+		main_frame->hide();
 		option_frame->show();
 		dead_space->resize(0, height());
-		main_frame->hide();
 	}
 }
 
