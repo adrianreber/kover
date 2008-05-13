@@ -85,6 +85,7 @@ KoverTop::KoverTop() : KXmlGuiWindow()
 
 	altered_data = false;
 	more = false;
+	actual = false;
 
 	if (globals.save_position)
 		move(globals.xpos, globals.ypos);
