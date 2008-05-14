@@ -106,6 +106,7 @@ KoverTop::KoverTop() : KXmlGuiWindow()
 
 KoverTop::~KoverTop()
 {
+	stopPreview();
 	if (globals.save_position) {
 		globals.xpos = x();
 		globals.ypos = y();
@@ -367,6 +368,7 @@ KoverTop::numberChecked(bool checked)
 void
 KoverTop::stopPreview()
 {
+	kprintf("begin\n");
 	if (more || !actual)
 		return;
 	cdview->setFixedSize(CDVIEW_WIDTH, CDVIEW_HEIGHT);
@@ -381,15 +383,24 @@ KoverTop::stopPreview()
 	adjustSize();
 	resize(orig_width, orig_height);
 	actual = false;
+	kprintf("end\n");
 }
 
 bool
 KoverTop::queryClose()
 {
-	if (altered_data) {
+	kprintf("begin\n");
+
+	if (actual) {
+		stopPreview();
+		return false;
+	}
+
+	if (altered_data)
 		if (how_about_saving())
 			return false;
-	}
+
+	kprintf("end\n");
 	return true;
 }
 
