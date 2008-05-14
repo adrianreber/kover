@@ -107,6 +107,11 @@ sighandler(int i)
 	}
 	kprintf("cleaning up...\n");
 
+	/* if the preview is currently running; stop it
+	 * so that not the values of the preview window
+	 * are stored */
+	kovertop->stopPreview();
+
 	if (globals.save_position) {
 		globals.xpos = kovertop->x();
 		globals.ypos = kovertop->y();
