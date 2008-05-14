@@ -22,26 +22,18 @@
  * 29 Oct 2001: Change size of the inlet title font
  */
 
-#include <globals.h>
-#include <QPrinter>
-#include <QPrintDialog>
-#include <kover_old.h>
 
 
 #include "cdview.moc"
-#include "koverfile.h"
 #include "cdview.h"
 
-#include <qimage.h>
-#include <qregexp.h>
-#include <qprinter.h>
-/* Added by qt3to4: */
-#include <QPaintEvent>
-#include <QFrame>
-#include <QMouseEvent>
-/* #include <kprinter.h> */
-#include <qpainter.h>
-/* #include <qsemimodal.h> */
+#include <globals.h>
+#include <QPrintDialog>
+#include <kover_old.h>
+
+#include <QImage>
+#include <QRegExp>
+#include <QPainter>
 #include <kmessagebox.h>
 #include <math.h>
 #include <stdio.h>
@@ -52,7 +44,7 @@
 #define BACK_HS 17
 #define BACK_V 334
 
-CDView::CDView(KoverFile *_kover_file, QWidget *parent, const char *name)
+CDView::CDView(KoverFile *_kover_file, QWidget *parent)
 	: QFrame(parent)
 {
 	kover_file = _kover_file;
@@ -116,6 +108,12 @@ CDView::printKover()
 	if (globals.one_page) {
 		printer->setOrientation(QPrinter::Portrait);
 		printer->setFromTo(1, 1);
+	} else if (globals.its_a_slim_case) {
+		printer->setOrientation(QPrinter::Landscape);
+		printer->setFromTo(1, 1);
+	} else if (globals.inlet_only) {
+		printer->setOrientation(QPrinter::Landscape);
+		printer->setFromTo(1, 1);
 	} else {
 		printer->setOrientation(QPrinter::Landscape);
 		printer->setFromTo(1, 2);
@@ -123,6 +121,16 @@ CDView::printKover()
 
 
 	QPrintDialog printDialog(printer, this);
+
+	if (globals.one_page)
+		printDialog.setMinMax(1,1);
+	else if (globals.its_a_slim_case)
+		printDialog.setMinMax(1,1);
+	else if (globals.inlet_only)
+		printDialog.setMinMax(1,1);
+	else
+		printDialog.setMinMax(1,2);
+
 	printDialog.setWindowTitle(i18n("Print Dialog Title"));
 
 	if (!printDialog.exec())
@@ -134,23 +142,23 @@ CDView::printKover()
 
 	previewMode = true;     /* hack */
 
-	/* this is getting ugly */
-	if (!globals.one_page) {
-		if (!globals.inlet_only) {
-			if (printer->fromPage() == 1)
-				drawBooklet(paint, 20, 20);
-		}
-		if (!globals.its_a_slim_case) {
-			if (!globals.inlet_only)
-				printer->newPage();
-			if (printer->toPage() == 2)
-				drawInlet(paint, 20, 20);
-		}
-	} else {
+	kprintf("FIXME: printing does not working properly\n");
+	if (globals.one_page) {
+		kprintf("globals.one_page\n");
 		drawBooklet(paint, 20, 15);
 		drawInlet(paint, 20, 370);
+	} else if (globals.its_a_slim_case) {
+		kprintf("globals.its_a_slim_case\n");
+		drawBooklet(paint, 20, 20);
+	} else if (globals.inlet_only) {
+		kprintf("globals.inlet_only\n");
+		drawInlet(paint, 20, 20);
+	} else {
+		kprintf("normal print\n");
+		drawBooklet(paint, 20, 20);
+		printer->newPage();
+		drawInlet(paint, 20, 20);
 	}
-
 
 	/* print_information(paint); */
 
@@ -164,7 +172,7 @@ CDView::drawBooklet(QPainter *p, int X, int Y)
 {
 	if (globals.inlet_only)
 		return;
-	const float scale = 0.4; /* Abhängig von Bildschirmbreite!! */
+	const float scale = 0.4; /* AbhÃ¤ngig von Bildschirmbreite!! */
 
 	if (globals.one_page)
 		p->fillRect(X, Y, FRONT_H, FRONT_V, kover_file->backColor());
