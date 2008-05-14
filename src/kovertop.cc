@@ -153,6 +153,7 @@ KoverTop::make_menu()
 	act = new KAction(KIcon("zoom-out"), i18n("Preview size"), ac);
 	ac->addAction("stop_preview", act);
 	act->setShortcut(KStandardShortcut::zoomOut());
+	act->setShortcut(QKeySequence(Qt::Key_Escape));
 	connect(act, SIGNAL(triggered(bool)), SLOT(stopPreview()));
 
 	act = new KAction(KIcon("image-loading"), i18n("&Image Embedding..."), ac);
