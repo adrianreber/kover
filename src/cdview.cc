@@ -390,6 +390,8 @@ CDView::drawInlet(QPainter *p, int X, int Y)
 
 	title.replace(QRegExp("\n"), " - ");
 
+	p->translate(0, 0);
+
 	p->fillRect(X, Y, BACK_HI + BACK_HS * 2, BACK_V, kover_file->backColor());
 
 	for (int i = 0; i < 3; i++) {
