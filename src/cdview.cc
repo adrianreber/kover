@@ -123,13 +123,13 @@ CDView::printKover()
 	QPrintDialog printDialog(printer, this);
 
 	if (globals.one_page)
-		printDialog.setMinMax(1,1);
+		printDialog.setMinMax(1, 1);
 	else if (globals.its_a_slim_case)
-		printDialog.setMinMax(1,1);
+		printDialog.setMinMax(1, 1);
 	else if (globals.inlet_only)
-		printDialog.setMinMax(1,1);
+		printDialog.setMinMax(1, 1);
 	else
-		printDialog.setMinMax(1,2);
+		printDialog.setMinMax(1, 2);
 
 	printDialog.setWindowTitle(i18n("Print Dialog Title"));
 
@@ -155,9 +155,12 @@ CDView::printKover()
 		drawInlet(paint, 20, 20);
 	} else {
 		kprintf("normal print\n");
-		drawBooklet(paint, 20, 20);
-		printer->newPage();
-		drawInlet(paint, 20, 20);
+		if (printer->fromPage() != 2)
+			drawBooklet(paint, 20, 20);
+		if (printer->fromPage() != 2 && printer->toPage() != 1)
+			printer->newPage();
+		if (printer->toPage() != 1)
+			drawInlet(paint, 20, 20);
 	}
 
 	/* print_information(paint); */
@@ -244,7 +247,8 @@ CDView::drawBooklet(QPainter *p, int X, int Y)
 									     scale),
 								       (int)(
 									       FRONT_H
-									       * scale),
+									       *
+									       scale),
 								       (int)(
 									       FRONT_V
 									       *
@@ -257,7 +261,9 @@ CDView::drawBooklet(QPainter *p, int X, int Y)
 								       (int)(
 									       FRONT_H
 									       *
-									       2 * scale),
+									       2
+									       *
+									       scale),
 								       (int)(
 									       FRONT_V
 									       *
@@ -425,7 +431,7 @@ CDView::drawInlet(QPainter *p, int X, int Y)
 						p->setClipRect(
 							X, Y,
 							(BACK_HI +
-								BACK_HS * 2),
+							 BACK_HS * 2),
 							BACK_V);
 					else
 						p->setClipRect((int)(X * scale),
