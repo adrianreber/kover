@@ -177,6 +177,9 @@ CDView::drawBooklet(QPainter *p, int X, int Y)
 		return;
 	const float scale = 0.4; /* Abhängig von Bildschirmbreite!! */
 
+	/* just to make sure we always start drawing at the same point */
+	p->translate(0, 0);
+
 	if (globals.one_page)
 		p->fillRect(X, Y, FRONT_H, FRONT_V, kover_file->backColor());
 	else
@@ -396,6 +399,7 @@ CDView::drawInlet(QPainter *p, int X, int Y)
 
 	title.replace(QRegExp("\n"), " - ");
 
+	/* just to make sure we always start drawing at the same point */
 	p->translate(0, 0);
 
 	p->fillRect(X, Y, BACK_HI + BACK_HS * 2, BACK_V, kover_file->backColor());
