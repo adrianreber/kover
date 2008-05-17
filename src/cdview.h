@@ -83,6 +83,7 @@ class CDView : public QFrame {
 	QPrinter*printer;
 	QPainter *paint1;
 	void print_information(QPainter *);
+	void inlet_images(QPainter *, int, int, int);
 };
 
 #endif /* _CDVIEW_H */

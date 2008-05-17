@@ -384,12 +384,92 @@ CDView::drawBooklet(QPainter *p, int X, int Y)
 }
 
 void
+CDView::inlet_images(QPainter *p, int X, int Y, int i)
+{
+	const float scale = 0.4;
+
+	switch (kover_file->imageMode(i)) {
+	case IMG_CENTER:
+		switch (kover_file->imageTarget(i)) {
+		case IMG_BACK_INNER:
+			if (previewMode)
+				p->setClipRect((X + BACK_HS), Y,
+					       BACK_HI,
+					       BACK_V);
+			else
+				p->setClipRect((int)((X +
+						      BACK_HS) *
+						     scale),
+					       (int)(Y * scale),
+					       (int)(BACK_HI *
+						     scale),
+					       (int)(BACK_V *
+						     scale));
+			p->drawPixmap(X + BACK_HS + BACK_HI / 2 -
+				      images[i].width() / 2,
+				      Y + BACK_V / 2 -
+				      images[i].height() / 2,
+				      images[i]);
+			p->setClipping(false);
+			break;
+		case IMG_BACK_FULL:
+			if (previewMode)
+				p->setClipRect(
+					X, Y,
+					(BACK_HI +
+					 BACK_HS * 2),
+					BACK_V);
+			else
+				p->setClipRect((int)(X * scale),
+					       (int)(Y * scale),
+					       (int)((BACK_HI +
+						      BACK_HS *
+						      2) * scale),
+					       (int)(BACK_V *
+						     scale));
+			p->drawPixmap(X + BACK_HS + BACK_HI / 2 -
+				      images[i].width() / 2,
+				      Y + BACK_V / 2 -
+				      images[i].height() / 2,
+				      images[i]);
+			p->setClipping(false);
+			break;
+		}
+		break;
+	case IMG_TILE:
+		switch (kover_file->imageTarget(i)) {
+		case IMG_BACK_INNER:
+			p->drawTiledPixmap(X + BACK_HS, Y,
+					   BACK_HI, BACK_V,
+					   images[i]);
+			break;
+		case IMG_BACK_FULL:
+			p->drawTiledPixmap(X, Y, BACK_HI +
+					   BACK_HS * 2, BACK_V,
+					   images[i]);
+			break;
+		}
+		break;
+	case IMG_STRETCH:
+		switch (kover_file->imageTarget(i)) {
+		case IMG_BACK_INNER:
+			p->drawPixmap(X + BACK_HS, Y, images[i]);
+			break;
+		case IMG_BACK_FULL:
+			p->drawPixmap(X, Y, images[i]);
+			break;
+		}
+		break;
+	}
+
+}
+
+void
 CDView::drawInlet(QPainter *p, int X, int Y)
 {
 	if (globals.its_a_slim_case)
 		return;
 
-	const float scale = 0.4;
 	QString title;
 
 	if (kover_file->spine_text())
@@ -405,81 +485,8 @@ CDView::drawInlet(QPainter *p, int X, int Y)
 	p->fillRect(X, Y, BACK_HI + BACK_HS * 2, BACK_V, kover_file->backColor());
 
 	for (int i = 0; i < 3; i++) {
-		if (!images[i].isNull()) {
-			switch (kover_file->imageMode(i)) {
-			case IMG_CENTER:
-				switch (kover_file->imageTarget(i)) {
-				case IMG_BACK_INNER:
-					if (previewMode)
-						p->setClipRect((X + BACK_HS), Y,
-							       BACK_HI,
-							       BACK_V);
-					else
-						p->setClipRect((int)((X +
-								      BACK_HS) *
-								     scale),
-							       (int)(Y * scale),
-							       (int)(BACK_HI *
-								     scale),
-							       (int)(BACK_V *
-								     scale));
-					p->drawPixmap(X + BACK_HS + BACK_HI / 2 -
-						      images[i].width() / 2,
-						      Y + BACK_V / 2 -
-						      images[i].height() / 2,
-						      images[i]);
-					p->setClipping(false);
-					break;
-				case IMG_BACK_FULL:
-					if (previewMode)
-						p->setClipRect(
-							X, Y,
-							(BACK_HI +
-							 BACK_HS * 2),
-							BACK_V);
-					else
-						p->setClipRect((int)(X * scale),
-							       (int)(Y * scale),
-							       (int)((BACK_HI +
-								      BACK_HS *
-								      2) * scale),
-							       (int)(BACK_V *
-								     scale));
-					p->drawPixmap(X + BACK_HS + BACK_HI / 2 -
-						      images[i].width() / 2,
-						      Y + BACK_V / 2 -
-						      images[i].height() / 2,
-						      images[i]);
-					p->setClipping(false);
-					break;
-				}
-				break;
-			case IMG_TILE:
-				switch (kover_file->imageTarget(i)) {
-				case IMG_BACK_INNER:
-					p->drawTiledPixmap(X + BACK_HS, Y,
-							   BACK_HI, BACK_V,
-							   images[i]);
-					break;
-				case IMG_BACK_FULL:
-					p->drawTiledPixmap(X, Y, BACK_HI +
-							   BACK_HS * 2, BACK_V,
-							   images[i]);
-					break;
-				}
-				break;
-			case IMG_STRETCH:
-				switch (kover_file->imageTarget(i)) {
-				case IMG_BACK_INNER:
-					p->drawPixmap(X + BACK_HS, Y, images[i]);
-					break;
-				case IMG_BACK_FULL:
-					p->drawPixmap(X, Y, images[i]);
-					break;
-				}
-				break;
-			}
-		}
+		if (!images[i].isNull())
+			inlet_images(p, X, Y, i);
 	}
 
 	p->setPen(Qt::black);
