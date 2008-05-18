@@ -118,7 +118,7 @@ void ImageDlg::Browse3()
 void ImageDlg::initDialog()
 {
     this->resize(500, 440);
-    ImageGroup_1 = new QGroupBox("ImageGroup_1");
+    ImageGroup_1 = new QGroupBox(this);
     ImageGroup_1->setGeometry(10, 10, 480, 120);
     ImageGroup_1->setTitle(tr("First Image"));
 
@@ -155,7 +155,7 @@ void ImageDlg::initDialog()
     QLabel_3->setGeometry(240, 80, 70, 30);
     QLabel_3->setText(tr("Appearance"));
 
-    QGroupBox_2 = new QGroupBox(ImageGroup_1);
+    QGroupBox_2 = new QGroupBox(this);
     QGroupBox_2->setGeometry(10, 140, 480, 120);
     QGroupBox_2->setTitle(tr("Second Image"));
 
