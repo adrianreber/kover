@@ -386,22 +386,14 @@ CDView::drawBooklet(QPainter *p, int X, int Y)
 void
 CDView::inlet_center_back_inner(QPainter *p, int X, int Y, int i)
 {
-	QRect r;
 	int y;
-	int x = X + BACK_HS;
-	const float scale = 0.4;
+	int x;
 
-	r.setX((int)(X * scale));
-	r.setY((int)(Y * scale));
-	r.setWidth((int)(BACK_HI * scale));
-	r.setHeight((int)(BACK_V * scale));
+	kprintf("entering\n");
 
-	if (previewMode)
-		p->setClipRect(x, Y, BACK_HI, BACK_V);
-	else
-		p->setClipRect(r);
+	p->setClipRect(X + BACK_HS, Y, BACK_HI, BACK_V);
 
-	x += BACK_HI / 2 - images[i].width() / 2;
+	x = X + BACK_HS + BACK_HI / 2 - images[i].width() / 2;
 	y = Y + BACK_V / 2 - images[i].height() / 2;
 
 	p->drawPixmap(x, y, images[i]);
@@ -412,21 +404,10 @@ CDView::inlet_center_back_inner(QPainter *p, int X, int Y, int i)
 void
 CDView::inlet_center_back_full(QPainter *p, int X, int Y, int i)
 {
-	QRect r;
 	int x;
 	int y;
-	const float scale = 0.4;
-	int back_h = BACK_HI + BACK_HS;
 
-	r.setX((int)(X * scale));
-	r.setY((int)(Y * scale));
-	r.setWidth((int)((back_h * 2) * scale));
-	r.setHeight((int)(BACK_V * scale));
-
-	if (previewMode)
-		p->setClipRect(X, Y, (back_h * 2), BACK_V);
-	else
-		p->setClipRect(r);
+	p->setClipRect(X, Y, (BACK_HI + BACK_HS * 2), BACK_V);
 
 	x = X + BACK_HS + BACK_HI / 2 - images[i].width() / 2;
 	y = Y + BACK_V / 2 - images[i].height() / 2;
@@ -440,6 +421,7 @@ void
 CDView::inlet_images(QPainter *p, int X, int Y, int i)
 {
 	QRect r;
+	QRect s;
 
 	switch (kover_file->imageMode(i)) {
 	case IMG_CENTER:
@@ -467,10 +449,14 @@ CDView::inlet_images(QPainter *p, int X, int Y, int i)
 	case IMG_STRETCH:
 		switch (kover_file->imageTarget(i)) {
 		case IMG_BACK_INNER:
-			p->drawPixmap(X + BACK_HS, Y, images[i]);
+			r.setRect(X + BACK_HS, Y, BACK_HI, BACK_V);
+			s.setRect(0, 0, images[i].width(), images[i].height());
+			p->drawPixmap(r, images[i], s);
 			break;
 		case IMG_BACK_FULL:
-			p->drawPixmap(X, Y, images[i]);
+			r.setRect(X, Y, (BACK_HI + BACK_HS * 2), BACK_V);
+			s.setRect(0, 0, images[i].width(), images[i].height());
+			p->drawPixmap(r, images[i], s);
 			break;
 		}
 		break;
