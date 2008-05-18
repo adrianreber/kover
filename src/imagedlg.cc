@@ -136,16 +136,16 @@ void ImageDlg::initDialog()
     TargetCombo_1 = new QComboBox(ImageGroup_1);
     TargetCombo_1->setGeometry(80, 80, 150, 30);
     TargetCombo_1->insertItem(0, tr("Front, left side"));
-    TargetCombo_1->insertItem(0, tr("Front, right side"));
-    TargetCombo_1->insertItem(0, tr("Front, both sides"));
-    TargetCombo_1->insertItem(0, tr("Back, without sides"));
-    TargetCombo_1->insertItem(0, tr("Back, with sides"));
+    TargetCombo_1->insertItem(1, tr("Front, right side"));
+    TargetCombo_1->insertItem(2, tr("Front, both sides"));
+    TargetCombo_1->insertItem(3, tr("Back, without sides"));
+    TargetCombo_1->insertItem(4, tr("Back, with sides"));
 
     AppearanceCombo_1 = new QComboBox(ImageGroup_1);
     AppearanceCombo_1->setGeometry(320, 80, 150, 30);
     AppearanceCombo_1->insertItem(0, tr("Centered"));
-    AppearanceCombo_1->insertItem(0, tr("Tiled"));
-    AppearanceCombo_1->insertItem(0, tr("Stretched"));
+    AppearanceCombo_1->insertItem(1, tr("Tiled"));
+    AppearanceCombo_1->insertItem(2, tr("Stretched"));
 
     QLabel_2 = new QLabel(this);
     QLabel_2->setGeometry(30, 80, 40, 30);
@@ -177,16 +177,16 @@ void ImageDlg::initDialog()
     TargetCombo_2 = new QComboBox(this);
     TargetCombo_2->setGeometry(80, 210, 150, 30);
     TargetCombo_2->insertItem(0, tr("Front, left side"));
-    TargetCombo_2->insertItem(0, tr("Front, right side"));
-    TargetCombo_2->insertItem(0, tr("Front, both sides"));
-    TargetCombo_2->insertItem(0, tr("Back, without sides"));
-    TargetCombo_2->insertItem(0, tr("Back, with sides"));
+    TargetCombo_2->insertItem(1, tr("Front, right side"));
+    TargetCombo_2->insertItem(2, tr("Front, both sides"));
+    TargetCombo_2->insertItem(3, tr("Back, without sides"));
+    TargetCombo_2->insertItem(4, tr("Back, with sides"));
 
     AppearanceCombo_2 = new QComboBox(this);
     AppearanceCombo_2->setGeometry(320, 210, 150, 30);
     AppearanceCombo_2->insertItem(0, tr("Centered"));
-    AppearanceCombo_2->insertItem(0, tr("Tiled"));
-    AppearanceCombo_2->insertItem(0, tr("Stretched"));
+    AppearanceCombo_2->insertItem(1, tr("Tiled"));
+    AppearanceCombo_2->insertItem(2, tr("Stretched"));
 
     QLabel_6 = new QLabel(this);
     QLabel_6->setGeometry(240, 210, 70, 30);
@@ -214,16 +214,16 @@ void ImageDlg::initDialog()
     TargetCombo_3 = new QComboBox(this);
     TargetCombo_3->setGeometry(80, 340, 150, 30);
     TargetCombo_3->insertItem(0, tr("Front, left side"));
-    TargetCombo_3->insertItem(0, tr("Front, right side"));
-    TargetCombo_3->insertItem(0, tr("Front, both sides"));
-    TargetCombo_3->insertItem(0, tr("Back, without sides"));
-    TargetCombo_3->insertItem(0, tr("Back, with sides"));
+    TargetCombo_3->insertItem(1, tr("Front, right side"));
+    TargetCombo_3->insertItem(2, tr("Front, both sides"));
+    TargetCombo_3->insertItem(3, tr("Back, without sides"));
+    TargetCombo_3->insertItem(4, tr("Back, with sides"));
 
     AppearanceCombo_3 = new QComboBox(this);
     AppearanceCombo_3->setGeometry(320, 340, 150, 30);
     AppearanceCombo_3->insertItem(0, tr("Centered"));
-    AppearanceCombo_3->insertItem(0, tr("Tiled"));
-    AppearanceCombo_3->insertItem(0, tr("Stretched"));
+    AppearanceCombo_3->insertItem(1, tr("Tiled"));
+    AppearanceCombo_3->insertItem(2, tr("Stretched"));
 
     QLabel_9 = new QLabel(this);
     QLabel_9->setGeometry(240, 340, 70, 30);
