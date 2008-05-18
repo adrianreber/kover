@@ -73,8 +73,6 @@ class CDView : public QFrame {
 	void paintEvent(QPaintEvent *);
 	void mousePressEvent(QMouseEvent *);
 	void drawBooklet(QPainter *p, int X, int Y);
-	void drawInlet(QPainter *p, int X, int Y);
-
 
  private:
 	QPixmap images[3];
@@ -84,6 +82,9 @@ class CDView : public QFrame {
 	QPainter *paint1;
 	void print_information(QPainter *);
 	void inlet_images(QPainter *, int, int, int);
+	void inlet_center_back_inner(QPainter *, int, int, int);
+	void inlet_center_back_full(QPainter *, int, int, int);
+	void inlet(QPainter *, int, int);
 };
 
 #endif /* _CDVIEW_H */

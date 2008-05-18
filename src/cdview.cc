@@ -70,7 +70,7 @@ CDView::paintEvent(QPaintEvent *)
 
 	if (previewMode) {
 		drawBooklet(&paint, 4, 4);
-		drawInlet(&paint, 150, 4 * 2 + FRONT_V);
+		inlet(&paint, 150, 4 * 2 + FRONT_V);
 		paint.setWorldMatrix(QMatrix());
 		paint.setFont(QFont("helvetica", 14));
 		paint.setPen(Qt::black);
@@ -78,7 +78,7 @@ CDView::paintEvent(QPaintEvent *)
 	} else {
 		paint.scale(0.4f, 0.4f);
 		drawBooklet(&paint, 20, 15);
-		drawInlet(&paint, 140, 15 * 2 + FRONT_V);
+		inlet(&paint, 140, 15 * 2 + FRONT_V);
 	}
 }
 
@@ -146,13 +146,13 @@ CDView::printKover()
 	if (globals.one_page) {
 		kprintf("globals.one_page\n");
 		drawBooklet(paint, 20, 15);
-		drawInlet(paint, 20, 370);
+		inlet(paint, 20, 370);
 	} else if (globals.its_a_slim_case) {
 		kprintf("globals.its_a_slim_case\n");
 		drawBooklet(paint, 20, 20);
 	} else if (globals.inlet_only) {
 		kprintf("globals.inlet_only\n");
-		drawInlet(paint, 20, 20);
+		inlet(paint, 20, 20);
 	} else {
 		kprintf("normal print\n");
 		if (printer->fromPage() != 2)
@@ -160,7 +160,7 @@ CDView::printKover()
 		if (printer->fromPage() != 2 && printer->toPage() != 1)
 			printer->newPage();
 		if (printer->toPage() != 1)
-			drawInlet(paint, 20, 20);
+			inlet(paint, 20, 20);
 	}
 
 	/* print_information(paint); */
@@ -384,69 +384,83 @@ CDView::drawBooklet(QPainter *p, int X, int Y)
 }
 
 void
+CDView::inlet_center_back_inner(QPainter *p, int X, int Y, int i)
+{
+	QRect r;
+	int y;
+	int x = X + BACK_HS;
+	const float scale = 0.4;
+
+	r.setX((int)(X * scale));
+	r.setY((int)(Y * scale));
+	r.setWidth((int)(BACK_HI * scale));
+	r.setHeight((int)(BACK_V * scale));
+
+	if (previewMode)
+		p->setClipRect(x, Y, BACK_HI, BACK_V);
+	else
+		p->setClipRect(r);
+
+	x += BACK_HI / 2 - images[i].width() / 2;
+	y = Y + BACK_V / 2 - images[i].height() / 2;
+
+	p->drawPixmap(x, y, images[i]);
+
+	p->setClipping(false);
+}
+
+void
+CDView::inlet_center_back_full(QPainter *p, int X, int Y, int i)
+{
+	QRect r;
+	int x;
+	int y;
+	const float scale = 0.4;
+	int back_h = BACK_HI + BACK_HS;
+
+	r.setX((int)(X * scale));
+	r.setY((int)(Y * scale));
+	r.setWidth((int)((back_h * 2) * scale));
+	r.setHeight((int)(BACK_V * scale));
+
+	if (previewMode)
+		p->setClipRect(X, Y, (back_h * 2), BACK_V);
+	else
+		p->setClipRect(r);
+
+	x = X + BACK_HS + BACK_HI / 2 - images[i].width() / 2;
+	y = Y + BACK_V / 2 - images[i].height() / 2;
+
+	p->drawPixmap(x, y, images[i]);
+
+	p->setClipping(false);
+}
+
+void
 CDView::inlet_images(QPainter *p, int X, int Y, int i)
 {
-	const float scale = 0.4;
+	QRect r;
 
 	switch (kover_file->imageMode(i)) {
 	case IMG_CENTER:
 		switch (kover_file->imageTarget(i)) {
 		case IMG_BACK_INNER:
-			if (previewMode)
-				p->setClipRect((X + BACK_HS), Y,
-					       BACK_HI,
-					       BACK_V);
-			else
-				p->setClipRect((int)((X +
-						      BACK_HS) *
-						     scale),
-					       (int)(Y * scale),
-					       (int)(BACK_HI *
-						     scale),
-					       (int)(BACK_V *
-						     scale));
-			p->drawPixmap(X + BACK_HS + BACK_HI / 2 -
-				      images[i].width() / 2,
-				      Y + BACK_V / 2 -
-				      images[i].height() / 2,
-				      images[i]);
-			p->setClipping(false);
+			inlet_center_back_inner(p, X, Y, i);
 			break;
 		case IMG_BACK_FULL:
-			if (previewMode)
-				p->setClipRect(
-					X, Y,
-					(BACK_HI +
-					 BACK_HS * 2),
-					BACK_V);
-			else
-				p->setClipRect((int)(X * scale),
-					       (int)(Y * scale),
-					       (int)((BACK_HI +
-						      BACK_HS *
-						      2) * scale),
-					       (int)(BACK_V *
-						     scale));
-			p->drawPixmap(X + BACK_HS + BACK_HI / 2 -
-				      images[i].width() / 2,
-				      Y + BACK_V / 2 -
-				      images[i].height() / 2,
-				      images[i]);
-			p->setClipping(false);
+			inlet_center_back_full(p, X, Y, i);
 			break;
 		}
 		break;
 	case IMG_TILE:
 		switch (kover_file->imageTarget(i)) {
 		case IMG_BACK_INNER:
-			p->drawTiledPixmap(X + BACK_HS, Y,
-					   BACK_HI, BACK_V,
-					   images[i]);
+			r.setRect(X + BACK_HS, Y, BACK_HI, BACK_V);
+			p->drawTiledPixmap(r, images[i]);
 			break;
 		case IMG_BACK_FULL:
-			p->drawTiledPixmap(X, Y, BACK_HI +
-					   BACK_HS * 2, BACK_V,
-					   images[i]);
+			r.setRect(X, Y, BACK_HI + BACK_HS * 2, BACK_V);
+			p->drawTiledPixmap(r, images[i]);
 			break;
 		}
 		break;
@@ -465,7 +479,7 @@ CDView::inlet_images(QPainter *p, int X, int Y, int i)
 }
 
 void
-CDView::drawInlet(QPainter *p, int X, int Y)
+CDView::inlet(QPainter *p, int X, int Y)
 {
 	if (globals.its_a_slim_case)
 		return;
