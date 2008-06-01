@@ -626,47 +626,15 @@ CDView::dataChanged(bool image)
 		if (kover_file->imageFile(i).isEmpty())
 			images[i] = QPixmap();
 	}
+
 	if (image) {
 		for (i = 0; i < 3; i++) {
 			QImage load(kover_file->imageFile(i));
 
-			if (load.isNull()) {
+			if (load.isNull())
 				images[i] = QPixmap();
-			} else {
-				switch (kover_file->imageMode(i)) {
-				case IMG_TILE:
-				case IMG_CENTER:
-					images[i] = QPixmap::fromImage(load);
-					break;
-				case IMG_STRETCH:
-					switch (kover_file->imageTarget(i)) {
-					case IMG_FRONT_LEFT:
-					case IMG_FRONT_RIGHT:
-						images[i] = QPixmap::fromImage(
-							load);
-						break;
-					case IMG_FRONT_FULL:
-						if (globals.one_page)
-							images[i] =
-								QPixmap::
-								fromImage(load);
-						else
-							images[i] =
-								QPixmap::
-								fromImage(load);
-						break;
-					case IMG_BACK_INNER:
-						images[i] = QPixmap::fromImage(
-							load);
-						break;
-					case IMG_BACK_FULL:
-						images[i] = QPixmap::fromImage(
-							load);
-						break;
-					}
-					break;
-				}
-			}
+			else
+				images[i] = QPixmap::fromImage(load);
 		}
 	}
 	repaint();
