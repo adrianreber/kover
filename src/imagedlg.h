@@ -25,10 +25,11 @@
 
 #include <QGroupBox>
 #include <QLineEdit>
-#include <QLabel>
 #include <QPushButton>
 #include <QComboBox>
 #include <QDialog>
+#include <QGridLayout>
+#include <QVBoxLayout>
 
 #include "koverfile.h"
 
@@ -38,40 +39,37 @@ class ImageDlg : public QDialog {
 	~ImageDlg ();
 
  protected slots:
-	void OK();
-	void Cancel();
-	void Browse1();
-	void Browse2();
-	void Browse3();
+	void ok();
+	void cancel();
+	void browse_1();
+	void browse_2();
+	void browse_3();
 
  private:
-	void initDialog();
-	QGroupBox *ImageGroup_1;
-	QLineEdit *FileEdit_1;
-	QLabel *FileLabel_1;
-	QPushButton *BrowseButton_1;
-	QComboBox *TargetCombo_1;
-	QComboBox *AppearanceCombo_1;
-	QLabel *QLabel_2;
-	QLabel *QLabel_3;
-	QGroupBox *QGroupBox_2;
-	QLabel *QLabel_4;
-	QLineEdit *FileEdit_2;
-	QPushButton *BrowseButton_2;
-	QLabel *QLabel_5;
-	QComboBox *TargetCombo_2;
-	QComboBox *AppearanceCombo_2;
-	QLabel *QLabel_6;
-	QGroupBox *QGroupBox_3;
-	QLabel *QLabel_7;
-	QLineEdit *FileEdit_3;
-	QPushButton *BrowseButton_3;
-	QLabel *QLabel_8;
-	QComboBox *TargetCombo_3;
-	QComboBox *AppearanceCombo_3;
-	QLabel *QLabel_9;
-	QPushButton *OKButton;
-	QPushButton *CancelButton;
+	void init();
+	void add_labels(QGridLayout *);
+	void buttons(QVBoxLayout *);
+	void add_targets(QComboBox *);
+	void add_appear(QComboBox *);
+
+	QGroupBox *group1;
+	QLineEdit *edit1;
+	QPushButton *browse1;
+	QComboBox *target1;
+	QComboBox *appear1;
+
+	QGroupBox *group2;
+	QLineEdit *edit2;
+	QPushButton *browse2;
+	QComboBox *target2;
+	QComboBox *appear2;
+
+	QGroupBox *group3;
+	QLineEdit *edit3;
+	QPushButton *browse3;
+	QComboBox *target3;
+	QComboBox *appear3;
+
 	KoverFile *kover_file;
 };
 

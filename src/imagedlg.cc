@@ -23,31 +23,30 @@
 #include "imagedlg.moc"
 #include "imagedlg.h"
 #include <kfiledialog.h>
+#include <QLabel>
 
 ImageDlg::ImageDlg(KoverFile *_kover_file)
 	:  QDialog()
 {
 	kover_file = _kover_file;
-	initDialog();
 
-	connect(OKButton, SIGNAL(clicked()), SLOT(OK()));
-	connect(CancelButton, SIGNAL(clicked()), SLOT(Cancel()));
+	init();
 
-	connect(BrowseButton_1, SIGNAL(clicked()), SLOT(Browse1()));
-	connect(BrowseButton_2, SIGNAL(clicked()), SLOT(Browse2()));
-	connect(BrowseButton_3, SIGNAL(clicked()), SLOT(Browse3()));
+	connect(browse1, SIGNAL(clicked()), SLOT(browse_1()));
+	connect(browse2, SIGNAL(clicked()), SLOT(browse_2()));
+	connect(browse3, SIGNAL(clicked()), SLOT(browse_3()));
 
-	FileEdit_1->setText(kover_file->imageFile(0));
-	FileEdit_2->setText(kover_file->imageFile(1));
-	FileEdit_3->setText(kover_file->imageFile(2));
+	edit1->setText(kover_file->imageFile(0));
+	edit2->setText(kover_file->imageFile(1));
+	edit3->setText(kover_file->imageFile(2));
 
-	AppearanceCombo_1->setCurrentIndex(kover_file->imageMode(0));
-	AppearanceCombo_2->setCurrentIndex(kover_file->imageMode(1));
-	AppearanceCombo_3->setCurrentIndex(kover_file->imageMode(2));
+	appear1->setCurrentIndex(kover_file->imageMode(0));
+	appear2->setCurrentIndex(kover_file->imageMode(1));
+	appear3->setCurrentIndex(kover_file->imageMode(2));
 
-	TargetCombo_1->setCurrentIndex(kover_file->imageTarget(0));
-	TargetCombo_2->setCurrentIndex(kover_file->imageTarget(1));
-	TargetCombo_3->setCurrentIndex(kover_file->imageTarget(2));
+	target1->setCurrentIndex(kover_file->imageTarget(0));
+	target2->setCurrentIndex(kover_file->imageTarget(1));
+	target3->setCurrentIndex(kover_file->imageTarget(2));
 }
 
 ImageDlg::~ImageDlg()
@@ -55,177 +54,186 @@ ImageDlg::~ImageDlg()
 }
 
 void
-ImageDlg::OK()
+ImageDlg::ok()
 {
-	kover_file->setImageFile(0, FileEdit_1->text());
-	kover_file->setImageFile(1, FileEdit_2->text());
-	kover_file->setImageFile(2, FileEdit_3->text());
+	kover_file->setImageFile(0, edit1->text());
+	kover_file->setImageFile(1, edit2->text());
+	kover_file->setImageFile(2, edit3->text());
 
-	kover_file->setImageMode(0, AppearanceCombo_1->currentIndex());
-	kover_file->setImageMode(1, AppearanceCombo_2->currentIndex());
-	kover_file->setImageMode(2, AppearanceCombo_3->currentIndex());
+	kover_file->setImageMode(0, appear1->currentIndex());
+	kover_file->setImageMode(1, appear2->currentIndex());
+	kover_file->setImageMode(2, appear3->currentIndex());
 
-	kover_file->setImageTarget(0, TargetCombo_1->currentIndex());
-	kover_file->setImageTarget(1, TargetCombo_2->currentIndex());
-	kover_file->setImageTarget(2, TargetCombo_3->currentIndex());
+	kover_file->setImageTarget(0, target1->currentIndex());
+	kover_file->setImageTarget(1, target2->currentIndex());
+	kover_file->setImageTarget(2, target3->currentIndex());
 
 	accept();
 }
 
 void
-ImageDlg::Cancel()
+ImageDlg::cancel()
 {
 	reject();
 }
 
 void
-ImageDlg::Browse1()
+ImageDlg::browse_1()
 {
 	QString filename = KFileDialog::getOpenFileName();
 
 	if (!filename.isEmpty())
-		FileEdit_1->setText(filename);
+		edit1->setText(filename);
 }
 
 void
-ImageDlg::Browse2()
+ImageDlg::browse_2()
 {
 	QString filename = KFileDialog::getOpenFileName();
 
 	if (!filename.isEmpty())
-		FileEdit_2->setText(filename);
+		edit2->setText(filename);
 }
 
 void
-ImageDlg::Browse3()
+ImageDlg::browse_3()
 {
 	QString filename = KFileDialog::getOpenFileName();
 
 	if (!filename.isEmpty())
-		FileEdit_3->setText(filename);
+		edit3->setText(filename);
 }
 
 void
-ImageDlg::initDialog()
+ImageDlg::add_targets(QComboBox *box)
 {
-	this->resize(500, 440);
-	ImageGroup_1 = new QGroupBox(this);
-	ImageGroup_1->setGeometry(10, 10, 480, 120);
-	ImageGroup_1->setTitle(tr("First Image"));
+	box->insertItem(0, tr("Front, left side"));
+	box->insertItem(1, tr("Front, right side"));
+	box->insertItem(2, tr("Front, both sides"));
+	box->insertItem(3, tr("Back, without sides"));
+	box->insertItem(4, tr("Back, with sides"));
+}
 
-	FileEdit_1 = new QLineEdit(this);
-	FileEdit_1->setGeometry(80, 40, 280, 30);
+void
+ImageDlg::add_appear(QComboBox *box)
+{
+	box->insertItem(0, tr("Centered"));
+	box->insertItem(1, tr("Tiled"));
+	box->insertItem(2, tr("Stretched"));
+}
 
-	FileLabel_1 = new QLabel(this);
-	FileLabel_1->setGeometry(30, 40, 30, 30);
-	FileLabel_1->setText(tr("File"));
+void
+ImageDlg::init()
+{
+	QVBoxLayout *top_layout = new QVBoxLayout(this);
+	top_layout->setMargin(12);
+	top_layout->addSpacing(5);
 
-	BrowseButton_1 = new QPushButton(this);
-	BrowseButton_1->setGeometry(370, 40, 100, 30);
-	BrowseButton_1->setText(tr("Browse"));
+	group1 = new QGroupBox(this);
+	group1->setTitle(tr("First Image"));
+	top_layout->addWidget(group1);
+	QGridLayout *gbox = new QGridLayout(group1);
 
-	TargetCombo_1 = new QComboBox(ImageGroup_1);
-	TargetCombo_1->setGeometry(80, 80, 150, 30);
-	TargetCombo_1->insertItem(0, tr("Front, left side"));
-	TargetCombo_1->insertItem(1, tr("Front, right side"));
-	TargetCombo_1->insertItem(2, tr("Front, both sides"));
-	TargetCombo_1->insertItem(3, tr("Back, without sides"));
-	TargetCombo_1->insertItem(4, tr("Back, with sides"));
+	add_labels(gbox);
 
-	AppearanceCombo_1 = new QComboBox(ImageGroup_1);
-	AppearanceCombo_1->setGeometry(320, 80, 150, 30);
-	AppearanceCombo_1->insertItem(0, tr("Centered"));
-	AppearanceCombo_1->insertItem(1, tr("Tiled"));
-	AppearanceCombo_1->insertItem(2, tr("Stretched"));
+	edit1 = new QLineEdit(group1);
+	gbox->addWidget(edit1, 0, 1, 1, 3);
 
-	QLabel_2 = new QLabel(this);
-	QLabel_2->setGeometry(30, 80, 40, 30);
-	QLabel_2->setText(tr("Target"));
+	browse1 = new QPushButton(group1);
+	browse1->setText(tr("Browse"));
+	gbox->addWidget(browse1, 0, 5, 1, 1);
 
-	QLabel_3 = new QLabel(this);
-	QLabel_3->setGeometry(240, 80, 70, 30);
-	QLabel_3->setText(tr("Appearance"));
+	target1 = new QComboBox(group1);
+	add_targets(target1);
+	gbox->addWidget(target1, 1, 1, 1, 2);
 
-	QGroupBox_2 = new QGroupBox(this);
-	QGroupBox_2->setGeometry(10, 140, 480, 120);
-	QGroupBox_2->setTitle(tr("Second Image"));
+	appear1 = new QComboBox(group1);
+	add_appear(appear1);
+	gbox->addWidget(appear1, 1, 4, 1, 2);
 
-	QLabel_4 = new QLabel(this);
-	QLabel_4->setGeometry(30, 170, 40, 30);
-	QLabel_4->setText(tr("File"));
 
-	FileEdit_2 = new QLineEdit(this);
-	FileEdit_2->setGeometry(80, 170, 280, 30);
+	top_layout->addSpacing(15);
+	group2 = new QGroupBox(this);
+	group2->setTitle(tr("Second Image"));
+	top_layout->addWidget(group2);
+	gbox = new QGridLayout(group2);
 
-	BrowseButton_2 = new QPushButton(this);
-	BrowseButton_2->setGeometry(370, 170, 100, 30);
-	BrowseButton_2->setText(tr("Browse"));
+	add_labels(gbox);
 
-	QLabel_5 = new QLabel(this);
-	QLabel_5->setGeometry(30, 210, 40, 30);
-	QLabel_5->setText(tr("Target"));
+	edit2 = new QLineEdit(group2);
+	gbox->addWidget(edit2, 0, 1, 1, 3);
 
-	TargetCombo_2 = new QComboBox(this);
-	TargetCombo_2->setGeometry(80, 210, 150, 30);
-	TargetCombo_2->insertItem(0, tr("Front, left side"));
-	TargetCombo_2->insertItem(1, tr("Front, right side"));
-	TargetCombo_2->insertItem(2, tr("Front, both sides"));
-	TargetCombo_2->insertItem(3, tr("Back, without sides"));
-	TargetCombo_2->insertItem(4, tr("Back, with sides"));
+	browse2 = new QPushButton(group2);
+	browse2->setText(tr("Browse"));
+	gbox->addWidget(browse2, 0, 5, 1, 1);
 
-	AppearanceCombo_2 = new QComboBox(this);
-	AppearanceCombo_2->setGeometry(320, 210, 150, 30);
-	AppearanceCombo_2->insertItem(0, tr("Centered"));
-	AppearanceCombo_2->insertItem(1, tr("Tiled"));
-	AppearanceCombo_2->insertItem(2, tr("Stretched"));
+	target2 = new QComboBox(group2);
+	add_targets(target2);
+	gbox->addWidget(target2, 1, 1, 1, 2);
 
-	QLabel_6 = new QLabel(this);
-	QLabel_6->setGeometry(240, 210, 70, 30);
-	QLabel_6->setText(tr("Appearance"));
+	appear2 = new QComboBox(group2);
+	add_appear(appear2);
+	gbox->addWidget(appear2, 1, 4, 1, 2);
 
-	QGroupBox_3 = new QGroupBox(this);
-	QGroupBox_3->setGeometry(10, 270, 480, 120);
-	QGroupBox_3->setTitle(tr("Third Image"));
+	top_layout->addSpacing(15);
+	group3 = new QGroupBox(this);
+	group3->setTitle(tr("Third Image"));
+	top_layout->addWidget(group3);
+	gbox = new QGridLayout(group3);
 
-	QLabel_7 = new QLabel(this);
-	QLabel_7->setGeometry(30, 300, 40, 30);
-	QLabel_7->setText(tr("File"));
+	add_labels(gbox);
 
-	FileEdit_3 = new QLineEdit(this);
-	FileEdit_3->setGeometry(80, 300, 280, 30);
+	edit3 = new QLineEdit(group3);
+	gbox->addWidget(edit3, 0, 1, 1, 3);
 
-	BrowseButton_3 = new QPushButton(this);
-	BrowseButton_3->setGeometry(370, 300, 100, 30);
-	BrowseButton_3->setText(tr("Browse"));
+	browse3 = new QPushButton(group3);
+	browse3->setText(tr("Browse"));
+	gbox->addWidget(browse3, 0, 5, 1, 1);
 
-	QLabel_8 = new QLabel(this);
-	QLabel_8->setGeometry(30, 340, 40, 30);
-	QLabel_8->setText(tr("Target"));
+	target3 = new QComboBox(group3);
+	add_targets(target3);
+	gbox->addWidget(target3, 1, 1, 1, 2);
 
-	TargetCombo_3 = new QComboBox(this);
-	TargetCombo_3->setGeometry(80, 340, 150, 30);
-	TargetCombo_3->insertItem(0, tr("Front, left side"));
-	TargetCombo_3->insertItem(1, tr("Front, right side"));
-	TargetCombo_3->insertItem(2, tr("Front, both sides"));
-	TargetCombo_3->insertItem(3, tr("Back, without sides"));
-	TargetCombo_3->insertItem(4, tr("Back, with sides"));
+	appear3 = new QComboBox(group3);
+	add_appear(appear3);
+	gbox->addWidget(appear3, 1, 4, 1, 2);
+	top_layout->addSpacing(15);
 
-	AppearanceCombo_3 = new QComboBox(this);
-	AppearanceCombo_3->setGeometry(320, 340, 150, 30);
-	AppearanceCombo_3->insertItem(0, tr("Centered"));
-	AppearanceCombo_3->insertItem(1, tr("Tiled"));
-	AppearanceCombo_3->insertItem(2, tr("Stretched"));
+	buttons(top_layout);
+}
 
-	QLabel_9 = new QLabel(this);
-	QLabel_9->setGeometry(240, 340, 70, 30);
-	QLabel_9->setText(tr("Appearance"));
+void
+ImageDlg::buttons(QVBoxLayout *top)
+{
+	QBoxLayout *button_layout = new QBoxLayout(QBoxLayout::RightToLeft);
 
-	OKButton = new QPushButton(this);
-	OKButton->setGeometry(140, 400, 100, 30);
-	OKButton->setText(tr("OK"));
-	OKButton->setDefault(true);
+	top->addLayout(button_layout);
 
-	CancelButton = new QPushButton(this);
-	CancelButton->setGeometry(260, 400, 100, 30);
-	CancelButton->setText(tr("Cancel"));
+	QPushButton *ok = new QPushButton(this);
+	ok->setText(tr("OK"));
+	ok->setDefault(true);
+	button_layout->addWidget(ok, 0, Qt::AlignRight);
+
+	QPushButton *cancel = new QPushButton(this);
+	cancel->setText(tr("Cancel"));
+	button_layout->addWidget(cancel, 0, Qt::AlignRight);
+
+	connect(ok, SIGNAL(clicked()), SLOT(ok()));
+	connect(cancel, SIGNAL(clicked()), SLOT(cancel()));
+}
+
+void
+ImageDlg::add_labels(QGridLayout *gbox)
+{
+	QLabel *label = new QLabel(this);
+	label->setText(tr("File"));
+	gbox->addWidget(label, 0, 0, 1, 1);
+
+	label = new QLabel(this);
+	label->setText(tr("Target"));
+	gbox->addWidget(label, 1, 0, 1, 1);
+
+	label = new QLabel(this);
+	label->setText(tr("Appearance"));
+	gbox->addWidget(label, 1, 3, 1, 1);
 }
