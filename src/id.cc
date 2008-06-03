@@ -109,19 +109,19 @@ id::browse_3()
 void
 id::add_targets(QComboBox *box)
 {
-	box->insertItem(0, tr("Front, left side"));
-	box->insertItem(1, tr("Front, right side"));
-	box->insertItem(2, tr("Front, both sides"));
-	box->insertItem(3, tr("Back, without sides"));
-	box->insertItem(4, tr("Back, with sides"));
+	box->insertItem(IMG_FRONT_LEFT, tr("Front, left side"));
+	box->insertItem(IMG_FRONT_RIGHT, tr("Front, right side"));
+	box->insertItem(IMG_FRONT_FULL, tr("Front, both sides"));
+	box->insertItem(IMG_BACK_INNER, tr("Back, without sides"));
+	box->insertItem(IMG_BACK_FULL, tr("Back, with sides"));
 }
 
 void
 id::add_appear(QComboBox *box)
 {
-	box->insertItem(0, tr("Centered"));
-	box->insertItem(1, tr("Tiled"));
-	box->insertItem(2, tr("Stretched"));
+	box->insertItem(IMG_CENTER, tr("Centered"));
+	box->insertItem(IMG_TILE, tr("Tiled"));
+	box->insertItem(IMG_STRETCH, tr("Stretched"));
 }
 
 void
