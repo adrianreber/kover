@@ -19,9 +19,9 @@
  */
 
 #include "kovertop.moc"
-#include "imagedlg.h"
 #include "without_cd.h"
 #include <pd.h>
+#include <id.h>
 
 #include <QGridLayout>
 #include <QVBoxLayout>
@@ -691,11 +691,11 @@ KoverTop::inlet_title_font()
 void
 KoverTop::imageEmbedding()
 {
-	ImageDlg *imgdlg = new ImageDlg(&kover_file);
+	id *dialog = new id(&kover_file);
 
-	if (imgdlg->exec())
+	if (dialog->exec())
 		cdview->dataChanged(true);
-	delete imgdlg;
+	delete dialog;
 }
 
 void

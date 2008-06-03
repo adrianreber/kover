@@ -16,7 +16,7 @@ set(${PROJECT_NAME}_SRCS
    koverfile.cpp
    cdview.cc
    kovertop.cc
-   imagedlg.cc 
+   id.cc 
    directory.cc
 )
 

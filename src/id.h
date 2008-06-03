@@ -20,8 +20,8 @@
  * 14 Dec 1998: Initial release
  */
 
-#ifndef IMAGEDLG_H
-#define IMAGEDLG_H
+#ifndef ID_H
+#define ID_H
 
 #include <QGroupBox>
 #include <QLineEdit>
@@ -33,10 +33,10 @@
 
 #include "koverfile.h"
 
-class ImageDlg : public QDialog {
+class id : public QDialog {
 	Q_OBJECT public:
-	ImageDlg (KoverFile *_kover_file);
-	~ImageDlg ();
+	id (KoverFile *_kover_file);
+	~id ();
 
  protected slots:
 	void ok();
@@ -73,4 +73,4 @@ class ImageDlg : public QDialog {
 	KoverFile *kover_file;
 };
 
-#endif /* IMAGEDLG_H */
+#endif /* ID_H */

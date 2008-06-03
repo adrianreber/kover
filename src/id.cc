@@ -20,12 +20,14 @@
  * 14 Dec 1998: Initial release
  */
 
-#include "imagedlg.moc"
-#include "imagedlg.h"
+/* this is the image dialog (id) */
+
+#include "id.moc"
+#include "id.h"
 #include <kfiledialog.h>
 #include <QLabel>
 
-ImageDlg::ImageDlg(KoverFile *_kover_file)
+id::id(KoverFile *_kover_file)
 	:  QDialog()
 {
 	kover_file = _kover_file;
@@ -49,12 +51,12 @@ ImageDlg::ImageDlg(KoverFile *_kover_file)
 	target3->setCurrentIndex(kover_file->imageTarget(2));
 }
 
-ImageDlg::~ImageDlg()
+id::~id()
 {
 }
 
 void
-ImageDlg::ok()
+id::ok()
 {
 	kover_file->setImageFile(0, edit1->text());
 	kover_file->setImageFile(1, edit2->text());
@@ -72,13 +74,13 @@ ImageDlg::ok()
 }
 
 void
-ImageDlg::cancel()
+id::cancel()
 {
 	reject();
 }
 
 void
-ImageDlg::browse_1()
+id::browse_1()
 {
 	QString filename = KFileDialog::getOpenFileName();
 
@@ -87,7 +89,7 @@ ImageDlg::browse_1()
 }
 
 void
-ImageDlg::browse_2()
+id::browse_2()
 {
 	QString filename = KFileDialog::getOpenFileName();
 
@@ -96,7 +98,7 @@ ImageDlg::browse_2()
 }
 
 void
-ImageDlg::browse_3()
+id::browse_3()
 {
 	QString filename = KFileDialog::getOpenFileName();
 
@@ -105,7 +107,7 @@ ImageDlg::browse_3()
 }
 
 void
-ImageDlg::add_targets(QComboBox *box)
+id::add_targets(QComboBox *box)
 {
 	box->insertItem(0, tr("Front, left side"));
 	box->insertItem(1, tr("Front, right side"));
@@ -115,7 +117,7 @@ ImageDlg::add_targets(QComboBox *box)
 }
 
 void
-ImageDlg::add_appear(QComboBox *box)
+id::add_appear(QComboBox *box)
 {
 	box->insertItem(0, tr("Centered"));
 	box->insertItem(1, tr("Tiled"));
@@ -123,9 +125,10 @@ ImageDlg::add_appear(QComboBox *box)
 }
 
 void
-ImageDlg::init()
+id::init()
 {
 	QVBoxLayout *top_layout = new QVBoxLayout(this);
+
 	top_layout->setMargin(12);
 	top_layout->addSpacing(5);
 
@@ -203,7 +206,7 @@ ImageDlg::init()
 }
 
 void
-ImageDlg::buttons(QVBoxLayout *top)
+id::buttons(QVBoxLayout *top)
 {
 	QBoxLayout *button_layout = new QBoxLayout(QBoxLayout::RightToLeft);
 
@@ -223,9 +226,10 @@ ImageDlg::buttons(QVBoxLayout *top)
 }
 
 void
-ImageDlg::add_labels(QGridLayout *gbox)
+id::add_labels(QGridLayout *gbox)
 {
 	QLabel *label = new QLabel(this);
+
 	label->setText(tr("File"));
 	gbox->addWidget(label, 0, 0, 1, 1);
 
