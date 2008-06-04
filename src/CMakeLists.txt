@@ -18,6 +18,7 @@ set(${PROJECT_NAME}_SRCS
    kovertop.cc
    id.cc 
    directory.cc
+   without_cd.cc
 )
 
 pkg_check_modules(CDIO REQUIRED libcdio)

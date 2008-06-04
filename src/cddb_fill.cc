@@ -18,17 +18,22 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <cddb_211_item.h>
+#include <inexact_dialog.h>
+#include <pa.h>
+#include <categories.h>
+#include <kover_old.h>
 #include <globals.h>
-#include "cddb_fill.h"
-#include <string>
+#include <cddb_fill.h>
+
 #include <klocale.h>
+
+#include <string>
+#include <algorithm>
 #include <cdio/cdda.h>
 #include <cdio/cdtext.h>
-#include "cddb_211_item.h"
-#include "inexact_dialog.h"
-#include "pa.h"
-#include "categories.h"
-#include <kover_old.h>
+
+using namespace std;
 
 cddb_fill::cddb_fill(KoverFile *_kover_file, no_qobject *bla)
 {
@@ -134,7 +139,9 @@ cddb_fill::execute_without_cd(const char *id, int cat)
 	categories *category = new categories();
 
 	cd_info.cddb_id = strtoul(id, NULL, 16);
-	cd_info.category = category->get_category(cat);
+	string d(category->get_category(cat));
+	transform(d.begin(), d.end(), d.begin(), (int(*) (int))tolower);
+	cd_info.category = d;
 
 	cd_info.artist = "Artist";
 	cd_info.cdname = "Title";
@@ -449,7 +456,7 @@ cddb_fill::cddb_query()
 {
 	int i;
 
-	list < cddb_211_item * >inexact_list;
+	list <cddb_211_item *>inexact_list;
 	inexact_dialog *inexact;
 	cddb_211_item *ref_211;
 	int aber = -2;
@@ -572,6 +579,8 @@ cddb_fill::cddb_read(unsigned long disc_id, string category)
 	cddb_conn_t *conn = NULL;
 	int i = -2;
 
+	kprintf("id %lx\n", disc_id);
+	kprintf("category %s\n", category.c_str());
 	conn = cddb_new();
 	if (conn == NULL) {
 		fprintf(stderr,
@@ -587,12 +596,17 @@ cddb_fill::cddb_read(unsigned long disc_id, string category)
 		exit(-1);
 	}
 
+	printf("cat %d\n", cddb_disc_get_category(disc));
+	printf("cat %s\n", cddb_disc_get_category_str(disc));
 	cddb_disc_set_category_str(disc, category.c_str());
 	cddb_disc_set_discid(disc, disc_id);
+
+	printf("cat %s\n", cddb_disc_get_category_str(disc));
 
 	while (i) {
 
 		int success = ::cddb_read(conn, disc);
+		kprintf("success %d\n", success);
 		if (cddb_errno(conn) == CDDB_ERR_PROXY_AUTH) {
 			if (check_for_auth(conn))
 				continue;
@@ -608,6 +622,7 @@ cddb_fill::cddb_read(unsigned long disc_id, string category)
 	}
 
 	cd_info.length = cddb_disc_get_length(disc);
+	kprintf("cd_info.length %d\n", cd_info.length);
 
 	if (cd_info.length == 0) {
 
@@ -642,7 +657,7 @@ cddb_fill::cddb_read(unsigned long disc_id, string category)
 }
 
 bool
-cddb_fill::sites(list < server * >&server_list)
+cddb_fill::sites(list <server *>&server_list)
 {
 
 	cddb_conn_t *conn = NULL;

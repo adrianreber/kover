@@ -754,7 +754,6 @@ KoverTop::cdrom_eject()
 void
 KoverTop::cddb_without_cd()
 {
-#if 0
 	int display_track_duration = globals.display_track_duration;
 
 	setStatusText(i18n("Initiating CDDB lookup!"));
@@ -788,7 +787,6 @@ KoverTop::cddb_without_cd()
 	delete (without);
 	free(id);
 	globals.display_track_duration = display_track_duration;
-#endif
 }
 
 void
