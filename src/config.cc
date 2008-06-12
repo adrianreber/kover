@@ -17,20 +17,18 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <QString>
-#include <config.h>
 #include <koverconfig.h>
-#include <categories.h>
-#include <ksharedconfig.h>
-
-#include <kglobal.h>
-#include <kconfiggroup.h>
-#include <ctype.h>
-#include <stdio.h>
-
-#include <cddb/cddb.h>
 #include <globals.h>
 #include <kover_old.h>
+#include <config.h>
+
+#include <ksharedconfig.h>
+#include <kglobal.h>
+#include <kconfiggroup.h>
+
+#include <ctype.h>
+#include <stdio.h>
+#include <cddb/cddb.h>
 
 void config_class::load_globals()
 {

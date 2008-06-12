@@ -25,8 +25,8 @@
 	 13 Jun 2001: Initial creation 
 */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef KOVER_CONFIG_H
+#define KOVER_CONFIG_H
 
 class config_class {
 
@@ -38,4 +38,4 @@ class config_class {
     char *check_cddb_dir();
 };
 
-#endif /* CONFIG_H */
+#endif /* KOVER_CONFIG_H */
