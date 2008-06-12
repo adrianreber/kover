@@ -18,19 +18,20 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <kovertop.h>
 #include <config.h>
 #include <kover.h>
 #include <kover_old.h>
-#include <kapplication.h>
-#include <kaboutdata.h>
-#include <kcmdlineargs.h>
-#include <KDE/KLocale>
-#include <kover_old.h>
-#include <signal.h>
 #include <globals.h>
 #include <koverconfig.h>
+
+#include <KApplication>
+#include <KAboutData>
+#include <KCmdLineArgs>
+#include <KLocale>
+
+#include <signal.h>
 #include <cdio/cdio.h>
-#include <kovertop.h>
 
 kover_global globals;
 

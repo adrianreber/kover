@@ -32,7 +32,7 @@
 #include <QGroupBox>
 #include <QBoxLayout>
 
-#include <krecentfilesaction.h>
+#include <KRecentFilesAction>
 
 /** KoverTop is the TopLevelWidget. */
 
