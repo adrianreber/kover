@@ -171,11 +171,112 @@ CDView::printKover()
 }
 
 void
+CDView::booklet_images(QPainter *p, int X, int Y, int i)
+{
+	QRect r;
+	QRect s;
+	int x;
+	int y;
+	int draw = 0;
+
+	if (kover_file->imageTarget(i) == IMG_BACK_INNER ||
+	    kover_file->imageTarget(i) == IMG_BACK_FULL)
+		return;
+
+	kprintf("i %d\n", i);
+	kprintf("image mode %d\n", kover_file->imageMode(i));
+	kprintf("image target %d\n", kover_file->imageTarget(i));
+
+	switch (kover_file->imageMode(i)) {
+	case IMG_CENTER:
+		switch (kover_file->imageTarget(i)) {
+		case IMG_FRONT_LEFT:
+			r.setRect(X, Y, FRONT_H, FRONT_V);
+			x = X + FRONT_H / 2 - images[i].width() / 2;
+			y = Y + FRONT_V / 2 - images[i].height() / 2;
+			draw = 1;
+			break;
+		case IMG_FRONT_RIGHT:
+			if (globals.one_page)
+				break;
+			r.setRect(X + FRONT_H, Y, FRONT_H, FRONT_V);
+			x = X + FRONT_H + FRONT_H / 2 - images[i].width() / 2;
+			y = Y + FRONT_V / 2 - images[i].height() / 2;
+			draw = 1;
+			break;
+		case IMG_FRONT_FULL:
+			r.setRect(X, Y, FRONT_H, FRONT_V);
+			if (!globals.one_page)
+				r.setWidth(FRONT_H * 2);
+
+			if (globals.one_page)
+				x = X + FRONT_H / 2 - images[i].width() / 2;
+			else
+				x = X + FRONT_H - images[i].width() / 2;
+
+			y = Y + FRONT_V / 2 - images[i].height() / 2;
+			draw = 1;
+		}
+		if (draw) {
+			p->setClipRect(r);
+			p->drawPixmap(x, y, images[i]);
+		}
+		break;
+	case IMG_TILE:
+		switch (kover_file->imageTarget(i)) {
+		case IMG_FRONT_LEFT:
+			r.setRect(X, Y, FRONT_H, FRONT_V);
+			draw = 1;
+			break;
+		case IMG_FRONT_RIGHT:
+			if (globals.one_page)
+				break;
+			r.setRect(X + FRONT_H, Y, FRONT_H, FRONT_V);
+			draw = 1;
+			break;
+		case IMG_FRONT_FULL:
+			r.setRect(X, Y, FRONT_H, FRONT_V);
+			if (!globals.one_page)
+				r.setWidth(FRONT_H * 2);
+			draw = 1;
+		}
+		if (draw) {
+			p->setClipRect(r);
+			p->drawTiledPixmap(r, images[i]);
+		}
+		break;
+	case IMG_STRETCH:
+		s.setRect(0, 0, images[i].width(), images[i].height());
+		r.setRect(X, Y, FRONT_H, FRONT_V);
+		switch (kover_file->imageTarget(i)) {
+		case IMG_FRONT_FULL:
+			r.setWidth(FRONT_H * 2);
+			draw = 1;
+			break;
+		case IMG_FRONT_LEFT:
+			if (globals.one_page)
+				break;
+			draw = 1;
+			break;
+		case IMG_FRONT_RIGHT:
+			r.moveLeft(X + FRONT_H);
+			draw = 1;
+		}
+		if (draw) {
+			p->setClipRect(r);
+			p->drawPixmap(r, images[i], s);
+
+		}
+	}
+	p->setClipping(false);
+
+}
+
+void
 CDView::drawBooklet(QPainter *p, int X, int Y)
 {
 	if (globals.inlet_only)
 		return;
-	const float scale = 0.4; /* Abhängig von Bildschirmbreite!! */
 
 	/* just to make sure we always start drawing at the same point */
 	p->translate(0, 0);
@@ -186,152 +287,8 @@ CDView::drawBooklet(QPainter *p, int X, int Y)
 		p->fillRect(X, Y, FRONT_H * 2, FRONT_V, kover_file->backColor());
 
 	for (int i = 0; i < 3; i++) {
-		if (!images[i].isNull()) {
-			switch (kover_file->imageMode(i)) {
-			case IMG_CENTER:
-				switch (kover_file->imageTarget(i)) {
-				case IMG_FRONT_LEFT:
-					if (previewMode)
-						p->setClipRect(X, Y, FRONT_H,
-							       FRONT_V);
-					else
-						p->setClipRect((int)(X * scale),
-							       (int)(Y * scale),
-							       (int)(FRONT_H *
-								     scale),
-							       (int)(FRONT_V *
-								     scale));
-					p->drawPixmap(
-						X + FRONT_H / 2 - images[i].width(
-							) / 2,
-						Y + FRONT_V / 2 -
-						images[i].height() / 2, images[i]);
-					p->setClipping(false);
-					break;
-				case IMG_FRONT_RIGHT:
-					if (globals.one_page)
-						break;
-					if (previewMode)
-						p->setClipRect(X + FRONT_H, Y,
-							       FRONT_H,
-							       FRONT_V);
-					else
-						p->setClipRect((int)((X +
-								      FRONT_H) *
-								     scale),
-							       (int)(Y * scale),
-							       (int)(FRONT_H *
-								     scale),
-							       (int)(FRONT_V *
-								     scale));
-
-					p->drawPixmap(X + FRONT_H + FRONT_H / 2 -
-						      images[i].width() / 2,
-						      Y + FRONT_V / 2 -
-						      images[i].height() / 2,
-						      images[i]);
-					p->setClipping(false);
-					break;
-				case IMG_FRONT_FULL:
-					if (previewMode) {
-						if (globals.one_page)
-							p->setClipRect(X, Y,
-								       FRONT_H,
-								       FRONT_V);
-						else
-							p->setClipRect(
-								X, Y, FRONT_H * 2,
-								FRONT_V);
-					} else {
-						if (globals.one_page)
-							p->setClipRect((int)(X *
-									     scale),
-								       (int)(Y *
-									     scale),
-								       (int)(
-									       FRONT_H
-									       *
-									       scale),
-								       (int)(
-									       FRONT_V
-									       *
-									       scale));
-						else
-							p->setClipRect((int)(X *
-									     scale),
-								       (int)(Y *
-									     scale),
-								       (int)(
-									       FRONT_H
-									       *
-									       2
-									       *
-									       scale),
-								       (int)(
-									       FRONT_V
-									       *
-									       scale));
-					}
-					if (globals.one_page)
-						p->drawPixmap(
-							X + FRONT_H / 2 -
-							images[i].width() / 2,
-							Y + FRONT_V / 2 -
-							images[i].height() / 2,
-							images[i]);
-					else
-						p->drawPixmap(
-							X + FRONT_H -
-							images[i].width() /
-							2,
-							Y + FRONT_V / 2 -
-							images[i].height() / 2,
-							images[i]);
-					p->setClipping(false);
-					break;
-				}
-				break;
-			case IMG_TILE:
-				switch (kover_file->imageTarget(i)) {
-				case IMG_FRONT_LEFT:
-					p->drawTiledPixmap(X, Y, FRONT_H, FRONT_V,
-							   images[i]);
-					break;
-				case IMG_FRONT_RIGHT:
-					if (globals.one_page)
-						break;
-					p->drawTiledPixmap(X + FRONT_H, Y,
-							   FRONT_H, FRONT_V,
-							   images[i]);
-					break;
-				case IMG_FRONT_FULL:
-					if (globals.one_page)
-						p->drawTiledPixmap(X, Y, FRONT_H,
-								   FRONT_V,
-								   images[i]);
-					else
-						p->drawTiledPixmap(X, Y,
-								   FRONT_H * 2,
-								   FRONT_V,
-								   images[i]);
-					break;
-				}
-				break;
-			case IMG_STRETCH:
-				switch (kover_file->imageTarget(i)) {
-				case IMG_FRONT_FULL:
-				case IMG_FRONT_LEFT:
-					p->drawPixmap(X, Y, images[i]);
-					break;
-				case IMG_FRONT_RIGHT:
-					if (globals.one_page)
-						break;
-					p->drawPixmap(X + FRONT_H, Y, images[i]);
-					break;
-				}
-				break;
-			}
-		}
+		if (!images[i].isNull())
+			booklet_images(p, X, Y, i);
 	}
 
 	p->setFont(kover_file->titleFont());
@@ -397,8 +354,6 @@ CDView::inlet_center_back_inner(QPainter *p, int X, int Y, int i)
 	y = Y + BACK_V / 2 - images[i].height() / 2;
 
 	p->drawPixmap(x, y, images[i]);
-
-	p->setClipping(false);
 }
 
 void
@@ -413,15 +368,22 @@ CDView::inlet_center_back_full(QPainter *p, int X, int Y, int i)
 	y = Y + BACK_V / 2 - images[i].height() / 2;
 
 	p->drawPixmap(x, y, images[i]);
-
-	p->setClipping(false);
 }
 
 void
 CDView::inlet_images(QPainter *p, int X, int Y, int i)
 {
+	int draw = 0;
 	QRect r;
 	QRect s;
+
+	if (kover_file->imageTarget(i) != IMG_BACK_INNER &&
+	    kover_file->imageTarget(i) != IMG_BACK_FULL)
+		return;
+
+	kprintf("i %d\n", i);
+	kprintf("image mode %d\n", kover_file->imageMode(i));
+	kprintf("image target %d\n", kover_file->imageTarget(i));
 
 	switch (kover_file->imageMode(i)) {
 	case IMG_CENTER:
@@ -431,19 +393,21 @@ CDView::inlet_images(QPainter *p, int X, int Y, int i)
 			break;
 		case IMG_BACK_FULL:
 			inlet_center_back_full(p, X, Y, i);
-			break;
 		}
 		break;
 	case IMG_TILE:
 		switch (kover_file->imageTarget(i)) {
 		case IMG_BACK_INNER:
 			r.setRect(X + BACK_HS, Y, BACK_HI, BACK_V);
-			p->drawTiledPixmap(r, images[i]);
+			draw = 1;
 			break;
 		case IMG_BACK_FULL:
 			r.setRect(X, Y, BACK_HI + BACK_HS * 2, BACK_V);
+			draw = 1;
+		}
+		if (draw) {
+			p->setClipRect(r);
 			p->drawTiledPixmap(r, images[i]);
-			break;
 		}
 		break;
 	case IMG_STRETCH:
@@ -451,16 +415,19 @@ CDView::inlet_images(QPainter *p, int X, int Y, int i)
 		case IMG_BACK_INNER:
 			r.setRect(X + BACK_HS, Y, BACK_HI, BACK_V);
 			s.setRect(0, 0, images[i].width(), images[i].height());
-			p->drawPixmap(r, images[i], s);
+			draw = 1;
 			break;
 		case IMG_BACK_FULL:
 			r.setRect(X, Y, (BACK_HI + BACK_HS * 2), BACK_V);
 			s.setRect(0, 0, images[i].width(), images[i].height());
-			p->drawPixmap(r, images[i], s);
-			break;
+			draw = 1;
 		}
-		break;
+		if (draw) {
+			p->setClipRect(r);
+			p->drawPixmap(r, images[i], s);
+		}
 	}
+	p->setClipping(false);
 
 }
 

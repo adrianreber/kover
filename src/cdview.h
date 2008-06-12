@@ -85,6 +85,7 @@ class CDView : public QFrame {
 	void inlet_center_back_inner(QPainter *, int, int, int);
 	void inlet_center_back_full(QPainter *, int, int, int);
 	void inlet(QPainter *, int, int);
+	void booklet_images(QPainter *, int, int, int);
 };
 
 #endif /* _CDVIEW_H */
