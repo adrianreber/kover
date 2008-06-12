@@ -335,8 +335,7 @@ CDView::drawBooklet(QPainter *p, int X, int Y)
 		p->setFont(kover_file->contentsFont());
 		p->setPen(kover_file->contentsColor());
 		p->drawText(X + 10, Y + 10, FRONT_H - 20, FRONT_V - 10,
-			    Qt::AlignLeft,
-			    kover_file->contents());
+			    Qt::AlignLeft, kover_file->contents());
 	}
 }
 
@@ -462,20 +461,16 @@ CDView::inlet(QPainter *p, int X, int Y)
 	p->drawLine(X - 20, Y, X - 15, Y);
 	p->drawLine(X - 10, Y, X - 5, Y);
 	p->drawLine(X + BACK_HI + BACK_HS * 2 + 20, Y, X + BACK_HI + BACK_HS *
-		    2 + 15,
-		    Y);
+		    2 + 15, Y);
 	p->drawLine(X + BACK_HI + BACK_HS * 2 + 10, Y, X + BACK_HI + BACK_HS *
-		    2 + 5,
-		    Y);
+		    2 + 5, Y);
 
 	p->drawLine(X - 20, Y + BACK_V, X - 15, Y + BACK_V);
 	p->drawLine(X - 10, Y + BACK_V, X - 5, Y + BACK_V);
 	p->drawLine(X + BACK_HI + BACK_HS * 2 + 20, Y + BACK_V, X + BACK_HI +
-		    BACK_HS * 2 + 15,
-		    Y + BACK_V);
+		    BACK_HS * 2 + 15, Y + BACK_V);
 	p->drawLine(X + BACK_HI + BACK_HS * 2 + 10, Y + BACK_V, X + BACK_HI +
-		    BACK_HS * 2 + 5,
-		    Y + BACK_V);
+		    BACK_HS * 2 + 5, Y + BACK_V);
 
 	p->drawLine(X, Y, X + BACK_HI + BACK_HS * 2, Y);
 	p->drawLine(X, Y + BACK_V, X + BACK_HI + BACK_HS * 2, Y + BACK_V);
@@ -499,19 +494,16 @@ CDView::inlet(QPainter *p, int X, int Y)
 		p->setPen(Qt::red);
 		p->setFont(QFont("helvetica", 12, QFont::Bold));
 		p->drawText(10, 0, BACK_V - 10, BACK_HS, Qt::AlignLeft |
-			    Qt::AlignVCenter,
-			    numberStr);
+			    Qt::AlignVCenter, numberStr);
 		p->setPen(kover_file->titleColor());
 		p->setFont(kover_file->inlet_title_font());
 		p->drawText(38, 0, BACK_V - 38, BACK_HS, Qt::AlignLeft |
-			    Qt::AlignVCenter,
-			    title);
+			    Qt::AlignVCenter, title);
 	} else {
 		p->setPen(kover_file->titleColor());
 		p->setFont(kover_file->inlet_title_font());
 		p->drawText(10, 0, BACK_V - 10, BACK_HS, Qt::AlignLeft |
-			    Qt::AlignVCenter,
-			    title);
+			    Qt::AlignVCenter, title);
 	}
 
 	p->translate(BACK_V, BACK_HS + BACK_HI);
@@ -524,19 +516,16 @@ CDView::inlet(QPainter *p, int X, int Y)
 		p->setPen(Qt::red);
 		p->setFont(QFont("helvetica", 12, QFont::Bold));
 		p->drawText(10, -1, BACK_V - 10, -BACK_HS, Qt::AlignLeft |
-			    Qt::AlignVCenter,
-			    numberStr);
+			    Qt::AlignVCenter, numberStr);
 		p->setPen(kover_file->titleColor());
 		p->setFont(kover_file->inlet_title_font());
 		p->drawText(38, -1, BACK_V - 38, -BACK_HS, Qt::AlignLeft |
-			    Qt::AlignVCenter,
-			    title);
+			    Qt::AlignVCenter, title);
 	} else {
 		p->setPen(kover_file->titleColor());
 		p->setFont(kover_file->inlet_title_font());
 		p->drawText(10, -1, BACK_V - 10, -BACK_HS, Qt::AlignLeft |
-			    Qt::AlignVCenter,
-			    title);
+			    Qt::AlignVCenter, title);
 	}
 
 	p->translate(0, BACK_HI);
@@ -586,8 +575,7 @@ CDView::dataChanged(bool image)
 {
 	int i = 3;
 
-	kprintf("kover:CDView::dataChanged() %d\n",
-		globals.one_page);
+	kprintf("kover:CDView::dataChanged() %d\n", globals.one_page);
 
 	while (i--) {
 		if (kover_file->imageFile(i).isEmpty())
