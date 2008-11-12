@@ -138,7 +138,7 @@ CDView::printKover()
 
 	QPainter *paint = new QPainter(printer);
 
-	/* paint->save(); */
+	paint->scale(1.35f, 1.35f);
 
 	previewMode = true;     /* hack */
 
