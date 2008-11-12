@@ -257,14 +257,14 @@ cddb_fill::readTOC()
 	if (cnt == 0) {
 		blub->set_status_text("no audio tracks on CD");
 	}
-	fprintf(stderr, "CD contains %d track(s)\n", cnt);
+	kprintf("CD contains %d track(s)\n", cnt);
 
 
 	cd_info.ntracks = cnt;
 	for (t = 1; t <= cnt; t++) {
 
 		lsn = cdio_get_track_lsn(cdio, t);
-		fprintf(stderr, "lsn: %d\n", lsn);
+		kprintf("lsn: %d\n", lsn);
 		if (lsn == CDIO_INVALID_LSN) {
 			blub->
 			set_status_text
@@ -276,12 +276,7 @@ cddb_fill::readTOC()
 		blub->track = t;
 		blub->start = lsn + SECONDS_TO_FRAMES(2);
 
-
 		cd_info.tracks.push_back(blub);
-
-		/* track_info(i + 1, entry.cdte_addr.msf.minute, */
-		/*            entry.cdte_addr.msf.second, entry.cdte_addr.msf.frame)); */
-
 	}
 
 	lsn = cdio_get_track_lsn(cdio, CDIO_CDROM_LEADOUT_TRACK);
@@ -292,15 +287,15 @@ cddb_fill::readTOC()
 	cd_info.tracks.push_back(blub);
 
 	cd_info.length = FRAMES_TO_SECONDS(lsn);
-	fprintf(stderr, "cd_info.length %d\n", cd_info.length);
+	kprintf("cd_info.length %d\n", cd_info.length);
 
 	pos = cd_info.tracks[0]->start;
 	for (i = 0; i < cd_info.ntracks; i++) {
-		fprintf(stderr, "pos: %d\n", pos);
+		kprintf("pos: %d\n", pos);
 		cd_info.tracks[i]->length = cd_info.tracks[i + 1]->start - pos;
-		fprintf(stderr, "length: %ld\n",
+		kprintf("length: %ld\n",
 			cd_info.tracks[i]->length);
-		fprintf(stderr, "3: min %ld sec %ld\n",
+		kprintf("3: min %ld sec %ld\n",
 			FRAMES_TO_SECONDS(cd_info.tracks[i]->length -
 					  SECONDS_TO_FRAMES(2)) / 60,
 			FRAMES_TO_SECONDS(cd_info.tracks[i]->length -
@@ -308,9 +303,9 @@ cddb_fill::readTOC()
 		pos = cd_info.tracks[i + 1]->start;
 	}
 
-	fprintf(stderr, "Table of contents successfully read: %08lx\n",
+	kprintf("Table of contents successfully read: %08lx\n",
 		cd_info.cddb_id);
-	fprintf(stderr, "Disc length: %d\n", cd_info.length);
+	kprintf("Disc length: %d\n", cd_info.length);
 
 	cdio_destroy(cdio);
 
@@ -343,8 +338,8 @@ cddb_fill::do_proxy_stuff(cddb_conn_t *conn)
 						globals.password);
 	}
 	if (!globals.proxy_from_env) {
-		printf("not using http_env %s %d\n", globals.proxy_server,
-		       globals.proxy_port);
+		kprintf("not using http_env %s %d\n", globals.proxy_server,
+			globals.proxy_port);
 		cddb_http_proxy_enable(conn);
 		cddb_set_http_proxy_server_name(conn, globals.proxy_server);
 		cddb_set_http_proxy_server_port(conn, globals.proxy_port);
@@ -476,9 +471,7 @@ cddb_fill::cddb_query()
 
 	conn = cddb_new();
 	if (conn == NULL) {
-		fprintf(stderr,
-			"out of memory, "
-			"unable to create connection structure");
+		kprintf("out of memory, unable to create connection structure");
 	}
 
 	if (!set_connection_params(conn))
@@ -488,8 +481,7 @@ cddb_fill::cddb_query()
 	for (i = 0; i < cd_info.ntracks; i++) {
 		track = cddb_track_new();
 		if (track == NULL) {
-			fprintf(stderr,
-				"out of memory, unable to create track");
+			fprintf(stderr, "out of memory, unable to create track");
 			exit(-1);
 		}
 		cddb_track_set_frame_offset(track, cd_info.tracks[i]->start);
@@ -562,7 +554,7 @@ cddb_fill::cddb_query()
 	}
 	ref_211 = inexact->get_object(aber);
 
-	fprintf(stderr, "Using disc: %08lX:%s:%s:%s\n",
+	kprintf("Using disc: %08lX:%s:%s:%s\n",
 		ref_211->get_id(), ref_211->get_artist().c_str(),
 		ref_211->get_title().c_str(),
 		ref_211->get_category().c_str());
@@ -583,9 +575,7 @@ cddb_fill::cddb_read(unsigned long disc_id, string category)
 	kprintf("category %s\n", category.c_str());
 	conn = cddb_new();
 	if (conn == NULL) {
-		fprintf(stderr,
-			"out of memory, "
-			"unable to create connection structure");
+		kprintf("out of memory, unable to create connection structure");
 	}
 
 	if (!set_connection_params(conn))
@@ -596,12 +586,12 @@ cddb_fill::cddb_read(unsigned long disc_id, string category)
 		exit(-1);
 	}
 
-	printf("cat %d\n", cddb_disc_get_category(disc));
-	printf("cat %s\n", cddb_disc_get_category_str(disc));
+	kprintf("cat %d\n", cddb_disc_get_category(disc));
+	kprintf("cat %s\n", cddb_disc_get_category_str(disc));
 	cddb_disc_set_category_str(disc, category.c_str());
 	cddb_disc_set_discid(disc, disc_id);
 
-	printf("cat %s\n", cddb_disc_get_category_str(disc));
+	kprintf("cat %s\n", cddb_disc_get_category_str(disc));
 
 	while (i) {
 
@@ -664,9 +654,7 @@ cddb_fill::sites(list <server *>&server_list)
 
 	conn = cddb_new();
 	if (conn == NULL) {
-		fprintf(stderr,
-			"out of memory, "
-			"unable to create connection structure");
+		kprintf("out of memory, unable to create connection structure");
 		return false;
 	}
 
