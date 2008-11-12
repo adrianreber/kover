@@ -22,21 +22,19 @@
  * 29 Oct 2001: Change size of the inlet title font
  */
 
-
-
 #include "cdview.moc"
 #include "cdview.h"
 
-#include <globals.h>
 #include <QPrintDialog>
-#include <kover_old.h>
-
 #include <QImage>
 #include <QRegExp>
 #include <QPainter>
-#include <kmessagebox.h>
-#include <math.h>
-#include <stdio.h>
+
+#include <kover_old.h>
+#include <globals.h>
+
+#include <KLocalizedString>
+#include <KMessageBox>
 
 #define FRONT_H 343
 #define FRONT_V 338

@@ -22,7 +22,6 @@
 #ifndef CDDB_FILL_H
 #define CDDB_FILL_H
 
-#include "kover.h"
 #include "koverfile.h"
 #include "no_qobject.h"
 #include <cddb/cddb.h>

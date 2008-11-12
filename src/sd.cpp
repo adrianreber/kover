@@ -24,6 +24,10 @@
 #include <cddb_fill.h>
 #include <kover_old.h>
 
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+
 sd::sd():QDialog()
 {
 	cddb_fill *bla = new cddb_fill();

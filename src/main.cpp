@@ -20,7 +20,6 @@
 
 #include <kovertop.h>
 #include <config.h>
-#include <kover.h>
 #include <kover_old.h>
 #include <globals.h>
 #include <koverconfig.h>

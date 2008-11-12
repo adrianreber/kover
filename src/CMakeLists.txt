@@ -1,7 +1,6 @@
 include(FindPkgConfig)
 
 set(${PROJECT_NAME}_SRCS
-   kover.cpp
    main.cpp
    koverview.cpp
    config.cc

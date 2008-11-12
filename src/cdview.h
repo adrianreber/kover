@@ -28,8 +28,6 @@
 #include <QPrinter>
 #include "koverfile.h"
 
-#include "kover.h"
-
 /**
  * CDView draws the cover in mini form, print preview or direct to the printer.
  * @author Denis Oliver Kropp (dok@fischlustig.de)

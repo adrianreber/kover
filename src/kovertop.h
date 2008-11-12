@@ -31,8 +31,10 @@
 #include <QTextEdit>
 #include <QGroupBox>
 #include <QBoxLayout>
+#include <QSpinBox>
 
 #include <KRecentFilesAction>
+#include <KXmlGuiWindow>
 
 /** KoverTop is the TopLevelWidget. */
 
