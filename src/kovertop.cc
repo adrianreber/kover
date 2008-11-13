@@ -137,7 +137,8 @@ KoverTop::make_menu()
 	KStandardAction::keyBindings(this, SLOT(config_keys()), ac);
 	recent = KStandardAction::openRecent(this, SLOT(fileOpen(KUrl)), ac);
 
-	KAction *act = new KAction(KIcon("network-connect"), i18n("&CDDB lookup"), ac);
+	KAction *act = new KAction(KIcon("network-connect"), i18n(
+					   "&CDDB lookup"), ac);
 	ac->addAction("cddb", act);
 	connect(act, SIGNAL(triggered(bool)), SLOT(cddbFill()));
 
@@ -160,15 +161,15 @@ KoverTop::make_menu()
 	ac->addAction("image_embedding", act);
 	connect(act, SIGNAL(triggered(bool)), SLOT(imageEmbedding()));
 
-	act = new KAction(KIcon("fonts-package"), i18n("Title Font..."), ac);
+	act = new KAction(KIcon("preferences-desktop-font"), i18n("Title Font..."), ac);
 	ac->addAction("title_font", act);
 	connect(act, SIGNAL(triggered(bool)), SLOT(titleFont()));
 
-	act = new KAction(KIcon("fonts-package"), i18n("Contents Font..."), ac);
+	act = new KAction(KIcon("preferences-desktop-font"), i18n("Contents Font..."), ac);
 	ac->addAction("contents_font", act);
 	connect(act, SIGNAL(triggered(bool)), SLOT(contentsFont()));
 
-	act = new KAction(KIcon("fonts-package"), i18n("Spine Text Font..."), ac);
+	act = new KAction(KIcon("preferences-desktop-font"), i18n("Spine Text Font..."), ac);
 	ac->addAction("inlet_title_font", act);
 	connect(act, SIGNAL(triggered(bool)), SLOT(inlet_title_font()));
 
@@ -176,11 +177,13 @@ KoverTop::make_menu()
 	ac->addAction("title_font_color", act);
 	connect(act, SIGNAL(triggered(bool)), SLOT(titleFontColor()));
 
-	act = new KAction(KIcon("color-picker"), i18n("Contents Fontcolor..."), ac);
+	act = new KAction(KIcon("color-picker"), i18n(
+				  "Contents Fontcolor..."), ac);
 	ac->addAction("contents_font_color", act);
 	connect(act, SIGNAL(triggered(bool)), SLOT(contentsFontColor()));
 
-	act = new KAction(KIcon("color-picker"), i18n("Background Fontcolor..."), ac);
+	act = new KAction(KIcon("color-picker"), i18n(
+				  "Background Fontcolor..."), ac);
 	ac->addAction("background_color", act);
 	connect(act, SIGNAL(triggered(bool)), SLOT(backgroundColor()));
 
@@ -203,6 +206,7 @@ void
 KoverTop::make_main_frame()
 {
 	QHBoxLayout *hlayout = new QHBoxLayout();
+
 	main_frame->setLayout(hlayout);
 	left_frame = new QWidget();
 	hlayout->addWidget(left_frame);
@@ -440,8 +444,7 @@ KoverTop::fileOpen()
 
 	KUrl url =
 		KFileDialog::getOpenUrl(KUrl(),
-					i18n(
-						"*.kover|Kover files\n*|All files\n*.k3b|k3b files"));
+					i18n( "*.kover|Kover files\n*|All files"));
 
 	if (!url.isEmpty()) {
 		fileOpen(url);
@@ -503,14 +506,14 @@ KoverTop::how_about_saving()
 						(
 							"Data changed since last saving!\nDo you want to save the changes?")))
 	{
-	case 3:         //YES
+	case 3:         /* YES */
 		fileSave();
 		if (altered_data)
 			return -1;
 		return 0;
-	case 4:         //NO
+	case 4:         /* NO */
 		return 0;
-	case 2:         //CANCEL
+	case 2:         /* CANCEL */
 		return -1;
 	}
 	return -1;
@@ -545,11 +548,8 @@ KoverTop::fileSaveAs()
 		KFileDialog::getSaveUrl(KUrl(),
 					i18n("*.kover|Kover files\n*|All files"));
 
-	if (!url.isEmpty()) {
-		if (url.fileName().contains('.'))
-			url.setFileName(url.fileName() + ".kover");
+	if (!url.isEmpty())
 		saveFile(url);
-	}
 }
 
 void
@@ -631,7 +631,7 @@ KoverTop::cddbFill()
 void
 KoverTop::preferences()
 {
-	KConfigSkeleton* cs = new KConfigSkeleton();
+	KConfigSkeleton*cs = new KConfigSkeleton();
 	pd *dialog = NULL;
 
 	if (kover_file.empty())
@@ -850,10 +850,10 @@ KoverTop::file_mode()
 	string add = "";
 
 	for (int i = 0; i <= tmp->how_many_files(); i++) {
-		//directory *child = tmp->get_childs(i);
+		/* directory *child = tmp->get_childs(i); */
 
-		//if (child == NULL)
-		//    continue;
+		/* if (child == NULL) */
+		/*    continue; */
 
 		if (!tmp->get_file(i).empty()) {
 			add += tmp->get_file(i) + "\n";
