@@ -10,3 +10,5 @@ set(PACKAGE ${PROJECT_NAME})
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 add_subdirectory(src)
+
+install(FILES kover.1  DESTINATION  ${MAN_INSTALL_DIR}/man1 )
