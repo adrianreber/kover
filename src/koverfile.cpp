@@ -350,7 +350,7 @@ KoverFile::openECD(QString & filename)
 		return false;
 
 	char c;
-	int i, length;
+	long i, length;
 	QFile ecd_file(filename);
 
 	if (!ecd_file.open(QIODevice::ReadOnly))
@@ -361,10 +361,10 @@ KoverFile::openECD(QString & filename)
 
 	/* Title */
 	cd_title = "";
-	length = (int)ecd_file.read(1).data();
+	length = (long)ecd_file.read(1).constData();
 	ecd_file.seek(1);
 	for (i = 0; i < length; i++) {
-		c = (int)ecd_file.read(1).data();
+		c = (long)ecd_file.read(1).constData();
 		ecd_file.seek(1);
 		if ((c != 10) && (c != 13))
 			cd_title += c;
@@ -373,12 +373,12 @@ KoverFile::openECD(QString & filename)
 	}
 
 	/* Background image */
-	length = (int)ecd_file.read(1).data();
+	length = (long)ecd_file.read(1).constData();
 	ecd_file.seek(1);
 	ecd_file.seek(ecd_file.pos() + length);
 
 	/* Foreground image */
-	length = (int)ecd_file.read(1).data();
+	length = (long)ecd_file.read(1).constData();
 	ecd_file.seek(1);
 	ecd_file.seek(ecd_file.pos() + length);
 
@@ -386,7 +386,7 @@ KoverFile::openECD(QString & filename)
 	ecd_file.seek(ecd_file.pos() + 28);
 
 	/* Font 1, Name */
-	length = (int)ecd_file.read(1).data();
+	length = (long)ecd_file.read(1).constData();
 	ecd_file.seek(1);
 	ecd_file.seek(ecd_file.pos() + length);
 
@@ -394,7 +394,7 @@ KoverFile::openECD(QString & filename)
 	ecd_file.seek(ecd_file.pos() + 28);
 
 	/* Font 2, Name */
-	length = (int)ecd_file.read(1).data();
+	length = (long)ecd_file.read(1).constData();
 	ecd_file.seek(1);
 	ecd_file.seek(ecd_file.pos() + length);
 
@@ -403,17 +403,17 @@ KoverFile::openECD(QString & filename)
 
 	/* Contents */
 	cd_contents = "";
-	length = (int)ecd_file.read(1).data();
+	length = (long)ecd_file.read(1).constData();
 	ecd_file.seek(1);
 	if (length == 0xff) {
-		length = (int)ecd_file.read(1).data();
+		length = (long)ecd_file.read(1).constData();
 		ecd_file.seek(1);
-		length += (int)ecd_file.read(1).data() << 8;
+		length += (long)ecd_file.read(1).constData() << 8;
 		ecd_file.seek(1);
 	}
 
 	for (i = 0; i < length; i++) {
-		c = (int)ecd_file.read(1).data();
+		c = (long)ecd_file.read(1).constData();
 		ecd_file.seek(1);
 		if (c != 13)
 			cd_contents += c;
