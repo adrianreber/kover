@@ -61,7 +61,7 @@
         * pl.po: polish translation updated by
                  Michal Rudolf <mrudolf@mercury.ci.uw.edu.pl>
         * nb.po: norwegian translation updated by
-                 Håvard Dahle <havardda@orakel.ntnu.no>
+                 HÃ¥vard Dahle <havardda@orakel.ntnu.no>
         * it.po: italian translation updated by
                  Marco Ciampa <ciampix@libero.it>
         * fr.po: french translation updated by
@@ -131,10 +131,10 @@
 
 2002-07-24 Adrian <adrian@lisas.de>
         * mainly bugfixes
-        * renamed no.po to nb.po (Øyvind Sæther)
+        * renamed no.po to nb.po (Ã˜yvind SÃ¦ther)
         * koverfile.cc: now using utf8() to save the files;
           this sould fix the problem with utf8 characters...
-          (Øyvind Sæther)
+          (Ã˜yvind SÃ¦ther)
         * koverfile.cc: loading of old style .kover files
           now without errors (Claudio Ferrari)
         * koverfile.cc: empty lines now also saved (Claudio Ferrari)
@@ -232,14 +232,14 @@
         * cdrom_cddb.h: fixed typo. --enable-final should work now
 
 2001-10-28  Adrian  <adrian@lisas.de>
-        * some files: patch from Håvard Dahle <havardda-i18n@orakel.ntnu.no>
+        * some files: patch from HÃ¥vard Dahle <havardda-i18n@orakel.ntnu.no>
           included for inlet only option.
         * PreferencesDialog.cpp: inlet only option to radio buttons
         * KoverTop.cpp: new font selection dialog for inlet
           inlet title font
         * koverfile.cpp CDView.cpp: changes to handle inlet title font
         * no.po: norwegian translation by
-          Håvard Dahle <havardda-i18n@orakel.ntnu.no>
+          HÃ¥vard Dahle <havardda-i18n@orakel.ntnu.no>
         * released as 0.8.1
 
 2001-10-12  Adrian  <adrian@lisas.de>
@@ -343,7 +343,7 @@ Kover ChangeLog
 0.20
   *corrected the lsm file
   *changed e-mail address to dok@fischlustig.de
-  *don´t ask for filename every time (save/save as)
+  *donÂ´t ask for filename every time (save/save as)
   *store applink in Utilities
   +"Choose Font" moved into second toolbar
   +color settings for text/background
