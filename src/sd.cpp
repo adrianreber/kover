@@ -22,7 +22,7 @@
 #include "sd.moc"
 #include "sd.h"
 #include <cddb_fill.h>
-#include <kover_old.h>
+#include <kover.h>
 
 #include <QVBoxLayout>
 #include <QLabel>

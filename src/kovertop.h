@@ -21,7 +21,7 @@
 #ifndef KOVER_TOP_H
 #define KOVER_TOP_H
 
-#include "kover_old.h"
+#include <kover.h>
 #include "cdview.h"
 #include "koverfile.h"
 #include "cddb_fill.h"

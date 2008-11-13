@@ -22,10 +22,9 @@
 #include "pd.moc"
 #include "pd.h"
 #include "sd.h"
-#include <globals.h>
 #include <QGroupBox>
 #include <QVBoxLayout>
-#include <kover_old.h>
+#include <kover.h>
 #include <klocalizedstring.h>
 #include <kfontdialog.h>
 #include <kmessagebox.h>

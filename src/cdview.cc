@@ -30,8 +30,7 @@
 #include <QRegExp>
 #include <QPainter>
 
-#include <kover_old.h>
-#include <globals.h>
+#include <kover.h>
 
 #include <KLocalizedString>
 #include <KMessageBox>

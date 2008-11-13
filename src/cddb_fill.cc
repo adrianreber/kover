@@ -22,8 +22,7 @@
 #include <inexact_dialog.h>
 #include <pa.h>
 #include <categories.h>
-#include <kover_old.h>
-#include <globals.h>
+#include <kover.h>
 #include <cddb_fill.h>
 
 #include <klocale.h>

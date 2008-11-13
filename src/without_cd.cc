@@ -24,7 +24,7 @@
 #include <without_cd.moc>
 #include <without_cd.h>
 #include <categories.h>
-#include <kover_old.h>
+#include <kover.h>
 
 #include <QPushButton>
 #include <QString>

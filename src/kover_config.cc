@@ -18,9 +18,7 @@
  */
 
 #include <kover_config.h>
-#include <globals.h>
-#include <kover_old.h>
-#include <config.h>
+#include <kover.h>
 
 #include <ksharedconfig.h>
 #include <kglobal.h>

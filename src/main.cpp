@@ -19,8 +19,7 @@
  */
 
 #include <kovertop.h>
-#include <kover_old.h>
-#include <globals.h>
+#include <kover.h>
 #include <kover_config.h>
 
 #include <KApplication>

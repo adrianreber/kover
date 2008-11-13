@@ -29,7 +29,7 @@
 #include <string>
 #include <list>
 
-#include "globals.h"
+#include <globals.h>
 
 using std::string;
 

@@ -54,7 +54,9 @@ typedef enum {
  */
 
 class KoverFile : public QObject {
-	Q_OBJECT public:
+	Q_OBJECT
+
+ public:
 	KoverFile();
 	~KoverFile();
 
