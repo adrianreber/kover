@@ -24,7 +24,7 @@
 #ifndef KOVER_CONFIG_H
 #define KOVER_CONFIG_H
 
-class config_class {
+class kover_config {
 
  public:
 	void store_globals();

@@ -19,10 +19,9 @@
  */
 
 #include <kovertop.h>
-#include <config.h>
 #include <kover_old.h>
 #include <globals.h>
-#include <koverconfig.h>
+#include <kover_config.h>
 
 #include <KApplication>
 #include <KAboutData>
@@ -36,7 +35,7 @@ kover_global globals;
 
 int verbose = 0;
 
-config_class *config = NULL;
+kover_config *config = NULL;
 static KoverTop *kovertop = NULL;
 
 void
@@ -126,28 +125,30 @@ sighandler(int i)
 int
 main(int argc, char **argv)
 {
-	config = new config_class();
+	config = new kover_config();
 	signal(SIGTERM, sighandler);
 	signal(SIGINT, sighandler);
 
 	fprintf(stderr, "%s %s\n", PACKAGE, VERSION);
 	fprintf(stderr, "    Copyright (C) 1998, 2000 by Denis Oliver Kropp\n");
 	fprintf(stderr, "    Copyright (C) 2000, 2008 by Adrian Reber\n");
-	fprintf(
-		stderr,
-		"%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n",
-		PACKAGE);
+	fprintf( stderr, "%s comes with ABSOLUTELY NO WARRANTY "
+		 "- for details read the license.\n", PACKAGE);
+
 	KAboutData about(PACKAGE, 0, ki18n(PACKAGE), VERSION,
-			 ki18n(
-				 "Kover is an easy to use WYSIWYG CD cover printer with CDDB support."),
+			 ki18n("Kover is an easy to use WYSIWYG CD cover"
+			       " printer with CDDB support."),
 			 KAboutData::License_GPL_V2,
-			 ki18n(
-				 "(C) 1998, 2000 Denis Oliver Kropp\n(C) 2000, 2008 Adrian Reber"),
+			 ki18n("(C) 1998, 2000 Denis Oliver Kropp\n(C)"
+			       " 2000, 2008 Adrian Reber"),
 			 KLocalizedString(), 0, "adrian@lisas.de");
+
 	about.addAuthor(ki18n("Adrian Reber"),
 			KLocalizedString(), "adrian@lisas.de");
+
 	about.addAuthor(ki18n("Denis Oliver Kropp"),
 			KLocalizedString(), "dok@fischlustig.de");
+
 	KCmdLineArgs::init(argc, argv, &about);
 
 	KCmdLineOptions options;

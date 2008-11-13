@@ -3,7 +3,7 @@ include(FindPkgConfig)
 set(${PROJECT_NAME}_SRCS
    main.cpp
    koverview.cpp
-   config.cc
+   kover_config.cc
    pd.cpp
    sd.cpp
    server.cpp

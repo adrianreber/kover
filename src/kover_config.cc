@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <koverconfig.h>
+#include <kover_config.h>
 #include <globals.h>
 #include <kover_old.h>
 #include <config.h>
@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <cddb/cddb.h>
 
-void config_class::load_globals()
+void kover_config::load_globals()
 {
 	QString *string = new QString();
 
@@ -206,9 +206,9 @@ void config_class::load_globals()
 	globals.password = NULL;
 }
 
-void config_class::store_globals()
+void kover_config::store_globals()
 {
-	kprintf("entering config_class::store_globals()\n");
+	kprintf("entering kover_config::store_globals()\n");
 	KConfigGroup config = KGlobal::config()->group("CDDB");
 	QString *string = new QString();
 
@@ -273,10 +273,10 @@ void config_class::store_globals()
 			   ((globals.inlet_title_font)->toString()));
 
 	delete(string);
-	kprintf("leaving config_class::store_globals()\n");
+	kprintf("leaving kover_config::store_globals()\n");
 }
 
-char *config_class::check_cddb_dir()
+char *kover_config::check_cddb_dir()
 {
 	char *cddb_path = NULL;
 #ifdef CDDB_PATH
@@ -290,7 +290,7 @@ char *config_class::check_cddb_dir()
 	return cddb_path;
 }
 
-void config_class::sync()
+void kover_config::sync()
 {
 	KGlobal::config()->sync();
 }
