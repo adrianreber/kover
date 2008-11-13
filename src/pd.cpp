@@ -430,11 +430,11 @@ pd::setup_cover()
 	cover_widgets.inlet = new QLabel(group);
 	KIconLoader *pixmap = KIconLoader::global ();
 
-	cover_widgets.inlet->setPixmap(pixmap->loadIcon("back_content", KIconLoader::NoGroup));
+	cover_widgets.inlet->setPixmap(pixmap->loadIcon("kover_back_content", KIconLoader::NoGroup));
 	gbox->addWidget(cover_widgets.inlet, 5, 0, 1, 1, Qt::AlignHCenter);
 
 	cover_widgets.booklet = new QLabel(group);
-	cover_widgets.booklet->setPixmap(pixmap->loadIcon("front_title_only", KIconLoader::NoGroup));
+	cover_widgets.booklet->setPixmap(pixmap->loadIcon("kover_front_title_only", KIconLoader::NoGroup));
 	gbox->addWidget(cover_widgets.booklet, 5, 1, 1, 1, Qt::AlignHCenter);
 
 	set_cover();
@@ -471,22 +471,21 @@ pd::output_changed(int type)
 	KIconLoader *pixmap = KIconLoader::global ();
 
 	if (type == 1) {
-		cover_widgets.inlet->setPixmap(pixmap->loadIcon("back_content", KIconLoader::NoGroup));
-		cover_widgets.booklet->setPixmap(pixmap->loadIcon("front_title_only", KIconLoader::NoGroup));
+		cover_widgets.inlet->setPixmap(pixmap->loadIcon("kover_back_content", KIconLoader::NoGroup));
+		cover_widgets.booklet->setPixmap(pixmap->loadIcon("kover_front_title_only", KIconLoader::NoGroup));
 	}
 	if (type == 2) {
 		cover_widgets.inlet->setPixmap(NULL);
-		cover_widgets.booklet->setPixmap(pixmap->
-						 loadIcon("front_title-right_content-left",
-							  KIconLoader::NoGroup));
+		cover_widgets.booklet->setPixmap(pixmap-> loadIcon("kover_front_title-right_content-left",
+						 KIconLoader::NoGroup));
 	}
 	if (type == 3) {
-		cover_widgets.inlet->setPixmap(pixmap->loadIcon("back_title_content", KIconLoader::NoGroup));
+		cover_widgets.inlet->setPixmap(pixmap->loadIcon("kover_back_title_content", KIconLoader::NoGroup));
 		cover_widgets.booklet->setPixmap(NULL);
 	}
 	if (type == 4) {
-		cover_widgets.inlet->setPixmap(pixmap->loadIcon("back_content", KIconLoader::NoGroup));
-		cover_widgets.booklet->setPixmap(pixmap->loadIcon("one_page", KIconLoader::NoGroup));
+		cover_widgets.inlet->setPixmap(pixmap->loadIcon("kover_back_content", KIconLoader::NoGroup));
+		cover_widgets.booklet->setPixmap(pixmap->loadIcon("kover_one_page", KIconLoader::NoGroup));
 	}
 }
 
