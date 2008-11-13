@@ -33,7 +33,8 @@ target_link_libraries(${PROJECT_NAME} ${CDIO_LDFLAGS})
 target_link_libraries(${PROJECT_NAME} ${CDDB_LDFLAGS})
 
 install(TARGETS kover DESTINATION ${BIN_INSTALL_DIR} )
-install( FILES kover.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
-install( FILES koverui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kover )
+install(FILES kover.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
+install(FILES kover.xml  DESTINATION  ${XDG_MIME_INSTALL_DIR} )
+install(FILES koverui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kover )
 
 add_subdirectory(icons)
