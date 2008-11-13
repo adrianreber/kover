@@ -1,3 +1,6 @@
+2008-11-13 Adrian Reber <adrian@lisas.de>
+        * released as 4
+
 2007-07-03 Adrian Reber <adrian@lisas.de>
         * dumped all the self written cd and cddb code
           and switched to libcdio and libcddb
