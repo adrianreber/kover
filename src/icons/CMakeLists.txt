@@ -1,0 +1,8 @@
+kde4_install_icons(${ICON_INSTALL_DIR})
+install(FILES kover_back_content.png DESTINATION ${ICON_INSTALL_DIR})
+install(FILES kover_back_title_content.png DESTINATION ${ICON_INSTALL_DIR})
+install(FILES kover_cdaudio.png DESTINATION ${ICON_INSTALL_DIR})
+install(FILES kover_front_title-content-right_content-left.png DESTINATION ${ICON_INSTALL_DIR})
+install(FILES kover_front_title_only.png DESTINATION ${ICON_INSTALL_DIR})
+install(FILES kover_front_title-right_content-left.png DESTINATION ${ICON_INSTALL_DIR})
+install(FILES kover_one_page.png DESTINATION ${ICON_INSTALL_DIR})
