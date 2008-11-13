@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-MimeType=application/x-kover
-Exec=kover  
-Icon=kover
-Comment=CD Cover Printer
-Terminal=false
-Name=Kover
-Encoding=UTF-8
