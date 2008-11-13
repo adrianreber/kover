@@ -1,8 +1,34 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="kover" version="1">
-<MenuBar>
-  <Menu name="move"><text>&amp;Move</text>
-    <Action name="switch_action" />
+<kpartgui version="1" name="kover" >
+ <MenuBar>
+  <Menu name="view" >
+   <text>&amp;View</text>
+   <Action name="actual_size"/>
   </Menu>
-</MenuBar>
+  <Menu name="kover" >
+   <text>&amp;Kover</text>
+   <Action name="cddb" />
+   <Action name="cddb_without_cd" />
+   <Action name="read_cd_text" />
+   <Action name="image_embedding" />
+   <Action name="background_color" />
+   <Action name="title_font" />
+   <Action name="title_font_color" />
+   <Action name="contents_font" />
+   <Action name="contents_font_color" />
+   <Action name="inlet_title_font" />
+   <Action name="eject_cdrom" />
+  </Menu>
+ </MenuBar>
+ <ToolBar name="koverToolBar" position="bottom">
+  <Action name="cddb" />
+  <Action name="actual_size" />
+  <Action name="background_color" />
+  <Action name="image_embedding" />
+  <Action name="title_font" />
+  <Action name="title_font_color" />
+  <Action name="contents_font" />
+  <Action name="contents_font_color" />
+  <Action name="eject_cdrom" />
+ </ToolBar>
 </kpartgui>
