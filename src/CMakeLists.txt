@@ -28,6 +28,7 @@ include_directories(${CDDB_INCLUDE_DIRS})
 kde4_add_executable(${PROJECT_NAME} ${kover_SRCS})
 
 target_link_libraries(${PROJECT_NAME} ${KDE4_KDEUI_LIBS})
+target_link_libraries(${PROJECT_NAME} ${KDE4_KIO_LIBS})
 target_link_libraries(${PROJECT_NAME} ${KDE4_KFILE_LIBS})
 target_link_libraries(${PROJECT_NAME} ${CDIO_LDFLAGS})
 target_link_libraries(${PROJECT_NAME} ${CDDB_LDFLAGS})
