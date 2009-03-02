@@ -20,6 +20,7 @@
 #include "inexact_dialog.moc"
 #include "inexact_dialog.h"
 
+#include <cstdio>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QPushButton>
