@@ -33,9 +33,6 @@
 #include <config.h>
 #include <stdarg.h>
 
-#define AMAZONKEY "14TC04B24356BPHXW1R2"
-#define ENDPOINTS 6
-
 #define DISCOGS_API_KEY "332020810c"
 #define DISCOGS_API_ROOT "http://www.discogs.com/"
 
@@ -43,30 +40,10 @@
 	{ if (verbose) \
 		d_printf(__PRETTY_FUNCTION__, __LINE__, format, ##ARGS); }
 
-static const char *endpoints[ENDPOINTS][2] = {
-	{"com", "United States"},
-	{"co.uk", "United Kingdom"},
-	{"jp", "Japan"},
-	{"fr", "France"},
-	{"ca", "Canada"},
-	{"de", "Germany"}
-};
-
 typedef enum {
 	META_ALBUM_ART = 1,	/* Album Cover art */
 	META_ARTIST_ART = 4	/* Artist art */
 } meta_data_type;
-
-static const char *host =
-    "http://ecs.amazonaws.%s/onca/xml?Service=" "AWSECommerceService&Operation=ItemSearch&SearchIndex="
-    "Music&ResponseGroup=Images,EditorialReview&" "SubscriptionId=%s&Artist=%s&%s=%s";
-
-typedef struct amazon_song_info {
-	char *image_big;
-	char *image_medium;
-	char *image_small;
-	char *album_info;
-} amazon_song_info;
 
 typedef struct download {
 	char *data;
@@ -75,13 +52,11 @@ typedef struct download {
 } download;
 
 typedef struct extra_params {
-	int ep;
 	int port;
 	char *proxy;
 	char *dir;
 	char *artist;
 	char *album;
-	char *stype;
 	char *url;
 	int type;
 } ep;
@@ -328,31 +303,6 @@ cover_art_process_string(const char *string)
 	return result;
 }
 
-static amazon_song_info *
-amazon_song_info_new()
-{
-	amazon_song_info *asi = g_malloc(sizeof(amazon_song_info));
-	asi->image_big = NULL;
-	asi->image_medium = NULL;
-	asi->image_small = NULL;
-	asi->album_info = NULL;
-	return asi;
-}
-static void
-amazon_song_info_free(amazon_song_info *asi)
-{
-	if (asi->image_big != NULL)
-		g_free(asi->image_big);
-	if (asi->image_medium != NULL)
-		g_free(asi->image_medium);
-	if (asi->image_small != NULL)
-		g_free(asi->image_small);
-	if (asi->album_info != NULL)
-		g_free(asi->album_info);
-	g_free(asi);
-	return;
-}
-
 static xmlNodePtr
 get_first_node_by_name(xmlNodePtr xml, char *name)
 {
@@ -364,60 +314,6 @@ get_first_node_by_name(xmlNodePtr xml, char *name)
 		}
 	}
 	return NULL;
-}
-
-static amazon_song_info *
-cover_art_xml_get_image(char *data, int size)
-{
-	amazon_song_info *asi = NULL;
-	xmlDocPtr doc = xmlParseMemory(data, size);
-	if (!doc)
-		goto no_doc;
-
-	xmlNodePtr root = xmlDocGetRootElement(doc);
-	xmlNodePtr cur = get_first_node_by_name(root, "Items");
-	if (!cur)
-		goto no_items;
-
-	cur = get_first_node_by_name(cur, "Item");
-	if (!cur)
-		goto no_items;
-
-	xmlNodePtr child = NULL;
-	asi = amazon_song_info_new();
-
-	if ((child = get_first_node_by_name(cur, "LargeImage"))) {
-		xmlChar *temp = xmlNodeGetContent(get_first_node_by_name(child, "URL"));
-		/* copy it, so we can free it, and don't need xmlFree */
-		asi->image_big = g_strdup((char *) temp);
-		xmlFree(temp);
-	}
-	if ((child = get_first_node_by_name(cur, "MediumImage"))) {
-		xmlChar *temp = xmlNodeGetContent(get_first_node_by_name(child, "URL"));
-		asi->image_medium = g_strdup((char *) temp);
-		xmlFree(temp);
-	}
-	if ((child = get_first_node_by_name(cur, "SmallImage"))) {
-		xmlChar *temp = xmlNodeGetContent(get_first_node_by_name(child, "URL"));
-		asi->image_small = g_strdup((char *) temp);
-		xmlFree(temp);
-	}
-
-	if ((child = get_first_node_by_name(cur, "EditorialReviews"))) {
-		child = get_first_node_by_name(child, "EditorialReview");
-		if (child) {
-			/* ugy, lazy */
-			xmlChar *temp = xmlNodeGetContent(get_first_node_by_name(child, "Content"));
-			asi->album_info = g_strdup((char *) temp);
-			xmlFree(temp);
-		}
-	}
-
-no_items:
-	xmlFreeDoc(doc);
-no_doc:
-	xmlCleanupParser();
-	return asi;
 }
 
 static FILE *
@@ -436,6 +332,36 @@ file_open(ep *ep)
 	return fopen(ep->url, mode);
 }
 
+static int check_result(download *dld)
+{
+    xmlDocPtr doc;
+    if(dld->size < 4 || strncmp(dld->data, "<res",4)) {
+        dprintf("invalid XML - good, probably an image\n");
+	return 0;
+	}
+
+        doc = xmlParseMemory(dld->data,dld->size);
+        if(doc)
+	{
+            xmlNodePtr root = xmlDocGetRootElement(doc);
+            if(root)
+            {
+                /* loop through all albums */
+                xmlNodePtr cur = get_first_node_by_name(root,"searchresults");
+                if(cur)
+                {
+                            xmlChar *temp = xmlGetProp(cur, (xmlChar *)"numResults");
+                            if(temp)
+                                if(xmlStrEqual(temp, (xmlChar *)"0")) {
+					dprintf("0 search results\n");
+					return -1;
+				}
+                }
+            }
+            xmlFreeDoc(doc);
+        }
+    return 0;
+}
 static gchar * __query_album_get_uri(download *dld, ep *ep)
 {
     char *retv = NULL;
@@ -444,12 +370,10 @@ static gchar * __query_album_get_uri(download *dld, ep *ep)
     /**
      * Get artist name
      */
-    if(dld->size < 4 || strncmp(dld->data, "<res",4))
-    {
+    if(dld->size < 4 || strncmp(dld->data, "<res",4)) {
         dprintf("Invalid XML\n");
+	goto out;
     }
-    else
-    {
         doc = xmlParseMemory(dld->data,dld->size);
         if(doc)
 	{
@@ -488,7 +412,7 @@ static gchar * __query_album_get_uri(download *dld, ep *ep)
             }
             xmlFreeDoc(doc);
         }
-    }
+out:
     g_free(temp_b);
     return retv;
 }
@@ -499,9 +423,8 @@ static GList *__query_album_get_uri_list(download *dld, ep *ep)
     if(dld->size < 4 || strncmp(dld->data, "<res",4))
     {
         dprintf("Invalid XML\n");
+	goto out;
     }
-    else
-    {
 
         doc = xmlParseMemory(dld->data,dld->size);
         if(doc)
@@ -541,7 +464,7 @@ static GList *__query_album_get_uri_list(download *dld, ep *ep)
             }
             xmlFreeDoc(doc);
         }
-    }
+out:
     return retv;
 }
 
@@ -598,9 +521,8 @@ static gchar * __query_artist_get_uri(download *dld)
     if(dld->size < 4 || strncmp(dld->data, "<res",4))
     {
         dprintf("Invalid XML\n");
+	goto out;
     }
-    else
-    {
         doc = xmlParseMemory(dld->data,dld->size);
         if(doc)
         {
@@ -625,7 +547,7 @@ static gchar * __query_artist_get_uri(download *dld)
             xmlFreeDoc(doc);
         }
 
-    }
+out:
     return retv;
 }
 
@@ -636,9 +558,8 @@ static GList *__query_artist_get_uri_list(download *dld, ep *ep)
     if(dld->size < 4 || strncmp(dld->data, "<res",4))
     {
         dprintf("Invalid XML\n");
+	goto out;
     }
-    else
-    {
         doc = xmlParseMemory(dld->data,dld->size);
         if(doc)
         {
@@ -677,7 +598,7 @@ static GList *__query_artist_get_uri_list(download *dld, ep *ep)
             xmlFreeDoc(doc);
         }
 
-    }
+out:
     return retv;
 }
 
@@ -733,17 +654,11 @@ discogs_fetch_artist_art(ep *ep, download *dld)
 }
 
 static int
-fetch_metadata_amazon(ep *ep)
+fetch_metadata(ep *ep)
 {
 	download data = { NULL, 0, -1 };
-	char furl[1024];
-	const char *endp = endpoints[ep->ep][0];
-	char *artist;
-	char *album;
 	FILE *fp = NULL;
 
-	dprintf("search-type: %s\n", ep->stype);
-	dprintf("using endpoint %s (%s)\n", endp, endpoints[ep->ep][1]);
 	dprintf("artist %s\n", ep->artist);
 	dprintf("album %s\n", ep->album);
 
@@ -756,63 +671,16 @@ fetch_metadata_amazon(ep *ep)
 	}
 
 	easy_download(ep->url, &data, ep);
+
+	if (check_result(&data) == -1)
+		return -1;
+
 	if (data.size) {
 		fp = file_open(ep);
 		if (fp)
 			fwrite(data.data, sizeof(char), data.size, fp);
 	}
 	download_clean(&data);
-	return 0;
-
-	snprintf(furl, 1024, host, endp, AMAZONKEY, artist, ep->stype, album);
-	if (easy_download(furl, &data, ep)) {
-		amazon_song_info *asi = cover_art_xml_get_image(data.data, data.size);
-		download_clean(&data);
-		if (asi) {
-			if (ep->type & META_ALBUM_ART) {
-				dprintf("trying to fetch album art\n");
-				easy_download(asi->image_big, &data, ep);
-				if (data.size <= 900) {
-					download_clean(&data);
-					easy_download(asi->image_medium, &data, ep);
-					if (data.size <= 900) {
-						download_clean(&data);
-						easy_download(asi->image_small, &data, ep);
-						if (data.size <= 900)
-							download_clean(&data);
-					}
-				}
-				if (data.size) {
-					fp = file_open(ep);
-					if (fp)
-						fwrite(data.data, sizeof(char), data.size, fp);
-				}
-				download_clean(&data);
-
-			} else if (ep->type & META_ARTIST_ART) {
-				dprintf("trying to fetch album txt\n");
-				if (asi->album_info) {
-					fp = file_open(ep);
-					if (fp) {
-						int j = 0, depth = 0;;
-						/* Quick 'n Dirty html stripper */
-						for (j = 0; j < strlen(asi->album_info); j++) {
-							if ((asi->album_info)[j] == '<')
-								depth++;
-							else if ((asi->album_info)[j] == '>' && depth)
-								depth--;
-							else if (depth == 0)
-								fputc((asi->album_info)[j], fp);
-						}
-					}
-				}
-			}
-			amazon_song_info_free(asi);
-		}
-	}
-
-	g_free(artist);
-	g_free(album);
 
 	if (fp) {
 		fclose(fp);
@@ -820,17 +688,6 @@ fetch_metadata_amazon(ep *ep)
 	}
 
 	return -1;
-}
-
-static void
-dump_endpoints()
-{
-	int i;
-	fprintf(stderr, "\nSelect an endpoint by specifying the corresponding number:\n\n");
-	for (i = 0; i < ENDPOINTS; i++) {
-		fprintf(stderr, "  %d: %s (%s)\n", i, endpoints[i][1], endpoints[i][0]);
-	}
-	exit(0);
 }
 
 static void
@@ -844,11 +701,8 @@ usage(int rc)
 	fprintf(stderr, "                   (required)\n");
 	fprintf(stderr, "  -l, --album      specify the album\n");
 	fprintf(stderr, "                   (required if searching for album cover art)\n");
-	fprintf(stderr, "  -t, --title      search type: Title (default)\n");
-	fprintf(stderr, "  -k, --keyword    search type: Keyword\n");
 	fprintf(stderr, "  -c, --cover      download cover (default)\n");
 	fprintf(stderr, "  -i, --info       download artist art\n");
-	fprintf(stderr, "  -e, --endpoint   select endpoint (specify \"list\" to see all options)\n");
 	fprintf(stderr, "  -o, --host       specify proxy host\n");
 	fprintf(stderr, "  -p, --port       specify proxy port\n");
 	fprintf(stderr, "                   if the environment variable http_proxy is set\n");
@@ -863,22 +717,18 @@ int
 main(int argc, char *argv[])
 {
 	int next_option;
-	char *searchtype[] = { "Title", "Keyword" };
-	ep ep = { 0, -1, NULL, NULL, NULL, NULL, NULL, NULL, META_ALBUM_ART };
+	ep ep = { -1, NULL, NULL, NULL, NULL, NULL, META_ALBUM_ART };
 	int proxy = 0;
 	int result;
 
-	const char *short_options = "hcitka:l:e:p:o:d:v";
+	const char *short_options = "hcita:l:p:o:d:v";
 
 	const struct option long_options[] = {
 		{"help", no_argument, NULL, 'h'},
 		{"artist", required_argument, NULL, 'a'},
 		{"album", no_argument, NULL, 'l'},
-		{"title", no_argument, NULL, 't'},
-		{"keyword", no_argument, NULL, 'k'},
 		{"cover", no_argument, NULL, 'c'},
 		{"info", no_argument, NULL, 'i'},
-		{"endpoint", required_argument, NULL, 'e'},
 		{"host", required_argument, NULL, 'o'},
 		{"port", required_argument, NULL, 'p'},
 		{"directory", required_argument, NULL, 'd'},
@@ -892,9 +742,6 @@ main(int argc, char *argv[])
 	if (argc < 3)
 		usage(-2);
 
-	/* default is "Title" search */
-	ep.stype = searchtype[0];
-
 	while (1) {
 		next_option = getopt_long(argc, argv, short_options, long_options, NULL);
 		if (next_option == -1)
@@ -906,12 +753,6 @@ main(int argc, char *argv[])
 		case 'l':
 			ep.album = g_strdup(optarg);
 			break;
-		case 't':
-			ep.stype = searchtype[0];
-			break;
-		case 'k':
-			ep.stype = searchtype[1];
-			break;
 		case 'i':
 			ep.type = META_ARTIST_ART;
 			dprintf("trying to download artist art\n");
@@ -919,13 +760,6 @@ main(int argc, char *argv[])
 		case 'c':
 			ep.type = META_ALBUM_ART;
 			dprintf("trying to download album art\n");
-			break;
-		case 'e':
-			if (!strncmp("list", optarg, 4))
-				dump_endpoints();
-			ep.ep = atoi(optarg);
-			if (ep.ep > ENDPOINTS || ep.ep < 0)
-				dump_endpoints();
 			break;
 		case 'p':
 			proxy++;
@@ -971,7 +805,7 @@ main(int argc, char *argv[])
 	else if (!g_file_test(ep.dir, G_FILE_TEST_EXISTS))
 		g_mkdir(ep.dir, 0755);
 
-	result = fetch_metadata_amazon(&ep);
+	result = fetch_metadata(&ep);
 	if (!result)
 		printf("\nDownloaded %s\n", ep.url);
 	else
