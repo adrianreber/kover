@@ -436,6 +436,158 @@ file_open(ep *ep)
 	return fopen(ep->url, mode);
 }
 
+static gchar * __query_album_get_uri(download *dld, ep *ep)
+{
+    char *retv = NULL;
+    char *temp_b = g_utf8_casefold(ep->album,-1);
+    xmlDocPtr doc;
+    /**
+     * Get artist name
+     */
+    if(dld->size < 4 || strncmp(dld->data, "<res",4))
+    {
+        dprintf("Invalid XML\n");
+    }
+    else
+    {
+        doc = xmlParseMemory(dld->data,dld->size);
+        if(doc)
+	{
+            xmlNodePtr root = xmlDocGetRootElement(doc);
+            if(root)
+            {
+                /* loop through all albums */
+                xmlNodePtr cur = get_first_node_by_name(root,"searchresults");
+                if(cur)
+                {
+                    xmlNodePtr cur2 = get_first_node_by_name(cur,"result");
+                    if(cur2) {
+                        xmlNodePtr cur4 = get_first_node_by_name(cur2,"title");
+                        if(cur4){
+                            xmlChar *title = xmlNodeGetContent(cur4);
+
+                            if(title)
+                            {   
+                                char *temp_a = g_utf8_casefold((gchar *)title,-1);
+                                /** Todo make this check fuzzy */
+                                if(strstr((char *)temp_a, temp_b))
+                                {
+                                    xmlNodePtr cur3 = get_first_node_by_name(cur2,"uri");
+                                    if(cur3){
+                                        xmlChar *xurl = xmlNodeGetContent(cur3);
+                                        retv = g_strdup((char *)xurl);
+                                        xmlFree(xurl);
+                                    }
+                                }
+                                g_free(temp_a);
+                            }
+                            if(title)xmlFree(title);
+                        }
+                    }
+                }
+            }
+            xmlFreeDoc(doc);
+        }
+    }
+    g_free(temp_b);
+    return retv;
+}
+static GList *__query_album_get_uri_list(download *dld, ep *ep)
+{ 
+    GList *retv = NULL;
+    xmlDocPtr doc;
+    if(dld->size < 4 || strncmp(dld->data, "<res",4))
+    {
+        dprintf("Invalid XML\n");
+    }
+    else
+    {
+
+        doc = xmlParseMemory(dld->data,dld->size);
+        if(doc)
+        {
+            xmlNodePtr root = xmlDocGetRootElement(doc);
+            if(root)
+            {
+                /* loop through all albums */
+                xmlNodePtr cur = get_first_node_by_name(root,"release");
+                if(cur)
+                {
+                    xmlNodePtr cur2 = get_first_node_by_name(cur,"images");
+                    if(cur2) {
+                        xmlNodePtr cur3 = get_first_node_by_name(cur2,"image");
+                        while(cur3){
+                            xmlChar *temp = xmlGetProp(cur3, (xmlChar *)"type");
+
+                            if(temp){
+                                if(xmlStrEqual(temp, (xmlChar *)"primary"))
+                                {
+                                    xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
+                                    retv = g_list_prepend(retv,g_strdup((char *)xurl));
+                                    if(xurl) xmlFree(xurl);
+                                } else if(xmlStrEqual(temp, (xmlChar *)"secondary"))
+                                {
+                                    xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
+                                    retv = g_list_append(retv,g_strdup((char *)xurl));
+                                    if(xurl) xmlFree(xurl);
+                                }
+
+                                xmlFree(temp);
+                            }
+                            cur3 = cur3->next;
+                        }
+                    }
+                }
+            }
+            xmlFreeDoc(doc);
+        }
+    }
+    return retv;
+}
+
+static void __query_get_album_art_uris(download *dld, ep *ep)
+{
+        GList *list =  __query_album_get_uri_list(dld, ep);
+	GList* node = NULL;
+
+	ep->url = g_strdup(g_list_first(list)->data);
+	for (node = g_list_first(list); node != NULL; node = g_list_next(node))
+	{
+		dprintf("found: %s\n", node->data);
+		g_free(node->data);
+	}
+	g_list_free(list);
+}
+static void __query_get_album_art(download *dld, ep *ep)
+{
+        gchar *artist_uri = NULL;
+        char furl[1024];
+        int i=0;
+        artist_uri = __query_album_get_uri(dld, ep);
+        if(!artist_uri)
+		return;
+	/* Hack to fix bug in discogs api */
+	for(i=strlen(artist_uri); artist_uri[i] != '/' && i > 0; i--);
+	snprintf(furl,1024,DISCOGS_API_ROOT"release%s?f=xml&api_key=%s", &artist_uri[i],DISCOGS_API_KEY);
+	download_clean(dld);
+	easy_download(furl, dld, ep);
+	__query_get_album_art_uris(dld, ep);
+	download_clean(dld);
+	g_free(artist_uri);
+}
+
+/** other */
+static void discogs_fetch_cover_album_art(ep *ep, download *dld)
+{
+	char *artist = cover_art_process_string(ep->artist);
+	char *album = cover_art_process_string(ep->album);
+	char furl[1024];
+	snprintf(furl,1024,DISCOGS_API_ROOT"search?type=all&f=xml&q=%s%%20%s&api_key=%s", artist,album,DISCOGS_API_KEY);
+	easy_download(furl, dld, ep);
+	__query_get_album_art(dld, ep);
+	g_free(artist);
+	g_free(album);
+}
 static gchar * __query_artist_get_uri(download *dld)
 {
     char *retv = NULL;
@@ -573,7 +725,6 @@ discogs_fetch_artist_art(ep *ep, download *dld)
 {
 	char *artist = cover_art_process_string(ep->artist);
 	char furl[1024];
-	int i;
 	snprintf(furl,1024,DISCOGS_API_ROOT"search?type=all&f=xml&q=%s&api_key=%s", artist,DISCOGS_API_KEY);
 	easy_download(furl, dld, ep);
 	__query_get_artist_art(dld, ep);
@@ -598,7 +749,7 @@ fetch_metadata_amazon(ep *ep)
 
 	if (ep->type & META_ALBUM_ART) {
 		dprintf("trying to fetch album art\n");
-        	;//discogs_fetch_cover_album_art(ep);
+        	discogs_fetch_cover_album_art(ep, &data);
 	} else {
 		dprintf("trying to fetch arist art\n");
         	discogs_fetch_artist_art(ep, &data);
