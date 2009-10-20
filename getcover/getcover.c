@@ -53,8 +53,8 @@ static const char *endpoints[ENDPOINTS][2] = {
 };
 
 typedef enum {
-	META_ALBUM_ART = 1,	/* Album Cover art      */
-	META_ALBUM_TXT = 4	/* Album story          */
+	META_ALBUM_ART = 1,	/* Album Cover art */
+	META_ARTIST_ART = 4	/* Artist art */
 } meta_data_type;
 
 static const char *host =
@@ -160,6 +160,8 @@ easy_download(const char *url, download *dld, ep *ep)
 	if (!curlm)
 		return 0;
 
+	/* set encoding (discogs want gzip) */
+	curl_easy_setopt(curl, CURLOPT_ENCODING , "gzip");
 	/* set uri */
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 	/* set callback data */
@@ -423,17 +425,160 @@ file_open(ep *ep)
 {
 	char *tmp;
 	char *mode;
-	tmp = g_strdup_printf("%s/%s-%s.", ep->dir, ep->artist, ep->album);
-	if (ep->type & META_ALBUM_TXT) {
-		ep->url = g_strdup_printf("%s%s", tmp, "albuminfo");
-		mode = "w";
-	} else {
-		ep->url = g_strdup_printf("%s%s", tmp, "jpg");
-		mode = "wb";
-	}
+	if (ep->type & META_ALBUM_ART)
+		tmp = g_strdup_printf("%s/%s-%s.", ep->dir, ep->artist, ep->album);
+	else
+		tmp = g_strdup_printf("%s/%s.", ep->dir, ep->artist);
+	ep->url = g_strdup_printf("%s%s", tmp, "jpg");
+	mode = "wb";
 	g_free(tmp);
 	dprintf("destination %s\n", ep->url);
 	return fopen(ep->url, mode);
+}
+
+static gchar * __query_artist_get_uri(download *dld)
+{
+    char *retv = NULL;
+    xmlDocPtr doc;
+    /**
+     * Get artist name
+     */
+    if(dld->size < 4 || strncmp(dld->data, "<res",4))
+    {
+        dprintf("Invalid XML\n");
+    }
+    else
+    {
+        doc = xmlParseMemory(dld->data,dld->size);
+        if(doc)
+        {
+            xmlNodePtr root = xmlDocGetRootElement(doc);
+            if(root)
+            {
+                /* loop through all albums */
+                xmlNodePtr cur = get_first_node_by_name(root,"exactresults");
+                if(cur)
+                {
+                    xmlNodePtr cur2 = get_first_node_by_name(cur,"result");
+                    if(cur2) {
+                        xmlNodePtr cur3 = get_first_node_by_name(cur2,"uri");
+                        if(cur3){
+                            xmlChar *xurl = xmlNodeGetContent(cur3);
+                            retv = g_strdup((char *)xurl);
+                            xmlFree(xurl);
+                        }
+                    }
+                }
+            }
+            xmlFreeDoc(doc);
+        }
+
+    }
+    return retv;
+}
+
+static GList *__query_artist_get_uri_list(download *dld, ep *ep)
+{ 
+    GList *retv = NULL;
+    xmlDocPtr doc;
+    if(dld->size < 4 || strncmp(dld->data, "<res",4))
+    {
+        dprintf("Invalid XML\n");
+    }
+    else
+    {
+        doc = xmlParseMemory(dld->data,dld->size);
+        if(doc)
+        {
+            xmlNodePtr root = xmlDocGetRootElement(doc);
+            if(root)
+            {
+                /* loop through all albums */
+                xmlNodePtr cur = get_first_node_by_name(root,"artist");
+                if(cur)
+                {
+                    xmlNodePtr cur2 = get_first_node_by_name(cur,"images");
+                    if(cur2) {
+                        xmlNodePtr cur3 = get_first_node_by_name(cur2,"image");
+                        while(cur3 ){
+                            xmlChar *temp = xmlGetProp(cur3, (xmlChar *)"type");
+                            if(temp){
+                                if(xmlStrEqual(temp, (xmlChar *)"primary"))
+                                {
+                                    xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
+				retv = g_list_prepend(retv, g_strdup((char *)xurl));
+                                    if(xurl) xmlFree(xurl);
+                                } else if(xmlStrEqual(temp, (xmlChar *)"secondary"))
+                                {
+                                    xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
+                                    retv = g_list_append(retv,g_strdup((char *)xurl));
+                                    if(xurl) xmlFree(xurl);
+                                }
+
+                                xmlFree(temp);
+                            }
+                            cur3 = cur3->next;
+                        }
+                    }
+                }
+            }
+            xmlFreeDoc(doc);
+        }
+
+    }
+    return retv;
+}
+
+static void __query_get_artist_art_uris(download *dld, ep *ep)
+{
+        GList *list =  __query_artist_get_uri_list(dld, ep);
+	GList* node = NULL;
+
+	ep->url = g_strdup(g_list_first(list)->data);
+	for (node = g_list_first(list); node != NULL; node = g_list_next(node))
+	{
+		dprintf("found: %s\n", node->data);
+		g_free(node->data);
+	}
+	g_list_free(list);
+}
+
+static void __query_get_artist_art(download *dld, ep *ep)
+{
+        gchar *artist_uri = NULL;
+        char furl[1024];
+	char fix;
+        artist_uri = __query_artist_get_uri(dld);
+	dprintf("artist_uri: %s\n", artist_uri);
+        if(!artist_uri)
+		return;
+	/* Hack to fix bug in discogs api */
+	if(strstr(artist_uri, "?") != NULL)
+		fix = '&';
+	else
+		fix = '?';
+	snprintf(furl,1024,"%s%cf=xml&api_key=%s", artist_uri,fix,DISCOGS_API_KEY);
+
+	download_clean(dld);
+	easy_download(furl, dld, ep);
+	__query_get_artist_art_uris(dld, ep);
+	download_clean(dld);
+	g_free(artist_uri);
+	return;
+}
+
+
+static void
+discogs_fetch_artist_art(ep *ep, download *dld)
+{
+	char *artist = cover_art_process_string(ep->artist);
+	char furl[1024];
+	int i;
+	snprintf(furl,1024,DISCOGS_API_ROOT"search?type=all&f=xml&q=%s&api_key=%s", artist,DISCOGS_API_KEY);
+	easy_download(furl, dld, ep);
+	__query_get_artist_art(dld, ep);
+	g_free(artist);
+	return ;
 }
 
 static int
@@ -450,8 +595,24 @@ fetch_metadata_amazon(ep *ep)
 	dprintf("using endpoint %s (%s)\n", endp, endpoints[ep->ep][1]);
 	dprintf("artist %s\n", ep->artist);
 	dprintf("album %s\n", ep->album);
-	artist = cover_art_process_string(ep->artist);
-	album = cover_art_process_string(ep->album);
+
+	if (ep->type & META_ALBUM_ART) {
+		dprintf("trying to fetch album art\n");
+        	;//discogs_fetch_cover_album_art(ep);
+	} else {
+		dprintf("trying to fetch arist art\n");
+        	discogs_fetch_artist_art(ep, &data);
+	}
+
+	easy_download(ep->url, &data, ep);
+	if (data.size) {
+		fp = file_open(ep);
+		if (fp)
+			fwrite(data.data, sizeof(char), data.size, fp);
+	}
+	download_clean(&data);
+	return 0;
+
 	snprintf(furl, 1024, host, endp, AMAZONKEY, artist, ep->stype, album);
 	if (easy_download(furl, &data, ep)) {
 		amazon_song_info *asi = cover_art_xml_get_image(data.data, data.size);
@@ -477,7 +638,7 @@ fetch_metadata_amazon(ep *ep)
 				}
 				download_clean(&data);
 
-			} else if (ep->type & META_ALBUM_TXT) {
+			} else if (ep->type & META_ARTIST_ART) {
 				dprintf("trying to fetch album txt\n");
 				if (asi->album_info) {
 					fp = file_open(ep);
@@ -531,17 +692,17 @@ usage(int rc)
 	fprintf(stderr, "  -a, --artist     specify the artist whose cover should be retrieved\n");
 	fprintf(stderr, "                   (required)\n");
 	fprintf(stderr, "  -l, --album      specify the album\n");
-	fprintf(stderr, "                   (required)\n");
+	fprintf(stderr, "                   (required if searching for album cover art)\n");
 	fprintf(stderr, "  -t, --title      search type: Title (default)\n");
 	fprintf(stderr, "  -k, --keyword    search type: Keyword\n");
 	fprintf(stderr, "  -c, --cover      download cover (default)\n");
-	fprintf(stderr, "  -i, --info       download artist information\n");
+	fprintf(stderr, "  -i, --info       download artist art\n");
 	fprintf(stderr, "  -e, --endpoint   select endpoint (specify \"list\" to see all options)\n");
 	fprintf(stderr, "  -o, --host       specify proxy host\n");
 	fprintf(stderr, "  -p, --port       specify proxy port\n");
 	fprintf(stderr, "                   if the environment variable http_proxy is set\n");
-	fprintf(stderr, "                   that value will be used. to disable the use of\n");
-	fprintf(stderr, "                   proxy in that case the environment variable has to be unset.\n");
+	fprintf(stderr, "                   that value will be used. to disable the use of a\n");
+	fprintf(stderr, "                   proxy the environment variable has to be unset.\n");
 	fprintf(stderr, "  -d, --directory  destination directory (defaults to current directory)\n");
 	fprintf(stderr, "  -v, --verbose    verbose output\n");
 	exit(rc);
@@ -561,7 +722,7 @@ main(int argc, char *argv[])
 	const struct option long_options[] = {
 		{"help", no_argument, NULL, 'h'},
 		{"artist", required_argument, NULL, 'a'},
-		{"album", required_argument, NULL, 'l'},
+		{"album", no_argument, NULL, 'l'},
 		{"title", no_argument, NULL, 't'},
 		{"keyword", no_argument, NULL, 'k'},
 		{"cover", no_argument, NULL, 'c'},
@@ -574,7 +735,7 @@ main(int argc, char *argv[])
 		{0, 0, 0, 0}
 	};
 
-	fprintf(stderr, "%s %s, Copyright (C) 2008 by Adrian Reber <adrian@lisas.de>\n", PACKAGE, VERSION);
+	fprintf(stderr, "%s %s, Copyright (C) 2008, 2009 by Adrian Reber <adrian@lisas.de>\n", PACKAGE, VERSION);
 	fprintf(stderr, "%s comes with ABSOLUTELY NO WARRANTY - for details read the license.\n\n", PACKAGE);
 
 	if (argc < 3)
@@ -601,8 +762,8 @@ main(int argc, char *argv[])
 			ep.stype = searchtype[1];
 			break;
 		case 'i':
-			ep.type = META_ALBUM_TXT;
-			dprintf("trying to download album text\n");
+			ep.type = META_ARTIST_ART;
+			dprintf("trying to download artist art\n");
 			break;
 		case 'c':
 			ep.type = META_ALBUM_ART;
@@ -639,14 +800,20 @@ main(int argc, char *argv[])
 	/* let's do a few sanity checks to see if all parameters are used
 	 * like they are supposed to
 	 *
-	 * we need at least an artist and an album name */
-	if (!ep.artist || !ep.album)
+	 * we need at least an artist */
+	if (!ep.artist)
 		usage(-4);
+
+	/* and an album name if cover art has been requested */
+	if (ep.type == META_ALBUM_ART && !ep.album) {
+		fprintf(stderr, "Artist name and album name required\n");
+		usage(-5);
+	}
 
 	/* only if a hostname and a port a specfied
 	 * for the proxy it makes sense */
 	if ((ep.port < 1 || !ep.proxy) && (proxy >= 1))
-		usage(-5);
+		usage(-6);
 
 	if (!ep.dir)
 		ep.dir = g_strdup(".");
