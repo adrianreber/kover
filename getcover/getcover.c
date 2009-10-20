@@ -1,7 +1,7 @@
 /*
  * getcover - getcover is command-line tool to download covers
- * Copyright (C) 2007 by Qball Cow <Qball@Sarine.nl>
- * Copyright (C) 2007, 2008 by Adrian Reber
+ * Copyright (C) 2007, 2009 by Qball Cow <Qball@Sarine.nl>
+ * Copyright (C) 2007, 2009 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * This code is largely based on the gmpc coveramazon plugin which
- * is written by Qball Cow <Qball@Sarine.nl>.
+ * This code is largely based on the gmpc coveramazon plugin and
+ * gmpc discogs plugin which are written by Qball Cow <Qball@Sarine.nl>.
  *
  * There are only minimal modifications from me (Adrian) to make it
  * run as standalone command-line tool.
@@ -35,6 +35,9 @@
 
 #define AMAZONKEY "14TC04B24356BPHXW1R2"
 #define ENDPOINTS 6
+
+#define DISCOGS_API_KEY "332020810c"
+#define DISCOGS_API_ROOT "http://www.discogs.com/"
 
 #define dprintf(format, ARGS...)	\
 	{ if (verbose) \
