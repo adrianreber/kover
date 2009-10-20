@@ -2,7 +2,7 @@ project(getcover)
 
 include(FindPkgConfig)
 
-set(VERSION 1)
+set(VERSION 2)
 set(PACKAGE ${PROJECT_NAME})
 
 set(CMAKE_C_FLAGS "-g -Wall")
