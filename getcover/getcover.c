@@ -38,11 +38,11 @@
 
 #define dprintf(format, ARGS...)	\
 	{ if (verbose) \
-		d_printf(__PRETTY_FUNCTION__, __LINE__, format, ##ARGS); }
+		  d_printf(__PRETTY_FUNCTION__, __LINE__, format, ## ARGS);}
 
 typedef enum {
-	META_ALBUM_ART = 1,	/* Album Cover art */
-	META_ARTIST_ART = 4	/* Artist art */
+	META_ALBUM_ART = 1,     /* Album Cover art */
+	META_ARTIST_ART = 4     /* Artist art */
 } meta_data_type;
 
 typedef struct download {
@@ -70,6 +70,7 @@ d_printf(const char *fn, int line, const char *format, ...)
 {
 	char *tmp;
 	va_list arglist;
+
 	va_start(arglist, format);
 	tmp = g_strdup_vprintf(format, arglist);
 	fprintf(stderr, "  %s():%d: %s", fn, line, tmp);
@@ -85,7 +86,7 @@ write_data(void *buffer, size_t size, size_t nmemb, download *dld)
 	if (dld->data == NULL)
 		dld->size = 0;
 
-	dld->data = g_realloc(dld->data, (gulong) (size * nmemb + dld->size) + 1);
+	dld->data = g_realloc(dld->data, (gulong)(size * nmemb + dld->size) + 1);
 
 	memset(&(dld->data)[dld->size], '\0', (size * nmemb) + 1);
 	memcpy(&(dld->data)[dld->size], buffer, size * nmemb);
@@ -116,6 +117,7 @@ easy_download(const char *url, download *dld, ep *ep)
 	CURLM *curlm = NULL;
 	CURLMsg *msg = NULL;
 	char *proxy = NULL;
+
 	/*int res; */
 	if (!dld)
 		return 0;
@@ -136,7 +138,7 @@ easy_download(const char *url, download *dld, ep *ep)
 		return 0;
 
 	/* set encoding (discogs want gzip) */
-	curl_easy_setopt(curl, CURLOPT_ENCODING , "gzip");
+	curl_easy_setopt(curl, CURLOPT_ENCODING, "gzip");
 	/* set uri */
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 	/* set callback data */
@@ -237,7 +239,7 @@ cover_art_process_string(const char *string)
 	/*      Get count of chars that will need to be converted to %
 	   and remove ([{}]) and everything between */
 	for (p = string; *p != '\0'; p++) {
-		c = (unsigned char) *p;
+		c = (unsigned char)*p;
 
 		if (c == '(' || c == '[' || c == '{') {
 			depth++;
@@ -262,7 +264,7 @@ cover_art_process_string(const char *string)
 	/* remove double spaces from the string because removing ([{}])
 	   tends to create those */
 	for (p = new_string + 1; *p != '\0'; p++) {
-		c = (unsigned char) *p;
+		c = (unsigned char)*p;
 		if (c == ' ') {
 			tmp_p = p - 1;
 			if (*tmp_p == ' ') {
@@ -286,10 +288,10 @@ cover_art_process_string(const char *string)
 
 	/*time to create the escaped string */
 	for (q = result, p = new_string; *p != '\0'; p++) {
-		c = (unsigned char) *p;
+		c = (unsigned char)*p;
 
 		if (!ACCEPTABLE(c)) {
-			*q++ = '%';	/* means hex coming */
+			*q++ = '%';     /* means hex coming */
 			*q++ = hex[c >> 4];
 			*q++ = hex[c & 15];
 		} else
@@ -309,7 +311,7 @@ get_first_node_by_name(xmlNodePtr xml, char *name)
 	if (xml) {
 		xmlNodePtr c = xml->xmlChildrenNode;
 		for (; c; c = c->next) {
-			if (xmlStrEqual(c->name, (xmlChar *) name))
+			if (xmlStrEqual(c->name, (xmlChar *)name))
 				return c;
 		}
 	}
@@ -321,6 +323,7 @@ file_open(ep *ep)
 {
 	char *tmp;
 	char *mode;
+
 	if (ep->type & META_ALBUM_ART)
 		tmp = g_strdup_printf("%s/%s-%s.", ep->dir, ep->artist, ep->album);
 	else
@@ -332,166 +335,164 @@ file_open(ep *ep)
 	return fopen(ep->url, mode);
 }
 
-static int check_result(download *dld)
+static int
+check_result(download *dld)
 {
-    xmlDocPtr doc;
-    if(dld->size < 4 || strncmp(dld->data, "<res",4)) {
-        dprintf("invalid XML - good, probably an image\n");
-	return 0;
+	xmlDocPtr doc;
+
+	if (dld->size < 4 || strncmp(dld->data, "<res", 4)) {
+		dprintf("invalid XML - good, probably an image\n");
+		return 0;
 	}
 
-        doc = xmlParseMemory(dld->data,dld->size);
-        if(doc)
-	{
-            xmlNodePtr root = xmlDocGetRootElement(doc);
-            if(root)
-            {
-                /* loop through all albums */
-                xmlNodePtr cur = get_first_node_by_name(root,"searchresults");
-                if(cur)
-                {
-                            xmlChar *temp = xmlGetProp(cur, (xmlChar *)"numResults");
-                            if(temp)
-                                if(xmlStrEqual(temp, (xmlChar *)"0")) {
-					dprintf("0 search results\n");
-					return -1;
+	doc = xmlParseMemory(dld->data, dld->size);
+	if (doc) {
+		xmlNodePtr root = xmlDocGetRootElement(doc);
+		if (root) {
+			/* loop through all albums */
+			xmlNodePtr cur = get_first_node_by_name(root, "searchresults");
+			if (cur) {
+				xmlChar *temp = xmlGetProp(cur, (xmlChar *)"numResults");
+				if (temp)
+					if (xmlStrEqual(temp, (xmlChar *)"0")) {
+						dprintf("0 search results\n");
+						return -1;
+					}
+			}
+		}
+		xmlFreeDoc(doc);
+	}
+	return 0;
+}
+static gchar *
+__query_album_get_uri(download *dld, ep *ep)
+{
+	char *retv = NULL;
+	char *temp_b = g_utf8_casefold(ep->album, -1);
+	xmlDocPtr doc;
+
+	/**
+	 * Get artist name
+	 */
+	if (dld->size < 4 || strncmp(dld->data, "<res", 4)) {
+		dprintf("Invalid XML\n");
+		goto out;
+	}
+	doc = xmlParseMemory(dld->data, dld->size);
+	if (doc) {
+		xmlNodePtr root = xmlDocGetRootElement(doc);
+		if (root) {
+			/* loop through all albums */
+			xmlNodePtr cur = get_first_node_by_name(root, "searchresults");
+			if (cur) {
+				xmlNodePtr cur2 = get_first_node_by_name(cur, "result");
+				if (cur2) {
+					xmlNodePtr cur4 = get_first_node_by_name(cur2, "title");
+					if (cur4) {
+						xmlChar *title = xmlNodeGetContent(cur4);
+
+						if (title) {
+							char *temp_a = g_utf8_casefold((gchar *)title, -1);
+							/** Todo make this check fuzzy */
+							if (strstr((char *)temp_a, temp_b)) {
+								xmlNodePtr cur3 = get_first_node_by_name(cur2, "uri");
+								if (cur3) {
+									xmlChar *xurl = xmlNodeGetContent(cur3);
+									retv = g_strdup((char *)xurl);
+									xmlFree(xurl);
+								}
+							}
+							g_free(temp_a);
+						}
+						if (title) xmlFree(title);
+					}
 				}
-                }
-            }
-            xmlFreeDoc(doc);
-        }
-    return 0;
+			}
+		}
+		xmlFreeDoc(doc);
+	}
+ out:
+	g_free(temp_b);
+	return retv;
 }
-static gchar * __query_album_get_uri(download *dld, ep *ep)
+static GList *
+__query_album_get_uri_list(download *dld, ep *ep)
 {
-    char *retv = NULL;
-    char *temp_b = g_utf8_casefold(ep->album,-1);
-    xmlDocPtr doc;
-    /**
-     * Get artist name
-     */
-    if(dld->size < 4 || strncmp(dld->data, "<res",4)) {
-        dprintf("Invalid XML\n");
-	goto out;
-    }
-        doc = xmlParseMemory(dld->data,dld->size);
-        if(doc)
-	{
-            xmlNodePtr root = xmlDocGetRootElement(doc);
-            if(root)
-            {
-                /* loop through all albums */
-                xmlNodePtr cur = get_first_node_by_name(root,"searchresults");
-                if(cur)
-                {
-                    xmlNodePtr cur2 = get_first_node_by_name(cur,"result");
-                    if(cur2) {
-                        xmlNodePtr cur4 = get_first_node_by_name(cur2,"title");
-                        if(cur4){
-                            xmlChar *title = xmlNodeGetContent(cur4);
+	GList *retv = NULL;
+	xmlDocPtr doc;
 
-                            if(title)
-                            {   
-                                char *temp_a = g_utf8_casefold((gchar *)title,-1);
-                                /** Todo make this check fuzzy */
-                                if(strstr((char *)temp_a, temp_b))
-                                {
-                                    xmlNodePtr cur3 = get_first_node_by_name(cur2,"uri");
-                                    if(cur3){
-                                        xmlChar *xurl = xmlNodeGetContent(cur3);
-                                        retv = g_strdup((char *)xurl);
-                                        xmlFree(xurl);
-                                    }
-                                }
-                                g_free(temp_a);
-                            }
-                            if(title)xmlFree(title);
-                        }
-                    }
-                }
-            }
-            xmlFreeDoc(doc);
-        }
-out:
-    g_free(temp_b);
-    return retv;
-}
-static GList *__query_album_get_uri_list(download *dld, ep *ep)
-{ 
-    GList *retv = NULL;
-    xmlDocPtr doc;
-    if(dld->size < 4 || strncmp(dld->data, "<res",4))
-    {
-        dprintf("Invalid XML\n");
-	goto out;
-    }
+	if (dld->size < 4 || strncmp(dld->data, "<res", 4)) {
+		dprintf("Invalid XML\n");
+		goto out;
+	}
 
-        doc = xmlParseMemory(dld->data,dld->size);
-        if(doc)
-        {
-            xmlNodePtr root = xmlDocGetRootElement(doc);
-            if(root)
-            {
-                /* loop through all albums */
-                xmlNodePtr cur = get_first_node_by_name(root,"release");
-                if(cur)
-                {
-                    xmlNodePtr cur2 = get_first_node_by_name(cur,"images");
-                    if(cur2) {
-                        xmlNodePtr cur3 = get_first_node_by_name(cur2,"image");
-                        while(cur3){
-                            xmlChar *temp = xmlGetProp(cur3, (xmlChar *)"type");
+	doc = xmlParseMemory(dld->data, dld->size);
+	if (doc) {
+		xmlNodePtr root = xmlDocGetRootElement(doc);
+		if (root) {
+			/* loop through all albums */
+			xmlNodePtr cur = get_first_node_by_name(root, "release");
+			if (cur) {
+				xmlNodePtr cur2 = get_first_node_by_name(cur, "images");
+				if (cur2) {
+					xmlNodePtr cur3 = get_first_node_by_name(cur2, "image");
+					while (cur3) {
+						xmlChar *temp = xmlGetProp(cur3, (xmlChar *)"type");
 
-                            if(temp){
-                                if(xmlStrEqual(temp, (xmlChar *)"primary"))
-                                {
-                                    xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
-                                    retv = g_list_prepend(retv,g_strdup((char *)xurl));
-                                    if(xurl) xmlFree(xurl);
-                                } else if(xmlStrEqual(temp, (xmlChar *)"secondary"))
-                                {
-                                    xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
-                                    retv = g_list_append(retv,g_strdup((char *)xurl));
-                                    if(xurl) xmlFree(xurl);
-                                }
+						if (temp) {
+							if (xmlStrEqual(temp, (xmlChar *)"primary")) {
+								xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
+								retv = g_list_prepend(retv, g_strdup((char *)xurl));
+								dprintf("primary %s\n", (char *)xurl);
+								if (xurl) xmlFree(xurl);
+							} else if (xmlStrEqual(temp, (xmlChar *)"secondary")) {
+								xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
+								retv = g_list_append(retv, g_strdup((char *)xurl));
+								dprintf("secondary %s\n", (char *)xurl);
+								if (xurl) xmlFree(xurl);
+							}
 
-                                xmlFree(temp);
-                            }
-                            cur3 = cur3->next;
-                        }
-                    }
-                }
-            }
-            xmlFreeDoc(doc);
-        }
-out:
-    return retv;
+							xmlFree(temp);
+						}
+						cur3 = cur3->next;
+					}
+				}
+			}
+		}
+		xmlFreeDoc(doc);
+	}
+ out:
+	return retv;
 }
 
-static void __query_get_album_art_uris(download *dld, ep *ep)
+static void
+__query_get_album_art_uris(download *dld, ep *ep)
 {
-        GList *list =  __query_album_get_uri_list(dld, ep);
-	GList* node = NULL;
+	GList *list =  __query_album_get_uri_list(dld, ep);
+	GList*node = NULL;
 
+	if (g_list_length(list) == 0)
+		return;
 	ep->url = g_strdup(g_list_first(list)->data);
-	for (node = g_list_first(list); node != NULL; node = g_list_next(node))
-	{
+	for (node = g_list_first(list); node != NULL; node = g_list_next(node)) {
 		dprintf("found: %s\n", node->data);
 		g_free(node->data);
 	}
 	g_list_free(list);
 }
-static void __query_get_album_art(download *dld, ep *ep)
+static void
+__query_get_album_art(download *dld, ep *ep)
 {
-        gchar *artist_uri = NULL;
-        char furl[1024];
-        int i=0;
-        artist_uri = __query_album_get_uri(dld, ep);
-        if(!artist_uri)
+	gchar *artist_uri = NULL;
+	char furl[1024];
+	int i = 0;
+
+	artist_uri = __query_album_get_uri(dld, ep);
+	if (!artist_uri)
 		return;
 	/* Hack to fix bug in discogs api */
-	for(i=strlen(artist_uri); artist_uri[i] != '/' && i > 0; i--);
-	snprintf(furl,1024,DISCOGS_API_ROOT"release%s?f=xml&api_key=%s", &artist_uri[i],DISCOGS_API_KEY);
+	for (i = strlen(artist_uri); artist_uri[i] != '/' && i > 0; i--) ;
+	snprintf(furl, 1024, DISCOGS_API_ROOT "release%s?f=xml&api_key=%s", &artist_uri[i], DISCOGS_API_KEY);
 	download_clean(dld);
 	easy_download(furl, dld, ep);
 	__query_get_album_art_uris(dld, ep);
@@ -500,137 +501,137 @@ static void __query_get_album_art(download *dld, ep *ep)
 }
 
 /** other */
-static void discogs_fetch_cover_album_art(ep *ep, download *dld)
+static void
+discogs_fetch_cover_album_art(ep *ep, download *dld)
 {
 	char *artist = cover_art_process_string(ep->artist);
 	char *album = cover_art_process_string(ep->album);
 	char furl[1024];
-	snprintf(furl,1024,DISCOGS_API_ROOT"search?type=all&f=xml&q=%s%%20%s&api_key=%s", artist,album,DISCOGS_API_KEY);
+
+	snprintf(furl, 1024, DISCOGS_API_ROOT "search?type=all&f=xml&q=%s%%20%s&api_key=%s", artist, album, DISCOGS_API_KEY);
 	easy_download(furl, dld, ep);
 	__query_get_album_art(dld, ep);
 	g_free(artist);
 	g_free(album);
 }
-static gchar * __query_artist_get_uri(download *dld)
+static gchar *
+__query_artist_get_uri(download *dld)
 {
-    char *retv = NULL;
-    xmlDocPtr doc;
-    /**
-     * Get artist name
-     */
-    if(dld->size < 4 || strncmp(dld->data, "<res",4))
-    {
-        dprintf("Invalid XML\n");
-	goto out;
-    }
-        doc = xmlParseMemory(dld->data,dld->size);
-        if(doc)
-        {
-            xmlNodePtr root = xmlDocGetRootElement(doc);
-            if(root)
-            {
-                /* loop through all albums */
-                xmlNodePtr cur = get_first_node_by_name(root,"exactresults");
-                if(cur)
-                {
-                    xmlNodePtr cur2 = get_first_node_by_name(cur,"result");
-                    if(cur2) {
-                        xmlNodePtr cur3 = get_first_node_by_name(cur2,"uri");
-                        if(cur3){
-                            xmlChar *xurl = xmlNodeGetContent(cur3);
-                            retv = g_strdup((char *)xurl);
-                            xmlFree(xurl);
-                        }
-                    }
-                }
-            }
-            xmlFreeDoc(doc);
-        }
+	char *retv = NULL;
+	xmlDocPtr doc;
 
-out:
-    return retv;
+	/**
+	 * Get artist name
+	 */
+	if (dld->size < 4 || strncmp(dld->data, "<res", 4)) {
+		dprintf("Invalid XML\n");
+		goto out;
+	}
+	doc = xmlParseMemory(dld->data, dld->size);
+	if (doc) {
+		xmlNodePtr root = xmlDocGetRootElement(doc);
+		if (root) {
+			/* loop through all albums */
+			xmlNodePtr cur = get_first_node_by_name(root, "exactresults");
+			if (cur) {
+				xmlNodePtr cur2 = get_first_node_by_name(cur, "result");
+				if (cur2) {
+					xmlNodePtr cur3 = get_first_node_by_name(cur2, "uri");
+					if (cur3) {
+						xmlChar *xurl = xmlNodeGetContent(cur3);
+						retv = g_strdup((char *)xurl);
+						xmlFree(xurl);
+					}
+				}
+			}
+		}
+		xmlFreeDoc(doc);
+	}
+
+ out:
+	return retv;
 }
 
-static GList *__query_artist_get_uri_list(download *dld, ep *ep)
-{ 
-    GList *retv = NULL;
-    xmlDocPtr doc;
-    if(dld->size < 4 || strncmp(dld->data, "<res",4))
-    {
-        dprintf("Invalid XML\n");
-	goto out;
-    }
-        doc = xmlParseMemory(dld->data,dld->size);
-        if(doc)
-        {
-            xmlNodePtr root = xmlDocGetRootElement(doc);
-            if(root)
-            {
-                /* loop through all albums */
-                xmlNodePtr cur = get_first_node_by_name(root,"artist");
-                if(cur)
-                {
-                    xmlNodePtr cur2 = get_first_node_by_name(cur,"images");
-                    if(cur2) {
-                        xmlNodePtr cur3 = get_first_node_by_name(cur2,"image");
-                        while(cur3 ){
-                            xmlChar *temp = xmlGetProp(cur3, (xmlChar *)"type");
-                            if(temp){
-                                if(xmlStrEqual(temp, (xmlChar *)"primary"))
-                                {
-                                    xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
-				retv = g_list_prepend(retv, g_strdup((char *)xurl));
-                                    if(xurl) xmlFree(xurl);
-                                } else if(xmlStrEqual(temp, (xmlChar *)"secondary"))
-                                {
-                                    xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
-                                    retv = g_list_append(retv,g_strdup((char *)xurl));
-                                    if(xurl) xmlFree(xurl);
-                                }
+static GList *
+__query_artist_get_uri_list(download *dld, ep *ep)
+{
+	GList *retv = NULL;
+	xmlDocPtr doc;
 
-                                xmlFree(temp);
-                            }
-                            cur3 = cur3->next;
-                        }
-                    }
-                }
-            }
-            xmlFreeDoc(doc);
-        }
+	if (dld->size < 4 || strncmp(dld->data, "<res", 4)) {
+		dprintf("Invalid XML\n");
+		goto out;
+	}
+	doc = xmlParseMemory(dld->data, dld->size);
+	if (doc) {
+		xmlNodePtr root = xmlDocGetRootElement(doc);
+		if (root) {
+			/* loop through all albums */
+			xmlNodePtr cur = get_first_node_by_name(root, "artist");
+			if (cur) {
+				xmlNodePtr cur2 = get_first_node_by_name(cur, "images");
+				if (cur2) {
+					xmlNodePtr cur3 = get_first_node_by_name(cur2, "image");
+					while (cur3 ) {
+						xmlChar *temp = xmlGetProp(cur3, (xmlChar *)"type");
+						if (temp) {
+							if (xmlStrEqual(temp, (xmlChar *)"primary")) {
+								xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
+								retv = g_list_prepend(retv, g_strdup((char *)xurl));
+								if (xurl) xmlFree(xurl);
+							} else if (xmlStrEqual(temp, (xmlChar *)"secondary")) {
+								xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
+								retv = g_list_append(retv, g_strdup((char *)xurl));
+								if (xurl) xmlFree(xurl);
+							}
 
-out:
-    return retv;
+							xmlFree(temp);
+						}
+						cur3 = cur3->next;
+					}
+				}
+			}
+		}
+		xmlFreeDoc(doc);
+	}
+
+ out:
+	return retv;
 }
 
-static void __query_get_artist_art_uris(download *dld, ep *ep)
+static void
+__query_get_artist_art_uris(download *dld, ep *ep)
 {
-        GList *list =  __query_artist_get_uri_list(dld, ep);
-	GList* node = NULL;
+	GList *list =  __query_artist_get_uri_list(dld, ep);
+	GList*node = NULL;
 
+	if (g_list_length(list) == 0)
+		return;
 	ep->url = g_strdup(g_list_first(list)->data);
-	for (node = g_list_first(list); node != NULL; node = g_list_next(node))
-	{
+	for (node = g_list_first(list); node != NULL; node = g_list_next(node)) {
 		dprintf("found: %s\n", node->data);
 		g_free(node->data);
 	}
 	g_list_free(list);
 }
 
-static void __query_get_artist_art(download *dld, ep *ep)
+static void
+__query_get_artist_art(download *dld, ep *ep)
 {
-        gchar *artist_uri = NULL;
-        char furl[1024];
+	gchar *artist_uri = NULL;
+	char furl[1024];
 	char fix;
-        artist_uri = __query_artist_get_uri(dld);
+
+	artist_uri = __query_artist_get_uri(dld);
 	dprintf("artist_uri: %s\n", artist_uri);
-        if(!artist_uri)
+	if (!artist_uri)
 		return;
 	/* Hack to fix bug in discogs api */
-	if(strstr(artist_uri, "?") != NULL)
+	if (strstr(artist_uri, "?") != NULL)
 		fix = '&';
 	else
 		fix = '?';
-	snprintf(furl,1024,"%s%cf=xml&api_key=%s", artist_uri,fix,DISCOGS_API_KEY);
+	snprintf(furl, 1024, "%s%cf=xml&api_key=%s", artist_uri, fix, DISCOGS_API_KEY);
 
 	download_clean(dld);
 	easy_download(furl, dld, ep);
@@ -646,7 +647,8 @@ discogs_fetch_artist_art(ep *ep, download *dld)
 {
 	char *artist = cover_art_process_string(ep->artist);
 	char furl[1024];
-	snprintf(furl,1024,DISCOGS_API_ROOT"search?type=all&f=xml&q=%s&api_key=%s", artist,DISCOGS_API_KEY);
+
+	snprintf(furl, 1024, DISCOGS_API_ROOT "search?type=all&f=xml&q=%s&api_key=%s", artist, DISCOGS_API_KEY);
 	easy_download(furl, dld, ep);
 	__query_get_artist_art(dld, ep);
 	g_free(artist);
@@ -664,10 +666,10 @@ fetch_metadata(ep *ep)
 
 	if (ep->type & META_ALBUM_ART) {
 		dprintf("trying to fetch album art\n");
-        	discogs_fetch_cover_album_art(ep, &data);
+		discogs_fetch_cover_album_art(ep, &data);
 	} else {
 		dprintf("trying to fetch arist art\n");
-        	discogs_fetch_artist_art(ep, &data);
+		discogs_fetch_artist_art(ep, &data);
 	}
 
 	easy_download(ep->url, &data, ep);
@@ -724,16 +726,16 @@ main(int argc, char *argv[])
 	const char *short_options = "hcita:l:p:o:d:v";
 
 	const struct option long_options[] = {
-		{"help", no_argument, NULL, 'h'},
-		{"artist", required_argument, NULL, 'a'},
-		{"album", no_argument, NULL, 'l'},
-		{"cover", no_argument, NULL, 'c'},
-		{"info", no_argument, NULL, 'i'},
-		{"host", required_argument, NULL, 'o'},
-		{"port", required_argument, NULL, 'p'},
-		{"directory", required_argument, NULL, 'd'},
-		{"verbose", no_argument, NULL, 'v'},
-		{0, 0, 0, 0}
+		{ "help", no_argument, NULL, 'h' },
+		{ "artist", required_argument, NULL, 'a' },
+		{ "album", no_argument, NULL, 'l' },
+		{ "cover", no_argument, NULL, 'c' },
+		{ "info", no_argument, NULL, 'i' },
+		{ "host", required_argument, NULL, 'o' },
+		{ "port", required_argument, NULL, 'p' },
+		{ "directory", required_argument, NULL, 'd' },
+		{ "verbose", no_argument, NULL, 'v' },
+		{ 0, 0, 0, 0 }
 	};
 
 	fprintf(stderr, "%s %s, Copyright (C) 2008, 2009 by Adrian Reber <adrian@lisas.de>\n", PACKAGE, VERSION);
