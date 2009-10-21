@@ -595,42 +595,52 @@ __query_artist_get_uri_list(download *dld, ep *ep)
 
 	if (dld->size < 4 || strncmp(dld->data, "<res", 4)) {
 		dprintf("Invalid XML\n");
-		goto out;
+		return NULL;
 	}
+
 	doc = xmlParseMemory(dld->data, dld->size);
-	if (doc) {
-		xmlNodePtr root = xmlDocGetRootElement(doc);
-		if (root) {
-			/* loop through all albums */
-			xmlNodePtr cur = get_first_node_by_name(root, "artist");
-			if (cur) {
-				xmlNodePtr cur2 = get_first_node_by_name(cur, "images");
-				if (cur2) {
-					xmlNodePtr cur3 = get_first_node_by_name(cur2, "image");
-					while (cur3 ) {
-						xmlChar *temp = xmlGetProp(cur3, (xmlChar *)"type");
-						if (temp) {
-							if (xmlStrEqual(temp, (xmlChar *)"primary")) {
-								xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
-								retv = g_list_prepend(retv, g_strdup((char *)xurl));
-								if (xurl) xmlFree(xurl);
-							} else if (xmlStrEqual(temp, (xmlChar *)"secondary")) {
-								xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
-								retv = g_list_append(retv, g_strdup((char *)xurl));
-								if (xurl) xmlFree(xurl);
-							}
+	if (!doc)
+		return NULL;
 
-							xmlFree(temp);
-						}
-						cur3 = cur3->next;
-					}
-				}
-			}
+	xmlNodePtr root = xmlDocGetRootElement(doc);
+	if (!root)
+		goto out;
+
+	/* TODO: loop through all albums */
+	xmlNodePtr cur = get_first_node_by_name(root, "artist");
+	if (!cur)
+		goto out;
+	xmlNodePtr cur2 = get_first_node_by_name(cur, "images");
+	if (!cur2)
+		goto out;
+
+	xmlNodePtr cur3 = get_first_node_by_name(cur2, "image");
+	while (cur3 ) {
+		xmlChar *temp = xmlGetProp(cur3, (xmlChar *)"type");
+		if (!temp) {
+			cur3 = cur3->next;
+			continue;
 		}
-		xmlFreeDoc(doc);
-	}
 
+		if (xmlStrEqual(temp, (xmlChar *)"primary")) {
+			xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
+			retv = g_list_prepend(retv, g_strdup((char *)xurl));
+			dprintf("primary %s\n", (char *)xurl);
+			if (xurl)
+				xmlFree(xurl);
+		} else if (xmlStrEqual(temp, (xmlChar *)"secondary")) {
+			xmlChar *xurl = xmlGetProp(cur3, (xmlChar *)"uri");
+			retv = g_list_append(retv, g_strdup((char *)xurl));
+			dprintf("secondary %s\n", (char *)xurl);
+			if (xurl)
+				xmlFree(xurl);
+		}
+
+		xmlFree(temp);
+		cur3 = cur3->next;
+	}
  out:
+	xmlFreeDoc(doc);
 	return retv;
 }
 
