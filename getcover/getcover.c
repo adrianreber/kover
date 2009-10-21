@@ -393,6 +393,8 @@ __query_album_get_uri(download *dld, ep *ep)
 
 						if (title) {
 							char *temp_a = g_utf8_casefold((gchar *)title, -1);
+							dprintf("title from discogs: %s\n", temp_a);
+							dprintf("compare with: %s\n", temp_b);
 							/** Todo make this check fuzzy */
 							if (strstr((char *)temp_a, temp_b)) {
 								xmlNodePtr cur3 = get_first_node_by_name(cur2, "uri");
@@ -413,6 +415,7 @@ __query_album_get_uri(download *dld, ep *ep)
 	}
  out:
 	g_free(temp_b);
+	dprintf("url %s\n", retv);
 	return retv;
 }
 static GList *
@@ -465,22 +468,25 @@ __query_album_get_uri_list(download *dld, ep *ep)
 	return retv;
 }
 
-static void
+static int
 __query_get_album_art_uris(download *dld, ep *ep)
 {
 	GList *list =  __query_album_get_uri_list(dld, ep);
 	GList*node = NULL;
 
-	if (g_list_length(list) == 0)
-		return;
+	if (g_list_length(list) == 0) {
+		dprintf("no album art available\n");
+		return -1;
+	}
 	ep->url = g_strdup(g_list_first(list)->data);
 	for (node = g_list_first(list); node != NULL; node = g_list_next(node)) {
 		dprintf("found: %s\n", node->data);
 		g_free(node->data);
 	}
 	g_list_free(list);
+	return 0;
 }
-static void
+static int
 __query_get_album_art(download *dld, ep *ep)
 {
 	gchar *artist_uri = NULL;
@@ -489,30 +495,33 @@ __query_get_album_art(download *dld, ep *ep)
 
 	artist_uri = __query_album_get_uri(dld, ep);
 	if (!artist_uri)
-		return;
+		return -1;
 	/* Hack to fix bug in discogs api */
 	for (i = strlen(artist_uri); artist_uri[i] != '/' && i > 0; i--) ;
 	snprintf(furl, 1024, DISCOGS_API_ROOT "release%s?f=xml&api_key=%s", &artist_uri[i], DISCOGS_API_KEY);
 	download_clean(dld);
 	easy_download(furl, dld, ep);
-	__query_get_album_art_uris(dld, ep);
+	i = __query_get_album_art_uris(dld, ep);
 	download_clean(dld);
 	g_free(artist_uri);
+	return i;
 }
 
 /** other */
-static void
+static int
 discogs_fetch_cover_album_art(ep *ep, download *dld)
 {
 	char *artist = cover_art_process_string(ep->artist);
 	char *album = cover_art_process_string(ep->album);
 	char furl[1024];
+	int rc;
 
 	snprintf(furl, 1024, DISCOGS_API_ROOT "search?type=all&f=xml&q=%s%%20%s&api_key=%s", artist, album, DISCOGS_API_KEY);
 	easy_download(furl, dld, ep);
-	__query_get_album_art(dld, ep);
+	rc = __query_get_album_art(dld, ep);
 	g_free(artist);
 	g_free(album);
+	return rc;
 }
 static gchar *
 __query_artist_get_uri(download *dld)
@@ -660,17 +669,21 @@ fetch_metadata(ep *ep)
 {
 	download data = { NULL, 0, -1 };
 	FILE *fp = NULL;
+	int rc = 0;
 
 	dprintf("artist %s\n", ep->artist);
 	dprintf("album %s\n", ep->album);
 
 	if (ep->type & META_ALBUM_ART) {
 		dprintf("trying to fetch album art\n");
-		discogs_fetch_cover_album_art(ep, &data);
+		rc = discogs_fetch_cover_album_art(ep, &data);
 	} else {
 		dprintf("trying to fetch arist art\n");
 		discogs_fetch_artist_art(ep, &data);
 	}
+
+	if (rc != 0)
+		return rc;
 
 	easy_download(ep->url, &data, ep);
 
