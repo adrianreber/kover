@@ -308,13 +308,15 @@ cover_art_process_string(const char *string)
 static xmlNodePtr
 get_first_node_by_name(xmlNodePtr xml, char *name)
 {
-	if (xml) {
-		xmlNodePtr c = xml->xmlChildrenNode;
-		for (; c; c = c->next) {
-			if (xmlStrEqual(c->name, (xmlChar *)name))
-				return c;
-		}
+	if (!xml)
+		return NULL;
+
+	xmlNodePtr c = xml->xmlChildrenNode;
+	for (; c; c = c->next) {
+		if (xmlStrEqual(c->name, (xmlChar *)name))
+			return c;
 	}
+
 	return NULL;
 }
 
@@ -346,73 +348,93 @@ check_result(download *dld)
 	}
 
 	doc = xmlParseMemory(dld->data, dld->size);
-	if (doc) {
-		xmlNodePtr root = xmlDocGetRootElement(doc);
-		if (root) {
-			/* loop through all albums */
-			xmlNodePtr cur = get_first_node_by_name(root, "searchresults");
-			if (cur) {
-				xmlChar *temp = xmlGetProp(cur, (xmlChar *)"numResults");
-				if (temp)
-					if (xmlStrEqual(temp, (xmlChar *)"0")) {
-						dprintf("0 search results\n");
-						return -1;
-					}
-			}
-		}
-		xmlFreeDoc(doc);
+	if (!doc)
+		return -1;
+
+	xmlNodePtr root = xmlDocGetRootElement(doc);
+	if (!root)
+		return -1;
+
+	/* loop through all albums */
+	xmlNodePtr cur = get_first_node_by_name(root, "searchresults");
+	if (!cur)
+		return -1;
+
+	xmlChar *temp = xmlGetProp(cur, (xmlChar *)"numResults");
+	if (!temp)
+		return -1;
+
+	if (xmlStrEqual(temp, (xmlChar *)"0")) {
+		dprintf("0 search results\n");
+		return -1;
 	}
+
+	xmlFreeDoc(doc);
 	return 0;
 }
 static gchar *
 __query_album_get_uri(download *dld, ep *ep)
 {
 	char *retv = NULL;
+	char *tmp;
 	char *temp_b = g_utf8_casefold(ep->album, -1);
 	xmlDocPtr doc;
 
-	/**
-	 * Get artist name
-	 */
 	if (dld->size < 4 || strncmp(dld->data, "<res", 4)) {
 		dprintf("Invalid XML\n");
 		goto out;
 	}
 	doc = xmlParseMemory(dld->data, dld->size);
-	if (doc) {
-		xmlNodePtr root = xmlDocGetRootElement(doc);
-		if (root) {
-			/* loop through all albums */
-			xmlNodePtr cur = get_first_node_by_name(root, "searchresults");
-			if (cur) {
-				xmlNodePtr cur2 = get_first_node_by_name(cur, "result");
-				if (cur2) {
-					xmlNodePtr cur4 = get_first_node_by_name(cur2, "title");
-					if (cur4) {
-						xmlChar *title = xmlNodeGetContent(cur4);
+	if (!doc)
+		goto out;
 
-						if (title) {
-							char *temp_a = g_utf8_casefold((gchar *)title, -1);
-							dprintf("title from discogs: %s\n", temp_a);
-							dprintf("compare with: %s\n", temp_b);
-							/** Todo make this check fuzzy */
-							if (strstr((char *)temp_a, temp_b)) {
-								xmlNodePtr cur3 = get_first_node_by_name(cur2, "uri");
-								if (cur3) {
-									xmlChar *xurl = xmlNodeGetContent(cur3);
-									retv = g_strdup((char *)xurl);
-									xmlFree(xurl);
-								}
-							}
-							g_free(temp_a);
-						}
-						if (title) xmlFree(title);
-					}
-				}
-			}
+	xmlNodePtr root = xmlDocGetRootElement(doc);
+	if (!root)
+		goto out;
+
+	/* loop through all albums */
+	xmlNodePtr cur = get_first_node_by_name(root, "searchresults");
+	if (!cur)
+		goto out;
+
+	xmlNodePtr cur2 = get_first_node_by_name(cur, "result");
+
+	while (cur2 != NULL) {
+		xmlNodePtr cur4 = get_first_node_by_name(cur2, "title");
+
+		if (!cur4) {
+			cur2 = cur2->next;
+			continue;
 		}
-		xmlFreeDoc(doc);
+
+		xmlChar *title = xmlNodeGetContent(cur4);
+
+		if (!title) {
+			cur2 = cur2->next;
+			continue;
+		}
+
+		tmp = g_utf8_casefold((gchar *)title, -1);
+		dprintf("title from discogs: %s\n", tmp);
+		dprintf("compare with: %s\n", temp_b);
+		/* Todo make this check fuzzy */
+		if (strstr((char *)tmp, temp_b)) {
+			dprintf("found: %s\n", tmp);
+			xmlNodePtr cur3 = get_first_node_by_name(cur2, "uri");
+			if (cur3) {
+				xmlChar *xurl = xmlNodeGetContent(cur3);
+				retv = g_strdup((char *)xurl);
+				xmlFree(xurl);
+			}
+			g_free(tmp);
+			xmlFree(title);
+			break;
+		}
+		g_free(tmp);
+		xmlFree(title);
+		cur2 = cur2->next;
 	}
+	xmlFreeDoc(doc);
  out:
 	g_free(temp_b);
 	dprintf("url %s\n", retv);
