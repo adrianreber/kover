@@ -171,18 +171,18 @@ easy_download(const char *url, download *dld, ep *ep)
 		curl_multi_perform(curlm, &running);
 		g_usleep(100000);
 		while ((msg = curl_multi_info_read(curlm, &msgs_left))) {
-			if (msg->msg == CURLMSG_DONE) {
-				if ((!msg->data.result || msg->data.result == 23)) {
-					success = TRUE;
-				} else {
-					/* don't print the can't resolve.. */
-					if (msg->data.result != 108) {
-						printf("Error: %i '%s' url: %s",
-						       msg->data.result,
-						       curl_easy_strerror(msg->data.result), url);
-					}
-				}
+			if (msg->msg != CURLMSG_DONE)
+				continue;
+
+			if ((!msg->data.result || msg->data.result == 23)) {
+				success = TRUE;
+				continue;
 			}
+			/* don't print the can't resolve.. */
+			if (msg->data.result == 108)
+				continue;
+			printf("Error: %i '%s' url: %s", msg->data.result,
+			       curl_easy_strerror(msg->data.result), url);
 		}
 	} while (running);
 	/**
