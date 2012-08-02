@@ -152,7 +152,7 @@ directory *directory::get_child_by_path(string path) {
     path = normalize_path(path);
     list <directory *> :: iterator dir;
     for (dir = childs.begin(); dir != childs.end(); dir++) {
-        printf("%s:%s:%d\n",(*dir)->get_current().c_str(),
+        printf("%s:%s:%ld\n",(*dir)->get_current().c_str(),
                 path.c_str(),path.size());
         if (!(*dir)->get_current().compare(0,path.size(),path))
             return (*dir);

@@ -293,15 +293,13 @@ KoverTop::make_more_frame()
 void
 KoverTop::dataChanged(bool image)
 {
-	bool bla = image;
-
-	bla = true;
+	image = true;
 
 	setStatusText(i18n("Data changed"));
 	if (m_url.isEmpty())
-		setCaption(i18n("[New Document]"), true);
+		setCaption(i18n("[New Document]"), image);
 	else
-		setCaption(i18n(m_url.url()), true);
+		setCaption(i18n(m_url.url()), image);
 
 	altered_data = true;
 }
