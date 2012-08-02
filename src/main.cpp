@@ -18,6 +18,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <config.h>
 #include <kovertop.h>
 #include <kover.h>
 #include <kover_config.h>
@@ -45,7 +46,7 @@ k_printf(const char *fn, int line, const char *format, ...)
 
 	va_start(arglist, format);
 	vsnprintf(tmp, 1024, format, arglist);
-	fprintf(stderr, "  %s(%s):%s:%d: %s", PACKAGE, VERSION, fn, line, tmp);
+	fprintf(stderr, "  %s(%s):%s:%d: %s", K_PACKAGE, K_VERSION, fn, line, tmp);
 	va_end(arglist);
 }
 
@@ -59,7 +60,7 @@ eject_cdrom()
 		device = cdio_get_default_device(NULL);
 		if (!device) {
 			fprintf(stderr, "%s: Unable to get default CD device.",
-				PACKAGE);
+				K_PACKAGE);
 			return;
 		}
 	} else
@@ -128,13 +129,13 @@ main(int argc, char **argv)
 	signal(SIGTERM, sighandler);
 	signal(SIGINT, sighandler);
 
-	fprintf(stderr, "%s %s\n", PACKAGE, VERSION);
+	fprintf(stderr, "%s %s\n", K_PACKAGE, K_VERSION);
 	fprintf(stderr, "    Copyright (C) 1998, 2000 by Denis Oliver Kropp\n");
 	fprintf(stderr, "    Copyright (C) 2000, 2008 by Adrian Reber\n");
 	fprintf( stderr, "%s comes with ABSOLUTELY NO WARRANTY "
-		 "- for details read the license.\n", PACKAGE);
+		 "- for details read the license.\n", K_PACKAGE);
 
-	KAboutData about(PACKAGE, 0, ki18n(PACKAGE), VERSION,
+	KAboutData about(K_PACKAGE, 0, ki18n(K_PACKAGE), K_VERSION,
 			 ki18n("Kover is an easy to use WYSIWYG CD cover"
 			       " printer with CDDB support."),
 			 KAboutData::License_GPL_V2,

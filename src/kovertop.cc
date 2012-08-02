@@ -72,7 +72,7 @@ KoverTop::KoverTop() : KXmlGuiWindow()
 	setCaption(i18n("[New Document]"), false);
 
 	status_bar = statusBar();
-	status_bar->insertItem("Kover " VERSION " - http://lisas.de/kover/", 1);
+	status_bar->insertItem("Kover " K_VERSION " - http://lisas.de/kover/", 1);
 
 	make_menu();
 	make_main_frame();

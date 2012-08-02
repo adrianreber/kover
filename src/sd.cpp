@@ -89,7 +89,7 @@ sd::sd():QDialog()
 
 sd::~sd()
 {
-	fprintf(stderr, "%s:sd::~sd()\n", PACKAGE);
+	fprintf(stderr, "%s:sd::~sd()\n", K_PACKAGE);
 
 	while (server_list.size()) {
 		delete((server_list.back()));

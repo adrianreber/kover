@@ -393,7 +393,7 @@ cddb_fill::set_connection_params(cddb_conn_t *conn)
 	char email[64];
 	snprintf(email, 63, "%s@%s", logname, hostname);
 
-	cddb_set_client(conn, PACKAGE, VERSION);
+	cddb_set_client(conn, K_PACKAGE, K_VERSION);
 
 	cddb_set_email_address(conn, email);
 

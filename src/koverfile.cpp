@@ -555,13 +555,13 @@ KoverFile::save_as_XML(const QString & filename)
 
 	QDomElement kover = doc.createElement("kover");
 
-	kover.setAttribute("name", PACKAGE);
-	kover.setAttribute("version", VERSION);
+	kover.setAttribute("name", K_PACKAGE);
+	kover.setAttribute("version", K_VERSION);
 	doc.appendChild(kover);
 
 	/* comment */
 	QDomComment comment = doc.createComment("This file was created by "
-						PACKAGE " " VERSION);
+						K_PACKAGE " " K_VERSION);
 	kover.appendChild(comment);
 
 	/* title */

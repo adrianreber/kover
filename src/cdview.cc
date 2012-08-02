@@ -103,7 +103,7 @@ void
 CDView::printKover()
 {
 	if (globals.one_page) {
-		printer->setOrientation(QPrinter::Portrait);
+		//printer->setOrientation(QPrinter::Portrait);
 		printer->setFromTo(1, 1);
 	} else if (globals.its_a_slim_case) {
 		printer->setOrientation(QPrinter::Landscape);
