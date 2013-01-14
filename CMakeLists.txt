@@ -4,7 +4,7 @@ include (KDE4Defaults)
 include_directories( ${KDE4_INCLUDES} ${QT_INCLUDES} )
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 
-set(K_VERSION 5)
+set(K_VERSION 6)
 set(K_PACKAGE ${PROJECT_NAME})
 
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
