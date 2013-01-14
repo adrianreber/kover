@@ -1,7 +1,7 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
  * Copyright (C) 1999, 2000 by Denis Oliver Kropp
- * Copyright (C) 2000, 2008 by Adrian Reber
+ * Copyright (C) 2000, 2013 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,24 +93,17 @@ cddb_fill::read_cdtext()
 	kprintf("device %p\n", cdio);
 
 	/* get disc artist and title */
-	cdtext_t *cdtext = cdio_get_cdtext(cdio, 0);
+	cdtext_t *cdtext = cdio_get_cdtext(cdio);
 	if (cdtext) {
-		if (cdtext->field[CDTEXT_PERFORMER])
-			cd_info.artist = cdtext->field[CDTEXT_PERFORMER];
-		if (cdtext->field[CDTEXT_TITLE])
-			cd_info.cdname = cdtext->field[CDTEXT_TITLE];
-		if (cdtext->field[CDTEXT_DISCID])
-			cd_info.cddb_id =
-				strtoul(cdtext->field[CDTEXT_DISCID], NULL, 16);
-
+		cd_info.artist = cdtext_get(cdtext, CDTEXT_FIELD_PERFORMER, 0);
+		cd_info.cdname = cdtext_get(cdtext, CDTEXT_FIELD_TITLE, 0);
+		cd_info.cddb_id = strtoul(cdtext_get(cdtext, CDTEXT_FIELD_DISCID, 0), NULL, 16);
 	}
 
 	for (int i = 1; i <= cd_info.ntracks; i++) {
-		cdtext_t *cdtext = cdio_get_cdtext(cdio, i);
 		trackinfo *blub = new trackinfo();
 		blub->track = i;
-		if (cdtext->field[CDTEXT_TITLE])
-			blub->name = cdtext->field[CDTEXT_TITLE];
+		blub->name = cdtext_get(cdtext, CDTEXT_FIELD_TITLE, i);
 		cd_info.tracks.push_back(blub);
 
 	}
