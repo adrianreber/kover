@@ -19,7 +19,7 @@ set(${PROJECT_NAME}_SRCS
    without_cd.cc
 )
 
-pkg_check_modules(CDIO REQUIRED libcdio)
+pkg_check_modules(CDIO REQUIRED libcdio>=0.90)
 pkg_check_modules(CDDB REQUIRED libcddb)
 set(CMAKE_C_FLAGS "-g -Wall")
 include_directories(${CDIO_INCLUDE_DIRS})
