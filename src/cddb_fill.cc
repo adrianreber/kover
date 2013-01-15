@@ -29,7 +29,7 @@
 
 #include <string>
 #include <algorithm>
-#include <cdio/cdda.h>
+#include <cdio/cdio.h>
 #include <cdio/cdtext.h>
 
 using namespace std;
