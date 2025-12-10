@@ -1,0 +1,62 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runner }}
+    container: fedora:latest
+    strategy:
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          dnf install -y \
+            cmake \
+            gcc-c++ \
+            gettext \
+            extra-cmake-modules \
+            qt6-qtbase-devel \
+            kf6-kcoreaddons-devel \
+            kf6-ki18n-devel \
+            kf6-kxmlgui-devel \
+            kf6-kio-devel \
+            kf6-kconfigwidgets-devel \
+            kf6-kiconthemes-devel \
+            libcdio-devel \
+            libcddb-devel
+
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+
+      - name: Build
+        run: |
+          cd build
+          make
+
+      - name: Test help option
+        run: |
+          cd build
+          QT_QPA_PLATFORM=minimal ./bin/kover -h
+
+      - name: Test version option
+        run: |
+          cd build
+          QT_QPA_PLATFORM=minimal ./bin/kover -v
