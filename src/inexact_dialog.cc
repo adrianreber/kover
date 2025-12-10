@@ -1,6 +1,6 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 2001, 2008 by Adrian Reber
+ * Copyright (C) 2001, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "inexact_dialog.moc"
 #include "inexact_dialog.h"
 
 #include <cstdio>
@@ -36,7 +35,7 @@ inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list) : QDialog()
 	local_list = inexact_list;
 	QVBoxLayout *top_layout = new QVBoxLayout(this);
 
-	top_layout->setMargin(7);
+	top_layout->setContentsMargins(7, 7, 7, 7);
 	top_layout->addSpacing(10);
 	QLabel *label = new QLabel(tr("Choose wisely!"), this);
 
@@ -47,7 +46,7 @@ inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list) : QDialog()
 
 	for (item = inexact_list.begin(); item != inexact_list.end(); item++) {
 		char disc_id[16];
-		snprintf(disc_id, 8, "%08lX", (*item)->get_id());
+		snprintf(disc_id, sizeof(disc_id), "%08lX", (*item)->get_id());
 		string tmp = string(disc_id);
 		tmp += ": ";
 		tmp += string((*item)->get_artist());
@@ -57,7 +56,7 @@ inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list) : QDialog()
 		tmp += string((*item)->get_category());
 		tmp += ")";
 		QListWidgetItem *newItem = new QListWidgetItem;
-		newItem->setText(tmp.c_str());
+		newItem->setText(QString::fromStdString(tmp));
 		box->addItem(newItem);
 	}
 
@@ -73,7 +72,7 @@ inexact_dialog::inexact_dialog(list < cddb_211_item * >inexact_list) : QDialog()
 
 	QPushButton *ok = new QPushButton(tr("Ok"), this);
 
-	ok->setDefault(TRUE);
+	ok->setDefault(true);
 
 	ok->setMaximumWidth(70);
 

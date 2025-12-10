@@ -1,6 +1,6 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 2001, 2008 by Adrian Reber
+ * Copyright (C) 2001, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 
 /* This is the dialog for freedb server selection */
 
-#include "sd.moc"
 #include "sd.h"
 #include <cddb_fill.h>
 #include <kover.h>
@@ -35,7 +34,7 @@ sd::sd():QDialog()
 	delete(bla);
 	QVBoxLayout *top_layout = new QVBoxLayout(this);
 
-	top_layout->setMargin(7);
+	top_layout->setContentsMargins(7, 7, 7, 7);
 	top_layout->addSpacing(10);
 	QLabel *label = new QLabel (tr("Choose wisely!"), this);
 
@@ -50,10 +49,10 @@ sd::sd():QDialog()
 		if (verbose)
 			(*item)->dump();
 		if (((*item)->get_proto()).compare("http")) {
-			string = ((*item)->get_site()).c_str();
-			string += " (";
-			string += ((*item)->get_description()).c_str();
-			string += ")";
+			string = QString::fromStdString((*item)->get_site());
+			string += QStringLiteral(" (");
+			string += QString::fromStdString((*item)->get_description());
+			string += QStringLiteral(")");
 			QListWidgetItem *newItem = new QListWidgetItem;
 			newItem->setText(string);
 			box->addItem(newItem);
@@ -70,7 +69,7 @@ sd::sd():QDialog()
 	top_layout->addLayout(button_layout);
 	QPushButton *ok = new QPushButton(tr("Ok"), this);
 
-	ok->setDefault(TRUE);
+	ok->setDefault(true);
 
 	ok->setMaximumWidth(70);
 
@@ -89,8 +88,6 @@ sd::sd():QDialog()
 
 sd::~sd()
 {
-	fprintf(stderr, "%s:sd::~sd()\n", K_PACKAGE);
-
 	while (server_list.size()) {
 		delete((server_list.back()));
 		server_list.pop_back();

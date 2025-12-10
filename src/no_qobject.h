@@ -21,10 +21,12 @@
 #ifndef _NO_QOBJECT_H
 #define _NO_QOBJECT_H
 
+#include <QString>
+
 class no_qobject {
       public:
 	virtual ~ no_qobject() {};
 	virtual void update_id(unsigned long) = 0;
-	virtual void set_status_text(const char *) = 0;
+	virtual void set_status_text(const QString &) = 0;
 };
 #endif

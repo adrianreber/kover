@@ -1,7 +1,7 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
  * Copyright (C) 1999, 2000 by Denis Oliver Kropp
- * Copyright (C) 2000, 2008 by Adrian Reber
+ * Copyright (C) 2000, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,13 +54,13 @@ class CDView : public QFrame {
 	 */
 	void showPreview(bool preview = true);
 
- public slots:
+ public Q_SLOTS:
 /**
  * Tells CDView that the data within KoverFile changed.
  */
 	void dataChanged(bool image);
 
- signals:
+ Q_SIGNALS:
 /**
  * This signal is emitted when the user clicks into the CDView during preview.
  */
@@ -68,8 +68,8 @@ class CDView : public QFrame {
 	void actualSize();
 
  protected:
-	void paintEvent(QPaintEvent *);
-	void mousePressEvent(QMouseEvent *);
+	void paintEvent(QPaintEvent *) override;
+	void mousePressEvent(QMouseEvent *) override;
 	void drawBooklet(QPainter *p, int X, int Y);
 
  private:

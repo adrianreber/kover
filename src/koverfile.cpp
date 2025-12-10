@@ -1,7 +1,7 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
  * Copyright (C) 1999, 2000 by Denis Oliver Kropp
- * Copyright (C) 2000, 2008 by Adrian Reber
+ * Copyright (C) 2000, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +20,16 @@
 
 using namespace std;
 
-#include "koverfile.moc"
+#include "koverfile.h"
 
 #include <kover.h>
 #include <iostream>
-#include <qdom.h>
-#include <qfile.h>
-#include <qregexp.h>
-#include <qfileinfo.h>
-#include <kurl.h>
-#include <ktemporaryfile.h>
-#include <kio/netaccess.h>
-#include <kconfiggroup.h>
+#include <QDomDocument>
+#include <QFile>
+#include <QRegularExpression>
+#include <QFileInfo>
+#include <QUrl>
+#include <QTemporaryFile>
 
 KoverFile::KoverFile()
 {
@@ -45,36 +43,36 @@ KoverFile::~KoverFile()
 void
 KoverFile::reset()
 {
-	cd_title = "";
+	cd_title = QString();
 	cd_title_font = QFont(*globals.title_font);
-	cd_contents = "";
+	cd_contents = QString();
 	cd_contents_font = QFont(*globals.content_font);
 	cd_inlet_title_font = QFont(*globals.inlet_title_font);
 	cd_title_color = Qt::black;
 	cd_contents_color = Qt::black;
 	cd_back_color = Qt::white;
 	cd_number = 0;
-	cd_cddb_id = "";
-	cd_image_file[0] = "";
+	cd_cddb_id = QString();
+	cd_image_file[0] = QString();
 	cd_image_mode[0] = IMG_CENTER;
 	cd_image_target[0] = IMG_FRONT_LEFT;
-	cd_image_file[1] = "";
+	cd_image_file[1] = QString();
 	cd_image_mode[1] = IMG_CENTER;
 	cd_image_target[1] = IMG_FRONT_LEFT;
-	cd_image_file[2] = "";
+	cd_image_file[2] = QString();
 	cd_image_mode[2] = IMG_CENTER;
 	cd_image_target[2] = IMG_FRONT_LEFT;
 	cd_display_title = false;
 	cd_spine_text = false;
-	cd_the_spine_text = "";
+	cd_the_spine_text = QString();
 
-	emit dataChanged();
+	Q_EMIT dataChanged();
 }
 
 bool
 KoverFile::empty()
 {
-	if (cd_title == "" && cd_contents == "" && cd_the_spine_text == "")
+	if (cd_title.isEmpty() && cd_contents.isEmpty() && cd_the_spine_text.isEmpty())
 		return true;
 	else
 		return false;
@@ -85,8 +83,8 @@ KoverFile::setTitle(const QString & _title)
 {
 	if (cd_title != _title) {
 		cd_title = _title;
-		cd_title.replace(QRegExp("\r"), "\n");
-		emit dataChanged();
+		cd_title.replace(QRegularExpression(QStringLiteral("\r")), QStringLiteral("\n"));
+		Q_EMIT dataChanged();
 	}
 }
 
@@ -95,8 +93,8 @@ KoverFile::setContents(const QString & _contents)
 {
 	if (cd_contents != _contents) {
 		cd_contents = _contents;
-		cd_contents.replace(QRegExp("\r"), "\n");
-		emit dataChanged();
+		cd_contents.replace(QRegularExpression(QStringLiteral("\r")), QStringLiteral("\n"));
+		Q_EMIT dataChanged();
 	}
 }
 
@@ -105,7 +103,7 @@ KoverFile::setTitleFont(const QFont & _title_font)
 {
 	if (cd_title_font != _title_font) {
 		cd_title_font = _title_font;
-		emit dataChanged();
+		Q_EMIT dataChanged();
 	}
 }
 
@@ -114,7 +112,7 @@ KoverFile::setTitleColor(const QColor & _title_color)
 {
 	if (cd_title_color != _title_color) {
 		cd_title_color = _title_color;
-		emit dataChanged();
+		Q_EMIT dataChanged();
 	}
 }
 
@@ -123,7 +121,7 @@ KoverFile::setContentsFont(const QFont & _contents_font)
 {
 	if (cd_contents_font != _contents_font) {
 		cd_contents_font = _contents_font;
-		emit dataChanged();
+		Q_EMIT dataChanged();
 	}
 }
 
@@ -132,7 +130,7 @@ KoverFile::set_inlet_title_font(const QFont & _inlet_title_font)
 {
 	if (cd_inlet_title_font != _inlet_title_font) {
 		cd_inlet_title_font = _inlet_title_font;
-		emit dataChanged();
+		Q_EMIT dataChanged();
 	}
 }
 
@@ -141,7 +139,7 @@ KoverFile::setContentsColor(const QColor & _contents_color)
 {
 	if (cd_contents_color != _contents_color) {
 		cd_contents_color = _contents_color;
-		emit dataChanged();
+		Q_EMIT dataChanged();
 	}
 }
 
@@ -150,7 +148,7 @@ KoverFile::setBackColor(const QColor & _back_color)
 {
 	if (cd_back_color != _back_color) {
 		cd_back_color = _back_color;
-		emit dataChanged();
+		Q_EMIT dataChanged();
 	}
 }
 
@@ -159,7 +157,7 @@ KoverFile::setNumber(const int _number)
 {
 	if (cd_number != _number) {
 		cd_number = _number;
-		emit dataChanged();
+		Q_EMIT dataChanged();
 	}
 }
 
@@ -168,7 +166,7 @@ KoverFile::setImageFile(const int _nr, const QString & _image_file)
 {
 	if (cd_image_file[_nr] != _image_file) {
 		cd_image_file[_nr] = _image_file;
-		emit dataChanged(true);
+		Q_EMIT dataChanged(true);
 	}
 }
 
@@ -177,7 +175,7 @@ KoverFile::setImageMode(const int _nr, const int _image_mode)
 {
 	if (cd_image_mode[_nr] != _image_mode) {
 		cd_image_mode[_nr] = _image_mode;
-		emit dataChanged(true);
+		Q_EMIT dataChanged(true);
 	}
 }
 
@@ -186,7 +184,7 @@ KoverFile::setImageTarget(const int _nr, const int _image_target)
 {
 	if (cd_image_target[_nr] != _image_target) {
 		cd_image_target[_nr] = _image_target;
-		emit dataChanged(true);
+		Q_EMIT dataChanged(true);
 	}
 }
 
@@ -194,7 +192,7 @@ void
 KoverFile::set_display_title(bool title)
 {
 	cd_display_title = title;
-	emit dataChanged();
+	Q_EMIT dataChanged();
 }
 
 bool
@@ -281,7 +279,7 @@ void
 KoverFile::set_spine_text(bool bla)
 {
 	cd_spine_text = bla;
-	emit dataChanged();
+	Q_EMIT dataChanged();
 }
 
 bool
@@ -301,7 +299,7 @@ KoverFile::set_the_spine_text(const QString & text)
 {
 	if (cd_the_spine_text != text) {
 		cd_the_spine_text = text;
-		emit dataChanged();
+		Q_EMIT dataChanged();
 	}
 }
 
@@ -316,7 +314,7 @@ KoverFile::set_cddb_id(const QString & text)
 {
 	if (cd_cddb_id != text) {
 		cd_cddb_id = text;
-		emit dataChanged();
+		Q_EMIT dataChanged();
 	}
 }
 
@@ -360,16 +358,16 @@ KoverFile::openECD(QString & filename)
 	ecd_file.seek(8);
 
 	/* Title */
-	cd_title = "";
+	cd_title = QString();
 	length = (long)ecd_file.read(1).constData();
 	ecd_file.seek(1);
 	for (i = 0; i < length; i++) {
 		c = (long)ecd_file.read(1).constData();
 		ecd_file.seek(1);
 		if ((c != 10) && (c != 13))
-			cd_title += c;
+			cd_title += QChar(static_cast<ushort>(c));
 		else
-			cd_title += 32;
+			cd_title += QChar(32);
 	}
 
 	/* Background image */
@@ -402,7 +400,7 @@ KoverFile::openECD(QString & filename)
 	ecd_file.seek(ecd_file.pos() + 22);
 
 	/* Contents */
-	cd_contents = "";
+	cd_contents = QString();
 	length = (long)ecd_file.read(1).constData();
 	ecd_file.seek(1);
 	if (length == 0xff) {
@@ -416,24 +414,26 @@ KoverFile::openECD(QString & filename)
 		c = (long)ecd_file.read(1).constData();
 		ecd_file.seek(1);
 		if (c != 13)
-			cd_contents += c;
+			cd_contents += QChar(static_cast<ushort>(c));
 	}
 
 	ecd_file.close();
 
-	emit dataChanged();
+	Q_EMIT dataChanged();
 
 	return true;
 }
 
 bool
-KoverFile::openFile(const KUrl & url)
+KoverFile::openFile(const QUrl & url)
 {
 	QString filename;
-	QString tempFile;
 	bool retval = false;
 
-	filename = url.path();
+	if (url.isLocalFile())
+		filename = url.toLocalFile();
+	else
+		filename = url.path();
 
 	QFileInfo fi(filename);
 
@@ -444,12 +444,12 @@ KoverFile::openFile(const KUrl & url)
 	if (checkForECD(filename)) {
 		kprintf("even older format; opening ECD file\n");
 		retval = openECD(filename);
-		emit dataChanged(true);
+		Q_EMIT dataChanged(true);
 
 		return retval;
 	}
 	/* check for xml */
-	QDomDocument doc("kover");
+	QDomDocument doc(QStringLiteral("kover"));
 	QFile f(filename);
 
 	if (!f.open(QIODevice::ReadOnly)) {
@@ -482,7 +482,7 @@ KoverFile::openFile(const KUrl & url)
 					answer = false;
 				store->close();
 				delete store;
-				emit dataChanged(true);
+				Q_EMIT dataChanged(true);
 				return answer;
 			}
 		}
@@ -493,32 +493,22 @@ KoverFile::openFile(const KUrl & url)
 		f.close();
 		kprintf("must be one of the new XML files\n");
 		retval = open_XML(filename);
-		emit dataChanged(true);
+		Q_EMIT dataChanged(true);
 
 		return retval;
 	} else {
 		f.close();
 		return false;
 	}
-
-	emit dataChanged(true);
-
-	if (!url.isLocalFile())
-		KIO::NetAccess::removeTempFile(tempFile);
-
-	return true;
 }
 
 bool
-KoverFile::saveFile(const KUrl & url)
+KoverFile::saveFile(const QUrl & url)
 {
 	QString filename;
-	KTemporaryFile tempFile;
 
-	tempFile.setAutoRemove(true);
-
-	if (!url.isLocalFile())
-		filename = tempFile.fileName();
+	if (url.isLocalFile())
+		filename = url.toLocalFile();
 	else
 		filename = url.path();
 
@@ -529,7 +519,7 @@ KoverFile::saveFile(const KUrl & url)
 	if (fi.isDir())
 		return false;
 
-	if (fi.absolutePath() == "")
+	if (fi.absolutePath().isEmpty())
 		return false;
 	fi.setFile(fi.absoluteFilePath());
 	if (fi.exists() && !fi.isWritable())
@@ -549,94 +539,94 @@ KoverFile::save_as_XML(const QString & filename)
 	QDomText the_text;
 	QStringList list;
 
-	QDomDocument doc("kover");
+	QDomDocument doc(QStringLiteral("kover"));
 
 	QDomElement root = doc.documentElement();
 
-	QDomElement kover = doc.createElement("kover");
+	QDomElement kover = doc.createElement(QStringLiteral("kover"));
 
-	kover.setAttribute("name", K_PACKAGE);
-	kover.setAttribute("version", K_VERSION);
+	kover.setAttribute(QStringLiteral("name"), QString::fromUtf8(K_PACKAGE));
+	kover.setAttribute(QStringLiteral("version"), QString::fromUtf8(K_VERSION));
 	doc.appendChild(kover);
 
 	/* comment */
-	QDomComment comment = doc.createComment("This file was created by "
-						K_PACKAGE " " K_VERSION);
+	QDomComment comment = doc.createComment(QString::fromUtf8("This file was created by "
+						K_PACKAGE " " K_VERSION));
 	kover.appendChild(comment);
 
 	/* title */
-	QDomElement title = doc.createElement("title");
+	QDomElement title = doc.createElement(QStringLiteral("title"));
 
-	title.setAttribute("color", cd_title_color.name());
-	title.setAttribute("font", cd_title_font.family());
-	title.setAttribute("size", cd_title_font.pointSize());
-	title.setAttribute("weight", cd_title_font.weight());
-	title.setAttribute("italic", cd_title_font.italic());
-	title.setAttribute("display", cd_display_title);
-	title.setAttribute("font_settings", cd_title_font.toString());
+	title.setAttribute(QStringLiteral("color"), cd_title_color.name());
+	title.setAttribute(QStringLiteral("font"), cd_title_font.family());
+	title.setAttribute(QStringLiteral("size"), cd_title_font.pointSize());
+	title.setAttribute(QStringLiteral("weight"), cd_title_font.weight());
+	title.setAttribute(QStringLiteral("italic"), cd_title_font.italic());
+	title.setAttribute(QStringLiteral("display"), cd_display_title);
+	title.setAttribute(QStringLiteral("font_settings"), cd_title_font.toString());
 	kover.appendChild(title);
 
 	/* replace carriage return with newline */
-	cd_title.replace(QRegExp("\r"), "\n");
-	cd_contents.replace(QRegExp("\r"), "\n");
+	cd_title.replace(QRegularExpression(QStringLiteral("\r")), QStringLiteral("\n"));
+	cd_contents.replace(QRegularExpression(QStringLiteral("\r")), QStringLiteral("\n"));
 
 	/* title text */
-	list = cd_title.split("\n");
+	list = cd_title.split(QStringLiteral("\n"));
 
 	for (QStringList::Iterator it = list.begin(); it != list.end(); ++it) {
-		text = doc.createElement("text");
+		text = doc.createElement(QStringLiteral("text"));
 		title.appendChild(text);
-		the_text = doc.createCDATASection((*it).toUtf8());
+		the_text = doc.createCDATASection(*it);
 		text.appendChild(the_text);
 	}
 
 	for (int i = 0; i < 3; i++) {
-		img = doc.createElement("img");
-		img.setAttribute("src", cd_image_file[i]);
-		img.setAttribute("mode", cd_image_mode[i]);
-		img.setAttribute("target", cd_image_target[i]);
+		img = doc.createElement(QStringLiteral("img"));
+		img.setAttribute(QStringLiteral("src"), cd_image_file[i]);
+		img.setAttribute(QStringLiteral("mode"), cd_image_mode[i]);
+		img.setAttribute(QStringLiteral("target"), cd_image_target[i]);
 		kover.appendChild(img);
 	}
 
 	/* general */
-	QDomElement general = doc.createElement("general");
+	QDomElement general = doc.createElement(QStringLiteral("general"));
 
-	general.setAttribute("bgcolor", cd_back_color.name());
-	general.setAttribute("number", cd_number);
-	general.setAttribute("cddb_id", cd_cddb_id);
+	general.setAttribute(QStringLiteral("bgcolor"), cd_back_color.name());
+	general.setAttribute(QStringLiteral("number"), cd_number);
+	general.setAttribute(QStringLiteral("cddb_id"), cd_cddb_id);
 	kover.appendChild(general);
 
 	/* inlet */
-	QDomElement inlet = doc.createElement("inlet");
+	QDomElement inlet = doc.createElement(QStringLiteral("inlet"));
 
-	inlet.setAttribute("font", cd_inlet_title_font.family());
-	inlet.setAttribute("size", cd_inlet_title_font.pointSize());
-	inlet.setAttribute("weight", cd_inlet_title_font.weight());
-	inlet.setAttribute("italic", cd_inlet_title_font.italic());
-	inlet.setAttribute("spine_text", cd_spine_text);
-	inlet.setAttribute("font_settings", cd_inlet_title_font.toString());
-	the_text = doc.createCDATASection(cd_the_spine_text.toUtf8());
+	inlet.setAttribute(QStringLiteral("font"), cd_inlet_title_font.family());
+	inlet.setAttribute(QStringLiteral("size"), cd_inlet_title_font.pointSize());
+	inlet.setAttribute(QStringLiteral("weight"), cd_inlet_title_font.weight());
+	inlet.setAttribute(QStringLiteral("italic"), cd_inlet_title_font.italic());
+	inlet.setAttribute(QStringLiteral("spine_text"), cd_spine_text);
+	inlet.setAttribute(QStringLiteral("font_settings"), cd_inlet_title_font.toString());
+	the_text = doc.createCDATASection(cd_the_spine_text);
 	inlet.appendChild(the_text);
 	kover.appendChild(inlet);
 
 	/* content */
-	QDomElement content = doc.createElement("content");
+	QDomElement content = doc.createElement(QStringLiteral("content"));
 
-	content.setAttribute("color", cd_contents_color.name());
-	content.setAttribute("font", cd_contents_font.family());
-	content.setAttribute("size", cd_contents_font.pointSize());
-	content.setAttribute("weight", cd_contents_font.weight());
-	content.setAttribute("italic", cd_contents_font.italic());
-	content.setAttribute("font_settings", cd_contents_font.toString());
+	content.setAttribute(QStringLiteral("color"), cd_contents_color.name());
+	content.setAttribute(QStringLiteral("font"), cd_contents_font.family());
+	content.setAttribute(QStringLiteral("size"), cd_contents_font.pointSize());
+	content.setAttribute(QStringLiteral("weight"), cd_contents_font.weight());
+	content.setAttribute(QStringLiteral("italic"), cd_contents_font.italic());
+	content.setAttribute(QStringLiteral("font_settings"), cd_contents_font.toString());
 	kover.appendChild(content);
 
 	/* content text */
-	list = cd_contents.split("\n");
+	list = cd_contents.split(QStringLiteral("\n"));
 
 	for (QStringList::Iterator it = list.begin(); it != list.end(); ++it) {
-		text = doc.createElement("text");
+		text = doc.createElement(QStringLiteral("text"));
 		content.appendChild(text);
-		the_text = doc.createCDATASection((*it).toUtf8());
+		the_text = doc.createCDATASection(*it);
 		text.appendChild(the_text);
 	}
 
@@ -650,7 +640,7 @@ KoverFile::save_as_XML(const QString & filename)
 	f.write("\n", 1);          /* newline */
 	f.close();
 
-	kprintf("%s\n", (const char *)(doc.toString()).toUtf8());
+	kprintf("%s\n", (doc.toString()).toUtf8().constData());
 
 	return true;
 }
@@ -681,19 +671,19 @@ KoverFile::open_XML(QDomDocument doc)
 
 	/* cerr << docElem.tagName() << endl; */
 
-	if (docElem.tagName() == "k3b_audio_project") {
+	if (docElem.tagName() == QStringLiteral("k3b_audio_project")) {
 		open_k3b_audio_project(doc);
 		return true;
 	}
 
-	if (docElem.tagName() == "k3b_data_project") {
+	if (docElem.tagName() == QStringLiteral("k3b_data_project")) {
 		open_k3b_data_project(doc);
 		return true;
 	}
 
 	QDomNamedNodeMap nmm = docElem.attributes();
 
-	for (uint length = 0; length < nmm.length(); length++) {
+	for (int length = 0; length < nmm.length(); length++) {
 		/* cerr << (nmm.item(length)).nodeName() << "..." << (nmm.  item(length)).nodeValue() << endl; */
 	}
 
@@ -707,84 +697,64 @@ KoverFile::open_XML(QDomDocument doc)
 			/* cerr << e.tagName() << endl; */
 			QDomNamedNodeMap nm = e.attributes();
 
-			if (e.tagName() == "title") {
-				cd_title_font = QFont((nm.namedItem(
-							       "font")).nodeValue(),
-						      (nm.namedItem(
-							       "size")).nodeValue(
-							      ).toInt(),
-						      (nm.namedItem(
-							       "weight")).
-						      nodeValue().toInt(),
-						      (nm.namedItem(
-							       "italic")).
-						      nodeValue().toInt());
-				cd_title_color = QColor((nm.namedItem(
-								 "color")).
-							nodeValue());
+			if (e.tagName() == QStringLiteral("title")) {
+				cd_title_font = QFont(nm.namedItem(QStringLiteral("font")).nodeValue(),
+						      nm.namedItem(QStringLiteral("size")).nodeValue().toInt(),
+					      nm.namedItem(QStringLiteral("weight")).nodeValue().toInt(),
+					      nm.namedItem(QStringLiteral("italic")).nodeValue().toInt());
+			cd_title_color = QColor(nm.namedItem(QStringLiteral("color")).nodeValue());
 				cd_display_title =
-					nm.namedItem("display").nodeValue().toInt();
+					nm.namedItem(QStringLiteral("display")).nodeValue().toInt();
 				kprintf("font:%s\n",
-					cd_title_font.rawName().toUtf8().
+					cd_title_font.family().toUtf8().
 					constData());
 			}
 
-			if (e.tagName() == "content") {
+			if (e.tagName() == QStringLiteral("content")) {
 				cd_contents_font =
-					QFont((nm.namedItem("font")).nodeValue(),
-					      (nm.namedItem(
-						       "size")).nodeValue().toInt(),
-					      (nm.namedItem(
-						       "weight")).nodeValue().
+					QFont(nm.namedItem(QStringLiteral("font")).nodeValue(),
+					      nm.namedItem(QStringLiteral("size")).nodeValue().toInt(),
+					      nm.namedItem(QStringLiteral("weight")).nodeValue().
 					      toInt(),
-					      (nm.namedItem(
-						       "italic")).nodeValue().
+					      nm.namedItem(QStringLiteral("italic")).nodeValue().
 					      toInt());
 				cd_contents_color =
-					QColor((nm.namedItem("color")).nodeValue());
+					QColor(nm.namedItem(QStringLiteral("color")).nodeValue());
 				kprintf("font:%s\n",
-					cd_contents_font.rawName().toUtf8().
+					cd_contents_font.family().toUtf8().
 					constData());
 			}
 
-			if (e.tagName() == "inlet") {
+			if (e.tagName() == QStringLiteral("inlet")) {
 				cd_inlet_title_font =
-					QFont((nm.namedItem("font")).nodeValue(),
-					      (nm.namedItem(
-						       "size")).nodeValue().toInt(),
-					      (nm.namedItem(
-						       "weight")).nodeValue().
+					QFont(nm.namedItem(QStringLiteral("font")).nodeValue(),
+					      nm.namedItem(QStringLiteral("size")).nodeValue().toInt(),
+					      nm.namedItem(QStringLiteral("weight")).nodeValue().
 					      toInt(),
-					      (nm.namedItem(
-						       "italic")).nodeValue().
+					      nm.namedItem(QStringLiteral("italic")).nodeValue().
 					      toInt());
 				cd_spine_text =
-					nm.namedItem("spine_text").nodeValue().
-				toInt();
+				nm.namedItem(QStringLiteral("spine_text")).nodeValue().toInt();
 				cd_the_spine_text = e.text();
 				kprintf("font:%s\n",
-					cd_inlet_title_font.rawName().toUtf8().
+					cd_inlet_title_font.family().toUtf8().
 					constData());
 			}
 
-			if (e.tagName() == "general") {
+			if (e.tagName() == QStringLiteral("general")) {
 				cd_number =
-					(nm.namedItem("number")).nodeValue().
-				toInt();
-				cd_back_color = QColor((nm.namedItem(
-								"bgcolor")).
-						       nodeValue());
-				cd_cddb_id = (nm.namedItem("cddb_id")).nodeValue();
+				nm.namedItem(QStringLiteral("number")).nodeValue().toInt();
+			cd_back_color = QColor(nm.namedItem(QStringLiteral("bgcolor")).nodeValue());
+				cd_cddb_id = nm.namedItem(QStringLiteral("cddb_id")).nodeValue();
 			}
 
-			if (e.tagName() == "img") {
+			if (e.tagName() == QStringLiteral("img")) {
 				cd_image_file[image] =
-					(nm.namedItem("src")).nodeValue();
+					nm.namedItem(QStringLiteral("src")).nodeValue();
 				cd_image_mode[image] =
-					(nm.namedItem("mode")).nodeValue().toInt();
+					nm.namedItem(QStringLiteral("mode")).nodeValue().toInt();
 				cd_image_target[image++] =
-					(nm.namedItem("target")).nodeValue().
-				toInt();
+				nm.namedItem(QStringLiteral("target")).nodeValue().toInt();
 			}
 
 		}
@@ -796,13 +766,13 @@ KoverFile::open_XML(QDomDocument doc)
 			if (!ee.isNull()) { /* the node was really an element. */
 				/* cout << ee.tagName() << "...." << ee.text() << endl; */
 
-				if (e.tagName() == "title" && ee.tagName() ==
-				    "text") {
-					cd_title += ee.text() + "\n";
+				if (e.tagName() == QStringLiteral("title") && ee.tagName() ==
+				    QStringLiteral("text")) {
+					cd_title += ee.text() + QStringLiteral("\n");
 				}
-				if (e.tagName() == "content" && ee.tagName() ==
-				    "text") {
-					cd_contents += ee.text() + "\n";
+				if (e.tagName() == QStringLiteral("content") && ee.tagName() ==
+				    QStringLiteral("text")) {
+					cd_contents += ee.text() + QStringLiteral("\n");
 				}
 
 			}
@@ -828,23 +798,23 @@ KoverFile::open_k3b_audio_project(QDomDocument doc)
 
 	QDomNode n = docElem.firstChild();
 
-	title = "";
-	artist = "";
+	title = QString();
+	artist = QString();
 
 	while (!n.isNull()) {
 		QDomElement e = n.toElement();
 
-		if (e.tagName() == "cd-text") {
+		if (e.tagName() == QStringLiteral("cd-text")) {
 			QDomNode m = n.firstChild();
 
 			while (!m.isNull()) {
 				QDomElement ee = m.toElement();
 
-				if (ee.tagName() == "title")
+				if (ee.tagName() == QStringLiteral("title"))
 					title = ee.text();
-				if (ee.tagName() == "artist")
+				if (ee.tagName() == QStringLiteral("artist"))
 					artist = ee.text();
-				if (ee.tagName() == "disc_id")
+				if (ee.tagName() == QStringLiteral("disc_id"))
 					cd_cddb_id = ee.text();
 
 				m = m.nextSibling();
@@ -855,38 +825,38 @@ KoverFile::open_k3b_audio_project(QDomDocument doc)
 			else if (artist.isEmpty())
 				cd_title = title;
 			else
-				cd_title = title + "\n" + artist;
+				cd_title = title + QStringLiteral("\n") + artist;
 		}
 
-		title = "";
-		artist = "";
+		title = QString();
+		artist = QString();
 
-		if (e.tagName() == "contents") {
+		if (e.tagName() == QStringLiteral("contents")) {
 			QDomNode m = n.firstChild();
 
 			while (!m.isNull()) {
 				QDomElement ee = m.toElement();
 
-				if (ee.tagName() == "track") {
+				if (ee.tagName() == QStringLiteral("track")) {
 					QDomNode mm = m.firstChild();
 
 					while (!mm.isNull()) {
 						QDomNode mmm = mm.firstChild();
 						QDomElement eee = mm.toElement();
 
-						if (eee.tagName() == "cd-text") {
+						if (eee.tagName() == QStringLiteral("cd-text")) {
 							while (!mmm.isNull()) {
 								QDomElement eeee
 								= mmm.toElement();
 
 								if (eeee.tagName()
-								    == "title")
+								    == QStringLiteral("title"))
 									title =
 										eeee
 										.
 										text();
 								if (eeee.tagName()
-								    == "artist")
+								    == QStringLiteral("artist"))
 									artist =
 										eeee
 										.
@@ -899,19 +869,19 @@ KoverFile::open_k3b_audio_project(QDomDocument doc)
 							if (title.isEmpty())
 								cd_contents +=
 									artist +
-									"\n";
+									QStringLiteral("\n");
 							else if (artist.isEmpty())
 								cd_contents +=
 									title +
-									"\n";
+									QStringLiteral("\n");
 							else if (!title.isEmpty()
 								 && !artist.
 								 isEmpty())
 								cd_contents +=
 									title +
-									" - " +
+									QStringLiteral(" - ") +
 									artist +
-									"\n";
+									QStringLiteral("\n");
 						}
 						mm = mm.nextSibling();
 					}
@@ -934,32 +904,32 @@ KoverFile::open_k3b_data_project(QDomDocument doc)
 	while (!n.isNull()) {
 		QDomElement e = n.toElement();
 
-		if (e.tagName() == "header") {
+		if (e.tagName() == QStringLiteral("header")) {
 			QDomNode m = n.firstChild();
 
 			while (!m.isNull()) {
 				QDomElement ee = m.toElement();
 
-				if (ee.tagName() == "volume_id")
+				if (ee.tagName() == QStringLiteral("volume_id"))
 					cd_title = ee.text();
 				m = m.nextSibling();
 			}
 		}
-		if (e.tagName() == "files") {
+		if (e.tagName() == QStringLiteral("files")) {
 			QDomNode m = n.firstChild();
 
 			while (!m.isNull()) {
 				QDomElement ee = m.toElement();
 				QDomNamedNodeMap nm = ee.attributes();
 
-				if (ee.tagName() == "directory")
+				if (ee.tagName() == QStringLiteral("directory"))
 					cd_contents +=
-						(nm.namedItem("name")).nodeValue()
-					+ "\n";
-				if (ee.tagName() == "file")
+						(nm.namedItem(QStringLiteral("name"))).nodeValue()
+					+ QStringLiteral("\n");
+				if (ee.tagName() == QStringLiteral("file"))
 					cd_contents +=
-						(nm.namedItem("name")).nodeValue()
-					+ "\n";
+						(nm.namedItem(QStringLiteral("name"))).nodeValue()
+					+ QStringLiteral("\n");
 
 				m = m.nextSibling();
 			}
@@ -968,3 +938,4 @@ KoverFile::open_k3b_data_project(QDomDocument doc)
 	}
 	cd_contents.truncate(cd_contents.length() - 1);
 }
+#include "moc_koverfile.cpp"

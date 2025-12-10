@@ -1,7 +1,7 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
  * Copyright (C) 1999, 2000 by Denis Oliver Kropp
- * Copyright (C) 2000, 2008 by Adrian Reber
+ * Copyright (C) 2000, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +28,18 @@
 #include "no_qobject.h"
 #include "pd.h"
 
+#include <QObject>
 #include <QTextEdit>
 #include <QGroupBox>
 #include <QBoxLayout>
 #include <QSpinBox>
+#include <QUrl>
+#include <QStatusBar>
+#include <QCheckBox>
+#include <QLineEdit>
+#include <QFrame>
+#include <QPushButton>
+#include <QLabel>
 
 #include <KRecentFilesAction>
 #include <KXmlGuiWindow>
@@ -44,23 +52,23 @@ class KoverTop : public KXmlGuiWindow, no_qobject {
 	KoverTop();
 	~KoverTop();
 
- public slots:
+ public Q_SLOTS:
 	void contentsBoxChanged();
 	void titleBoxChanged();
 	void stopPreview();
 	void numberChecked(bool checked);
 	void numberChanged(int number);
 	void dataChanged(bool image);
-	void set_status_text(const char *);
-	void setStatusText(const char *_status_text);
+	void set_status_text(const QString &) override;
+	void setStatusText(const QString &_status_text);
 	void actualSize();
-	void update_id(unsigned long = 0);
-	void fileOpen(const KUrl &);
+	void update_id(unsigned long = 0) override;
+	void fileOpen(const QUrl &);
 
  private:
-	void saveFile(const KUrl &);
+	void saveFile(const QUrl &);
 
- private slots:
+ private Q_SLOTS:
 	void fileNew();
 	void fileOpen();
 	void fileSave();
@@ -91,7 +99,7 @@ class KoverTop : public KXmlGuiWindow, no_qobject {
 
  private:
 
-	bool queryClose();
+	bool queryClose() override;
 	int how_about_saving();
 
 	void make_menu();
@@ -118,7 +126,7 @@ class KoverTop : public KXmlGuiWindow, no_qobject {
 	KoverFile kover_file;
 	cddb_fill *cddbfill;
 
-	KUrl m_url;
+	QUrl m_url;
 	bool altered_data;
 
 	QLabel *title_label;
@@ -130,9 +138,7 @@ class KoverTop : public KXmlGuiWindow, no_qobject {
 	QCheckBox *number_check;
 	QSpinBox *number_spin;
 
-	KToolBar *main_toolbar;
-	KToolBar *cd_toolbar;
-	KStatusBar *status_bar;
+	QStatusBar *status_bar;
 
 	QLabel *cddb_id;
 	CDView *cdview;

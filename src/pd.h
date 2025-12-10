@@ -1,6 +1,6 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 2000, 2008 by Adrian Reber
+ * Copyright (C) 2000, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,21 +22,23 @@
 #ifndef PD_H
 #define PD_H
 
-#include <kconfigdialog.h>
+#include <QObject>
+#include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QRadioButton>
 #include <QPushButton>
+#include <QTabWidget>
 
 using namespace std;
 
-class pd:public KConfigDialog
+class pd:public QDialog
 {
       Q_OBJECT public:
 
-	pd(QWidget *p, KConfigSkeleton *cs, bool changed = false);
+	pd(QWidget *p, bool changed = false);
 	~pd();
 
       private:
@@ -107,8 +109,9 @@ class pd:public KConfigDialog
 	} font_widgets;
 
 	bool changed;
+	QTabWidget *tabWidget;
 
-      private slots:
+      private Q_SLOTS:
 
 	void use_proxy(bool status);
 	void use_proxy_env(bool status);
@@ -121,10 +124,7 @@ class pd:public KConfigDialog
 	void content_font_dialog();
 	void title_font_dialog();
 	void inlet_title_font_dialog();
-
-      protected Q_SLOTS:
-
-	virtual void slotButtonClicked(int button);
+	void accept() override;
 };
 
 #endif /* PD_H */

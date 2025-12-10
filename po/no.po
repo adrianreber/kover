@@ -8,16 +8,17 @@ msgstr ""
 "Project-Id-Version: 1\n"
 "POT-Creation-Date: 2001-10-06 18:14+0200\n"
 "PO-Revision-Date: 2001-10-16 17:49GMT+1\n"
-"Last-Translator: H�vard Dahle <havardda-i18n@orakel.ntnu.no>\n"
+"Last-Translator: Hï¿½vard Dahle <havardda-i18n@orakel.ntnu.no>\n"
 "Language-Team: Norwegian\n"
+"Language: no\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 0.9.5\n"
 
 #: imagedlgdata.cpp:16
 msgid "First Image"
-msgstr "F�rste bilde"
+msgstr "Fï¿½rste bilde"
 
 #: imagedlgdata.cpp:31 imagedlgdata.cpp:72 imagedlgdata.cpp:109
 msgid "Front, left side"
@@ -25,7 +26,7 @@ msgstr "Forside, venstre"
 
 #: imagedlgdata.cpp:32 imagedlgdata.cpp:73 imagedlgdata.cpp:110
 msgid "Front, right side"
-msgstr "Forside, h�yre"
+msgstr "Forside, hï¿½yre"
 
 #: imagedlgdata.cpp:33 imagedlgdata.cpp:74 imagedlgdata.cpp:111
 msgid "Front, both sides"
@@ -53,7 +54,7 @@ msgstr "Strukket"
 
 #: imagedlgdata.cpp:45 imagedlgdata.cpp:68 imagedlgdata.cpp:105
 msgid "Target"
-msgstr "M�l"
+msgstr "Mï¿½l"
 
 #: imagedlgdata.cpp:53
 msgid "Second Image"
@@ -69,11 +70,11 @@ msgstr "Sett inn bilde"
 
 #: cddb_fill.cpp:150
 msgid "Internal error: Filedescriptor is not -1, already opened?"
-msgstr "Intern feil: Fildeskriptoren er ikke -1; er filen allerede �pnet?"
+msgstr "Intern feil: Fildeskriptoren er ikke -1; er filen allerede ï¿½pnet?"
 
 #: cddb_fill.cpp:160
 msgid "You dont have permission to read from "
-msgstr "Du har ikke tilgang til � lese fra "
+msgstr "Du har ikke tilgang til ï¿½ lese fra "
 
 #: cddb_fill.cpp:164
 msgid "Theres no medium in "
@@ -85,13 +86,13 @@ msgstr " er opptatt!"
 
 #: cddb_fill.cpp:172
 msgid "Unknown error while opening "
-msgstr "Ukjent feil ved �pning av "
+msgstr "Ukjent feil ved ï¿½pning av "
 
 #: cddb_fill.cpp:185
 msgid "Oops. No information about disc. Will keep trying..."
 msgstr ""
-"Oops. Fant ingen informasjon om cd-en. Fortsetter � "
-"pr�ve..."
+"Oops. Fant ingen informasjon om cd-en. Fortsetter ï¿½ "
+"prï¿½ve..."
 
 #: cddb_fill.cpp:188
 msgid "Theres no audio cd in "
@@ -103,7 +104,7 @@ msgstr "! (overser)"
 
 #: cddb_fill.cpp:209
 msgid "Internal error: Filedescriptor is -1, not opened?"
-msgstr "Intern feil: Fildeskriptoren er -1; er filen ikke �pnet?"
+msgstr "Intern feil: Fildeskriptoren er -1; er filen ikke ï¿½pnet?"
 
 #: cddb_fill.cpp:213
 msgid "Reading table of contents..."
@@ -135,7 +136,7 @@ msgstr "Bruker lokale verdier for cd"
 
 #: cddb_fill.cpp:436
 msgid "Querying database..."
-msgstr "Sl�r opp i databasen..."
+msgstr "Slï¿½r opp i databasen..."
 
 #: cddb_fill.cpp:494
 msgid "Initializing authorization"
@@ -147,7 +148,7 @@ msgstr "Handling avbrutt."
 
 #: cddb_fill.cpp:581
 msgid "Found inexact matches, list follows (until terminating marker)"
-msgstr "Fant un�yaktige treff, liste f�lger (fram til avsluttende tegn)"
+msgstr "Fant unï¿½yaktige treff, liste fï¿½lger (fram til avsluttende tegn)"
 
 #: cddb_fill.cpp:640
 msgid "No match found."
@@ -155,7 +156,7 @@ msgstr "Fant ingen treff."
 
 #: cddb_fill.cpp:643 cddb_fill.cpp:750
 msgid "Database entry is corrupt."
-msgstr "Database-oppf�ringen er �delagt."
+msgstr "Database-oppfï¿½ringen er ï¿½delagt."
 
 #: cddb_fill.cpp:646 cddb_fill.cpp:753
 msgid "No handshake."
@@ -167,11 +168,11 @@ msgstr "Laster ned cd-info..."
 
 #: cddb_fill.cpp:741
 msgid "OK, CDDB database entry follows."
-msgstr "OK, database-oppf�ring fra CDDB f�lger."
+msgstr "OK, database-oppfï¿½ring fra CDDB fï¿½lger."
 
 #: cddb_fill.cpp:744
 msgid "Specified CDDB entry not found."
-msgstr "Den forespurte CDDB-oppf�ringen ble ikke funnet."
+msgstr "Den forespurte CDDB-oppfï¿½ringen ble ikke funnet."
 
 #: cddb_fill.cpp:747
 msgid "Server error."
@@ -191,11 +192,11 @@ msgstr "[Nytt dokument]"
 
 #: KoverTop.cpp:68
 msgid "&Actual size"
-msgstr "&Faktisk st�rrelse"
+msgstr "&Faktisk stï¿½rrelse"
 
 #: KoverTop.cpp:69
 msgid "&CDDB lookup"
-msgstr "&CDDB-s�k"
+msgstr "&CDDB-sï¿½k"
 
 #: KoverTop.cpp:71
 msgid "&Image Embedding..."
@@ -239,7 +240,7 @@ msgstr "Fil lastet"
 
 #: KoverTop.cpp:257 KoverTop.cpp:286 KoverTop.cpp:302
 msgid "Error while opening/reading file!"
-msgstr "Feil ved �pning/lesing av fil!"
+msgstr "Feil ved ï¿½pning/lesing av fil!"
 
 #: KoverTop.cpp:263
 msgid ""
@@ -247,7 +248,7 @@ msgid ""
 "Do you want to save the changes?"
 msgstr ""
 "Data har blitt endret.\n"
-"�nsker du � lagre endingene?"
+"ï¿½nsker du ï¿½ lagre endingene?"
 
 #: KoverTop.cpp:283 KoverTop.cpp:299
 msgid "File saved"
@@ -259,11 +260,11 @@ msgstr "Starter CDDB-oppslag"
 
 #: KoverTop.cpp:365
 msgid "config me"
-msgstr "konfigur�r meg"
+msgstr "konfigurï¿½r meg"
 
 #: CDView.cpp:77
 msgid "Click to close"
-msgstr "Klikk for � lukke"
+msgstr "Klikk for ï¿½ lukke"
 
 #: PreferencesDialog.cpp:48
 msgid "CDDB"
@@ -295,7 +296,7 @@ msgstr "Bruk proxy ved CDDB-oppslag"
 
 #: PreferencesDialog.cpp:87
 msgid "Use 'http_proxy' environment variable"
-msgstr "Bruk milj�variabelen 'http_proxy'"
+msgstr "Bruk miljï¿½variabelen 'http_proxy'"
 
 #: PreferencesDialog.cpp:90
 msgid "Proxy server:"
@@ -359,18 +360,18 @@ msgstr "&Ting"
 
 #: PreferencesDialog.cpp:403
 msgid "Mouse click on kover preview triggers actual size."
-msgstr "Museklikk p� kovers forh�ndsvisning endrer til faktisk st�rrelse."
+msgstr "Museklikk pï¿½ kovers forhï¿½ndsvisning endrer til faktisk stï¿½rrelse."
 
 #: PreferencesDialog.cpp:407
 msgid "Display track duration after a CDDB request."
-msgstr "Vis cd-sporets lengde etter en CDDB-foresp�rsel."
+msgstr "Vis cd-sporets lengde etter en CDDB-forespï¿½rsel."
 
 #: PreferencesDialog.cpp:411
 msgid ""
 "Print inlet on left side of booklet.\n"
 "(slim case option)"
 msgstr ""
-"Skriv innlegget p� venstre side av boken.\n"
+"Skriv innlegget pï¿½ venstre side av boken.\n"
 "(for tynne cd-etui)"
 
 #: proxy_auth.cc:49

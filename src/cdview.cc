@@ -1,7 +1,7 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
  * Copyright (C) 1998, 2000 by Denis Oliver Kropp
- * Copyright (C) 2000, 2008 by Adrian Reber
+ * Copyright (C) 2000, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@
  * 29 Oct 2001: Change size of the inlet title font
  */
 
-#include "cdview.moc"
 #include "cdview.h"
 
 #include <QPrintDialog>
 #include <QImage>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QPainter>
+#include <QPageLayout>
 
 #include <kover.h>
 
@@ -53,7 +53,7 @@ CDView::CDView(KoverFile *_kover_file, QWidget *parent)
 	setFrameStyle(WinPanel | Sunken);
 
 	printer = new QPrinter();
-	printer->setOrientation(QPrinter::Landscape);
+	printer->setPageOrientation(QPageLayout::Landscape);
 	/* printer->setMinMax(1, 2); */
 	printer->setFromTo(1, 2);
 }
@@ -68,8 +68,8 @@ CDView::paintEvent(QPaintEvent *)
 	if (previewMode) {
 		drawBooklet(&paint, 4, 4);
 		inlet(&paint, 150, 4 * 2 + FRONT_V);
-		paint.setWorldMatrix(QMatrix());
-		paint.setFont(QFont("helvetica", 14));
+		paint.setTransform(QTransform());
+		paint.setFont(QFont(QStringLiteral("helvetica"), 14));
 		paint.setPen(Qt::black);
 		paint.drawText(20, 400, tr("Click to close"));
 	} else {
@@ -103,16 +103,16 @@ void
 CDView::printKover()
 {
 	if (globals.one_page) {
-		//printer->setOrientation(QPrinter::Portrait);
+		//printer->setPageOrientation(QPageLayout::Portrait);
 		printer->setFromTo(1, 1);
 	} else if (globals.its_a_slim_case) {
-		printer->setOrientation(QPrinter::Landscape);
+		printer->setPageOrientation(QPageLayout::Landscape);
 		printer->setFromTo(1, 1);
 	} else if (globals.inlet_only) {
-		printer->setOrientation(QPrinter::Landscape);
+		printer->setPageOrientation(QPageLayout::Landscape);
 		printer->setFromTo(1, 1);
 	} else {
-		printer->setOrientation(QPrinter::Landscape);
+		printer->setPageOrientation(QPageLayout::Landscape);
 		printer->setFromTo(1, 2);
 	}
 
@@ -441,7 +441,7 @@ CDView::inlet(QPainter *p, int X, int Y)
 	else
 		title = kover_file->title();
 
-	title.replace(QRegExp("\n"), " - ");
+	title.replace(QRegularExpression(QStringLiteral("\\n")), QStringLiteral(" - "));
 
 	/* just to make sure we always start drawing at the same point */
 	p->translate(0, 0);
@@ -491,7 +491,7 @@ CDView::inlet(QPainter *p, int X, int Y)
 
 		numberStr.setNum(kover_file->number());
 		p->setPen(Qt::red);
-		p->setFont(QFont("helvetica", 12, QFont::Bold));
+		p->setFont(QFont(QStringLiteral("helvetica"), 12, QFont::Bold));
 		p->drawText(offset, 0, BACK_V - offset, BACK_HS, Qt::AlignLeft |
 			    Qt::AlignVCenter, numberStr);
 		offset = 38;
@@ -510,7 +510,7 @@ CDView::inlet(QPainter *p, int X, int Y)
 
 		numberStr.setNum(kover_file->number());
 		p->setPen(Qt::red);
-		p->setFont(QFont("helvetica", 12, QFont::Bold));
+		p->setFont(QFont(QStringLiteral("helvetica"), 12, QFont::Bold));
 		p->drawText(offset, -BACK_HS, BACK_V - offset, BACK_HS, Qt::AlignLeft |
 			    Qt::AlignVCenter, numberStr);
 		offset = 38;
@@ -537,7 +537,7 @@ CDView::inlet(QPainter *p, int X, int Y)
 
 		p->setFont(kover_file->contentsFont());
 		p->setPen(kover_file->contentsColor());
-		int lines = kover_file->title().count(QRegExp("\n"));
+		int lines = kover_file->title().count(QRegularExpression(QStringLiteral("\\n")));
 		lines += 2;
 
 		p->drawText(5, kover_file->titleFont().pointSize() * lines + 5,
@@ -549,16 +549,14 @@ CDView::inlet(QPainter *p, int X, int Y)
 void
 CDView::mousePressEvent(QMouseEvent *evt)
 {
-	int i = evt->x();
-
-	i++;
+	Q_UNUSED(evt);
 	if (previewMode)
-		emit stopPreview();
+		Q_EMIT stopPreview();
 
 	else {
 		if (!globals.trigger_actual_size)
 			return;
-		emit actualSize();
+		Q_EMIT actualSize();
 	}
 }
 

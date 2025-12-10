@@ -1,6 +1,6 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 2000, 2008 by Adrian Reber
+ * Copyright (C) 2000, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,20 +19,37 @@
 
 /* This is the Preferences Dialog (pd) */
 
-#include "pd.moc"
 #include "pd.h"
 #include "sd.h"
 #include <QGroupBox>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
+#include <QTabWidget>
+#include <QLabel>
+#include <QPixmap>
+#include <QIcon>
 #include <kover.h>
-#include <klocalizedstring.h>
-#include <kfontdialog.h>
-#include <kmessagebox.h>
+#include <KLocalizedString>
+#include <QFontDialog>
+#include <KMessageBox>
+#include <KIconLoader>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QPushButton>
 
-pd::pd(QWidget *p, KConfigSkeleton *cs, bool changed):
-KConfigDialog(p, "configure", cs)
+pd::pd(QWidget *p, bool changed):
+QDialog(p)
 {
-	setButtons(Ok | Cancel);
+	QVBoxLayout *mainLayout = new QVBoxLayout(this);
+	tabWidget = new QTabWidget(this);
+	mainLayout->addWidget(tabWidget);
+
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+	connect(buttonBox, &QDialogButtonBox::accepted, this, &pd::accept);
+	connect(buttonBox, &QDialogButtonBox::rejected, this, &pd::reject);
+	mainLayout->addWidget(buttonBox);
+
 	setup_cddb();
 	setup_cdrom();
 	setup_cddb_files();
@@ -62,7 +79,7 @@ pd::setup_cdrom(void)
 
 	vlay->addSpacing(fontMetrics().lineSpacing());
 	QGridLayout *gbox = new QGridLayout();
-	gbox->setMargin(2);
+	gbox->setContentsMargins(2, 2, 2, 2);
 	gbox->setSpacing(4);
 
 	vlay->addLayout(gbox);
@@ -82,13 +99,13 @@ pd::setup_cdrom(void)
 	set_cdrom();
 
 	topLayout->addStretch(10);
-	addPage(page, i18n("CDROM"), "drive-optical");
+	tabWidget->addTab(page, QIcon::fromTheme(QStringLiteral("drive-optical")), i18n("CDROM"));
 }
 
 void
 pd::set_cdrom()
 {
-	cdrom_widgets.cdrom_device->setText(globals.cdrom_device);
+	cdrom_widgets.cdrom_device->setText(QString::fromUtf8(globals.cdrom_device));
 	if (globals.eject_cdrom)
 		cdrom_widgets.eject_cdrom->setChecked(true);
 	else
@@ -99,14 +116,14 @@ int
 pd::check()
 {
 	if (((cdrom_widgets.cdrom_device)->text()).isEmpty()) {
-		KMessageBox::sorry(this, i18n("Please enter a cdrom device."));
+		KMessageBox::error(this, i18n("Please enter a cdrom device."));
 		return -1;
 	}
 
 	if ((((cddb_widgets.proxy_server)->text()).isEmpty()
 	     || ((cddb_widgets.proxy_port)->text()).isEmpty())
 	    && (cddb_widgets.use_proxy)->isChecked() && !(cddb_widgets.proxy_from_env)->isChecked()) {
-		KMessageBox::sorry(this, i18n("Please enter a correct proxy setup."));
+		KMessageBox::error(this, i18n("Please enter a correct proxy setup."));
 		return -1;
 	}
 	return 0;
@@ -114,16 +131,13 @@ pd::check()
 }
 
 void
-pd::slotButtonClicked(int button)
+pd::accept()
 {
-	if (button == KDialog::Ok) {
-		if (check())
-			return;
-		kprintf("OK\n");
-		apply_settings();
-		accept();
-	} else
-		KDialog::slotButtonClicked(button);
+	if (check())
+		return;
+	kprintf("OK\n");
+	apply_settings();
+	QDialog::accept();
 }
 
 
@@ -138,20 +152,20 @@ pd::apply_settings()
 		kprintf("old value :%s\n", globals.cddb_server);
 		kprintf("new value: %s\n", ((cddb_widgets.cddb_server)->text()).toUtf8().constData());
 		free(globals.cddb_server);
-		globals.cddb_server = strdup(((cddb_widgets.cddb_server)->text()).toUtf8());
+		globals.cddb_server = strdup(((cddb_widgets.cddb_server)->text()).toUtf8().constData());
 	}
 
 	if (!((cddb_widgets.cgi_path)->text()).isEmpty()) {
 		kprintf("old value :%s\n", globals.cgi_path);
 		kprintf("new value: %s\n", ((cddb_widgets.cgi_path)->text()).toUtf8().constData());
 		free(globals.cgi_path);
-		globals.cgi_path = strdup(((cddb_widgets.cgi_path)->text()).toUtf8());
+		globals.cgi_path = strdup(((cddb_widgets.cgi_path)->text()).toUtf8().constData());
 	}
 
 	if (!((cddb_widgets.proxy_server)->text()).isEmpty()) {
 		if (globals.proxy_server)
 			free(globals.proxy_server);
-		globals.proxy_server = strdup(((cddb_widgets.proxy_server)->text()).toUtf8());
+		globals.proxy_server = strdup(((cddb_widgets.proxy_server)->text()).toUtf8().constData());
 	} else {
 		if (globals.proxy_server)
 			free(globals.proxy_server);
@@ -167,7 +181,7 @@ pd::apply_settings()
 	if (!((cdrom_widgets.cdrom_device)->text()).isEmpty()) {
 		if (globals.cdrom_device)
 			free(globals.cdrom_device);
-		globals.cdrom_device = strdup(((cdrom_widgets.cdrom_device)->text()).toUtf8());
+		globals.cdrom_device = strdup(((cdrom_widgets.cdrom_device)->text()).toUtf8().constData());
 	} else {
 		if (globals.cdrom_device)
 			free(globals.cdrom_device);
@@ -196,7 +210,7 @@ pd::setup_cddb(void)
 	vlay->addSpacing(fontMetrics().lineSpacing());
 
 	QGridLayout *gbox = new QGridLayout();
-	gbox->setMargin(2);
+	gbox->setContentsMargins(2, 2, 2, 2);
 	gbox->setSpacing(4);
 
 	vlay->addLayout(gbox);
@@ -207,9 +221,9 @@ pd::setup_cddb(void)
 	gbox->addWidget(label, 0, 0);
 
 	cddb_widgets.cddb_protocol = new QComboBox(group);
-	cddb_widgets.cddb_protocol->insertItem(0, "CDDBP");
-	cddb_widgets.cddb_protocol->insertItem(0, "HTTP");
-	connect(cddb_widgets.cddb_protocol, SIGNAL(activated(int)), SLOT(protocol_changed(int)));
+	cddb_widgets.cddb_protocol->insertItem(0, QStringLiteral("CDDBP"));
+	cddb_widgets.cddb_protocol->insertItem(0, QStringLiteral("HTTP"));
+	connect(cddb_widgets.cddb_protocol, QOverload<int>::of(&QComboBox::activated), this, &pd::protocol_changed);
 	gbox->addWidget(cddb_widgets.cddb_protocol, 0, 1);
 
 	cddb_widgets.cddb_server = new QLineEdit(group);
@@ -218,7 +232,7 @@ pd::setup_cddb(void)
 
 	QPushButton *browse = new QPushButton(i18n("Browse"), group);
 
-	connect(browse, SIGNAL(clicked()), SLOT(browsing()));
+	connect(browse, &QPushButton::clicked, this, &pd::browsing);
 	gbox->addWidget(browse, 0, 3);
 
 	label = new QLabel(i18n("CGI path:"), group);
@@ -236,11 +250,11 @@ pd::setup_cddb(void)
 	vlay->addLayout(gbox);
 	text = i18n("Use proxy for CDDB lookups");
 	cddb_widgets.use_proxy = new QCheckBox(text, group);
-	connect(cddb_widgets.use_proxy, SIGNAL(toggled(bool)), this, SLOT(use_proxy(bool)));
+	connect(cddb_widgets.use_proxy, &QCheckBox::toggled, this, &pd::use_proxy);
 	gbox->addWidget(cddb_widgets.use_proxy, 0, 0, 1, 2);
 	text = i18n("Use 'http_proxy' environment variable");
 	cddb_widgets.proxy_from_env = new QCheckBox(text, group);
-	connect(cddb_widgets.proxy_from_env, SIGNAL(toggled(bool)), this, SLOT(use_proxy_env(bool)));
+	connect(cddb_widgets.proxy_from_env, &QCheckBox::toggled, this, &pd::use_proxy_env);
 	gbox->addWidget(cddb_widgets.proxy_from_env, 3, 0, 1, 2);
 
 	label = new QLabel(i18n("Proxy server:"), group);
@@ -256,7 +270,7 @@ pd::setup_cddb(void)
 	gbox->addWidget(cddb_widgets.proxy_port, 2, 1, 1, 1);
 	set_cddb();
 	topLayout->addStretch(10);
-	addPage(page, i18n("CDDB"), "network-wired");
+	tabWidget->addTab(page, QIcon::fromTheme(QStringLiteral("network-wired")), i18n("CDDB"));
 }
 
 void
@@ -264,13 +278,13 @@ pd::set_cddb()
 {
 	QString text;
 
-	cddb_widgets.cddb_server->setText(globals.cddb_server);
-	cddb_widgets.cgi_path->setText(globals.cgi_path);
+	cddb_widgets.cddb_server->setText(QString::fromUtf8(globals.cddb_server));
+	cddb_widgets.cgi_path->setText(QString::fromUtf8(globals.cgi_path));
 
 	if (globals.proxy_server)
-		cddb_widgets.proxy_server->setText(globals.proxy_server);
+		cddb_widgets.proxy_server->setText(QString::fromUtf8(globals.proxy_server));
 
-	cddb_widgets.proxy_port->setText(text.sprintf("%d", globals.proxy_port));
+	cddb_widgets.proxy_port->setText(QString::number(globals.proxy_port));
 
 	cddb_widgets.cddb_protocol->setCurrentIndex(globals.use_cddbp ? 1 : 0);
 	cddb_widgets.proxy_from_env->setChecked(globals.proxy_from_env);
@@ -362,14 +376,14 @@ pd::setup_cddb_files(void)
 
 	set_cddb_files();
 	topLayout->addStretch(10);
-	addPage(page, i18n("CDDB files"), "preferences-desktop-filetype-association");
+	tabWidget->addTab(page, QIcon::fromTheme(QStringLiteral("preferences-desktop-filetype-association")), i18n("CDDB files"));
 }
 
 void
 pd::set_cddb_files()
 {
 	cddb_files_widgets.use_cache->setChecked(globals.use_cache);
-	cddb_files_widgets.cddb_path->setText(globals.cddb_path);
+	cddb_files_widgets.cddb_path->setText(QString::fromUtf8(globals.cddb_path));
 }
 
 void
@@ -380,7 +394,7 @@ pd::save_cddb_files()
 	if (globals.cddb_path)
 		free(globals.cddb_path);
 	if (!((cddb_files_widgets.cddb_path)->text()).isEmpty())
-		globals.cddb_path = strdup(((cddb_files_widgets.cddb_path)->text()).toUtf8());
+		globals.cddb_path = strdup(((cddb_files_widgets.cddb_path)->text()).toUtf8().constData());
 	else
 		globals.cddb_path = NULL;
 }
@@ -410,35 +424,35 @@ pd::setup_cover()
 	text = i18n("Print inlet and booklet");
 	cover_widgets.its_normal = new QRadioButton(text, group);
 	gbox->addWidget(cover_widgets.its_normal, 1, 0);
-	connect(cover_widgets.its_normal, SIGNAL(clicked(bool)), SLOT(output_changed_1()));
+	connect(cover_widgets.its_normal, &QRadioButton::clicked, this, &pd::output_changed_1);
 
 	text = i18n("Print inlet on left side of booklet.\n(slim case option)");
 	cover_widgets.its_a_slim_case = new QRadioButton(text, group);
 	gbox->addWidget(cover_widgets.its_a_slim_case, 2, 0, 1, -1);
-	connect(cover_widgets.its_a_slim_case, SIGNAL(clicked(bool)), SLOT(output_changed_2()));
+	connect(cover_widgets.its_a_slim_case, &QRadioButton::clicked, this, &pd::output_changed_2);
 
 	text = i18n("Don't print booklet.\n(inlet only option)");
 	cover_widgets.inlet_only = new QRadioButton(text, group);
 	gbox->addWidget(cover_widgets.inlet_only, 3, 0, 1, -1);
-	connect(cover_widgets.inlet_only, SIGNAL(clicked(bool)), SLOT(output_changed_3()));
+	connect(cover_widgets.inlet_only, &QRadioButton::clicked, this, &pd::output_changed_3);
 
 	text = i18n("Print all on one page");
 	cover_widgets.one_page = new QRadioButton(text, group);
 	gbox->addWidget(cover_widgets.one_page, 4, 0, 1, -1);
-	connect(cover_widgets.one_page, SIGNAL(clicked(bool)), SLOT(output_changed_4()));
+	connect(cover_widgets.one_page, &QRadioButton::clicked, this, &pd::output_changed_4);
 
 	cover_widgets.inlet = new QLabel(group);
 	KIconLoader *pixmap = KIconLoader::global ();
 
-	cover_widgets.inlet->setPixmap(pixmap->loadIcon("kover_back_content", KIconLoader::NoGroup));
+	cover_widgets.inlet->setPixmap(pixmap->loadIcon(QStringLiteral("kover_back_content"), KIconLoader::NoGroup));
 	gbox->addWidget(cover_widgets.inlet, 5, 0, 1, 1, Qt::AlignHCenter);
 
 	cover_widgets.booklet = new QLabel(group);
-	cover_widgets.booklet->setPixmap(pixmap->loadIcon("kover_front_title_only", KIconLoader::NoGroup));
+	cover_widgets.booklet->setPixmap(pixmap->loadIcon(QStringLiteral("kover_front_title_only"), KIconLoader::NoGroup));
 	gbox->addWidget(cover_widgets.booklet, 5, 1, 1, 1, Qt::AlignHCenter);
 
 	set_cover();
-	addPage(page, i18n("Cover"), "kover");
+	tabWidget->addTab(page, QIcon::fromTheme(QStringLiteral("kover")), i18n("Cover"));
 }
 
 void
@@ -471,21 +485,21 @@ pd::output_changed(int type)
 	KIconLoader *pixmap = KIconLoader::global ();
 
 	if (type == 1) {
-		cover_widgets.inlet->setPixmap(pixmap->loadIcon("kover_back_content", KIconLoader::NoGroup));
-		cover_widgets.booklet->setPixmap(pixmap->loadIcon("kover_front_title_only", KIconLoader::NoGroup));
+		cover_widgets.inlet->setPixmap(pixmap->loadIcon(QStringLiteral("kover_back_content"), KIconLoader::NoGroup));
+		cover_widgets.booklet->setPixmap(pixmap->loadIcon(QStringLiteral("kover_front_title_only"), KIconLoader::NoGroup));
 	}
 	if (type == 2) {
-		cover_widgets.inlet->setPixmap(NULL);
-		cover_widgets.booklet->setPixmap(pixmap-> loadIcon("kover_front_title-right_content-left",
+		cover_widgets.inlet->setPixmap(QPixmap());
+		cover_widgets.booklet->setPixmap(pixmap-> loadIcon(QStringLiteral("kover_front_title-right_content-left"),
 						 KIconLoader::NoGroup));
 	}
 	if (type == 3) {
-		cover_widgets.inlet->setPixmap(pixmap->loadIcon("kover_back_title_content", KIconLoader::NoGroup));
-		cover_widgets.booklet->setPixmap(NULL);
+		cover_widgets.inlet->setPixmap(pixmap->loadIcon(QStringLiteral("kover_back_title_content"), KIconLoader::NoGroup));
+		cover_widgets.booklet->setPixmap(QPixmap());
 	}
 	if (type == 4) {
-		cover_widgets.inlet->setPixmap(pixmap->loadIcon("kover_back_content", KIconLoader::NoGroup));
-		cover_widgets.booklet->setPixmap(pixmap->loadIcon("kover_one_page", KIconLoader::NoGroup));
+		cover_widgets.inlet->setPixmap(pixmap->loadIcon(QStringLiteral("kover_back_content"), KIconLoader::NoGroup));
+		cover_widgets.booklet->setPixmap(pixmap->loadIcon(QStringLiteral("kover_one_page"), KIconLoader::NoGroup));
 	}
 }
 
@@ -532,7 +546,7 @@ pd::browsing()
 	aber = dialog->exec();
 	kprintf("sd returns: %d %s\n", aber, (dialog->get(aber)).c_str());
 	if (aber >= 0)
-		cddb_widgets.cddb_server->setText((dialog->get(aber)).c_str());
+		cddb_widgets.cddb_server->setText(QString::fromStdString(dialog->get(aber)));
 	delete(dialog);
 }
 
@@ -568,39 +582,41 @@ pd::setup_font()
 
 	font_widgets.change_content_font = new QPushButton(i18n("Change"), group);
 	gbox->addWidget(font_widgets.change_content_font, 1, 1);
-	connect(font_widgets.change_content_font, SIGNAL(clicked()), SLOT(content_font_dialog()));
+	connect(font_widgets.change_content_font, &QPushButton::clicked, this, &pd::content_font_dialog);
 
 	label = new QLabel(i18n("Title Font: "), group);
 	gbox->addWidget(label, 2, 0);
 
 	font_widgets.change_title_font = new QPushButton(i18n("Change"), group);
 	gbox->addWidget(font_widgets.change_title_font, 2, 1);
-	connect(font_widgets.change_title_font, SIGNAL(clicked()), this, SLOT(title_font_dialog()));
+	connect(font_widgets.change_title_font, &QPushButton::clicked, this, &pd::title_font_dialog);
 
 	label = new QLabel(i18n("Spine Text Font: "), group);
 	gbox->addWidget(label, 3, 0);
 
 	font_widgets.change_inlet_title_font = new QPushButton(i18n("Change"), group);
 	gbox->addWidget(font_widgets.change_inlet_title_font, 3, 1);
-	connect(font_widgets.change_inlet_title_font, SIGNAL(clicked()), this,
-		SLOT(inlet_title_font_dialog()));
+	connect(font_widgets.change_inlet_title_font, &QPushButton::clicked, this, &pd::inlet_title_font_dialog);
 
 	topLayout->addStretch();
-	addPage(page, i18n("Fonts"), "preferences-desktop-font");
+	tabWidget->addTab(page, QIcon::fromTheme(QStringLiteral("preferences-desktop-font")), i18n("Fonts"));
 }
 
 void
 pd::font_dialog(QFont *f)
 {
-	KFontDialog kf;
 	kprintf("font name before: %s\n", f->family().toUtf8().constData());
 
-	kf.setFont(*f);
-	if (kf.getFont(*f) && changed) {
-		KMessageBox::information(this,
-					 i18n("Changes to the fonts" " will not be applied to"
-					      " the current cover," " but for the next new cover."));
-		changed = false;
+	bool ok;
+	QFont selectedFont = QFontDialog::getFont(&ok, *f, this);
+	if (ok) {
+		*f = selectedFont;
+		if (changed) {
+			KMessageBox::information(this,
+						 i18n("Changes to the fonts" " will not be applied to"
+						      " the current cover," " but for the next new cover."));
+			changed = false;
+		}
 	}
 	kprintf("font name after: %s\n", f->family().toUtf8().constData());
 }
@@ -655,7 +671,7 @@ pd::setup_misc(void)
 
 	set_misc();
 	topLayout->addStretch(10);
-	addPage(page, i18n("Miscellaneous"), "preferences-desktop-icons");
+	tabWidget->addTab(page, QIcon::fromTheme(QStringLiteral("preferences-desktop-icons")), i18n("Miscellaneous"));
 }
 
 void

@@ -1,7 +1,7 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
  * Copyright (C) 1998, 2000 by Denis Oliver Kropp
- * Copyright (C) 2000, 2008 by Adrian Reber
+ * Copyright (C) 2000, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,8 @@
 
 /* this is the image dialog (id) */
 
-#include "id.moc"
 #include "id.h"
-#include <kfiledialog.h>
+#include <QFileDialog>
 #include <QLabel>
 
 id::id(KoverFile *_kover_file)
@@ -82,7 +81,7 @@ id::cancel()
 void
 id::browse_1()
 {
-	QString filename = KFileDialog::getOpenFileName();
+	QString filename = QFileDialog::getOpenFileName();
 
 	if (!filename.isEmpty())
 		edit1->setText(filename);
@@ -91,7 +90,7 @@ id::browse_1()
 void
 id::browse_2()
 {
-	QString filename = KFileDialog::getOpenFileName();
+	QString filename = QFileDialog::getOpenFileName();
 
 	if (!filename.isEmpty())
 		edit2->setText(filename);
@@ -100,7 +99,7 @@ id::browse_2()
 void
 id::browse_3()
 {
-	QString filename = KFileDialog::getOpenFileName();
+	QString filename = QFileDialog::getOpenFileName();
 
 	if (!filename.isEmpty())
 		edit3->setText(filename);
@@ -129,7 +128,7 @@ id::init()
 {
 	QVBoxLayout *top_layout = new QVBoxLayout(this);
 
-	top_layout->setMargin(12);
+	top_layout->setContentsMargins(12, 12, 12, 12);
 	top_layout->addSpacing(5);
 
 	group1 = new QGroupBox(this);

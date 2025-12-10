@@ -1,6 +1,6 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 2001, 2008 by Adrian Reber
+ * Copyright (C) 2001, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
  * 11 Nov 2001: Initial release
  */
 
-#include <without_cd.moc>
 #include <without_cd.h>
 #include <categories.h>
 #include <kover.h>
@@ -40,7 +39,7 @@ without_cd::without_cd() : QDialog()
 	QString greeting;
 	QVBoxLayout *top_layout = new QVBoxLayout(this);
 
-	top_layout->setMargin(7);
+	top_layout->setContentsMargins(7, 7, 7, 7);
 	top_layout->addSpacing(10);
 	greeting = tr("Select a category:");
 	QLabel *label = new QLabel(greeting, this);
@@ -52,7 +51,7 @@ without_cd::without_cd() : QDialog()
 		string insert = cat->get_category(i);
 
 		if (!insert.empty())
-			category->insertItem(i, QString(insert.c_str()));
+			category->insertItem(i, QString::fromUtf8(insert.c_str()));
 	}
 	delete cat;
 	top_layout->addWidget(label);
@@ -75,7 +74,7 @@ without_cd::without_cd() : QDialog()
 
 	QPushButton *ok = new QPushButton(tr("Search"), this);
 
-	ok->setDefault(TRUE);
+	ok->setDefault(true);
 
 	ok->setMaximumWidth(70);
 

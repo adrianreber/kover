@@ -1,7 +1,7 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
  * Copyright (C) 1999, 2000 by Denis Oliver Kropp
- * Copyright (C) 2000, 2008 by Adrian Reber
+ * Copyright (C) 2000, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,14 @@
 #include <kover.h>
 #include <kover_config.h>
 
-#include <KApplication>
+#include <QApplication>
+#include <QCommandLineParser>
+#include <QCommandLineOption>
+#include <QUrl>
+#include <QPointer>
+#include <QIcon>
 #include <KAboutData>
-#include <KCmdLineArgs>
-#include <KLocale>
+#include <KLocalizedString>
 
 #include <signal.h>
 #include <cdio/cdio.h>
@@ -36,7 +40,7 @@ kover_global globals;
 int verbose = 0;
 
 kover_config *config = NULL;
-static KoverTop *kovertop = NULL;
+static QPointer<KoverTop> kovertop = NULL;
 
 void
 k_printf(const char *fn, int line, const char *format, ...)
@@ -106,17 +110,19 @@ sighandler(int i)
 	}
 	kprintf("cleaning up...\n");
 
-	/* if the preview is currently running; stop it
-	 * so that not the values of the preview window
-	 * are stored */
-	kovertop->stopPreview();
+	if (kovertop) {
+		/* if the preview is currently running; stop it
+		 * so that not the values of the preview window
+		 * are stored */
+		kovertop->stopPreview();
 
-	if (globals.save_position) {
-		globals.xpos = kovertop->x();
-		globals.ypos = kovertop->y();
+		if (globals.save_position) {
+			globals.xpos = kovertop->x();
+			globals.ypos = kovertop->y();
+		}
+
+		delete kovertop;
 	}
-
-	kovertop->close();
 
 	the_end();
 	exit(0);
@@ -129,43 +135,56 @@ main(int argc, char **argv)
 	signal(SIGTERM, sighandler);
 	signal(SIGINT, sighandler);
 
-	fprintf(stderr, "%s %s\n", K_PACKAGE, K_VERSION);
-	fprintf(stderr, "    Copyright (C) 1998, 2000 by Denis Oliver Kropp\n");
-	fprintf(stderr, "    Copyright (C) 2000, 2008 by Adrian Reber\n");
-	fprintf( stderr, "%s comes with ABSOLUTELY NO WARRANTY "
-		 "- for details read the license.\n", K_PACKAGE);
+	// Set the translation domain before any i18n() calls
+	KLocalizedString::setApplicationDomain(K_PACKAGE);
 
-	KAboutData about(K_PACKAGE, 0, ki18n(K_PACKAGE), K_VERSION,
-			 ki18n("Kover is an easy to use WYSIWYG CD cover"
-			       " printer with CDDB support."),
-			 KAboutData::License_GPL_V2,
-			 ki18n("(C) 1998, 2000 Denis Oliver Kropp\n(C)"
-			       " 2000, 2008 Adrian Reber"),
-			 KLocalizedString(), 0, "adrian@lisas.de");
+	KAboutData about(QStringLiteral(K_PACKAGE),
+			 i18n(K_PACKAGE),
+			 QStringLiteral(K_VERSION),
+			 i18n("Kover is an easy to use WYSIWYG CD cover"
+			      " printer with CDDB support."),
+			 KAboutLicense::GPL_V2,
+			 i18n("(C) 1998, 2000 Denis Oliver Kropp\n(C)"
+			      " 2000, 2025 Adrian Reber"),
+			 QString(),
+			 QStringLiteral(""),
+			 QStringLiteral("adrian@lisas.de"));
 
-	about.addAuthor(ki18n("Adrian Reber"),
-			KLocalizedString(), "adrian@lisas.de");
+	about.addAuthor(i18n("Adrian Reber"),
+			QString(),
+			QStringLiteral("adrian@lisas.de"));
 
-	about.addAuthor(ki18n("Denis Oliver Kropp"),
-			KLocalizedString(), "dok@fischlustig.de");
+	about.addAuthor(i18n("Denis Oliver Kropp"),
+			QString(),
+			QStringLiteral("dok@fischlustig.de"));
 
-	KCmdLineArgs::init(argc, argv, &about);
+	// Disable native dialogs to avoid GTK3 theme crashes in minimal environments
+	QApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
 
-	KCmdLineOptions options;
-	options.add("+[URL]", ki18n("Document to open"));
-	options.add("advise", ki18n("Help me now!"));
-	options.add("debug", ki18n("Enable debug output"));
-	KCmdLineArgs::addCmdLineOptions(options);
-	KApplication app;
+	QApplication app(argc, argv);
+	app.setDesktopFileName(QStringLiteral("kover"));
+	app.setWindowIcon(QIcon::fromTheme(QStringLiteral("kover")));
+	KAboutData::setApplicationData(about);
 
-	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+	QCommandLineParser parser;
+	parser.addPositionalArgument(QStringLiteral("URL"),
+				     i18n("Document to open"),
+				     QStringLiteral("[URL]"));
+	parser.addOption(QCommandLineOption(QStringList() << QStringLiteral("advise"),
+					    i18n("Help me now!")));
+	parser.addOption(QCommandLineOption(QStringList() << QStringLiteral("debug"),
+					    i18n("Enable debug output")));
 
-	if (args->isSet("advise")) {
+	about.setupCommandLine(&parser);
+	parser.process(app);
+	about.processCommandLine(&parser);
+
+	if (parser.isSet(QStringLiteral("advise"))) {
 		fprintf(stderr, "Don't Panic!\n");
 		exit(42);
 	}
 
-	if (args->isSet("debug")) {
+	if (parser.isSet(QStringLiteral("debug"))) {
 		verbose = 1;
 		fprintf(stderr, "\n");
 		kprintf("debug output enabled\n");
@@ -175,13 +194,18 @@ main(int argc, char **argv)
 
 	kovertop = new KoverTop();
 
-	if (args->count() > 0)
-		kovertop->fileOpen(args->url(0));
+	const QStringList args = parser.positionalArguments();
+	if (!args.isEmpty())
+		kovertop->fileOpen(QUrl::fromUserInput(args.at(0)));
 
-	args->clear();
 	kovertop->show();
 
 	int i = app.exec();
+
+	if (kovertop) {
+		delete kovertop;
+	}
+
 	the_end();
 	return i;
 }

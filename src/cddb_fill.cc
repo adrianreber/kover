@@ -1,7 +1,7 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
  * Copyright (C) 1999, 2000 by Denis Oliver Kropp
- * Copyright (C) 2000, 2013 by Adrian Reber
+ * Copyright (C) 2000, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include <kover.h>
 #include <cddb_fill.h>
 
-#include <klocale.h>
+#include <KLocalizedString>
 
 #include <string>
 #include <algorithm>
@@ -45,8 +45,8 @@ cddb_fill::read_cdtext()
 {
 	CdIo_t *cdio;
 	char *device = NULL;
-	const char *status = "Unable to get default CD device.";
-	const char *unable = "unable to open CD device";
+	QString status = QStringLiteral("Unable to get default CD device.");
+	QString unable = QStringLiteral("unable to open CD device");
 
 	cd_info.artist = "Artist";
 	cd_info.cdname = "Title";
@@ -58,7 +58,7 @@ cddb_fill::read_cdtext()
 	if (!globals.cdrom_device) {
 		device = cdio_get_default_device(NULL);
 		if (!device) {
-			blub->set_status_text(i18n(status).toUtf8());
+			blub->set_status_text(status);
 			return false;
 		}
 
@@ -73,7 +73,7 @@ cddb_fill::read_cdtext()
 
 	if (!cdio) {
 		blub->set_status_text(unable);
-		kprintf("%s\n", unable);
+		kprintf("%s\n", unable.toUtf8().constData());
 		return false;
 	}
 
@@ -85,7 +85,7 @@ cddb_fill::read_cdtext()
 
 	if (cd_info.ntracks == CDIO_INVALID_TRACK) {
 		blub->set_status_text(unable);
-		kprintf("%s\n", unable);
+		kprintf("%s\n", unable.toUtf8().constData());
 		cdio_destroy(cdio);
 		return false;
 	}
@@ -157,7 +157,7 @@ cddb_fill::setTitleAndContents()
 	QString tracks, contents, cddb_id;
 	string artist = cd_info.artist + "\n" + cd_info.cdname;
 
-	kover_file->setTitle(artist.c_str());
+	kover_file->setTitle(QString::fromStdString(artist));
 	for (int i = 0; i < cd_info.ntracks; i++) {
 		if (globals.display_track_duration) {
 			int m = 0;
@@ -165,33 +165,31 @@ cddb_fill::setTitleAndContents()
 
 			m = FRAMES_TO_SECONDS(cd_info.tracks[i]->length) / 60;
 			n = FRAMES_TO_SECONDS(cd_info.tracks[i]->length) % 60;
-			tracks.sprintf("(%.2d:%.2d)-%.2d. ", m, n, i + 1);
+			tracks = QString::asprintf("(%.2d:%.2d)-%.2d. ", m, n, i + 1);
 		} else
-			tracks.sprintf("%.2d. ", i + 1);
+			tracks = QString::asprintf("%.2d. ", i + 1);
 
-		tracks.append(cd_info.tracks[i]->name.c_str());
+		tracks.append(QString::fromStdString(cd_info.tracks[i]->name));
 		if (i != cd_info.ntracks - 1)
-			tracks.append("\n");
+			tracks.append(QStringLiteral("\n"));
 		contents.append(tracks);
 	}
 	kover_file->setContents(contents);
-	cddb_id.sprintf("0x%lx", cd_info.cddb_id);
+	cddb_id = QString::asprintf("0x%lx", cd_info.cddb_id);
 	kover_file->set_cddb_id(cddb_id);
 }
 
 void
 cddb_fill::get_info()
 {
-	const char *contains = "CD contains %d tracks, "
+	QString str = QString::asprintf("CD contains %d tracks, "
 			       "total time is %d:%02d, "
-			       "the magic number is 0x%lx";
-	char str[256];
+			       "the magic number is 0x%lx",
+			       cd_info.ntracks, cd_info.length / 60,
+			       cd_info.length % 60,
+			       cd_info.cddb_id);
 
-	sprintf(str, contains, cd_info.ntracks, cd_info.length / 60,
-		cd_info.length % 60,
-		cd_info.cddb_id);
-
-	kprintf("%s\n", str);
+	kprintf("%s\n", str.toUtf8().constData());
 
 	blub->set_status_text(str);
 	blub->update_id(cd_info.cddb_id);
@@ -205,7 +203,7 @@ cddb_fill::readTOC()
 	lsn_t lsn;
 	int i, pos;
 	char *device = NULL;
-	const char *status = "Unable to get default CD device.";
+	QString status = QStringLiteral("Unable to get default CD device.");
 
 	cd_info.artist = "Artist";
 	cd_info.cdname = "Title";
@@ -216,7 +214,7 @@ cddb_fill::readTOC()
 	if (!globals.cdrom_device) {
 		device = cdio_get_default_device(NULL);
 		if (!device) {
-			blub->set_status_text(i18n(status).toUtf8());
+			blub->set_status_text(status);
 			return false;
 		}
 
@@ -225,7 +223,7 @@ cddb_fill::readTOC()
 	kprintf("CD-ROM device: %s\n", device);
 	cdio = cdio_open(device, DRIVER_DEVICE);
 	if (!cdio) {
-		blub->set_status_text("unable to open CD device");
+		blub->set_status_text(QStringLiteral("unable to open CD device"));
 		kprintf("unable to open CD device\n");
 		return false;
 	}
@@ -238,7 +236,7 @@ cddb_fill::readTOC()
 	kprintf("CDIO_INVALID_TRACK %d\n", CDIO_INVALID_TRACK);
 
 	if (cnt == CDIO_INVALID_TRACK) {
-		blub->set_status_text("unable to open CD device");
+		blub->set_status_text(QStringLiteral("unable to open CD device"));
 		kprintf("unable to open CD device\n");
 		cdio_destroy(cdio);
 		return false;
@@ -247,7 +245,7 @@ cddb_fill::readTOC()
 	kprintf("device %p\n", cdio);
 
 	if (cnt == 0) {
-		blub->set_status_text("no audio tracks on CD");
+		blub->set_status_text(QStringLiteral("no audio tracks on CD"));
 	}
 	kprintf("CD contains %d track(s)\n", cnt);
 
@@ -258,9 +256,7 @@ cddb_fill::readTOC()
 		lsn = cdio_get_track_lsn(cdio, t);
 		kprintf("lsn: %d\n", lsn);
 		if (lsn == CDIO_INVALID_LSN) {
-			blub->
-			set_status_text
-			("track has invalid Logical Sector Number");
+			blub->set_status_text(QStringLiteral("track has invalid Logical Sector Number"));
 		}
 		/* lsn +=150; */
 
@@ -309,7 +305,7 @@ cddb_fill::reading_proxy_env_failed()
 {
 	const char *f = "Reading http_proxy environment variable failed!";
 
-	blub->set_status_text(i18n(f).toUtf8());
+	blub->set_status_text(i18n(f));
 	return false;
 }
 
@@ -415,12 +411,12 @@ cddb_fill::check_for_auth(cddb_conn_t *conn)
 	if (!conn)
 		return false;
 
-	blub->set_status_text(cddb_error_str(cddb_errno(conn)));
+	blub->set_status_text(QString::fromUtf8(cddb_error_str(cddb_errno(conn))));
 	pa *pad =
 		new pa(globals.proxy_server, globals.proxy_port);
 	blubber = pad->exec();
 	if (blubber) {
-		blub->set_status_text(i18n("Operation aborted.").toUtf8());
+		blub->set_status_text(i18n("Operation aborted."));
 		/* canceled */
 		return false;
 	}
@@ -453,7 +449,7 @@ cddb_fill::cddb_query()
 	int matches;
 	string inexact_string = "";
 
-	blub->set_status_text(i18n("Querying database...").toUtf8());
+	blub->set_status_text(i18n("Querying database..."));
 
 	disc = cddb_disc_new();
 	if (disc == NULL) {
@@ -490,7 +486,7 @@ cddb_fill::cddb_query()
 				return false;
 		}
 		if (matches == -1) {
-			blub->set_status_text(cddb_error_str(cddb_errno(conn)));
+			blub->set_status_text(QString::fromUtf8(cddb_error_str(cddb_errno(conn))));
 			return false;
 		} else
 			aber = 0;
@@ -500,7 +496,7 @@ cddb_fill::cddb_query()
 	i = matches;
 
 	if (i == 0) {
-		blub->set_status_text(i18n("No match found.").toUtf8());
+		blub->set_status_text(i18n("No match found."));
 		return false;
 	}
 	if (i == 1) {
@@ -531,7 +527,7 @@ cddb_fill::cddb_query()
 	cddb_destroy(conn);
 
 	if (inexact_list.empty()) {
-		blub->set_status_text(i18n("No match found.").toUtf8());
+		blub->set_status_text(i18n("No match found."));
 		return false;
 	}
 	inexact = new inexact_dialog(inexact_list);
@@ -541,7 +537,7 @@ cddb_fill::cddb_query()
 	}
 
 	if (aber == -1) {
-		blub->set_status_text(i18n("Query aborted...").toUtf8());
+		blub->set_status_text(i18n("Query aborted..."));
 		return false;
 	}
 	ref_211 = inexact->get_object(aber);
@@ -596,7 +592,7 @@ cddb_fill::cddb_read(unsigned long disc_id, string category)
 				return false;
 		}
 		if (!success) {
-			blub->set_status_text(cddb_error_str(cddb_errno(conn)));
+			blub->set_status_text(QString::fromUtf8(cddb_error_str(cddb_errno(conn))));
 			return false;
 		} else
 			i = 0;
@@ -607,12 +603,7 @@ cddb_fill::cddb_read(unsigned long disc_id, string category)
 	kprintf("cd_info.length %d\n", cd_info.length);
 
 	if (cd_info.length == 0) {
-
-		blub->
-		set_status_text(i18n
-				(
-					"Disc length == 0; this can't be right. Aborting.")
-				.toUtf8());
+		blub->set_status_text(i18n("Disc length == 0; this can't be right. Aborting."));
 		return false;
 	}
 	cd_info.artist = cddb_disc_get_artist(disc);

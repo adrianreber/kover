@@ -1,7 +1,7 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
  * Copyright (C) 1999, 2000 by Denis Oliver Kropp
- * Copyright (C) 2000, 2008 by Adrian Reber
+ * Copyright (C) 2000, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,15 +25,12 @@
 #ifndef KOVERFILE_H
 #define KOVERFILE_H
 
-#include <qobject.h>
-#include <qstring.h>
-#include <qfont.h>
-#include <qcolor.h>
-#include <ksimpleconfig.h>
-#include <qdom.h>
-#include <kurl.h>
-
-/* class KURL; */
+#include <QObject>
+#include <QString>
+#include <QFont>
+#include <QColor>
+#include <QDomDocument>
+#include <QUrl>
 
 typedef enum {
 	IMG_CENTER,
@@ -96,12 +93,12 @@ class KoverFile : public QObject {
 	QString the_spine_text() const;
 	QString cddb_id() const;
 
-	bool openFile(const KUrl & url);
-	bool saveFile(const KUrl & url);
+	bool openFile(const QUrl & url);
+	bool saveFile(const QUrl & url);
 	void reset();
 	bool empty();
 
- signals:
+ Q_SIGNALS:
 	/**
 	 * This signal is emitted when any data changed.
 	 */

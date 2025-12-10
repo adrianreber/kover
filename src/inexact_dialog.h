@@ -1,6 +1,6 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 2001, 2008 by Adrian Reber
+ * Copyright (C) 2001, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #define INEXACT_DIALOG_H
 
 #include <config.h>
+#include <QObject>
 #include <QDialog>
 #include "cddb_211_item.h"
 #include <list>
@@ -39,7 +40,7 @@ class inexact_dialog:public QDialog
 
 	inexact_dialog(list < cddb_211_item * >inexact_list);
 	~inexact_dialog();
-	int exec();
+	int exec() override;
 	char *get(int index);
 	cddb_211_item *get_object(int index);
 
@@ -48,12 +49,12 @@ class inexact_dialog:public QDialog
 	QListWidget *box;
 	list < cddb_211_item * >local_list;
 
-      private slots:
+      private Q_SLOTS:
 
-	void accept();
+	void accept() override;
 	void quit();
 
-      public slots:
+      public Q_SLOTS:
 
 	void double_clicked(QListWidgetItem *);
 };

@@ -1,6 +1,6 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 2000, 2008 by Adrian Reber
+ * Copyright (C) 2000, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "pa.moc"
 #include "pa.h"
 
 #include <QVBoxLayout>
@@ -32,10 +31,10 @@ pa::pa(char *host, int port):QDialog()
 	QString tmp;
 	QVBoxLayout *top_layout = new QVBoxLayout(this);
 
-	top_layout->setMargin(7);
+	top_layout->setContentsMargins(7, 7, 7, 7);
 	top_layout->addSpacing(10);
 	greeting = tr("Enter username and password for proxy at ");
-	tmp.sprintf("%s:%d", host, port);
+	tmp = QString::asprintf("%s:%d", host, port);
 	greeting += tmp;
 	QLabel *label = new QLabel(greeting, this);
 
@@ -59,7 +58,7 @@ pa::pa(char *host, int port):QDialog()
 	top_layout->addLayout(button_layout);
 	QPushButton *ok = new QPushButton(tr("Ok"), this);
 
-	ok->setDefault(TRUE);
+	ok->setDefault(true);
 	ok->setMaximumWidth(70);
 	connect(ok, SIGNAL(clicked()), SLOT(accept()));
 	button_layout->addWidget(ok, 0, Qt::AlignRight);
@@ -87,9 +86,9 @@ void
 pa::accept()
 {
 	QString tmp = user->text();
-	username = strdup(tmp.toUtf8());
+	username = strdup(tmp.toUtf8().constData());
 	tmp = pw->text();
-	password = strdup(tmp.toUtf8());
+	password = strdup(tmp.toUtf8().constData());
 	QDialog::done(0);
 }
 

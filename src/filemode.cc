@@ -18,16 +18,14 @@
  * 
  * $Id: filemode.cc,v 1.3 2005/06/25 19:38:13 adrian Exp $ */
 
-#include "filemode.moc"
 #include "filemode.h"
 
-#include <qpushbutton.h>
-#include <qstring.h>
-#include <qlayout.h>
-#include <q3groupbox.h>
-#include <qlabel.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
+#include <QPushButton>
+#include <QString>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGroupBox>
+#include <QLabel>
 
 /**
  * The constructor filemode::filemode
@@ -35,48 +33,52 @@
  * @param inexact_list is a STL list containing the 211 (inexact match) items
  */
 
-filemode::filemode():QDialog(0, 0, TRUE, 0)
+filemode::filemode():QDialog(nullptr)
 {
+	setModal(true);
 
-	Q3VBoxLayout *top_layout = new Q3VBoxLayout(this);
+	QVBoxLayout *top_layout = new QVBoxLayout(this);
 
-	top_layout->setMargin(7);
+	top_layout->setContentsMargins(7, 7, 7, 7);
 	top_layout->addSpacing(10);
 	QLabel *label = new QLabel(tr("Choose wisely!"), this);
 
 	top_layout->addWidget(label);
 	top_layout->addSpacing(10);
-	box = new Q3ListBox(this);
+	box = new QListWidget(this);
 
-	box->setMinimumWidth(box->maxItemWidth() + 30);
+	box->setMinimumWidth(300);
 
-	connect(box, SIGNAL(doubleClicked(Q3ListBoxItem *)), SLOT(double_clicked(Q3ListBoxItem *)));
+	connect(box, &QListWidget::itemDoubleClicked, this, &filemode::double_clicked);
 
 	top_layout->addWidget(box);
 	top_layout->addSpacing(10);
 
-	directory = new QLineEdit(this, "directory");
+	directory = new QLineEdit(this);
 	top_layout->addWidget(directory);
 	top_layout->addSpacing(20);
 
-	Q3BoxLayout *button_layout = new Q3BoxLayout(top_layout, Q3BoxLayout::RightToLeft, -10);
+	QHBoxLayout *button_layout = new QHBoxLayout();
 
-	QPushButton *ok = new QPushButton(tr("Ok"), this, "ok");
+	QPushButton *ok = new QPushButton(tr("Ok"), this);
 
-	ok->setDefault(TRUE);
+	ok->setDefault(true);
 
 	ok->setMaximumWidth(70);
 
-	connect(ok, SIGNAL(clicked()), SLOT(accept()));
-	button_layout->addWidget(ok, 0, AlignRight);
-	button_layout->addSpacing(5);
+	connect(ok, &QPushButton::clicked, this, &filemode::accept);
 
-	QPushButton *quit = new QPushButton(tr("Quit"), this, "quit");
+	QPushButton *quit = new QPushButton(tr("Quit"), this);
 
-	connect(quit, SIGNAL(clicked()), SLOT(quit()));
+	connect(quit, &QPushButton::clicked, this, &filemode::quit);
 	quit->setMaximumWidth(70);
-	button_layout->addWidget(quit, 0, AlignRight);
-	button_layout->addStretch(20);
+
+	button_layout->addStretch();
+	button_layout->addWidget(quit);
+	button_layout->addSpacing(5);
+	button_layout->addWidget(ok);
+
+	top_layout->addLayout(button_layout);
 	adjustSize();
 }
 
@@ -93,7 +95,7 @@ filemode::~filemode()
  */
 void filemode::accept()
 {
-	QDialog::done(box->currentItem());
+	QDialog::done(box->currentRow());
 }
 
 /**
@@ -108,9 +110,10 @@ void filemode::quit()
  * The double_clicked() slot. Setting the return value.
  * reimplemented from QDialog
  */
-void filemode::double_clicked(Q3ListBoxItem * item)
+void filemode::double_clicked(QListWidgetItem * item)
 {
-	QDialog::done(item->listBox()->currentItem());
+	Q_UNUSED(item);
+	QDialog::done(box->currentRow());
 }
 
 /**
@@ -135,7 +138,7 @@ int filemode::exec()
  * @see exec()
  * @return the string containing the cddb id and category. Can be freed with free(3).
  */
-char *filemode::get(int index __attribute((unused)))
+char *filemode::get(int index __attribute__((unused)))
 {
-	return strdup(directory->text().utf8());
+	return strdup(directory->text().toUtf8().constData());
 }

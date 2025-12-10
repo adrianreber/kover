@@ -1,6 +1,6 @@
 /*
  * kover - Kover is an easy to use WYSIWYG CD cover printer with CDDB support.
- * Copyright (C) 2001, 2008 by Adrian Reber
+ * Copyright (C) 2001, 2025 by Adrian Reber
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #ifndef WITHOUT_CD_H
 #define WITHOUT_CD_H
 
+#include <QObject>
 #include <QDialog>
 #include <QLineEdit>
 #include <QComboBox>
@@ -41,8 +42,8 @@ class without_cd : public QDialog {
 	QComboBox *category;
 	void handle_input();
 
- private slots:
-	void accept();
+ private Q_SLOTS:
+	void accept() override;
 	void quit();
 
 };

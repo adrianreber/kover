@@ -31,11 +31,11 @@
 #ifndef FILEMODE_H
 #define FILEMODE_H
 
-#include <qdialog.h>
+#include <QDialog>
+#include <QListWidget>
+#include <QLineEdit>
 #include "cddb_211_item.h"
 #include <list>
-#include <q3listbox.h>
-#include <qlineedit.h>
 
 using namespace std;
 
@@ -50,11 +50,13 @@ class filemode:public QDialog {
     int exec();
     char *get(int index);
   private:
-      Q3ListBox * box;
+      QListWidget * box;
       QLineEdit *directory;
-    private slots:void accept();
+    private Q_SLOTS:
+    void accept();
     void quit();
-    public slots:void double_clicked(Q3ListBoxItem *);
+    public Q_SLOTS:
+    void double_clicked(QListWidgetItem *);
 
 };
 
