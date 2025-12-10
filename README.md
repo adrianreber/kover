@@ -59,7 +59,8 @@ kover [options] [file.kover]
 
 ## File Format
 
-Kover saves cover designs in `.kover` files (XML format). It can also import K3b data project files.
+Kover saves cover designs in `.kover` files (XML format).
+It can also import K3b data project files.
 
 ## License
 
@@ -75,4 +76,4 @@ version.
 
 ## Links
 
-- Repository: https://github.com/adrianreber/kover
+- Repository: <https://github.com/adrianreber/kover>
